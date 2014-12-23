@@ -1,0 +1,59 @@
+
+	###############################################################################
+	# globally ####################################################################
+	if(exists("measurements",envir=as.environment(".GlobalEnv"))){rm(measurements,envir=as.environment(".GlobalEnv"))}
+	if(exists("MSlist",envir=as.environment(".GlobalEnv"))){rm(MSlist,envir=as.environment(".GlobalEnv"))}
+	if(exists("logfile",envir=as.environment(".GlobalEnv"))){rm(logfile,envir=as.environment(".GlobalEnv"))}
+	if(exists("atit",envir=as.environment(".GlobalEnv"))){rm(atit,envir=as.environment(".GlobalEnv"))}
+	if(exists("peakit",envir=as.environment(".GlobalEnv"))){rm(peakit,envir=as.environment(".GlobalEnv"))}
+	if(exists("profpeaks2",envir=as.environment(".GlobalEnv"))){rm(profpeaks2,envir=as.environment(".GlobalEnv"))}
+	if(exists("EICit",envir=as.environment(".GlobalEnv"))){rm(EICit,envir=as.environment(".GlobalEnv"))}
+	if(exists("summa",envir=as.environment(".GlobalEnv"))){rm(summa,envir=as.environment(".GlobalEnv"))}
+	if(exists("do_flow",envir=as.environment(".GlobalEnv"))){rm(do_flow,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="EIC_ID")){rm(EIC_ID,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList")){rm(profileList,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks")){rm(profpeaks,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks_neg")){rm(profpeaks_neg,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks_pos")){rm(profpeaks_pos,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="targets")){rm(targets,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="IS")){rm(IS,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="intmass_pos_IS")){rm(intmass_pos_IS,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_pos_IS")){rm(pattern_pos_IS,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternDelRT_pos_IS")){rm(patternDelRT_pos_IS,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternRT_pos_IS")){rm(patternRT_pos_IS,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="doit")){rm(doit,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="peakTable")){rm(peakTable,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="fileID")){rm(fileID,envir=as.environment(".GlobalEnv"))}
+	###############################################################################
+	
+	###############################################################################
+	# locally #####################################################################
+	if(exists("measurements")){rm(measurements)}
+	if(any(objects()=="MSlist")){rm(MSlist)}
+	if(any(objects()=="logfile")){rm(logfile)}
+	if(any(objects()=="atit")){rm(atit)}
+	if(any(objects()=="peakit")){rm(peakit)}
+	if(any(objects()=="profpeaks2")){rm(profpeaks2)}
+	if(any(objects()=="EICit")){rm(EICit)}
+	if(any(objects()=="summa")){rm(summa)}
+	if(any(objects()=="do_flow")){rm(do_flow)}
+	if(any(objects()=="EIC_ID")){rm(EIC_ID)}
+	if(any(objects()=="profileList")){rm(profileList)}
+	if(any(objects()=="profileList_neg")){rm(profileList_neg)}
+	if(any(objects()=="profileList_pos")){rm(profileList_pos)}
+	if(any(objects()=="profpeaks")){rm(profpeaks)}
+	if(any(objects()=="profpeaks_neg")){rm(profpeaks_neg)}
+	if(any(objects()=="profpeaks_pos")){rm(profpeaks_pos)}
+	if(any(objects()=="targets")){rm(targets)}
+	if(any(objects()=="IS")){rm(IS)}
+	if(any(objects()=="intmass_pos_IS")){rm(intmass_pos_IS)}
+	if(any(objects()=="pattern_pos_IS")){rm(pattern_pos_IS)}
+	if(any(objects()=="patternDelRT_pos_IS")){rm(patternDelRT_pos_IS)}
+	if(any(objects()=="patternRT_pos_IS")){rm(patternRT_pos_IS)}
+	if(any(objects()=="doit")){rm(doit)}
+	if(any(objects()=="peakTable")){rm(peakTable)}
+	if(any(objects()=="fileID")){rm(fileID)}
+	###############################################################################	
+	
