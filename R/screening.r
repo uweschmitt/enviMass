@@ -227,6 +227,13 @@ screening<-function (	peaklist,
                       many_3 <- c(many_3 + 1)
                     }
                   }
+                  else {
+                    # modification for misses (uwe schmitt 29.okt 2014)
+                    all_hits <- paste(all_hits, "-",  "/", sep = "");
+                    deltamz <- paste(deltamz, "-", "/", sep="");
+                    deltaRT <- paste(deltamz, "-", "/", sep="");
+                    deltaInt <- paste(deltamz, "-", "/", sep="");
+                  }
                 }
                 score1 <- paste(many_1, " of ", many, sep = "")
                 score2 <- paste(many_2, " of ", many, sep = "")
