@@ -105,14 +105,16 @@ checkproject<-function(logfile,isotopes,adducts){
   dated<-measurements[,6]
   timed<-measurements[,7]
   datetime<-c()
-  for(i in 1:length(timed)){
-      datetime<-c(datetime,paste(dated[i],timed[i],"CET",sep=" "))
+
+  if (length(timed) > 0) {
+    for(i in 1:length(timed)){
+        datetime<-c(datetime,paste(dated[i],timed[i],"CET",sep=" "))
+    }
+    atPOSIX<-as.POSIXct(datetime);
+    atPOSIX<-as.numeric(atPOSIX)
+    if(min(lags)>(((max(atPOSIX)-min(atPOSIX))/(24*60*60))+1)){say<-"Trend lags longer than time span of the measurements ... abort"}
   }
-  atPOSIX<-as.POSIXct(datetime);
-  atPOSIX<-as.numeric(atPOSIX)
-  if(min(lags)>(((max(atPOSIX)-min(atPOSIX))/(24*60*60))+1)){say<-"Trend lags longer than time span of the measurements ... abort"}
-  rm(lags);
-  ##############################################################################
+  rm(lags); ##############################################################################
   # data sets ok? ##############################################################
   filed<-list.files(file.path(logfile[[1]],"files"))
   if(!length(filed)){say<-"No measurements available!"}
