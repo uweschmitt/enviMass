@@ -64,10 +64,14 @@ profiledist<-function(profileList){
 	}
 	# new incidents ############################################################
 	allit<-log10(profileList[[7]][profileList[[7]][,5]>0,5])
+
+    scores <- allit - this$stats[5, 1];
 	allitID<-profileList[[7]][profileList[[7]][,5]>0,4]
+
 	if(length(allit)>0){
 		allitID<-allitID[order(allit,decreasing=FALSE)]
 		allit<-allit[order(allit,decreasing=FALSE)]
+		scores<-scores[order(allit,decreasing=FALSE)]
 		doat<-maxit
 		i=length(allit)
 		while((doat>minit)&(i>0)){
@@ -75,7 +79,7 @@ profiledist<-function(profileList){
 			mz<-round(mz,digits=4)
 			RT<-mean(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==allitID[i],1]:profileList[[7]][profileList[[7]][,4]==allitID[i],2]),3])
 			RT<-round(RT,digits=1)
-			if(allit[i]>this$stats[5,1]){
+			if(scores[i]>0){
 				lines(c(4.35,5.7),c(allit[i],doat),col="red")
 				text(5.85,doat,labels=paste("ID: ",as.character(allitID[i])," - m/z: ",as.character(mz)," - RT: ",as.character(RT),sep=""),pos=4,col="red",cex=1)
 			}else{
@@ -85,15 +89,19 @@ profiledist<-function(profileList){
 			doat<-(doat-((maxit-minit)/15))
 			i=i-1
 		}
-		below<-(allit[allit<this$stats[5,1]]);
-		above<-(allit[allit>this$stats[5,1]]);
+		below<-(allit[scores < 0]);
+		above<-(allit[scores > 0]);
 		points(rep(4,length(above)),above,pch=19,col="red",cex=1);
 		points(rep(4,length(below)),below,pch=19,col="darkgreen",cex=1);
 	}else{
 		text(6,this$stats[3,1],labels="No current incidents",pos=4,col="darkgreen")
 	}
     ############################################################################
-	
+
+    ranking <- list(allitID, scores)
+    names(ranking) <- c("profile_id", "score");
+    return(ranking);
+
 }
 
 
