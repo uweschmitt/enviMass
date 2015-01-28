@@ -39,7 +39,7 @@ recalib<-function(
   path_1=FALSE,
   path_2=FALSE,  
   stopit=FALSE,
-  intermediate_results=NULL
+  intermediate_results=FALSE
   ){
 
 
@@ -128,14 +128,16 @@ recalib<-function(
 	save(model,file=path_2)
   }
 
-  # simulate call by reference here:
-  imr <- list()
-  imr[[1]] <- model;
-  imr[[2]] <- peaks;
-  imr[[3]] <- getit2;
-  imr[[4]] <- getit3;
-  names(imr) <- c("model", "matches", "x", "delta_y");
-  eval.parent(substitute(intermediate_results<-imr))
+  if (intermediate_results) {
+    # simulate call by reference here:
+    imr <- list()
+    imr[[1]] <- model;
+    imr[[2]] <- peaks;
+    imr[[3]] <- getit2;
+    imr[[4]] <- getit3;
+    names(imr) <- c("model", "matches", "x", "delta_y");
+    eval.parent(substitute(intermediate_results<-imr))
+  }
 
   return(newpeaks)
   ##############################################################################
