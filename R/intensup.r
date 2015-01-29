@@ -81,7 +81,7 @@ intensup<-function(
 		}		
 	}
 	# INSERT ... also check any of the inter-sample distances ##################
-	if(max(diff(numtime[timeset[,2]!=0],lag=1))<max(lags)){
+	if(max(diff(numtime[timeset[,2]!=0],lag=1))>max(lags)){
 		warning("\n At least one gap in sample time series larger than largest lag!")
 	}
 	############################################################################

@@ -33,6 +33,7 @@ updateNumericInput(session, "prof_drt", "RT tolerance [s]", value = as.numeric(l
 # TREND ########################################################################
 updateTextInput(session, "trend_lags","Time lags of trends [days], comma-separated:",value = as.character(logfile$parameters[[34]]))
 updateNumericInput(session, "trend_thres", "Trend vs. mean+variance intensity threshold:", value = as.numeric(logfile$parameters[[35]]))   
+updateSelectInput(session, "notrend", "Do not show global trend - instead, report it as maximum intensity above blind", choices = c("TRUE"="TRUE","FALSE"="FALSE"), selected= as.character(logfile$parameters[[29]]))
 # BLIND ########################################################################
 updateSelectInput(session, "blind_do", "Run a blind subtraction...", c("yes"="yes","no"="no"),selected= as.character(logfile$parameters[[36]]))
 updateNumericInput(session, "blind_fold", "...if intensity ratio sample/blind <", value = as.numeric(logfile$parameters[[37]]))   
