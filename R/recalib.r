@@ -17,6 +17,7 @@
 #' @param path_1 Logical \code{FALSE} or character string. If not \code{FALSE}, filepath to output the plot
 #' @param path_2 Logical \code{FALSE} or character string. Filepath for saving GAM model.
 #' @param stopit Logical. Triggers a full R error (\code{TRUE}) or returns an error message string (\code{FALSE}) if failing. 
+#' @param intermediate_results Logical. Call by reference to have intermediates in the enclosing environment?
 #'
 #' @return Recalibrated \code{peaklist}.
 #' 

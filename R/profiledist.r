@@ -3,6 +3,7 @@
 #' @description \code{profiledist} boxplots current and global trend distributions
 #'
 #' @param profileList profileList
+#' @param ret Logical. Should outlier ranking be returned?
 #'
 #' @return 	The boxplot in grey shows the intensity distributions of all trends of concern, listing the IDs, mean masses (m/z) and mean retention time (RT)
 #' of the profiles with the most intense trends on the right. Colored points are used to elucidate the current 
@@ -13,10 +14,11 @@
 #' 
 
 
-profiledist<-function(profileList){
+profiledist<-function(profileList,ret=FALSE){
 
     ############################################################################
     if(!profileList[[1]][[4]]){stop("profileList not checked for temporal trends; aborted.")}
+	if(is.logical(ret)){stop("ret must be logical")}
 	############################################################################
 	plot.new()
 	par(mar=c(2,4,1,1))
@@ -98,10 +100,11 @@ profiledist<-function(profileList){
 	}
     ############################################################################
 
-    ranking <- list(allitID, scores)
-    names(ranking) <- c("profile_id", "score");
-    return(ranking);
-
+	if(ret){
+		ranking <- list(allitID, scores)
+		names(ranking) <- c("profile_id", "score");
+		return(ranking);
+	}
 }
 
 

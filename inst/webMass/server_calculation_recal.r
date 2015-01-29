@@ -144,7 +144,7 @@ if(
 				  knot=5,
 				  plotit=TRUE,
 				  path_1=file.path(logfile[[1]],"pics",paste("recal_",as.character(measurements[i,1]),sep="")),
-				  path_2
+				  path_2="FALSE"
 			   )
 			if(length(peak_recal)>1){
 			  peaklist[,c(12,13,14)]<-peak_recal
