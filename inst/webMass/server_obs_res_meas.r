@@ -345,53 +345,12 @@ maincalc6<-reactive({
 					output$atprof5<-renderText({ atit5 })
 					# intensity histogram
 					path=file.path(logfile[[1]],"pics","profilehisto.png");
-					png(filename = path, bg = "white", width = 600);
-						if(length(profpeaks2[profpeaks2[,2]!=0,2])>0){
-							aa<-c(hist(log10(profpeaks2[profpeaks2[,2]!=0,2]),breaks=100,plot=FALSE),0)
-							aa<-max(aa$counts)
-						}else{
-							aa<-(0)
-						}
-						if(length(profpeaks2[profpeaks2[,4]!=0,4])>0){						
-							bb<-c(hist(log10(profpeaks2[profpeaks2[,4]!=0,4]),breaks=100,plot=FALSE),0)
-							bb<-max(bb$counts)
-						}else{
-							bb<-(0)
-						}		
-						if(length(profpeaks2[profpeaks2[,12]!=0,12])>0){						
-							cc<-c(hist(log10(profpeaks2[profpeaks2[,12]!=0,12]),breaks=100,plot=FALSE),0)
-							cc<-max(cc$counts)
-						}else{
-							cc<-(0)
-						}		
-						if(length(profpeaks2[profpeaks2[,13]!=0,13])>0){						
-							dd<-c(hist(log10(profpeaks2[profpeaks2[,13]!=0,13]),breaks=100,plot=FALSE),0)
-							dd<-max(dd$counts)
-						}else{
-							dd<-(0)
-						}		
-						aaa<-max(aa,bb,cc,dd)
-						if(aaa>0){
-							hist(log10(profpeaks2[profpeaks2[,2]!=0,2]),breaks=100,xlab="log10 Intensity",border="darkgrey",col=NULL,ylim=c(0,aaa),main="Intensity distributions of profiles")
-							hist(log10(profpeaks2[profpeaks2[,4]!=0,4]),breaks=100,add=TRUE,border="darkgreen",col=NULL)
-							if(cc!=0){
-								hist(log10(profpeaks2[profpeaks2[,12]!=0,12]),breaks=100,add=TRUE,border="red",col=NULL)
-							}
-							if(dd!=0){							
-								hist(log10(profpeaks2[profpeaks2[,13]!=0,13]),breaks=100,add=TRUE,border="blue",col=NULL)
-								rug(log10(profpeaks2[profpeaks2[,13]!=0,13]),col="blue",quiet=TRUE)
-							}
-							plot.window(xlim=c(0,10),ylim=c(0,10))
-							text(7,9,labels="Mean intensity",col="darkgrey",pos=4)
-							text(7,8.5,labels="Maximum intensity",col="darkgreen",pos=4)
-							text(7,8,labels="Global trend intensity",col="red",pos=4)
-							text(7,7.5,labels="Current trend intensity",col="blue",pos=4)
-						}else{
-							plot.new()
-							plot.window(xlim=c(0,1),ylim=c(0,1))
-							text(0.5,0.5,labels="histogram infeasible",cex=1.8,col="red")
-						}
-					dev.off();
+                    png(filename = path, bg = "white", width = 600);
+                    plot_profiles_intensity_histograms(mean_intensities=profpeaks2[,2],
+                                                       max_intensities=profpeaks2[,4],
+                                                       past_incidents=profpeaks2[,12],
+                                                       current_incidents=profpeaks2[,13]);
+                    dev.off();
 					expr6<-list(src=file.path(logfile[[1]],"pics","profilehisto.png"));
 					output$profilehisto<-renderImage(expr6, deleteFile = FALSE);
 					# table
