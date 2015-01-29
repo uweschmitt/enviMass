@@ -4,7 +4,7 @@
 \title{Trend detection and blind subtraction for time profiles.}
 \usage{
 intensup(profileList, from = FALSE, to = FALSE, progbar = FALSE,
-  blindsub = TRUE, blindfold = 100, lags = c(5, 14), threshold = 3)
+  blindsub = TRUE, blindfold = 100, lags = c(5, 14), threshold = 3, notrend=1)
 }
 \arguments{
 \item{profileList}{A profile list.}
@@ -22,6 +22,8 @@ intensup(profileList, from = FALSE, to = FALSE, progbar = FALSE,
 \item{lags}{Vector of numericals.}
 
 \item{threshold}{Numerical. A trend is reported if its intensity is \code{threshold} above the mean intensity plus the intensity deviation of other trends.}
+
+\item{notrend}{Integer. Report global trend intensity as maximum intensity after blind subtraction}
 }
 \value{
 Updated \code{profileList[[7]]}.

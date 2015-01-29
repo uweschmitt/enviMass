@@ -12,6 +12,7 @@
 #' @param blindfold Numerical. Blind definition; above blind, if \code{blindfold} larger in intensity.
 #' @param lags Vector of numericals.
 #' @param threshold Numerical. A trend is reported if its intensity is \code{threshold} above the mean intensity plus the intensity deviation of other trends.
+#' @param notrend Integer. Report global trend intensity as maximum intensity after blind subtraction.
 #'
 #' @return Updated \code{profileList[[7]]}.
 #' 
@@ -26,7 +27,8 @@ intensup<-function(
 	blindsub=TRUE, # do a blind subtraction?
 	blindfold=100, # how much higher in intensity than blind?
 	lags=c(5,14),  # time lags
-	threshold=3    # trend threshold: 
+	threshold=3,   # trend threshold: 
+	notrend=1	   # no global threshold, but global maximum above blind	
 ){
 
     ############################################################################
@@ -36,6 +38,7 @@ intensup<-function(
 	if(blindsub!=FALSE){if(!is.numeric(blindfold) || (blindfold<0)){stop("Invalid blindfold argument; aborted.")}}
     if(blindsub!=FALSE){subit=1;subrat=blindfold;}else{subit=2;subrat=0;}
 	if(!is.numeric(lags)){stop("lags argument must be numeric; aborted.")}
+	if(!is.integer(notrend)){stop("notrend must be integer.")}
 	############################################################################
     # set matrix to sort & store data from a profile ###########################
     atPOSIX<-profileList[[3]];
@@ -44,8 +47,8 @@ intensup<-function(
     atdate<-c();
     attime<-c();
     for(i in 1:length(atPOSIX)){
-          atdate<-c(atdate, strsplit(atPOSIX[i]," ")[[1]][1]);
-          attime<-c(attime, strsplit(atPOSIX[i]," ")[[1]][2]);
+        atdate<-c(atdate, strsplit(atPOSIX[i]," ")[[1]][1]);
+        attime<-c(attime, strsplit(atPOSIX[i]," ")[[1]][2]);
     }
     attime<-as.difftime(attime);
     atdate<-as.Date(atdate);
@@ -70,13 +73,16 @@ intensup<-function(
 	latestID<-timeset[leng,2][[1]]
 	############################################################################
 	# check & adjust lags ######################################################
-	if(any((max(numtime)-min(numtime)+1)>lags)){
+	if(any(lags>(max(numtime)-min(numtime)+1))){
 		lags<-lags[lags<=(max(numtime)-min(numtime)+1)]
-		cat("WARNING: lags had to be adjusted to given time period!\n")
+		cat("WARNING: at least one lag longer than covered time period - omitted!\n")
+		if(length(lags)==0){
+			stop("...no lags left; aborted.")
+		}		
 	}
 	# INSERT ... also check any of the inter-sample distances ##################
-	if(length(lags)==0){
-		stop("...no lags fit into data time duration; aborted.")
+	if(max(diff(numtime[timeset[,2]!=0],lag=1))<max(lags)){
+		warning("\n At least one gap in sample time series larger than largest lag!")
 	}
 	############################################################################
     profileList[[7]][,5:7]<-0;
@@ -96,7 +102,7 @@ intensup<-function(
                                 PACKAGE="enviMass"
                             )	
 		########################################################################
-        # interpolate & subtract blind,  ####################################################
+        # interpolate & subtract blind,  #######################################
         ########################################################################
         # subtract blank #######################################################
         ########################################################################
@@ -110,6 +116,7 @@ intensup<-function(
 				as.integer(what),
 				as.numeric(lags),
 				as.numeric(threshold),
+				as.integer(notrend),
 				PACKAGE="enviMass"
 			)
 			if(what!=1){ 
@@ -127,7 +134,7 @@ intensup<-function(
 				}
 				stop(" YOU wanted the smoothed series...\n")
 			}else{		
-				profileList[[7]][k,5]<-max(that[4,]); # newest>abs.dev
+				profileList[[7]][k,5]<-max(that[4,]); # current>abs.dev
 				profileList[[7]][k,6]<-max(that[5,]); # global>abs.dev
 				profileList[[7]][k,7]<-max(that[3,]); # abs.dev
 				if(any(timeset[,5]>0)){ 			  # in blind?
