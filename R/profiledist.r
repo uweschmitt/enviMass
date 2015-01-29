@@ -18,7 +18,7 @@ profiledist<-function(profileList,ret=FALSE){
 
     ############################################################################
     if(!profileList[[1]][[4]]){stop("profileList not checked for temporal trends; aborted.")}
-	if(is.logical(ret)){stop("ret must be logical")}
+	if(!is.logical(ret)){stop("ret must be logical")}
 	############################################################################
 	plot.new()
 	par(mar=c(2,4,1,1))
