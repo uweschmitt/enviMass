@@ -21,7 +21,7 @@ if(
 				blindfold=as.numeric(logfile$parameters[[37]]),
 				lags=lagit,
 				threshold=as.numeric(logfile$parameters[[35]]),
-				notrend=as.integer(!as.logical(logfile$parameters[[29]]))
+				notrend=as.logical(logfile$parameters[[29]])
 		)
 		profileList_pos<<-profileList_pos
 		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"));
@@ -59,7 +59,7 @@ if(
 				blindfold=as.numeric(logfile$parameters[[37]]),
 				lags=lagit,
 				threshold=as.numeric(logfile$parameters[[35]]),
-				notrend=as.integer(!as.logical(logfile$parameters[[29]]))
+				notrend=as.logical(logfile$parameters[[29]])
 				)
 		profileList_neg<<-profileList_neg
 		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"));

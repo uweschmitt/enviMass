@@ -12,7 +12,7 @@
 #' @param blindfold Numerical. Blind definition; above blind, if \code{blindfold} larger in intensity.
 #' @param lags Vector of numericals.
 #' @param threshold Numerical. A trend is reported if its intensity is \code{threshold} above the mean intensity plus the intensity deviation of other trends.
-#' @param notrend Integer. Report global trend intensity as maximum intensity after blind subtraction.
+#' @param notrend Logical. Report global trend intensity as maximum intensity after blind subtraction.
 #'
 #' @return Updated \code{profileList[[7]]}.
 #' 
@@ -28,7 +28,7 @@ intensup<-function(
 	blindfold=100, # how much higher in intensity than blind?
 	lags=c(5,14),  # time lags
 	threshold=3,   # trend threshold: 
-	notrend=1	   # no global threshold, but global maximum above blind	
+	notrend=FALSE  # no global threshold, but global maximum above blind	
 ){
 
     ############################################################################
@@ -38,7 +38,7 @@ intensup<-function(
 	if(blindsub!=FALSE){if(!is.numeric(blindfold) || (blindfold<0)){stop("Invalid blindfold argument; aborted.")}}
     if(blindsub!=FALSE){subit=1;subrat=blindfold;}else{subit=2;subrat=0;}
 	if(!is.numeric(lags)){stop("lags argument must be numeric; aborted.")}
-	if(!is.integer(notrend)){stop("notrend must be integer.")}
+	if(!is.logical(notrend)){stop("notrend must be logical.")}
 	############################################################################
     # set matrix to sort & store data from a profile ###########################
     atPOSIX<-profileList[[3]];

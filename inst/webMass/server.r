@@ -35,19 +35,22 @@ shinyServer(function(input, output, session){
   ##############################################################################
   # start projects or load them - get their individual logfile #################
   # also load parameter settings ###############################################
-  source("server_startup.R", local=TRUE)
+  source("server_startup.r", local=TRUE)
   ##############################################################################  
   # add compounds, measurements, etc ###########################################
-  source("server_obs_Add.R", local=TRUE)
+  source("server_obs_Add.r", local=TRUE)
   ##############################################################################  
   # observe request for results ################################################
-  source("server_obs_res_meas.R", local=TRUE)
+  source("server_obs_res_meas.r", local=TRUE)
   ##############################################################################  
   # observe parameter changes ##################################################  
-  source("server_variables_out.R", local=TRUE)
+  source("server_variables_out.r", local=TRUE)
+  ##############################################################################  
+  # observe export requests ####################################################  
+  source("server_export.r", local=TRUE)
   ##############################################################################  
   # run calculations ###########################################################
-  source("server_calculation.R", local=TRUE)
+  source("server_calculation.r", local=TRUE)
   observe({ # Restart enviMass
     input$Restart
     if(input$Restart){

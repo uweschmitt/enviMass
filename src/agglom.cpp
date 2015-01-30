@@ -820,7 +820,7 @@ SEXP meandel(      SEXP timeset,
            double subratio = NUMERIC_VALUE(subrat);
            double thres = NUMERIC_VALUE(threshold);
            int getit = INTEGER_VALUE(getwhat);
-           int dotrend = INTEGER_VALUE(notrend);
+           int notrend2 = INTEGER_VALUE(notrend);
            double intdifto,blindint,atint,maxint,intsum,intcount,meanint,meanint_all,varint,varint_all,nowint;
            int m,n,k,maxat=0,minat,nowat,from,to=0,tosam,doit;
            SEXP scored;
@@ -1000,7 +1000,7 @@ SEXP meandel(      SEXP timeset,
                     *(at+(m*6)+4)=maxint;
                     *(at+(m*6)+5)=meanint_all;
                     /* instead of global trend, report maximum sample-blind intensity */
-                    if(dotrend!=1){
+                    if(notrend2==1){
                         maxint=0;
                         for(n=0;n<(leng);n++){
                             if((*(inte+(leng*3)+n)-*(inte+(leng*4)+n))>maxint){
