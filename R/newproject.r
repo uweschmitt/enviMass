@@ -117,6 +117,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters[[32]]<-"TRUE"; 					names(logfile$parameters)[32]<-"recal_ppm" 
 		logfile$parameters[[33]]<-"30"; 					names(logfile$parameters)[33]<-"recal_drt" 
 		# trend detection ######################################################
+		logfile$parameters[[29]]<-"TRUE";		names(logfile$parameters)[29]<-"notrend"
 		logfile$parameters[[34]]<-"4,7,14"; 	names(logfile$parameters)[34]<-"trend_lags" 
 		logfile$parameters[[35]]<-"3";			names(logfile$parameters)[35]<-"trend_threshold"
 		# blind subtraction ####################################################

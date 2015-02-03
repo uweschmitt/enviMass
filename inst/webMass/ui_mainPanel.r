@@ -234,21 +234,6 @@
                 numericInput("recal_drt", "RT tolerance [s]", 30)   
               )
             ),
-            # INTENSITY NORMALIZATION ##########################################
-            tabPanel("Normalization",
-				tags$h5("Intensity normalization based on IS-profiles"),
-				sliderInput("profnorm_cover_files", "Minimum of files covered by each IS profile (%)", min = 0, max = 100, value = 90, step= 1),
-				sliderInput("profnorm_threshold", "Screening threshold", min = 0, max = 1, value = 0.8, step= .01),
-				numericInput("profnorm_cover_isccount", "Minimum number of IS profiles", 15),
-				HTML('<hr noshade="noshade" />'),
-				checkboxInput("profnorm_use_blank", "Show median deviation of blank/blind profiles?", FALSE),
-				checkboxInput("profnorm_use_blank_sample", "Use subsampling", FALSE),
-				numericInput("profnorm_use_blank_samplecount", "Number of blank/blind profiles in subsample", 100),
-				HTML('<hr noshade="noshade" />'),
-				checkboxInput("profnorm_use_nonblank", "Show median deviation of sample (i.e., non-blank) profiles?", FALSE),	
-				checkboxInput("profnorm_use_nonblank_sample", "Use subsampling", FALSE),
-				numericInput("profnorm_use_nonblank_samplecount", "Number of sample profiles in subsample", 100)
-			),
             # ALLIGNMENT #######################################################
             #tabPanel("Allignment",
             #  tags$h5("RT allignment")
@@ -306,6 +291,21 @@
                 )
               )
             ),
+            # INTENSITY NORMALIZATION ##########################################
+            tabPanel("Normalization",
+				tags$h5("Intensity normalization based on IS-profiles"),
+				sliderInput("profnorm_cover_files", "Minimum of files covered by each IS profile (%)", min = 0, max = 100, value = 90, step= 1),
+				sliderInput("profnorm_threshold", "Screening threshold", min = 0, max = 1, value = 0.8, step= .01),
+				numericInput("profnorm_cover_isccount", "Minimum number of IS profiles", 15),
+				HTML('<hr noshade="noshade" />'),
+				checkboxInput("profnorm_use_blank", "Show median deviation of blank/blind profiles?", FALSE),
+				checkboxInput("profnorm_use_blank_sample", "Use subsampling", FALSE),
+				numericInput("profnorm_use_blank_samplecount", "Number of blank/blind profiles in subsample", 100),
+				HTML('<hr noshade="noshade" />'),
+				checkboxInput("profnorm_use_nonblank", "Show median deviation of sample (i.e., non-blank) profiles?", FALSE),	
+				checkboxInput("profnorm_use_nonblank_sample", "Use subsampling", FALSE),
+				numericInput("profnorm_use_nonblank_samplecount", "Number of sample profiles in subsample", 100)
+			),
             # PROFILING ########################################################
             tabPanel("Profiling",
 				tags$h5("Profile extraction"),
@@ -317,7 +317,8 @@
             tabPanel("Trends",
 				tags$h5("Trend detection:"),
 				textInput("trend_lags", "Time lags of trends [days], comma-separated:", value = "4,7,14"),
-				numericInput("trend_thres", "Trend vs. mean+variance intensity threshold:", 3)                
+				numericInput("trend_thres", "Trend vs. mean+variance intensity threshold:", 3),
+				selectInput("notrend", "Do not show global trend - instead, report it as maximum intensity above blind", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "TRUE")
             ),
             # BLIND #############################################################
             tabPanel("Blind",
@@ -368,11 +369,10 @@
 								div(style = widget_style3,radioButtons("filterProf_notblind", "Not in blind?", c("no"="no","yes"="yes"))),
 								div(style = widget_style3,selectInput("filterProf_sort", "Sort profile list by:", 
 									choices = c("ID","mean m/z","mean RT","maximum intensity","mean intensity","global trend intensity","current trend intensity"), selected="current trend intensity")),
-								div(style = widget_style3,numericInput("filterProf_count", "Restrict list size:", 500)),						
+								div(style = widget_style3,numericInput("filterProf_count", "Restrict list size:", 500)),
 								HTML('<hr noshade="noshade" />'),
 								bsCollapse(multiple = FALSE, open = "col2", id = "collapse2",
-									bsCollapsePanel("Profile statistics:", 
-										tags$h5("Profile statistics:"),
+									bsCollapsePanel("Profile statistics", 
 										div(style = widget_style3,tags$h6("Number of peaks:"), textOutput("atprof1")),
 										div(style = widget_style3,tags$h6("Number of profiles:"), textOutput("atprof2")),
 										div(style = widget_style3,tags$h6("...containing blind peaks:"), textOutput("atprof3")),
@@ -382,10 +382,18 @@
 									bsCollapsePanel("Intensity histogram", 
 										imageOutput("profilehisto", height="auto"),
 										id="col5", value="test5"),
-									bsCollapsePanel("Profile list", 
+									bsCollapsePanel("Profile list", 		
 										tableOutput("allproftable"),
 										id="col6", value="test5")
-								)
+								),
+								div(style = widget_style3,
+									bsActionButton("expo_profiles","Export filtered profile list",style="info"),
+									textOutput("expo1"),
+									bsPopover("expo_profiles", 
+										title = "Export above filtered profiles",
+										content = "Time-sorted peak intensities of profiles and their mean mass & RT are exported as profiles.txt to the export folder of this project. WARNING: restrict list size to avoid lengthy exports!", 
+										placement = "right", trigger = "hover"))				
+										
 						),
 						tabPanel("Newest trends",
 								tags$h5("Comparison of current vs. global trends by profile ID"),

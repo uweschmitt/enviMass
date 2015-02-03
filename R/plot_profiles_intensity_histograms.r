@@ -5,10 +5,10 @@
 #' @description \code{plot_profile_intensities_histogram} plots the intensities histogram of given profiles
 
 #'
-#' @param mean_intensities vector of mean intensities in profiles
-#' @param max_intensities vector of max intensities in profiles
-#' @param past_incidentss vector of global trands in profiles
-#' @param current_incidentss vector of current trends in profiles
+#' @param mean_intensities Numeric vector of mean intensities in profiles
+#' @param max_intensities Numeric vector of max intensities in profiles
+#' @param past_incidentss Numeric vector of global trands in profiles
+#' @param current_incidentss Numeric vector of current trends in profiles
 #' 
 #' @details enviMass workflow plot function
 #' 

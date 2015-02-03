@@ -87,6 +87,7 @@ plotaprofile<-function(
                                 PACKAGE="enviMass"
 							)
  	what<-2 # !=1 -> get raw output, i.e., smoothed series
+	notrend=1 # !=1 -> no global trends, only maximum intensity AFTER blind subtraction
 	that1<-.Call("meandel",
 				as.numeric(timeset),
 				as.integer(subit),
@@ -95,6 +96,7 @@ plotaprofile<-function(
 				as.integer(what),
 				as.numeric(lags),
 				as.numeric(threshold),
+				as.integer(notrend),
 				PACKAGE="enviMass"
 	)
    	that1<-matrix(nrow=length(atPOSIX),ncol=(5+(4*length(lags))),that1);
@@ -108,6 +110,7 @@ plotaprofile<-function(
 				as.integer(what),
 				as.numeric(lags),
 				as.numeric(threshold),
+				as.integer(notrend),
 				PACKAGE="enviMass"
 	)
 	############################################################################
