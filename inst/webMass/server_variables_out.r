@@ -280,11 +280,13 @@ observe({
 				logfile$Tasks_to_redo[16]<-TRUE;		
 			}			
 		}
+
 		# trend detection ######################################################
-		at1<-logfile$parameters[c(34,35)]
+		at1<-logfile$parameters[c(29,34,35)]
+		logfile$parameters[[29]]<-as.character(isolate(input$notrend))
 		logfile$parameters[[34]]<-as.character(isolate(input$trend_lags))
 		logfile$parameters[[35]]<-as.character(isolate(input$trend_thres))
-		at2<-logfile$parameters[c(34,35)]
+		at2<-logfile$parameters[c(29,34,35)]
 		if(any(is.na(match(at2,at1)))){ 
 			# must not rerun: qc
 			# must not rerun: recal

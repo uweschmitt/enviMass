@@ -82,7 +82,9 @@ if(
 				for(j in 1:length(screened[[i]][,1])){
 					if(  !(as.character(screened[[i]][j,9]))=="NaN"  ){
 						if( as.numeric(as.character(screened[[i]][j,9]))>=treshscore ){	
-							hits<-as.numeric(strsplit(as.character(screened[[i]][j,2]),"/")[[1]])
+							hits<-strsplit(as.character(screened[[i]][j,2]),"/")[[1]];
+							hits<-hits[hits!="-"];
+							hits<-as.numeric(hits);
 							for(b in 1:length(hits)){
 								if( peaks[hits[b],3]>min_count ){
 									profID<-as.numeric(peaks[hits[b],4])
@@ -464,8 +466,10 @@ if(
 			if(length(screened[[i]])!=1){
 				for(j in 1:length(screened[[i]][,1])){
 					if(  !(as.character(screened[[i]][j,9]))=="NaN"  ){
-						if( as.numeric(as.character(screened[[i]][j,9]))>=treshscore ){	
-							hits<-as.numeric(strsplit(as.character(screened[[i]][j,2]),"/")[[1]])
+						if( as.numeric(as.character(screened[[i]][j,9]))>=treshscore ){
+							hits<-strsplit(as.character(screened[[i]][j,2]),"/")[[1]]
+							hits<-hits[hits!="-"];
+							hits<-as.numeric(hits);
 							for(b in 1:length(hits)){
 								if( peaks[hits[b],3]>min_count ){
 									profID<-as.numeric(peaks[hits[b],4])

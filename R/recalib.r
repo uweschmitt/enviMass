@@ -17,6 +17,7 @@
 #' @param path_1 Logical \code{FALSE} or character string. If not \code{FALSE}, filepath to output the plot
 #' @param path_2 Logical \code{FALSE} or character string. Filepath for saving GAM model.
 #' @param stopit Logical. Triggers a full R error (\code{TRUE}) or returns an error message string (\code{FALSE}) if failing. 
+#' @param intermediate_results Logical. Call by reference to have intermediates in the enclosing environment?
 #'
 #' @return Recalibrated \code{peaklist}.
 #' 
@@ -39,7 +40,7 @@ recalib<-function(
   path_1=FALSE,
   path_2=FALSE,  
   stopit=FALSE,
-  intermediate_results=NULL
+  intermediate_results=FALSE
   ){
 
 
@@ -128,14 +129,16 @@ recalib<-function(
 	save(model,file=path_2)
   }
 
-  # simulate call by reference here:
-  imr <- list()
-  imr[[1]] <- model;
-  imr[[2]] <- peaks;
-  imr[[3]] <- getit2;
-  imr[[4]] <- getit3;
-  names(imr) <- c("model", "matches", "x", "delta_y");
-  eval.parent(substitute(intermediate_results<-imr))
+  if (intermediate_results) {
+    # simulate call by reference here:
+    imr <- list()
+    imr[[1]] <- model;
+    imr[[2]] <- peaks;
+    imr[[3]] <- getit2;
+    imr[[4]] <- getit3;
+    names(imr) <- c("model", "matches", "x", "delta_y");
+    eval.parent(substitute(intermediate_results<-imr))
+  }
 
   return(newpeaks)
   ##############################################################################

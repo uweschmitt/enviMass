@@ -5,7 +5,7 @@
 \usage{
 recalib(peaklist, mz, tolmz = 10, ppm = TRUE, ret, tolret, what = "mass",
   one = TRUE, knot = 5, plotit = FALSE, path_1 = FALSE,
-  path_2 = FALSE, stopit = FALSE)
+  path_2 = FALSE, stopit = FALSE,intermediate_results=FALSE)
 }
 \arguments{
 \item{peaklist}{Matrix or data.frame of sample peaks. 3 columns: m/z, intensity, RT.}
@@ -33,6 +33,8 @@ recalib(peaklist, mz, tolmz = 10, ppm = TRUE, ret, tolret, what = "mass",
 \item{path_2}{Logical \code{FALSE} or character string. Filepath for saving GAM model.}
 
 \item{stopit}{Logical. Triggers a full R error (\code{TRUE}) or returns an error message string (\code{FALSE}) if failing.}
+
+\item{intermediate_results}{Logical. Call by reference to have intermediates in the enclosing environment?}
 }
 \value{
 Recalibrated \code{peaklist}.

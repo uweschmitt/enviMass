@@ -3,10 +3,11 @@
 \alias{profiledist}
 \title{Plot trend distributions}
 \usage{
-profiledist(profileList)
+profiledist(profileList,ret)
 }
 \arguments{
 \item{profileList}{profileList}
+\item{ret}{Logical. Should outlier ranking be returned?}
 }
 \value{
 The boxplot in grey shows the intensity distributions of all trends of concern, listing the IDs, mean masses (m/z) and mean retention time (RT)

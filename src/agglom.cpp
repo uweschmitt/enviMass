@@ -789,7 +789,7 @@ SEXP fill_timeset(      SEXP timeset,
 }
 
 /******************************************************************************/
-/* get maximum difference in an time orderes series of intensities ************/
+/* get maximum difference in an time ordered series of intensities ************/
 /******************************************************************************/
 
 SEXP meandel(      SEXP timeset,
@@ -798,7 +798,8 @@ SEXP meandel(      SEXP timeset,
                    SEXP numtime,
                    SEXP getwhat,
                    SEXP lags,
-                   SEXP threshold
+                   SEXP threshold,
+                   SEXP notrend
            ){
 
            PROTECT(timeset = AS_NUMERIC(timeset));
@@ -808,6 +809,7 @@ SEXP meandel(      SEXP timeset,
            PROTECT(getwhat = AS_NUMERIC(getwhat));
            PROTECT(lags = AS_NUMERIC(lags));
            PROTECT(threshold = AS_NUMERIC(threshold));
+           PROTECT(notrend = AS_INTEGER(notrend));
            double *inte,*lagit, *tim;
            inte = NUMERIC_POINTER(timeset);
            lagit = NUMERIC_POINTER(lags);
@@ -818,13 +820,13 @@ SEXP meandel(      SEXP timeset,
            double subratio = NUMERIC_VALUE(subrat);
            double thres = NUMERIC_VALUE(threshold);
            int getit = INTEGER_VALUE(getwhat);
+           int notrend2 = INTEGER_VALUE(notrend);
            double intdifto,blindint,atint,maxint,intsum,intcount,meanint,meanint_all,varint,varint_all,nowint;
            int m,n,k,maxat=0,minat,nowat,from,to=0,tosam,doit;
            SEXP scored;
            PROTECT(scored = allocMatrix(REALSXP,6,lagnumb));
            double *at;
            at = REAL(scored);
-
 
            /* run blind subtraction *******************************************/
            if(subtractit==1){
@@ -885,7 +887,7 @@ SEXP meandel(      SEXP timeset,
 
            /* detect peaks & store maximum value over all lags ****************/
            if(doit==1){
-                for(m=0;m<lagnumb;m++){
+                for(m=0;m<lagnumb;m++){ // for each lag
                     doit=0;
                     k=0;
                     to=-1;
@@ -967,7 +969,7 @@ SEXP meandel(      SEXP timeset,
                     meanint_all=0;
                     varint_all=0;
                     maxat=-1;
-                    if(k>1){
+                    if(k>1){ // more than one trend per lag detected?
                         for(to=0;to<k;to++){
                             atint=*(inte+(leng*5)+(leng*lagnumb)+(leng*m)+to);
                             blindint=*(inte+(leng*5)+(leng*lagnumb*3)+(leng*m)+to);
@@ -985,7 +987,6 @@ SEXP meandel(      SEXP timeset,
                                 varint_all=varint;
                                 maxat=to;
                             }
-
                         }
                     }else{
                         maxint=intsum;
@@ -998,6 +999,16 @@ SEXP meandel(      SEXP timeset,
                     *(at+(m*6)+2)=varint_all;
                     *(at+(m*6)+4)=maxint;
                     *(at+(m*6)+5)=meanint_all;
+                    /* instead of global trend, report maximum sample-blind intensity */
+                    if(notrend2==1){
+                        maxint=0;
+                        for(n=0;n<(leng);n++){
+                            if((*(inte+(leng*3)+n)-*(inte+(leng*4)+n))>maxint){
+                                maxint=(*(inte+(leng*3)+n)-*(inte+(leng*4)+n));
+                            }
+                        }
+                        *(at+(m*6)+4)=maxint; // overwrite above value
+                    }
                     /* get absolute deviation & mean **************************/
                     /* have current peak excluded for meanint & varint ********/
                     /* subtract blind from newest *****************************/
@@ -1058,10 +1069,10 @@ SEXP meandel(      SEXP timeset,
            }
 
            if(getit==1){
-               UNPROTECT(8);
+               UNPROTECT(9);
                return scored;
            }else{
-               UNPROTECT(8);
+               UNPROTECT(9);
                return timeset;
            }
 
