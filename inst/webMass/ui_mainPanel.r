@@ -450,7 +450,7 @@
 								imageOutput("profnorm", height="auto"),
 								imageOutput("profcount", height="auto")
 						),
-						id="navbar_prof",inverse=FALSE,collapsable=TRUE,fluid=TRUE
+						id="navbar_prof",inverse=FALSE,collapsible=TRUE,fluid=TRUE
 					)
 				),
 				tabPanel("Quality control",
