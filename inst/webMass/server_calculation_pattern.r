@@ -81,7 +81,16 @@ if(
 								)
 								checked<-enviPat::check_chemform(isotopes, formelone)
 								res<-try(enviPat::getR(checked, resolution_list[names(resolution_list) == logfile$parameters[22]][[1]], nknots = 7, spar = 0.1, plotit = FALSE), silent=TRUE)
-								if(grepl("Error",res)){cat("\n Mass out of range of Resolution data - one pattern calculation skipped!");next;}
+								if(grepl("Error",res)){
+									cat("\n Mass out of range of Resolution data - set to range!");
+									if(checked[[3]]<=min(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])){
+										use_this<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1]==min(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])
+										res<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][use_this,2][1]
+									}else{
+										use_this<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1]==max(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])
+										res<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][use_this,2][1]									
+									}
+								}
 								pattern<-enviPat::envelope(
 									pattern,
 									ppm=FALSE,
@@ -101,7 +110,7 @@ if(
 								if(tolrets[i]!="FALSE"){
 									patternDelRT_pos_IS<-c(patternDelRT_pos_IS,as.numeric(as.character(tolrets[i]))*60)
 								}else{
-#patternDelRT_pos_IS<-c(patternDelRT_pos_IS,isolate(input$screen_IS_delRT))
+									patternDelRT_pos_IS<-c(patternDelRT_pos_IS,isolate(input$screen_IS_delRT))
 								}								
 								if(rec[i]=="TRUE"){
 									if(takeall){
@@ -205,7 +214,16 @@ if(
 								)
 								checked<-enviPat::check_chemform(isotopes, formelone)
 								res<-try(enviPat::getR(checked, resolution_list[names(resolution_list) == logfile$parameters[22]][[1]], nknots = 7, spar = 0.1, plotit = FALSE), silent=TRUE)
-								if(grepl("Error",res)){cat("\n Mass out of range of Resolution data - one pattern calculation skipped!");next;}
+								if(grepl("Error",res)){
+									cat("\n Mass out of range of Resolution data - set to range!");
+									if(checked[[3]]<=min(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])){
+										use_this<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1]==min(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])
+										res<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][use_this,2][1]
+									}else{
+										use_this<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1]==max(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])
+										res<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][use_this,2][1]									
+									}
+								}
 								pattern<-enviPat::envelope(
 									pattern,
 									ppm=FALSE,
@@ -340,7 +358,16 @@ if(
 								)
 								checked<-enviPat::check_chemform(isotopes, formelone)
 								res<-try(enviPat::getR(checked, resolution_list[names(resolution_list) == logfile$parameters[22]][[1]], nknots = 7, spar = 0.1, plotit = FALSE), silent=TRUE)
-								if(grepl("Error",res)){cat("\n Mass out of range of Resolution data - one pattern calculation skipped!");next;}
+								if(grepl("Error",res)){
+									cat("\n Mass out of range of Resolution data - set to range!");
+									if(checked[[3]]<=min(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])){
+										use_this<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1]==min(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])
+										res<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][use_this,2][1]
+									}else{
+										use_this<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1]==max(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])
+										res<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][use_this,2][1]									
+									}
+								}
 								pattern<-enviPat::envelope(
 									pattern,
 									ppm=FALSE,
@@ -464,7 +491,16 @@ if(
 								)
 								checked<-enviPat::check_chemform(isotopes, formelone)
 								res<-try(enviPat::getR(checked, resolution_list[names(resolution_list) == logfile$parameters[22]][[1]], nknots = 7, spar = 0.1, plotit = FALSE), silent=TRUE)
-								if(grepl("Error",res)){cat("\n Mass out of range of Resolution data - one pattern calculation skipped!");next;}
+								if(grepl("Error",res)){
+									cat("\n Mass out of range of Resolution data - set to range!");
+									if(checked[[3]]<=min(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])){
+										use_this<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1]==min(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])
+										res<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][use_this,2][1]
+									}else{
+										use_this<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1]==max(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])
+										res<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][use_this,2][1]									
+									}
+								}
 								pattern<-enviPat::envelope(
 									pattern,
 									ppm=FALSE,
