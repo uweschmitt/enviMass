@@ -318,7 +318,7 @@
 				tags$h5("Trend detection:"),
 				textInput("trend_lags", "Time lags of trends [days], comma-separated:", value = "4,7,14"),
 				numericInput("trend_thres", "Trend vs. mean+variance intensity threshold:", 3),
-				selectInput("notrend", "Do not show global trend - instead, report it as maximum intensity above blind", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "TRUE")
+				selectInput("notrend", "Do not show global trend - instead, report it as maximum intensity above blind", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE")
             ),
             # BLIND #############################################################
             tabPanel("Blind",
