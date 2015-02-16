@@ -206,34 +206,33 @@ screening<-function (	peaklist,
                 deltaInt <- ""
                 all_hits <- ""
                 for (m in 1:length(scoreitsample)) {
-                  if (length(scoreitsample[[m]]) > 0) {
-                    many_1 <- c(many_1 + 1)
-                    all_hits <- paste(all_hits, scoreitsample[[m]], 
-                      "/", sep = "")
-                    deltamz <- paste(deltamz, as.character(round(((pat2[m, 
-                      1] - peaklist[scoreitsample[[m]], 1])/peaklist[scoreitsample[[m]], 
-                      1] * 1e+06), digits = 2)), "/", sep = "")
-                    deltaRT <- paste(deltaRT, as.character(round((RT[from[i]] - 
-                      peaklist[scoreitsample[[m]], 3]), digits = 2)), 
-                      "/", sep = "")
-                    delInt <- round(((pat2[m, 2] - peaklist[scoreitsample[[m]], 
-                      2])/pat2[m, 2]), digits = 2)
-                    if (abs(delInt) <= dInt[from[i]]) {
-                      many_2 <- c(many_2 + 1)
-                    }
-                    deltaInt <- paste(deltaInt, as.character(delInt), 
-                      "/", sep = "")
-                    if (length(scoreitblank[[m]]) == 0) {
-                      many_3 <- c(many_3 + 1)
-                    }
-                  }
-                  else {
+					if (length(scoreitsample[[m]]) > 0) {
+						many_1 <- c(many_1 + 1)
+						all_hits <- paste(all_hits, scoreitsample[[m]], 
+						  "/", sep = "")
+						deltamz <- paste(deltamz, as.character(round(((pat2[m, 
+						  1] - peaklist[scoreitsample[[m]], 1])/peaklist[scoreitsample[[m]], 
+						  1] * 1e+06), digits = 2)), "/", sep = "")
+						deltaRT <- paste(deltaRT, as.character(round((RT[from[i]] - 
+						  peaklist[scoreitsample[[m]], 3]), digits = 2)), 
+						  "/", sep = "")
+						delInt <- round(((pat2[m, 2] - peaklist[scoreitsample[[m]], 
+						  2])/pat2[m, 2]), digits = 2)
+						if (abs(delInt) <= dInt[from[i]]) {
+						  many_2 <- c(many_2 + 1)
+						}
+						deltaInt <- paste(deltaInt, as.character(delInt), 
+						  "/", sep = "")
+						if (length(scoreitblank[[m]]) == 0) {
+						  many_3 <- c(many_3 + 1)
+						}
+					}else{
                     # modification for misses (uwe schmitt 29.okt 2014)
-                    all_hits <- paste(all_hits, "-",  "/", sep = "");
-                    deltamz <- paste(deltamz, "-", "/", sep="");
-                    deltaRT <- paste(deltamz, "-", "/", sep="");
-                    deltaInt <- paste(deltamz, "-", "/", sep="");
-                  }
+                    all_hits <- paste(all_hits, "-/", sep="");
+                    deltamz <- paste(deltamz, "-/", sep="");
+                    deltaRT <- paste(deltaRT, "-/", sep="");
+                    deltaInt <- paste(deltaInt, "-/", sep="");
+					}
                 }
                 score1 <- paste(many_1, " of ", many, sep = "")
                 score2 <- paste(many_2, " of ", many, sep = "")
