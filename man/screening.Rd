@@ -26,7 +26,7 @@ screening(peaklist, blanklist = FALSE, pattern, RT = 1000, dmz = 10,
 
 \item{dRTblank}{Numeric. RT tolerance window for matches with \code{blanklist}; units equal to those of the input files}
 
-\item{dInt}{Numeric. Intensity tolerance - percentage of a peak`s intensity.}
+\item{dInt}{Numeric. Intensity tolerance, given as a fraction of a peak intensity.}
 
 \item{Intcut}{Numeric. Centroids below this intensities are not screened for.}
 
