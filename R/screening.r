@@ -216,7 +216,7 @@ screening<-function (	peaklist,
 						  peaklist[scoreitsample[[m]], 3]), digits = 2)), 
 						  "/", sep = "")
 						delInt <- round(((pat2[m, 2] - peaklist[scoreitsample[[m]], 
-						  2])/pat2[m, 2]), digits = 2)
+						  2])/peaklist[scoreitsample[[m]]), digits = 2)
 						if( abs(delInt) <= (2*dInt[from[i]]) ) {
 						  many_2 <- c(many_2 + 1)
 						}
