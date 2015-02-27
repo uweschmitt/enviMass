@@ -329,7 +329,7 @@
             # GENERAL SETTINGS #################################################
             tabPanel("General",
 				div(style = widget_style3,
-					textInput("PWpath", "Path to Proteowizard MSConvert ", value = "C:\\Program Files\\ProteoWizard\\ProteoWizard 3.0.5140\\msconvert")
+					textInput("PWpath", "Path to Proteowizard MSConvert (use / and include .exe)", value = "C:/Program Files/ProteoWizard/ProteoWizard 3.0.5140/msconvert.exe")
 				),
 				div(style = widget_style,
 					tags$h5("Debug tools"),
@@ -520,7 +520,7 @@
 		   tags$h5("Contact, maintainer:"),
 		   HTML(
 			'<p>
-			Martin Loos, loosmart@eawag.ch 
+			Martin Loos, Martin.Loos@eawag.ch 
  			</p> 
 			'
 			),

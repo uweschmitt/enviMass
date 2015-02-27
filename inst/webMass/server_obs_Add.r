@@ -586,7 +586,7 @@ addmeasu<-reactive({
 			  substr(as.character(isolate(input$Measadd_path[[1]])),nchar(as.character(isolate(input$Measadd_path[[1]])))-3,nchar(as.character(isolate(input$Measadd_path[[1]]))))==".raw" ||
 			  substr(as.character(isolate(input$Measadd_path[[1]])),nchar(as.character(isolate(input$Measadd_path[[1]])))-3,nchar(as.character(isolate(input$Measadd_path[[1]]))))==".Raw"
 			){
-				if( file.exists(file.path(as.character(isolate(input$PWpath)),".exe")) ){
+				if( file.exists(file.path(logfile$PW)) ){
 					measurements1<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 					nameit<-names(measurements1);
 					measurements1<-measurements1[measurements1[,1]!="-",]		
@@ -597,15 +597,15 @@ addmeasu<-reactive({
 					}
 					file.copy(
 					  from=isolate(input$Measadd_path[[4]]),
-					  to=file.path(logfile[[1]],"files",as.character(newID),".raw"),
+					  to=file.path(logfile[[1]],"files",paste(as.character(newID),".raw",sep="")),
 					  overwrite=TRUE);
 					PWfile(
-					  rawfile=file.path(logfile[[1]],"files",as.character(newID),".raw"),
+					  rawfile=file.path(logfile[[1]],"files",paste(as.character(newID),".raw",sep="")),
 					  file.path(logfile[[1]],"files"),
 					  as.character(isolate(input$PWpath)),
 					  notintern=FALSE,
-					  use_format="mzXML");              
-					file.remove(file.path(logfile[[1]],"files",as.character(newID),".raw"))
+					  use_format="mzXML");     				  
+					file.remove(file.path(logfile[[1]],"files",paste(as.character(newID),".raw",sep="")))
 					file.remove(isolate(input$Measadd_path[[4]]));
 					if(  file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep=""))) || file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")))  ){
 						measurements2<-c(

@@ -27,17 +27,21 @@ function(rawfile,folderout,msconvert_path,notintern=FALSE,use_format="mzXML"){
       ){stop("rawfile not a .RAW file")}	  
       ##########################################################################
       # convert ################################################################
-      there2<-paste(" -o ",shQuote(folderout),sep="");
+      there2<-paste(" -o ",shQuote(folderout),sep="")
 	  filtered0<-paste(shQuote("--"),use_format,sep="")
-      filtered1<-paste(" --filter ",shQuote("peakPicking true 1"),sep="")
-      filtered2<-paste(" --filter ",shQuote("msLevel 1"),sep="")
+	  filtered1<-paste(shQuote("--32"),sep="")
+	  filtered2<-paste(shQuote("--zlib"),sep="")
+      filtered3<-paste(" --filter ",shQuote("peakPicking true 1-2"),sep="")
+      filtered4<-paste(" --filter ",shQuote("msLevel 1"),sep="")
       system(
               paste(
                 shQuote(msconvert_path),
                 shQuote(rawfile),
+				filtered1,
+				filtered2,
 				filtered0,
-                filtered1,
-                filtered2,
+                filtered3,
+                filtered4,
                 there2
               )
       ,intern=notintern)
