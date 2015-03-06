@@ -31,6 +31,9 @@ search_peak<-function(peaklist,mz,dmz=5,ppm=TRUE,RT,dRT){
   if(length(dmz)==1){dmz<-rep(dmz,length(mz))}
   if(length(dRT)==1){dRT<-rep(dRT,length(mz))}
   result<-rep("FALSE",length(mz));
+  if (nrow(peaklist) == 0) {
+    return(result);
+  }
   leng<-length(peaks[,1]);
   k<-c(1);
   options(digits=10)
