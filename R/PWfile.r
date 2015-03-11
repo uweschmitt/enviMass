@@ -4,7 +4,7 @@
 #'
 #' @description \code{PWfile} calls PW msconvert
 #'
-#' @param rawfile Path to raw file
+#' @param infile Path to input file
 #' @param folderout Path to output folder
 #' @param msconvert_path Path to PW msconvert executable (including \\msconvert).
 #' @param notintern Ignore
@@ -15,7 +15,7 @@
 
 
 PWfile <-
-function(rawfile,folderout,msconvert_path,notintern=FALSE,use_format="mzXML"){
+function(infile,folderout,msconvert_path,notintern=FALSE,use_format="mzXML"){
 
       ##########################################################################
       # checks & setups ########################################################
@@ -23,8 +23,8 @@ function(rawfile,folderout,msconvert_path,notintern=FALSE,use_format="mzXML"){
         cat("msconvert not in system path - ok if msconvert_path correct")
       }
       if(
-          sum(substr(rawfile,nchar(rawfile)-3,nchar(rawfile))!=".RAW",substr(rawfile,nchar(rawfile)-3,nchar(rawfile))!=".raw")!=1
-      ){stop("rawfile not a .RAW file")}	  
+          sum(substr(infile,nchar(infile)-3,nchar(infile))!=".RAW",substr(infile,nchar(infile)-3,nchar(infile))!=".raw")==1
+      ){cat("running .RAW file conversion.")}	  
       ##########################################################################
       # convert ################################################################
       there2<-paste(" -o ",shQuote(folderout),sep="")
@@ -36,7 +36,7 @@ function(rawfile,folderout,msconvert_path,notintern=FALSE,use_format="mzXML"){
       system(
               paste(
                 shQuote(msconvert_path),
-                shQuote(rawfile),
+                shQuote(infile),
 				filtered1,
 				filtered2,
 				filtered0,

@@ -35,6 +35,15 @@
             textInput("Measdel_ID", "ID:", value = "123"),
             actionButton("Measdel","Remove")
           ),
+		  div(style = widget_style,
+            tags$h4("Import project (files only)"),
+			textInput("import_pro_dir", "", value = "C:\\...\\old_project_name"),
+			bsPopover("import_pro_dir", 
+				title = "Insert full path, including the project folder, but excluding the logfile.emp.",
+				content = "Using your OS explorer, you may navigate into your project folder and copy/paste the full path.", 
+				placement = "right", trigger = "hover"),
+            actionButton("Import_project","Import")
+          ),
           helpText(""),
           dataTableOutput("measurements")
         ),
