@@ -63,15 +63,15 @@ pageWithSidebar(
 	windowTitle="enviMass"
   ),
   ##############################################################################
-  source("ui_sidebar.R", local=TRUE),   
+  source("ui_sidebar.R", local=TRUE)$value,   
   ##############################################################################
   mainPanel(
     HTML('</font>'),
-	source("ui_busy.R", local=TRUE),  
+	source("ui_busy.R", local=TRUE)$value,  
     HTML('</font>'),
-	source("ui_mainPanel_startup.R", local=TRUE),
+	source("ui_mainPanel_startup.R", local=TRUE)$value,
 	HTML('</font>'),	
-	source("ui_mainPanel.R", local=TRUE) 
+	source("ui_mainPanel.R", local=TRUE)$value 
   )
   ##############################################################################
    

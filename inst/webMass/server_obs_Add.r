@@ -850,7 +850,7 @@ observe({
 			adjustit<-"FALSE"
         }else{
 		    measurements1<-measurements1[measurements1[,1]!=as.character(isolate(input$Measdel_ID)),]
-			if(any(measurements1[,8])=="TRUE"){
+			if(any(as.character(measurements1[,8]))=="TRUE"){
 				adjustit<-"TRUE"
 			}else{
 				adjustit<-"FALSE"
@@ -960,7 +960,7 @@ observe({
 					!file.exists(file.path(file_in,"files",paste(as.character(measurements_2[i,1]),".mzXML",sep="")))
 				){ 
 					PWfile(
-						file.path(file_in,"files",paste(as.character(measurements_2[i,1]),".mzXML",sep="")),
+						file.path(file_in,"files",paste(as.character(measurements_2[i,1]),".mzML",sep="")),
 						file.path(file_in,"files"),
 						as.character(isolate(input$PWpath)),
 						notintern=FALSE,
@@ -970,8 +970,18 @@ observe({
 					  from=file.path(file_in,"files",paste(as.character(measurements_2[i,1]),".mzXML",sep="")),
 					  to=file.path(logfile[[1]],"files",paste(as.character(newID),".mzXML",sep="")),
 					  overwrite=TRUE);
-				measurements_2[i,1]<-newID
-				measurements_1<-rbind(measurements_1,measurements_2[i,])	
+					  
+				new_entry<-rep("FALSE",length(measurements_1[,1]))
+				measurements_1<-rbind(measurements_1,new_entry)	
+				at<-length(measurements_1[,1])
+				measurements_1[at,1]<-newID
+				measurements_1[at,names(measurements_1)=="Name"]<-measurements_2[i,names(measurements_2)=="Name"]
+				measurements_1[at,names(measurements_1)=="Type"]<-measurements_2[i,names(measurements_2)=="Type"]
+				measurements_1[at,names(measurements_1)=="Mode"]<-measurements_2[i,names(measurements_2)=="Mode"]
+				measurements_1[at,names(measurements_1)=="Place"]<-measurements_2[i,names(measurements_2)=="Place"]
+				measurements_1[at,names(measurements_1)=="Date"]<-measurements_2[i,names(measurements_2)=="Date"]
+				measurements_1[at,names(measurements_1)=="Time"]<-measurements_2[i,names(measurements_2)=="Time"]
+				measurements_1[at,c(8,9)]<-"TRUE"			
 				measurements_1<-measurements_1[measurements_1[,1]!="-",]
 			}
 			write.csv(measurements_1,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
