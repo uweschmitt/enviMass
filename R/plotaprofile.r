@@ -132,6 +132,8 @@ plotaprofile<-function(
 				}else{
 					atpeakID<-c(atpeakID,0)
 				}
+			}else{ # neither sample nor blind, e.g. doted!
+				atpeakID<-c(atpeakID,0)
 			}
 		}
 	}	

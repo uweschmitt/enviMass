@@ -96,12 +96,12 @@ observe({
 				dev.off()
 				expr31p<-list(src=path)
 				output$profcount_pos<-renderImage(expr31p, deleteFile = FALSE)
-			path=file.path(logfile$project_folder,"pics","profnorm__neg")
+			path=file.path(logfile$project_folder,"pics","profnorm_neg")
 				png(filename = path, bg = "white")
 				plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
 				dev.off()
 				expr30n<-list(src=path)
-				output$profnorm__neg<-renderImage(expr30n, deleteFile = FALSE)		
+				output$profnorm_neg<-renderImage(expr30n, deleteFile = FALSE)		
 			path=file.path(logfile$project_folder,"pics","profcount_neg")
 				png(filename = path, bg = "white")
 				plot.new();plot.window(xlim=c(1,1),ylim=c(1,1));#box();text(1,1,label="not available",cex=1.5,col="darkred")
@@ -237,8 +237,7 @@ maincalc2<-reactive({
 			}
 			updateSelectInput(session, "sel_meas_ID", label = "Select file by ID:", choices =  c("none",as.character(measurements[,1])), selected = "none")
 			# (5) RT Alignment #####################################################
-			
-			
+						
 			# (6) IS-Normalization #################################################
 			if(file.exists(file.path(logfile$project_folder,"pics","profnorm_pos"))){
 				if(isolate(input$Ion_mode)=="positive"){
@@ -263,8 +262,7 @@ maincalc2<-reactive({
 					exprprofcount_neg<-list(src=file.path(logfile$project_folder,"pics","profcount_neg"))
 					output$profcount<-renderImage(exprprofcount_neg, deleteFile = FALSE)
 				}
-			}
-			
+			}			
 			# (X) Profiling, trends, blind #########################################		
 			if(file.exists(file.path(logfile$project_folder,"pics","boxprofile_pos"))){
 				if(isolate(input$Ion_mode)=="positive"){
@@ -283,7 +281,7 @@ maincalc2<-reactive({
 					load(file=file.path(as.character(logfile$project_folder),"results","profileList_pos"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
 					assign("profileList",profileList_pos,envir=as.environment(".GlobalEnv"));
 				}
-			}
+			}	
 			if(file.exists(file.path(logfile$project_folder,"results","profileList_neg"))){
 				if(isolate(input$Ion_mode)=="negative"){
 					load(file=file.path(as.character(logfile$project_folder),"results","profileList_neg"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
@@ -303,13 +301,11 @@ maincalc2<-reactive({
 				}
 			}
 			
-			
-		
+
 			if(file.exists(file.path(logfile$project_folder,"pics","profilehisto.png"))){ 
 				expr6<-list(src=file.path(logfile$project_folder,"pics","profilehisto.png"))
 				output$profilehisto<-renderImage(expr6, deleteFile = FALSE)
-			}
-			
+			}		
 			# Parse selectable isotopes ###########################################
 			elements<-unique(as.character(isotopes[1:295,1]))
 			elements<-elements[order(elements)]
