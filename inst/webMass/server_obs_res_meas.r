@@ -449,8 +449,8 @@ observe({
     if( (isolate(init$a)=="TRUE") &  
 		(!is.na(isolate(input$profID))) & 
 		(isolate(input$profID)!=0) & 
-		(any(objects(envir=as.environment(".GlobalEnv"))=="profileList")) & 
-		any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks") & 
+		any(objects(envir=as.environment(".GlobalEnv"))=="profileList") & 
+		any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks") 	& 
 		any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks2")
 	){
 		if(any(profileList[[7]][,4]==as.numeric(isolate(input$profID)))){

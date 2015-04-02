@@ -13,7 +13,7 @@
 #' @param dRT Numeric. RT tolerance for matches with \code{peaklist}; units equal to those of the input files
 #' @param dRTwithin Numeric. More restrictive RT tolerance relative to the most intense match.
 #' @param dRTblank Numeric. RT tolerance window for matches with \code{blanklist}; units equal to those of the input files
-#' @param dInt Numeric. Intensity tolerance - percentage of a peak`s intensity.
+#' @param dInt Numeric. Intensity tolerance, given as a fraction of a peak intensity.
 #' @param Intcut Numeric. Centroids below this intensities are not screened for.
 #' @param w1 0<=Numeric<=1. Weight for fraction of expected vs. matched peaks within mass tolerances.
 #' @param w2 0<=Numeric<=1. Weight for fraction of expected vs. matched peaks within mass & intensity tolerances.
@@ -25,7 +25,7 @@
 #' Hence, different adducts of the same compound result in different entries in this list. \code{w1,w2,w3} must sum to 1.
 #' First, and for each entry in \code{pattern}, a match with the highest centroid is screened for. Having detected a match,
 #' the intensities of the remaining theretical centroids from \code{pattern} are scaled accordingly. Those remaining above
-#' \code{Intcut} are screened for.
+#' \code{Intcut} are then screened for.
 #'
 
 screening<-function (	peaklist, 
@@ -37,7 +37,7 @@ screening<-function (	peaklist,
 						dRT = 500, 
 						dRTwithin = 50, 
 						dRTblank = 200, 
-						dInt = 50, 
+						dInt = 0.2, 
 						Intcut = 5000, 
 						w1 = 0.8, 
 						w2 = 0.2, 
@@ -148,24 +148,23 @@ screening<-function (	peaklist,
                 scoreitblank <- list(0)
                 for (m in 1:length(pat2[, 1])) {
                   if (ppm == TRUE) {
-                    mztol <- c(dmz[from[i]] * pat2[m, 1]/1e+06 * 
-                      2)
+                    mztol <- c(dmz[from[i]] * pat2[m, 1]/1e+06 * 2)
                   } else {
                     mztol <- c(dmz[from[i]] * 2)
                   }
-                  these <- getpeaks[peaklist[, 1] >= (pat2[m, 
-                    1] - mztol) & peaklist[, 1] <= (pat2[m, 1] + 
-                    mztol) & peaklist[, 3] >= (peaklist[hihit[j], 
-                    3] - dRTwithin[from[i]]) & peaklist[, 3] <= 
-                    (peaklist[hihit[j], 3] + dRTwithin[from[i]])]
-                  scoreitsample[[m]] <- these
+                  these <- getpeaks[
+					peaklist[, 1] >= (pat2[m,1] - mztol) & 
+					peaklist[, 1] <= (pat2[m, 1] + mztol) & 
+					peaklist[, 3] >= (peaklist[hihit[j],3] - dRTwithin[from[i]]) & 
+					peaklist[, 3] <= (peaklist[hihit[j], 3] + dRTwithin[from[i]])]
+                  scoreitsample[[m]] <- these;
                   if (length(blanklist) != 1) {
-                    these <- getpeaks[blanklist[, 1] >= (pat2[m, 
-                      1] - mztol) & blanklist[, 1] <= (pat2[m, 
-                      1] + mztol) & blanklist[, 3] >= (RT[from[i]] - 
-                      dRTblank[from[i]]) & blanklist[, 3] <= 
-                      (RT[from[i]] + dRTblank[from[i]])]
-                    scoreitblank[[m]] <- these
+                    these <- getpeaks[
+						blanklist[,1] >= (pat2[m,1] - mztol) & 
+						blanklist[, 1] <= (pat2[m,1] + mztol) & 
+						blanklist[, 3] >= (RT[from[i]] - dRTblank[from[i]]) & 
+						blanklist[, 3] <= (RT[from[i]] + dRTblank[from[i]])]
+                    scoreitblank[[m]] <- these;
                   }
                   else {
                     scoreitblank[[m]] <- numeric(0)
@@ -206,34 +205,32 @@ screening<-function (	peaklist,
                 deltaInt <- ""
                 all_hits <- ""
                 for (m in 1:length(scoreitsample)) {
-                  if (length(scoreitsample[[m]]) > 0) {
-                    many_1 <- c(many_1 + 1)
-                    all_hits <- paste(all_hits, scoreitsample[[m]], 
-                      "/", sep = "")
-                    deltamz <- paste(deltamz, as.character(round(((pat2[m, 
-                      1] - peaklist[scoreitsample[[m]], 1])/peaklist[scoreitsample[[m]], 
-                      1] * 1e+06), digits = 2)), "/", sep = "")
-                    deltaRT <- paste(deltaRT, as.character(round((RT[from[i]] - 
-                      peaklist[scoreitsample[[m]], 3]), digits = 2)), 
-                      "/", sep = "")
-                    delInt <- round(((pat2[m, 2] - peaklist[scoreitsample[[m]], 
-                      2])/pat2[m, 2]), digits = 2)
-                    if (abs(delInt) <= dInt[from[i]]) {
-                      many_2 <- c(many_2 + 1)
-                    }
-                    deltaInt <- paste(deltaInt, as.character(delInt), 
-                      "/", sep = "")
-                    if (length(scoreitblank[[m]]) == 0) {
-                      many_3 <- c(many_3 + 1)
-                    }
-                  }
-                  else {
-                    # modification for misses (uwe schmitt 29.okt 2014)
-                    all_hits <- paste(all_hits, "-",  "/", sep = "");
-                    deltamz <- paste(deltamz, "-", "/", sep="");
-                    deltaRT <- paste(deltamz, "-", "/", sep="");
-                    deltaInt <- paste(deltamz, "-", "/", sep="");
-                  }
+					if (length(scoreitsample[[m]]) > 0) {
+						many_1 <- c(many_1 + 1)
+						all_hits <- paste(all_hits, scoreitsample[[m]], 
+						  "/", sep = "")
+						deltamz <- paste(deltamz, as.character(round(((pat2[m, 
+						  1] - peaklist[scoreitsample[[m]], 1])/peaklist[scoreitsample[[m]], 
+						  1] * 1e+06), digits = 2)), "/", sep = "")
+						deltaRT <- paste(deltaRT, as.character(round((RT[from[i]] - 
+						  peaklist[scoreitsample[[m]], 3]), digits = 2)), 
+						  "/", sep = "")
+						delInt <- round(((pat2[m, 2] - peaklist[scoreitsample[[m]], 
+						  2])/peaklist[scoreitsample[[m]],2]), digits = 2)
+						if( abs(delInt) <= (2*dInt[from[i]]) ) {
+						  many_2 <- c(many_2 + 1)
+						}
+						deltaInt <- paste(deltaInt, as.character(delInt), 
+						  "/", sep = "")
+						if (length(scoreitblank[[m]]) == 0) {
+						  many_3 <- c(many_3 + 1)
+						}
+					}else{
+						all_hits <- paste(all_hits, "-/", sep="");
+						deltamz <- paste(deltamz, "-/", sep="");
+						deltaRT <- paste(deltaRT, "-/", sep="");
+						deltaInt <- paste(deltaInt, "-/", sep="");
+					}
                 }
                 score1 <- paste(many_1, " of ", many, sep = "")
                 score2 <- paste(many_2, " of ", many, sep = "")

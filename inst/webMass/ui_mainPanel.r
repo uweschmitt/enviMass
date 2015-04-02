@@ -35,6 +35,15 @@
             textInput("Measdel_ID", "ID:", value = "123"),
             actionButton("Measdel","Remove")
           ),
+		  div(style = widget_style,
+            tags$h4("Import project (files only)"),
+			textInput("import_pro_dir", "", value = "C:\\...\\old_project_name"),
+			bsPopover("import_pro_dir", 
+				title = "Insert full path, including the project folder, but excluding the logfile.emp.",
+				content = "Using your OS explorer, you may navigate into your project folder and copy/paste the full path.", 
+				placement = "right", trigger = "hover"),
+            actionButton("Import_project","Import")
+          ),
           helpText(""),
           dataTableOutput("measurements")
         ),
@@ -318,7 +327,7 @@
 				tags$h5("Trend detection:"),
 				textInput("trend_lags", "Time lags of trends [days], comma-separated:", value = "4,7,14"),
 				numericInput("trend_thres", "Trend vs. mean+variance intensity threshold:", 3),
-				selectInput("notrend", "Do not show global trend - instead, report it as maximum intensity above blind", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "TRUE")
+				selectInput("notrend", "Do not show global trend - instead, report it as maximum intensity above blind", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE")
             ),
             # BLIND #############################################################
             tabPanel("Blind",
@@ -329,7 +338,7 @@
             # GENERAL SETTINGS #################################################
             tabPanel("General",
 				div(style = widget_style3,
-					textInput("PWpath", "Path to Proteowizard MSConvert ", value = "C:\\Program Files\\ProteoWizard\\ProteoWizard 3.0.5140\\msconvert")
+					textInput("PWpath", "Path to Proteowizard MSConvert (use / and include .exe)", value = "C:/Program Files/ProteoWizard/ProteoWizard 3.0.5140/msconvert.exe")
 				),
 				div(style = widget_style,
 					tags$h5("Debug tools"),
@@ -450,7 +459,7 @@
 								imageOutput("profnorm", height="auto"),
 								imageOutput("profcount", height="auto")
 						),
-						id="navbar_prof",inverse=FALSE,collapsable=TRUE,fluid=TRUE
+						id="navbar_prof",inverse=FALSE,collapsible=TRUE,fluid=TRUE
 					)
 				),
 				tabPanel("Quality control",
@@ -520,7 +529,7 @@
 		   tags$h5("Contact, maintainer:"),
 		   HTML(
 			'<p>
-			Martin Loos, loosmart@eawag.ch 
+			Martin Loos, Martin.Loos@eawag.ch 
  			</p> 
 			'
 			),

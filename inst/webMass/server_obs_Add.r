@@ -586,7 +586,7 @@ addmeasu<-reactive({
 			  substr(as.character(isolate(input$Measadd_path[[1]])),nchar(as.character(isolate(input$Measadd_path[[1]])))-3,nchar(as.character(isolate(input$Measadd_path[[1]]))))==".raw" ||
 			  substr(as.character(isolate(input$Measadd_path[[1]])),nchar(as.character(isolate(input$Measadd_path[[1]])))-3,nchar(as.character(isolate(input$Measadd_path[[1]]))))==".Raw"
 			){
-				if( file.exists(file.path(as.character(isolate(input$PWpath)),".exe")) ){
+				if( file.exists(file.path(logfile$PW)) ){
 					measurements1<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 					nameit<-names(measurements1);
 					measurements1<-measurements1[measurements1[,1]!="-",]		
@@ -597,15 +597,15 @@ addmeasu<-reactive({
 					}
 					file.copy(
 					  from=isolate(input$Measadd_path[[4]]),
-					  to=file.path(logfile[[1]],"files",as.character(newID),".raw"),
+					  to=file.path(logfile[[1]],"files",paste(as.character(newID),".raw",sep="")),
 					  overwrite=TRUE);
 					PWfile(
-					  rawfile=file.path(logfile[[1]],"files",as.character(newID),".raw"),
+					  infile=file.path(logfile[[1]],"files",paste(as.character(newID),".raw",sep="")),
 					  file.path(logfile[[1]],"files"),
 					  as.character(isolate(input$PWpath)),
 					  notintern=FALSE,
-					  use_format="mzXML");              
-					file.remove(file.path(logfile[[1]],"files",as.character(newID),".raw"))
+					  use_format="mzXML");     				  
+					file.remove(file.path(logfile[[1]],"files",paste(as.character(newID),".raw",sep="")))
 					file.remove(isolate(input$Measadd_path[[4]]));
 					if(  file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep=""))) || file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")))  ){
 						measurements2<-c(
@@ -850,7 +850,7 @@ observe({
 			adjustit<-"FALSE"
         }else{
 		    measurements1<-measurements1[measurements1[,1]!=as.character(isolate(input$Measdel_ID)),]
-			if(any(measurements1[,8])=="TRUE"){
+			if(any(as.character(measurements1[,8]))=="TRUE"){
 				adjustit<-"TRUE"
 			}else{
 				adjustit<-"FALSE"
@@ -938,6 +938,81 @@ observe({
 })
 ##############################################################################
 
+# IMPORT MEASUREMENTS ########################################################
+observe({
+    input$Import_project
+    if(input$Import_project){
+		cat("\n Importing project files ...")
+        measurements_1<<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		file_in<<-as.character(isolate(input$import_pro_dir))
+		measurements_2<<-read.csv(file=file.path(file_in,"dataframes","measurements"),colClasses = "character");
+		if(any(measurements_2[,1]!="-")){
+			measurements_2[,c(10:18)]<-"FALSE" # reset workflow options
+			for(i in 1:length(measurements_2[,1])){
+				cat(as.character(i))
+				if(all(measurements_1[,1]!="-")){
+					newID<-getID(as.numeric(measurements_1[,1]))
+				}else{
+					newID<-1			
+				}
+				if( # mzML to mzXML conversion required?
+					file.exists(file.path(file_in,"files",paste(as.character(measurements_2[i,1]),".mzML",sep=""))) &
+					!file.exists(file.path(file_in,"files",paste(as.character(measurements_2[i,1]),".mzXML",sep="")))
+				){ 
+					PWfile(
+						file.path(file_in,"files",paste(as.character(measurements_2[i,1]),".mzML",sep="")),
+						file.path(file_in,"files"),
+						as.character(isolate(input$PWpath)),
+						notintern=FALSE,
+						use_format="mzXML");    
+				}
+				file.copy(
+					  from=file.path(file_in,"files",paste(as.character(measurements_2[i,1]),".mzXML",sep="")),
+					  to=file.path(logfile[[1]],"files",paste(as.character(newID),".mzXML",sep="")),
+					  overwrite=TRUE);
+					  
+				new_entry<-rep("FALSE",length(measurements_1[,1]))
+				measurements_1<-rbind(measurements_1,new_entry)	
+				at<-length(measurements_1[,1])
+				measurements_1[at,1]<-newID
+				measurements_1[at,names(measurements_1)=="Name"]<-measurements_2[i,names(measurements_2)=="Name"]
+				measurements_1[at,names(measurements_1)=="Type"]<-measurements_2[i,names(measurements_2)=="Type"]
+				measurements_1[at,names(measurements_1)=="Mode"]<-measurements_2[i,names(measurements_2)=="Mode"]
+				measurements_1[at,names(measurements_1)=="Place"]<-measurements_2[i,names(measurements_2)=="Place"]
+				measurements_1[at,names(measurements_1)=="Date"]<-measurements_2[i,names(measurements_2)=="Date"]
+				measurements_1[at,names(measurements_1)=="Time"]<-measurements_2[i,names(measurements_2)=="Time"]
+				measurements_1[at,c(8,9)]<-"TRUE"			
+				measurements_1<-measurements_1[measurements_1[,1]!="-",]
+			}
+			write.csv(measurements_1,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+			output$measurements<<-renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
+			rm(measurements_1,measurements_2);
+			cat(" done.")		
+		}else{
+			cat(" no files to import - project empty?.")
+		}
+	}
+})
+##############################################################################
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   

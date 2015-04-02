@@ -4,7 +4,7 @@
 \title{Screens a peak- and blanklist for matches with compounds}
 \usage{
 screening(peaklist, blanklist = FALSE, pattern, RT = 1000, dmz = 10,
-  ppm = TRUE, dRT = 500, dRTwithin = 50, dRTblank = 200, dInt = 50,
+  ppm = TRUE, dRT = 500, dRTwithin = 50, dRTblank = 200, dInt = 0.2,
   Intcut = 5000, w1 = 0.8, w2 = 0.2, w3 = 0)
 }
 \arguments{
@@ -26,7 +26,7 @@ screening(peaklist, blanklist = FALSE, pattern, RT = 1000, dmz = 10,
 
 \item{dRTblank}{Numeric. RT tolerance window for matches with \code{blanklist}; units equal to those of the input files}
 
-\item{dInt}{Numeric. Intensity tolerance - percentage of a peak`s intensity.}
+\item{dInt}{Numeric. Intensity tolerance, given as a fraction of a peak intensity.}
 
 \item{Intcut}{Numeric. Centroids below this intensities are not screened for.}
 
