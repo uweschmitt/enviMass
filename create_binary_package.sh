@@ -1,1 +1,1 @@
-R_LIBS=../../.envipy_r_packages/ R CMD INSTALL --build .
+R_LIBS=$APPDATA/envipy_r_packages R CMD INSTALL --build .
