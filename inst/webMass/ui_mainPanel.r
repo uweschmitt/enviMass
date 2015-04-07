@@ -4,7 +4,7 @@
 		tags$head(
 			tags$style(type = "text/css", "li a{color: white; background-color: darkgreen}") 
 		),		
-		bsAlert(inputId="alert_3"),
+		bsAlert("alert_3"),
 		tabsetPanel(
         ########################################################################
         # MEASUREMENTS #########################################################
@@ -137,8 +137,8 @@
         ########################################################################
         tabPanel("Workflow options",
 			tags$h5("Apply settings to project?"), 
-			bsActionButton("saveflow","Apply",style="warning"),
-			bsAlert(inputId="alert_1"),
+			bsButton("saveflow","Apply",style="warning"),
+			bsAlert("alert_1"),
 				# block 1 ######################################################
 				HTML('<hr noshade="noshade" />'),
 				HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> File upload </font></p> '),
@@ -190,8 +190,8 @@
         ########################################################################
         tabPanel("Settings",     
 		  tags$h5("Apply settings to project?"), 
-		  bsActionButton("savepar","Apply",style="warning"),
-		  bsAlert(inputId="alert_2"),
+		  bsButton("savepar","Apply",style="warning"),
+		  bsAlert("alert_2"),
           HTML('<hr noshade="noshade" />'),
           tabsetPanel(
             # PEAK PICKING #####################################################
@@ -345,9 +345,9 @@
 					selectInput("progressbar", "Show progress bars (Windows OS only)", choices = c("TRUE","FALSE"), selected="FALSE"),
 					textInput("upto_file", "Up to file with ID:", value = "FALSE"),
 					tags$h6("Reset project without peak picking:"),
-					bsActionButton("reset_1","Reset",style="danger"),
+					bsButton("reset_1","Reset",style="danger"),
 					tags$h6("Reset project with peak picking:"),
-					bsActionButton("reset_2","Reset",style="danger")
+					bsButton("reset_2","Reset",style="danger")
 				)
 			)			
           )
@@ -396,7 +396,7 @@
 										id="col6", value="test5")
 								),
 								div(style = widget_style3,
-									bsActionButton("expo_profiles","Export filtered profile list",style="info"),
+									bsButton("expo_profiles","Export filtered profile list",style="info"),
 									textOutput("expo1"),
 									bsPopover("expo_profiles", 
 										title = "Export above filtered profiles",
@@ -427,7 +427,7 @@
 								div(style = widget_style3,numericInput("profID", "profile ID:", 0)),
 								div(style = widget_style3,numericInput("profentry", "Entry # in (filtered, sorted) profile list:", 0)),
 								div(style = widget_style3,radioButtons("prof_log", "Logarithmic intensity?", c("no"="no","yes"="yes"))),
-								div(style = widget_style3,bsGlyph("icon-search",white=FALSE),textOutput("prof_number")),
+								div(style = widget_style3,textOutput("prof_number")),
 								imageOutput("timeprofile", height="auto"),
 								bsCollapse(multiple = FALSE, open = "col1", id = "collapse1",
 									bsCollapsePanel("Profile EICs & Peak viewer", 
@@ -441,7 +441,7 @@
 										id="col1", value="test1"),
 									bsCollapsePanel("Profile mass estimation",
 										div(style = widget_style3,
-											bsActionButton("dens_mass","Get mass estimates",style="success"),
+											bsButton("dens_mass","Get mass estimates",style="success"),
 											numericInput("boot_size", "Size of bootstrap sample:",min=10, 200),
 											radioButtons("use_weight", "Weight by intensity?", c("no"="no","yes"="yes"))
 										),
@@ -483,7 +483,6 @@
 					)	
 				),
                 tabPanel("EIC & Peaks",
-					bsGlyph("icon-search", white = FALSE),
 					div(style = widget_style3,selectInput("sel_meas_ID", "Select file ID:", choices = c("none"), "none")),
 					div(style = widget_style3,numericInput("sel_peak_ID", "Select peak ID:", 0)),
 					imageOutput("EIC1", height="auto"),
@@ -491,7 +490,6 @@
 					imageOutput("EIC3", height="auto")
                 ),
                 tabPanel("Processing",            
-					bsGlyph("icon-search", white = FALSE),
 					selectInput("sel_meas", "Select file ID:", choices = c("none"), "none"),
 					imageOutput("recal_pic", height="auto"),
 					imageOutput("peakhist_pic", height="auto"),

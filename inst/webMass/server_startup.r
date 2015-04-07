@@ -4,9 +4,9 @@ observe({
 		# clean workspace from any previous workflow results #####################
 		source("server_cleaner.R", local=TRUE);		  
 		# create alert ###########################################################
-		createAlert(session,inputId = "alert_3", alertId="a3", 
+		createAlert(session, anchorId="alert_3", alertId="a3", 
 				title = "Getting started?", 
-				message="<p> Using the below panels, (1) add <span style='color: black'> Files</span>, (2) optionally add <span style='color: black'> Compounds</span>, (3) select the <span style='color: black'> 
+				content="<p> Using the below panels, (1) add <span style='color: black'> Files</span>, (2) optionally add <span style='color: black'> Compounds</span>, (3) select the <span style='color: black'> 
 					Workflow options </span> and (4) adjust the parameter <span style='color: black'> Settings </span> (make sure your data are suitable for enviPick peak picking, best by trying the seperate 
 					<a href='http://cran.r-project.org/web/packages/enviPick/index.html' target='_blank'> package</a> beforehand). Then, press <span style='color: red'> Calculate </span> (a sidebar message will 
 					tell you if your project is consistent) and wait for the <span style='color: black'> Results </span> to appear (depending on the number of files, this may take a while; especially if peak 
@@ -14,7 +14,7 @@ observe({
 					<p>You can exit your project and reopen it later to add new files and compounds or to change settings. enviMass will then adjust recalculations to avoid unnecessary workflow 
 					steps (e.g. to not redo peak picking for all files if only a few new have been added).</p>
 					",
-				type = "info",append=FALSE,block=TRUE,dismiss=TRUE)
+				style = "info",append=FALSE,dismiss=TRUE)
 		##########################################################################
 		if(!exists("IS",envir=as.environment(".GlobalEnv"))){data(IS,package="enviMass")}
 		if(!exists("targets",envir=as.environment(".GlobalEnv"))){data(targets,package="enviMass")}

@@ -19,7 +19,7 @@ sidebarPanel(
 			title = "Path to folder that will contain the new project.",
 			content = "The new project folder will be generated automatically, using the project name.", 
 			placement = "right", trigger = "hover"),
-		bsActionButton("newit","Start",style="success"),
+		bsButton("newit","Start",style="success"),
 		# (2) to open an existing project ########################################
 		tags$h4("Open existing project"),
 		helpText("Type path to project folder ..."),
@@ -37,7 +37,7 @@ sidebarPanel(
 			content = "... located inside the project folder of the desired project.", 
 			placement = "right", trigger = "hover"),	
 		helpText(""),				  
-		bsActionButton("openit","Open",style="success"),
+		bsButton("openit","Open",style="success"),
 		textOutput("had_opened")
     ),
     # action panel #############################################################
@@ -49,7 +49,7 @@ sidebarPanel(
       helpText("Finished tasks:"),
       tableOutput("summar"),
 	  HTML('<hr noshade="noshade" />'),
-      bsActionButton("Calc","Calculate",style="danger"),
+      bsButton("Calc","Calculate",style="danger"),
 	  bsPopover("Calc", 
 		title = "Start new project (re)calculation.",
 		content = "The current settings for parameters and workflow steps will be used. Calculation results will be displayed in the results tabset.", 
