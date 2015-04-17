@@ -15,7 +15,7 @@ shinyServer(function(input, output, session){
   if(!inherits(tried,"try-error")){
 	shinyFileChoose(input,"pro_dir3", session=session, roots=getVolumes(), filetypes=c("emp") )
   }else{
-	createAlert(session,inputId = "alert_4", alertId="a4", title = NULL, message="logfile select disabled, used folder path input",type = "alarm",append=FALSE,block=TRUE,dismiss=TRUE)
+	createAlert(session,anchorId = "alert_4", alertId="a4", title = NULL, content="logfile select disabled, used folder path input",style = "alarm",append=FALSE,dismiss=TRUE)
   }
   output$textit<-renderText("Waiting...")
   output$dowhat<-renderText("Open")

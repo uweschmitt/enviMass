@@ -14,7 +14,7 @@ observe({
 					<p>You can exit your project and reopen it later to add new files and compounds or to change settings. enviMass will then adjust recalculations to avoid unnecessary workflow 
 					steps (e.g. to not redo peak picking for all files if only a few new have been added).</p>
 					",
-				style = "info",append=FALSE,dismiss=TRUE)
+				style="info",append=FALSE,dismiss=TRUE)
 		##########################################################################
 		if(!exists("IS",envir=as.environment(".GlobalEnv"))){data(IS,package="enviMass")}
 		if(!exists("targets",envir=as.environment(".GlobalEnv"))){data(targets,package="enviMass")}
@@ -142,9 +142,9 @@ observe({
 			isolate(init$a<-"TRUE")
 			cat("Started a new project\n");
 		}else{
-			createAlert(session, "failed_new", alertId = "failed_new_id", title = "Invalid project path", 
-				message = "Project already exists or the specified path is invalid.", 
-				type = "danger", dismiss = TRUE, block = NULL, append = FALSE)
+			createAlert(session, anchorId="failed_new", alertId = "failed_new_id", title = "Invalid project path", 
+				content = "Project already exists or the specified path is invalid.", 
+				style = "danger", dismiss = TRUE, append = FALSE)
 			cat("Invalid - project already exists or path invalid \n")
 		}
     }
@@ -329,9 +329,9 @@ maincalc2<-reactive({
 			cat("\nProject opened\n")
 			return("Project available\n")
 		}else{
-			createAlert(session, "failed_open", alertId = "failed_open_id", title = "Invalid project path", 
-				message = "Project with specified path does not exist!", 
-				type = "danger", dismiss = TRUE, block = NULL, append = FALSE)
+			createAlert(session, anchorId="failed_open", alertId = "failed_open_id", title = "Invalid project path", 
+				content = "Project with specified path does not exist!", 
+				style = "danger", dismiss = TRUE, append = FALSE)
 			cat("Invalid - project already exists or path invalid \n")
 			cat("Invalid project!\n")
 			return("Project invalid\n")

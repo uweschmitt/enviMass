@@ -6,12 +6,12 @@ observe({
     if(	((exists("logfile")) & (isolate(input$savepar)))||
 		((exists("logfile")) & (isolate(input$saveflow)))
 	){
-		createAlert(session,inputId = "alert_1", alertId="a1", title = NULL, 
-              message="Changes in the workflow settings require a project recalculation to become effective.",
-              type = "warning",append=FALSE)
-		createAlert(session,inputId = "alert_2", alertId="a2", title = NULL, 
-              message="Changes in the parameter settings require a project recalculation to become effective.",
-              type = "warning",append=FALSE)
+		createAlert(session,anchorId = "alert_1", alertId="a1", title = NULL, 
+              content="Changes in the workflow settings require a project recalculation to become effective.",
+              style = "warning",append=FALSE)
+		createAlert(session,anchorId = "alert_2", alertId="a2", title = NULL, 
+              content="Changes in the parameter settings require a project recalculation to become effective.",
+              style = "warning",append=FALSE)
 		##########################################################################      
         # parameter settings #####################################################
         # PW path ##############################################################

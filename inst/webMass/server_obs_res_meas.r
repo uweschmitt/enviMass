@@ -785,7 +785,7 @@ observe({
     if( (isolate(init$a)=="TRUE") & isolate(input$reset_1) ){
 		logfile$Tasks_to_redo[-1]<-"TRUE"
 		logfile$Tasks_to_redo[-1]<<-"TRUE"
-		createAlert(session,inputId = "reset", alertId="reset1", title = NULL, message="Project reset w/o peak picking",type = "warning",append=FALSE,block=TRUE,dismiss=TRUE)
+		createAlert(session,anchorId = "reset", alertId="reset1", title = NULL, content="Project reset w/o peak picking",style = "warning",append=FALSE,dismiss=TRUE)
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		cat("\nReset without peak picking \n")
 	}
@@ -795,7 +795,7 @@ observe({
     if( (isolate(init$a)=="TRUE") & isolate(input$reset_2) ){
 		logfile$Tasks_to_redo<-"TRUE"
 		logfile$Tasks_to_redo<<-"TRUE"
-		createAlert(session,inputId = "reset", alertId="reset2", title = NULL, message="Project reset",type = "warning",append=FALSE,block=TRUE,dismiss=TRUE)
+		createAlert(session,anchorId = "reset", alertId="reset2", title = NULL, content="Project reset",style = "warning",append=FALSE,dismiss=TRUE)
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		cat("\nTotal reset \n")
 	}
