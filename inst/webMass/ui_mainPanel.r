@@ -387,13 +387,13 @@
 										div(style = widget_style3,tags$h6("...containing blind peaks:"), textOutput("atprof3")),
 										div(style = widget_style3,tags$h6("...with a past trend:"), textOutput("atprof4")),
 										div(style = widget_style3,tags$h6("...with a current trend:"), textOutput("atprof5")),
-										id="col4", value="test4"),							
+										value="test4"),							
 									bsCollapsePanel("Intensity histogram", 
 										imageOutput("profilehisto", height="auto"),
-										id="col5", value="test5"),
+										value="test5"),
 									bsCollapsePanel("Profile list", 		
 										tableOutput("allproftable"),
-										id="col6", value="test5")
+										value="test5")
 								),
 								div(style = widget_style3,
 									bsButton("expo_profiles","Export filtered profile list",style="info"),
@@ -427,7 +427,7 @@
 								div(style = widget_style3,numericInput("profID", "profile ID:", 0)),
 								div(style = widget_style3,numericInput("profentry", "Entry # in (filtered, sorted) profile list:", 0)),
 								div(style = widget_style3,radioButtons("prof_log", "Logarithmic intensity?", c("no"="no","yes"="yes"))),
-								div(style = widget_style3,textOutput("prof_number")),
+								div(style = widget_style3,textOutput("peak_number")),
 								imageOutput("timeprofile", height="auto"),
 								bsCollapse(multiple = FALSE, open = "col1", id = "collapse1",
 									bsCollapsePanel("Profile EICs & Peak viewer", 
@@ -438,7 +438,7 @@
 										HTML('<hr noshade="noshade" />'),
 										imageOutput("profile_position", height="auto"),
 										imageOutput("profile_EIC", height="auto"),
-										id="col1", value="test1"),
+										value="test1"),
 									bsCollapsePanel("Profile mass estimation",
 										div(style = widget_style3,
 											bsButton("dens_mass","Get mass estimates",style="success"),
@@ -449,10 +449,10 @@
 										textOutput("prof_mass"),
 										imageOutput("massdens", height="auto"),
 										imageOutput("massint", height="auto"),
-										id="col3", value="test3"),
+										value="test3"),
 									bsCollapsePanel("Profile peak table", 
 										dataTableOutput("oneproftable"),
-										id="col2", value="test2")
+										value="test2")
 								)
 						),
 						tabPanel("Normalization",            

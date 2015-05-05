@@ -373,7 +373,7 @@ maincalc6<-reactive({
 					output$allproftable<-renderTable(profpeaks2)
 					updateNumericInput(session,"profID",value = 0);
 					updateNumericInput(session,"profentry",value = 0);
-					return(as.character(atit2));
+					return(as.character(atit1));
 				}else{
 					#output$atprof1<-renderText({ "0" })
 					output$atprof2<-renderText({ "0" })
@@ -416,7 +416,7 @@ maincalc6<-reactive({
 	}else{
 		if( isolate(init$a)=="TRUE" ){
 			cat("\n No profiles available\n")
-			#output$atprof1<-renderText({"0"})
+			#output$atprof1<-renderText({"0"}) # now used as reactive output
 			output$atprof2<-renderText({"0"})
 			output$atprof3<-renderText({"0"})
 			output$atprof4<-renderText({"0"})
@@ -437,7 +437,7 @@ maincalc6<-reactive({
 	}
 })	
 output$atprof1<-renderText(paste(maincalc6()))
-output$prof_number<-renderText(paste(maincalc6())) 
+output$peak_number<-renderText(paste(maincalc6())) 
 ##############################################################################
 
 ##############################################################################
