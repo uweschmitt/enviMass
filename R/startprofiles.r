@@ -138,14 +138,14 @@ startprofiles<-function(
 			}
 			da2<-c(da1+that-1)				
 			if( logfile$workflow[2]=="yes" ){ # use recalibrated data ....
-				peaks[da1:da2,]<-cbind( peaklist[1:that,c(12,13,14,10)],
+				peaks[da1:da2,]<-as.matrix(cbind( peaklist[1:that,c(12,13,14,10)],
 								rep(0,that),rep(as.numeric(measurements[i,1]),that),
-								rep(0,that),rep(0,that)
+								rep(0,that),rep(0,that))
 				);
 			}else{ # ... or not?
-				peaks[da1:da2,]<-cbind( peaklist[1:that,c(1,4,5,10)],
+				peaks[da1:da2,]<-as.matrix(cbind( peaklist[1:that,c(1,4,5,10)],
 								rep(0,that),rep(as.numeric(measurements[i,1]),that),
-								rep(0,that),rep(0,that)
+								rep(0,that),rep(0,that))
 				);			
 			}
 			da1<-c(da2+1);
