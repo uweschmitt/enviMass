@@ -24,9 +24,9 @@ observe({
 			load(logfile_path,envir=as.environment(".GlobalEnv"));
 			output$summar<-renderTable(logfile[[3]][c(1,2,3,4,5,7,8,9,10),],label="Progress:");
 			output$dowhat<-renderText("Started new project");
-			output$IS<-renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
-			output$targets<-renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      
-			output$measurements<-renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"))        
+			output$IS<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
+			output$targets<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      
+			output$measurements<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"))        
 			# SET DUMMY RESULTS ####################################################
 			# (1) Peak picking #####################################################
 			path=file.path(logfile$project_folder,"pics","EIC1");
@@ -179,10 +179,10 @@ maincalc2<-reactive({
 			output$textit<-renderText(logfile$project_folder);
 			output$summar<-renderTable(logfile$summary[c(1,2,3,4,5,7,8,9,10),]);
 			output$dowhat<-renderText("Opened existing project");
-			output$IS<-renderDataTable(read.table(file=file.path(logfile$project_folder,"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
-			output$targets<-renderDataTable(read.table(file=file.path(logfile$project_folder,"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));              
+			output$IS<-DT::renderDataTable(read.table(file=file.path(logfile$project_folder,"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
+			output$targets<-DT::renderDataTable(read.table(file=file.path(logfile$project_folder,"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));              
 			measurements<-read.csv(file=file.path(logfile$project_folder,"dataframes","measurements"),colClasses = "character")
-			output$measurements<-renderDataTable(measurements)        
+			output$measurements<-DT::renderDataTable(measurements)        
 			# RETRIEVE RESULTS #####################################################
 			# (1) Peak picking & preprocessing #####################################
 			path=file.path(logfile$project_folder,"pics","EIC1");

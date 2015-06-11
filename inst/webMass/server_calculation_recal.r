@@ -169,7 +169,7 @@ if(
     }
 	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-	output$measurements<<-renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
+	output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
     logfile$summary[5,2]<<-"TRUE";
     logfile$summary[5,2]<-"TRUE";
 	logfile$Tasks_to_redo[3]<-"FALSE";

@@ -480,7 +480,7 @@ observe({
 			dev.off();
 			expr5<-list(src=file.path(logfile[[1]],"pics","timeprofile"));
 			output$timeprofile<-renderImage(expr5, deleteFile = FALSE);
-			output$oneproftable<-renderDataTable(peakTable);
+			output$oneproftable<-DT::renderDataTable(peakTable);
 			updateNumericInput(session,"profpeakID",value = 0);
 			path=file.path(logfile[[1]],"pics","massdens.png");
 			png(filename = path, bg = "white", width = 550,height=200);			
@@ -783,8 +783,8 @@ output$prof_mass<-renderText(paste(maincalc5()))
 observe({
     input$reset_1
     if( (isolate(init$a)=="TRUE") & isolate(input$reset_1) ){
-		logfile$Tasks_to_redo[-1]<-"TRUE"
-		logfile$Tasks_to_redo[-1]<<-"TRUE"
+		logfile$Tasks_to_redo<-replace(logfile$Tasks_to_redo,-1,TRUE)
+		logfile$Tasks_to_redo<<-replace(logfile$Tasks_to_redo,-1,TRUE)
 		createAlert(session,anchorId = "reset", alertId="reset1", title = NULL, content="Project reset w/o peak picking",style = "warning",append=FALSE,dismiss=TRUE)
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		cat("\nReset without peak picking \n")
@@ -793,8 +793,8 @@ observe({
 observe({
     input$reset_2
     if( (isolate(init$a)=="TRUE") & isolate(input$reset_2) ){
-		logfile$Tasks_to_redo<-"TRUE"
-		logfile$Tasks_to_redo<<-"TRUE"
+		logfile$Tasks_to_redo<-replace(logfile$Tasks_to_redo,,TRUE)
+		logfile$Tasks_to_redo<<-replace(logfile$Tasks_to_redo,,TRUE)
 		createAlert(session,anchorId = "reset", alertId="reset2", title = NULL, content="Project reset",style = "warning",append=FALSE,dismiss=TRUE)
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		cat("\nTotal reset \n")

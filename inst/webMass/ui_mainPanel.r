@@ -45,7 +45,7 @@
             actionButton("Import_project","Import")
           ),
           helpText(""),
-          dataTableOutput("measurements")
+          DT::dataTableOutput("measurements")
         ),
         ########################################################################
         # Compounds ############################################################
@@ -89,7 +89,7 @@
 					fileInput("ISlist_path", "Select IS.txt file, e.g. from dataframes folder of another project", multiple = FALSE, accept = c(".txt"))
                   ),
                 helpText(""),
-                dataTableOutput("IS")
+                DT::dataTableOutput("IS")
             ),
             tabPanel("Targets", 
                   div(style = widget_style,
@@ -128,7 +128,7 @@
 					fileInput("targetlist_path", "Select targets.txt file, e.g. from dataframes folder of another project", multiple = FALSE, accept = c(".txt"))
                   ),
                 helpText(""),
-                dataTableOutput("targets")
+                DT::dataTableOutput("targets")
             )
           )  
         ),
@@ -451,7 +451,7 @@
 										imageOutput("massint", height="auto"),
 										value="test3"),
 									bsCollapsePanel("Profile peak table", 
-										dataTableOutput("oneproftable"),
+										DT::dataTableOutput("oneproftable"),
 										value="test2")
 								)
 						),

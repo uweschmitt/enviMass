@@ -73,7 +73,7 @@
 				if(any(objects(envir=as.environment(".GlobalEnv"))=="MSlist")){rm(MSlist,envir=as.environment(".GlobalEnv"))}
 				if(any(objects()=="MSlist")){rm(MSlist)}
 				measurements[i,10]<-TRUE;
-				output$measurements<<-renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
+				output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
 				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 				cat(" picked -"); 
 				formulator<-cbind(
@@ -98,7 +98,7 @@
 		  summa[2,2]<<-"done"
 		  output$summar<<-renderTable(summa);
           measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-		  output$measurements<<-renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
+		  output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
 		  if(addit){library(nlme)}
           cat("Peak picking completed \n"); 	  
           updateSelectInput(session, "sel_meas_ID", label = "Select file by ID:", choices =  c("none",as.character(measurements[,1])), selected = "none")

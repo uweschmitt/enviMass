@@ -111,7 +111,7 @@ observe({
 			}			
 		}	  
 		#############################################################################			
-		output$IS<<-renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
+		output$IS<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 		logfile[[2]][3:7]<-rep(TRUE,length(3:7));
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 		output$dowhat<-renderText("Added IS compound");
@@ -198,7 +198,7 @@ observe({
 			}
 			####################################################################
 			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));   
- 			output$IS<<-renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
+ 			output$IS<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 			output$dowhat<-renderText("Added IS list");
 		}
 	}
@@ -283,7 +283,7 @@ observe({
 				}			
 		}
 		####################################################################
-		output$IS<<-renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
+		output$IS<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 		output$dowhat<-renderText("Deleted compound");
     }
@@ -401,7 +401,7 @@ observe({
 		}
 		#############################################################################			
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
-		output$targets<<-renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      
+		output$targets<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      
 		output$dowhat<-renderText("Added target compound");
     }
 })
@@ -485,7 +485,7 @@ observe({
 			}
 			#############################################################################			
 			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));   
- 			output$targets<<-renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));
+ 			output$targets<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));
 			output$dowhat<-renderText("Added targets list");
 		}
 	}
@@ -569,7 +569,7 @@ observe({
 				}			
 		}
 		#############################################################################			
-		output$targets<<-renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      	  
+		output$targets<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      	  
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 		output$dowhat<-renderText("Deleted compound");
     }
@@ -625,7 +625,7 @@ addmeasu<-reactive({
 						measurements3<-enviMass:::convDate(measurements3);
 						write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 						rm(measurements1,measurements2,measurements3);
-						output$measurements<<-renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
+						output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
 						#############################################################################
 						# adjust task/workflow settings #############################################
 						doit<-as.character(isolate(input$Measadd_incl))
@@ -816,7 +816,7 @@ addmeasu<-reactive({
 							}			
 					}
 					#############################################################################			
-					output$measurements<<-renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"));
+					output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"));
 					save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 					output$dowhat<-renderText("Measurement added");
 					cat("Measurement added\n")
@@ -928,7 +928,7 @@ observe({
 							}			
 		}	
         #############################################################################			
-        output$measurements<<-renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"));
+        output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"));
         save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
         output$dowhat<-renderText("Measurement deleted");
       }else{
@@ -985,7 +985,7 @@ observe({
 				measurements_1<-measurements_1[measurements_1[,1]!="-",]
 			}
 			write.csv(measurements_1,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
-			output$measurements<<-renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
+			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
 			rm(measurements_1,measurements_2);
 			cat(" done.")		
 		}else{
