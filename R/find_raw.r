@@ -48,10 +48,10 @@ find_raw<-function(
 				PACKAGE="nontarget"
 		);
 		if(inter){close(pbar)}
-		bounds<-matrix(ncol=2,nrow=3,0)						# store search bounds
-		bounds[2,2]<-max(MSlist[[4]][[2]][,2])
 		cat("done.")
 	}
+	bounds<-matrix(ncol=2,nrow=3,0)						# store search bounds
+	bounds[2,2]<-max(MSlist[[4]][[2]][,2])
 	##############################################################################
 	cat("\n Screen raw data...");	
 	if(inter){pbar <- txtProgressBar( min = 0, max = length(mz), style = 3 )}
