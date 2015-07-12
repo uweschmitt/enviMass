@@ -70,7 +70,8 @@ find_raw<-function(
 		found<-.Call("search_kdtree", 
 			MSlist[[4]][[2]][,1:3],
 			rawTree,
-			bounds
+			bounds,
+			PACKAGE="nontarget"
 		)
 		if(length(found)>0){
 			result[i]<-"TRUE"
