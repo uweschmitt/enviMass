@@ -110,9 +110,9 @@ screening<-function (	peaklist,
     }
     results <- list(0)
     result <- data.frame( "-", "-", "-", "-", "-", "-", "-", 
-        "-", "-")
+        "-", "-", "-")
     names(result) <- c("max_hit", "all_hits", "dm/z", 
-        "dRT", "dInt", "score_1", "score_2", "score_3", "score_sum")
+        "dRT", "dInt", "score_1", "score_2", "score_3", "score_sum", "below_Intcut")
     for (i in 1:length(pattern)) {
         results[[i]] <- result
     }
@@ -137,40 +137,72 @@ screening<-function (	peaklist,
                 pat2[, 2] <- pat2[, 2]/max(pat2[, 2])
                 pat2[, 2] <- pat2[, 2] * peaklist[hihit[j], 2]
                 if (any(pat2[, 2] >= Intcut[from[i]])) {
-                  pat2 <- pat2[pat2[, 2] >= Intcut[from[i]], 
-                    ]
-                  many <- length(pat2[, 1])
+					pat3 <- pat2[pat2[, 2] < Intcut[from[i]],]
+					pat2 <- pat2[pat2[, 2] >= Intcut[from[i]],]
+					many <- length(pat2[, 1])
                 } else {
-                  pat2 <- pat2[1, ]
-                  many <- 0
+					pat2 <- pat2[1, ]
+					pat3 <- pat2[rep(FALSE,length(pat2[, 1])), ]
+					many <- 0
                 }
                 scoreitsample <- list(0)
                 scoreitblank <- list(0)
                 for (m in 1:length(pat2[, 1])) {
-                  if (ppm == TRUE) {
-                    mztol <- c(dmz[from[i]] * pat2[m, 1]/1e+06 * 2)
-                  } else {
-                    mztol <- c(dmz[from[i]] * 2)
-                  }
-                  these <- getpeaks[
-					peaklist[, 1] >= (pat2[m,1] - mztol) & 
-					peaklist[, 1] <= (pat2[m, 1] + mztol) & 
-					peaklist[, 3] >= (peaklist[hihit[j],3] - dRTwithin[from[i]]) & 
-					peaklist[, 3] <= (peaklist[hihit[j], 3] + dRTwithin[from[i]])]
-                  scoreitsample[[m]] <- these;
-                  if (length(blanklist) != 1) {
-                    these <- getpeaks[
-						blanklist[,1] >= (pat2[m,1] - mztol) & 
-						blanklist[, 1] <= (pat2[m,1] + mztol) & 
-						blanklist[, 3] >= (RT[from[i]] - dRTblank[from[i]]) & 
-						blanklist[, 3] <= (RT[from[i]] + dRTblank[from[i]])]
-                    scoreitblank[[m]] <- these;
-                  }
-                  else {
-                    scoreitblank[[m]] <- numeric(0)
-                  }
+					if (ppm == TRUE) {
+						mztol <- c(dmz[from[i]] * pat2[m, 1]/1e+06 * 2)
+					} else {
+						mztol <- c(dmz[from[i]] * 2)
+					}
+					these <- getpeaks[
+						peaklist[, 1] >= (pat2[m,1] - mztol) & 
+						peaklist[, 1] <= (pat2[m, 1] + mztol) & 
+						peaklist[, 3] >= (peaklist[hihit[j],3] - dRTwithin[from[i]]) & 
+						peaklist[, 3] <= (peaklist[hihit[j], 3] + dRTwithin[from[i]])]
+					scoreitsample[[m]] <- these;
+					if (length(blanklist) != 1) {
+						these <- getpeaks[
+							blanklist[,1] >= (pat2[m,1] - mztol) & 
+							blanklist[, 1] <= (pat2[m,1] + mztol) & 
+							blanklist[, 3] >= (RT[from[i]] - dRTblank[from[i]]) & 
+							blanklist[, 3] <= (RT[from[i]] + dRTblank[from[i]]) ]
+						scoreitblank[[m]] <- these;
+					}else{
+						scoreitblank[[m]] <- numeric(0)
+					}
                 }
                 scoreitsample[[1]] <- hihit[j]
+				get_other_peaks <- list(0)		
+				found<-FALSE	
+				if(length(pat3[,1])>0){
+					for (m in 1:length(pat3[, 1])) {
+						if (ppm == TRUE) {
+							mztol <- c(dmz[from[i]] * pat3[m, 1]/1e+06 * 2)
+						} else {
+							mztol <- c(dmz[from[i]] * 2)
+						}
+						these <- getpeaks[
+							peaklist[, 1] >= (pat3[m,1] - mztol) & 
+							peaklist[, 1] <= (pat3[m, 1] + mztol) & 
+							peaklist[, 3] >= (peaklist[hihit[j],3] - dRTwithin[from[i]]) & 
+							peaklist[, 3] <= (peaklist[hihit[j], 3] + dRTwithin[from[i]])]
+						get_other_peaks[[m]] <- these;
+						if(length(these)>0){
+							found<-TRUE	
+						}
+					}				
+				}
+				if(found){
+					below_cut<-""
+					for(m in 1:length(get_other_peaks)){
+						if(length(get_other_peaks[[m]])>0){
+							for(n in 1:length(get_other_peaks[[m]])){
+								below_cut<-paste(below_cut,get_other_peaks[[m]][n],"/",sep="")
+							}
+						}
+					}
+				}else{
+					below_cut<-"-"
+				}
                 if (length(scoreitsample) > 1) {
                   for (m in 2:length(scoreitsample)) {
                     if (length(scoreitsample[[m]]) > 1) {
@@ -231,7 +263,7 @@ screening<-function (	peaklist,
 						deltaRT <- paste(deltaRT, "-/", sep="");
 						deltaInt <- paste(deltaInt, "-/", sep="");
 					}
-                }
+                }				
                 score1 <- paste(many_1, " of ", many, sep = "")
                 score2 <- paste(many_2, " of ", many, sep = "")
                 score3 <- paste(many_3, " of ", many, sep = "")
@@ -240,10 +272,10 @@ screening<-function (	peaklist,
                   digits = 3))
                 result2 <- data.frame(as.character(hihit[j]), 
                   all_hits, deltamz, deltaRT, deltaInt, score1, 
-                  score2, score3, sumscore)
+                  score2, score3, sumscore, below_cut)
                 names(result2) <- c("max_hit", "all_hits", 
                   "dm/z", "dRT", "dInt", "score_1", "score_2", 
-                  "score_3", "score_sum")
+                  "score_3", "score_sum", "below_Intcut")
                 results[[from[i]]] <- rbind(results[[from[i]]],result2)
             }
         }
