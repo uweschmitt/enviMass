@@ -27,6 +27,7 @@ search_peak<-function(peaklist,mz,dmz=5,ppm=TRUE,RT,dRT){
   ord1<-order(peaklist[,1],decreasing=TRUE);
   mass<-mz[order(mz,decreasing=TRUE)];
   ord2<-order(mz,decreasing=TRUE);
+
   ##############################################################################
   if(length(dmz)==1){dmz<-rep(dmz,length(mz))}
   if(length(dRT)==1){dRT<-rep(dRT,length(mz))}
@@ -74,23 +75,23 @@ search_peak<-function(peaklist,mz,dmz=5,ppm=TRUE,RT,dRT){
    	for(f in k:n){
     	if(   (as.numeric(peaks[f,1]) >= as.numeric(target_low)) &&
     		    ( as.numeric(peaks[f,1]) <= as.numeric(target_up))  &&
-    		    ( as.numeric(peaks[f,3]) >= (as.numeric(RT[ord2[i]])-as.numeric(dRT[i]))) &&
-    		    ( as.numeric(peaks[f,3]) <= (as.numeric(RT[ord2[i]])+as.numeric(dRT[i])))){
+    		    ( as.numeric(peaks[f,3]) >= (as.numeric(RT[ord2[i]])-as.numeric(dRT[ord2[i]]))) &&
+    		    ( as.numeric(peaks[f,3]) <= (as.numeric(RT[ord2[i]])+as.numeric(dRT[ord2[i]])))){
           deletes<-c(deletes,f);
         }
     }
     # save results #############################################################
     if(length(deletes)>0){
-     result[ord2[i]]<-as.character(ord1[deletes[1]]);
-     if(length(deletes)>1){
-      for(j in 2:length(deletes)){
-         result[ord2[i]]<-paste(result[ord2[i]],"/",as.character(ord1[deletes[j]]))
-      }
-     }
-    }
+		result[ord2[i]]<-as.character(ord1[deletes[1]]);
+		if(length(deletes)>1){
+			for(j in 2:length(deletes)){
+				result[ord2[i]]<-paste(result[ord2[i]],"/",as.character(ord1[deletes[j]]))
+			}
+		}
 	}
-	##############################################################################
-	return(result);
+  }
+  ##############################################################################
+  return(result);
 
 }
 
