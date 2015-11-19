@@ -42,6 +42,11 @@
 				title = "Insert full path, including the project folder, but excluding the logfile.emp.",
 				content = "Using your OS explorer, you may navigate into your project folder and copy/paste the full path.", 
 				placement = "right", trigger = "hover"),
+			checkboxInput("Merge_project", "Omit duplicates?", FALSE),
+			bsPopover("Merge_project", 
+				title = "File duplicate handling",
+				content = "A file with the same type, time, date, ionization and place as one which already exists will not be imported.", 
+				placement = "right", trigger = "hover"),
             actionButton("Import_project","Import")
           ),
           helpText(""),
@@ -318,7 +323,7 @@
             # PROFILING ########################################################
             tabPanel("Profiling",
 				tags$h5("Profile extraction"),
-				sliderInput("prof_sets", "Maximum number of newest samples to be processed", min = 50, max = 1500, value = 100, step= 1),
+				sliderInput("prof_sets", "Maximum number of newest samples to be processed", min = 50, max = 3000, value = 100, step= 1),
 				numericInput("prof_dmz", "Peak deviation within profiles: m/z tolerance ...", 3),                
                 selectInput("prof_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),
                 numericInput("prof_drt", "Peak deviation within profiles: RT tolerance [s]", 60)            ),
@@ -343,6 +348,7 @@
 				div(style = widget_style,
 					tags$h5("Debug tools"),
 					selectInput("progressbar", "Show progress bars (Windows OS only)", choices = c("TRUE","FALSE"), selected="FALSE"),
+					selectInput("do_project_check", "Skip the project check before calculations?", choices = c("TRUE","FALSE"), selected="FALSE"),					
 					textInput("upto_file", "Up to file with ID:", value = "FALSE"),
 					tags$h6("Reset project without peak picking:"),
 					bsButton("reset_1","Reset",style="danger"),

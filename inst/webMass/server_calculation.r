@@ -10,7 +10,7 @@
 maincalc<-reactive({
     input$Calc
     if(input$Calc){
-      say<-enviMass:::checkproject(logfile,isotopes,adducts);
+      say<-enviMass:::checkproject(logfile,isotopes,adducts,skipcheck=isolate(input$do_project_check));
       output$dowhat<<-renderText(say)
       if(say=="Project consistent"){
 	  

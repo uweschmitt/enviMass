@@ -947,9 +947,23 @@ observe({
 		file_in<<-as.character(isolate(input$import_pro_dir))
 		measurements_2<<-read.csv(file=file.path(file_in,"dataframes","measurements"),colClasses = "character");
 		if(any(measurements_2[,1]!="-")){
-			measurements_2[,c(10:18)]<-"FALSE" # reset workflow options
 			for(i in 1:length(measurements_2[,1])){
-				cat(as.character(i))
+				print(as.character(i))
+				if(isolate(input$Merge_project)){ # avoid duplicates?
+					if(
+						any(
+							( measurements_1[,3]==measurements_2[i,3] )&
+							( measurements_1[,4]==measurements_2[i,4] )&				
+							( measurements_1[,5]==measurements_2[i,5] )&
+							( measurements_1[,6]==measurements_2[i,6] )&					
+							( measurements_1[,7]==measurements_2[i,7] )
+						)
+					){
+						print("skipped a duplicate")
+						next;
+					}
+				}
+				print(as.character(i))
 				if(all(measurements_1[,1]!="-")){
 					newID<-getID(as.numeric(measurements_1[,1]))
 				}else{
@@ -966,22 +980,21 @@ observe({
 						notintern=FALSE,
 						use_format="mzXML");    
 				}
-				file.copy(
+				file.copy( # copy raw data 
 					  from=file.path(file_in,"files",paste(as.character(measurements_2[i,1]),".mzXML",sep="")),
 					  to=file.path(logfile[[1]],"files",paste(as.character(newID),".mzXML",sep="")),
 					  overwrite=TRUE);
-					  
-				new_entry<-rep("FALSE",length(measurements_1[,1]))
-				measurements_1<-rbind(measurements_1,new_entry)	
+				file.copy(
+					  from=file.path(file_in,"MSlist",as.character(measurements_2[i,1])),
+					  to=file.path(logfile[[1]],"MSlist",as.character(newID)),
+					  overwrite=TRUE);	  
+				file.copy(
+					  from=file.path(file_in,"peaklist",as.character(measurements_2[i,1])),
+					  to=file.path(logfile[[1]],"peaklist",as.character(newID)),
+					  overwrite=TRUE);
+				measurements_1<-rbind(measurements_1,measurements_2[i,])	
 				at<-length(measurements_1[,1])
 				measurements_1[at,1]<-newID
-				measurements_1[at,names(measurements_1)=="Name"]<-measurements_2[i,names(measurements_2)=="Name"]
-				measurements_1[at,names(measurements_1)=="Type"]<-measurements_2[i,names(measurements_2)=="Type"]
-				measurements_1[at,names(measurements_1)=="Mode"]<-measurements_2[i,names(measurements_2)=="Mode"]
-				measurements_1[at,names(measurements_1)=="Place"]<-measurements_2[i,names(measurements_2)=="Place"]
-				measurements_1[at,names(measurements_1)=="Date"]<-measurements_2[i,names(measurements_2)=="Date"]
-				measurements_1[at,names(measurements_1)=="Time"]<-measurements_2[i,names(measurements_2)=="Time"]
-				measurements_1[at,c(8,9)]<-"TRUE"			
 				measurements_1<-measurements_1[measurements_1[,1]!="-",]
 			}
 			write.csv(measurements_1,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);

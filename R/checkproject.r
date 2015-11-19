@@ -5,15 +5,19 @@
 #' @param logfile enviMass project logfile
 #' @param isotopes Isotope list
 #' @param adducts Adducts list from package enviPat
+#' @param skipcheck Logical. Should project check be skipped?
 #'
 #' @return Character string with either specific error message or a "Project consistent" message.
 #' 
 #' @details enviMass workflow function; run before further calculations are started in the workflow.
 #' 
 
-checkproject<-function(logfile,isotopes,adducts){
+checkproject<-function(logfile,isotopes,adducts,skipcheck=FALSE){
 
   say<-"Project consistent"
+  if(skipcheck){
+	return(say);
+  }
   ##############################################################################
   # directories available? ##################################################### 
   if(!file.exists(file.path(logfile[[1]],"files"))){say<-"files directory missing!"}

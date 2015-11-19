@@ -156,6 +156,8 @@ plotaprofile<-function(
 	############################################################################
     dated<-as.POSIXct(atPOSIXsort)
     timelimit<-c(min(dated),max(dated))
+	sam_dat<-seq(1,length(dated),(length(dated)/5))
+	dated2<-pretty(dated)
     if(logint){
 		if(!add){	
 			plot.new()
@@ -169,7 +171,7 @@ plotaprofile<-function(
 				text(8.5,7,labels=paste("Profile ID = ",round(unique(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),8]),digits=0),sep=""),col="black",pos=4)      	
 			}
 			plot.window(xlim=c(timelimit),ylim=c(0,max(log10(timeset[,4:5]))))
-			axis(1,at=dated,labels=dated,col="grey",cex.axis=1)
+			axis(1,at=dated2,labels=dated2,col="grey",cex.axis=1) # former at=dated
 			axis(2);
 			box();
 			title(xlab="Time",ylab="log10(intensity)")
@@ -192,14 +194,14 @@ plotaprofile<-function(
 			plot.window(xlim=c(0,10),ylim=c(0,10))
 			if(textit){
 				text(8.5,9.5,labels="Sample intensity",col="darkgreen",pos=4)
-				text(8.5,9,labels="Blank intensity",col="red",pos=4)      
+				text(8.5,9,labels="Blind intensity",col="red",pos=4)      
 				text(8.5,8.5,labels=paste("mean m/z = ",round(mean(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),1]),digits=4),sep=""),col="black",pos=4)
 				text(8.5,8,labels=paste("mean RT = ",round(mean(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),3]),digits=1),sep=""),col="black",pos=4)      
 				#text(8.5,7.5,labels=paste("Partit. ID = ",round(unique(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),7]),digits=0),sep=""),col="black",pos=4)      
 				text(8.5,7,labels=paste("Profile ID = ",round(unique(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),8]),digits=0),sep=""),col="black",pos=4)      	
 			}
 			plot.window(xlim=c(timelimit),ylim=c(0,max((timeset[,4:5]))))
-			axis(1,at=dated,labels=dated,col="grey",cex.axis=1)
+			axis(1,at=dated2,labels=dated2,col="grey",cex.axis=1) # former at=dated
 			axis(2);
 			box();
 			title(xlab="Time",ylab="Intensity")

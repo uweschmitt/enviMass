@@ -634,7 +634,7 @@ maincalc4<-reactive({
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="EIC_ID")){rm(EIC_ID,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="EIC_ID")){rm(EIC_ID)}				
 			fileID<-peakTable[,3]
-			fileID[fileID=="0"]<-peakTable[peakTable[,5]!="0",5]
+			fileID[fileID=="0"]<-peakTable[peakTable[,3]=="0",5]
 			if(any(peakTable[as.numeric(isolate(input$profpeakID)),7]!=0)){
 				load(file.path(logfile[[1]],"MSlist",fileID[as.numeric(isolate(input$profpeakID))]), envir=as.environment(".GlobalEnv"))
 				cat("\n MSlist loaded");		
@@ -785,6 +785,8 @@ observe({
     if( (isolate(init$a)=="TRUE") & isolate(input$reset_1) ){
 		logfile$Tasks_to_redo<-replace(logfile$Tasks_to_redo,-1,TRUE)
 		logfile$Tasks_to_redo<<-replace(logfile$Tasks_to_redo,-1,TRUE)
+		logfile$Tasks_to_redo<-replace(logfile$Tasks_to_redo,1,FALSE)
+		logfile$Tasks_to_redo<<-replace(logfile$Tasks_to_redo,1,FALSE)
 		createAlert(session,anchorId = "reset", alertId="reset1", title = NULL, content="Project reset w/o peak picking",style = "warning",append=FALSE,dismiss=TRUE)
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		cat("\nReset without peak picking \n")
