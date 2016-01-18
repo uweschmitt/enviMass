@@ -48,8 +48,7 @@ if(
 									with_add<-unique(with_add)
 									takeall<-FALSE
 								}
-							}
-							if(intstand[i,10]=="TRUE"){ # use main adduct only
+							}else{ # use main adduct only
 								with_add<-c(intstand[i,6])
 								takeall<-TRUE # there is just one entry anyway
 							}
@@ -181,8 +180,7 @@ if(
 									with_add<-unique(with_add)
 									takeall<-FALSE
 								}
-							}
-							if(intstand[i,10]=="TRUE"){ # use main adduct only
+							}else{ # use main adduct only
 								with_add<-c(intstand[i,6])
 								takeall<-TRUE # there is just one entry anyway
 							}
@@ -325,8 +323,7 @@ if(
 									with_add<-unique(with_add)
 									takeall<-FALSE
 								}
-							}
-							if(targets[i,11]=="TRUE"){ # use main adduct only
+							}else{ # use main adduct only
 								with_add<-c(targets[i,7])
 								takeall<-TRUE # there is just one entry anyway
 							}
@@ -458,8 +455,7 @@ if(
 									with_add<-unique(with_add)
 									takeall<-FALSE
 								}
-							}
-							if(targets[i,11]=="TRUE"){ # use main adduct only
+							}else{ # use main adduct only
 								with_add<-c(targets[i,7])
 								takeall<-TRUE # there is just one entry anyway
 							}

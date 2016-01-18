@@ -10,7 +10,7 @@ observe({ # update selectable adducts by ionization mode
 	}
 	if(isolate(input$ISadd_charge)=="negative"){
 		updateSelectInput(session, "ISadd_add", "Main adduct (-):", choices = c("FALSE",as.character(adducts[adducts[,6]=="negative",1])), selected="FALSE")
-	}
+	}  
 })
 observe({
     input$AddIS
