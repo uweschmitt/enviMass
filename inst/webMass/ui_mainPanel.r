@@ -176,12 +176,12 @@
 					radioButtons("profnorm", "Include? ", c("yes"="yes","no"="no")),
 				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> Trend detection & blind subtraction </font></p> '),
 					radioButtons("trenddetect", "Include? ", c("yes"="yes","no"="no")),
-				HTML('<hr noshade="noshade" />')#,
-				#HTML('<h1 align="center"> &#x21e9; </h1> '),                     
+				HTML('<hr noshade="noshade" />'),
+				HTML('<h1 align="center"> &#x21e9; </h1> '),                     
 				# block 4 ######################################################
-				#HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> File-wise screening </font></p> '),
-				#	checkboxInput("screen_IS_sam", "Screen internal standards?", TRUE),
-				#	checkboxInput("screen_target_sam", "Screen internal targets/sustpects?", TRUE),
+				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Compound screening </font></p> '),
+					checkboxInput("screen_IS_sam", "Screen internal standards?", TRUE),
+					checkboxInput("screen_target_sam", "Screen targets/sustpects?", TRUE)
 				#HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Peak grouping (componentization) </font></p>'),
 				#	checkboxInput("Comp_isotop", "Group isotopologue peaks?", TRUE),
 				#	checkboxInput("Comp_add", "Group adduct peaks?", TRUE),

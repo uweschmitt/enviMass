@@ -42,14 +42,22 @@ checkproject<-function(logfile,isotopes,adducts,skipcheck=FALSE){
 			intstand_check[,3]<-checked[,2]
 			write.table(intstand_check,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)
 		}
-		if(any(!charmatch(intstand_check[,7],c("positive","negative"),nomatch=FALSE))){say<-"IS column 7 either positive or negative"}
-		if(any(!charmatch(intstand_check[intstand_check[,7]=="positive",6],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE))){say<-"IS column 6: wrong adduct"}
-		if(any(!charmatch(intstand_check[intstand_check[,7]=="negative",6],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE))){say<-"IS column 6: wrong adduct"}
+		if(any(!charmatch(intstand_check[,7],c("positive","negative"),nomatch=FALSE))){say<-"Invalid IS column 7 entry (not positive/negative)"}
+		if(any(!charmatch(intstand_check[intstand_check[,7]=="positive",6],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE))){
+			wrongadduct<-intstand_check[intstand_check[,7]=="positive",6][!charmatch(intstand_check[intstand_check[,7]=="positive",6],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE)]
+			wrongadduct<-wrongadduct[1]
+			say<-paste("IS column 6: wrong adduct",wrongadduct)
+		}
+		if(any(!charmatch(intstand_check[intstand_check[,7]=="negative",6],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE))){
+			wrongadduct<-intstand_check[intstand_check[,7]=="negative",6][!charmatch(intstand_check[intstand_check[,7]=="negative",6],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE)]
+			wrongadduct<-wrongadduct[1]
+			say<-paste("IS column 6: wrong adduct",wrongadduct)
+		}
 		if(any(is.na(as.numeric(intstand_check[,4])))){say<-"IS column 4 not numeric"}
-		if(any(is.na(as.numeric(intstand_check[intstand_check[,5]!="FALSE",5])))){say<-"IS column 5 not numeric"}
-		if(any(!charmatch(intstand_check[,8],c("TRUE","FALSE"),nomatch=FALSE))){say<-"IS column 8 not logical"}
-		if(any(!charmatch(intstand_check[,9],c("TRUE","FALSE"),nomatch=FALSE))){say<-"IS column 9 not logical"}
-		if(any(!(charmatch(intstand_check[,10],c("TRUE","FALSE"),nomatch=FALSE))) ){say<-"IS column 10 not logical"}
+		if(any(is.na(as.numeric(intstand_check[intstand_check[,5]!="FALSE",5])))){say<-"IS compound table column 5 not numeric"}
+		if(any(!charmatch(intstand_check[,8],c("TRUE","FALSE"),nomatch=FALSE))){say<-"IS compound table column 8 not logical"}
+		if(any(!charmatch(intstand_check[,9],c("TRUE","FALSE"),nomatch=FALSE))){say<-"IS compound table column 9 not logical"}
+		if(any(!(charmatch(intstand_check[,10],c("TRUE","FALSE"),nomatch=FALSE))) ){say<-"IS compound table column 10 not logical"}
 		rm(checked,intstand_check)
 	}
 	targets_check<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character",blank.lines.skip=TRUE);
@@ -65,14 +73,22 @@ checkproject<-function(logfile,isotopes,adducts,skipcheck=FALSE){
 			targets_check[,3]<-checked[,2]
 			write.table(targets_check,file=file.path(logfile[[1]],"dataframes","targets.txt"),row.names=FALSE,sep="\t",quote=FALSE)        
 		}  
-		if(any(!charmatch(targets_check[,8],c("positive","negative"),nomatch=FALSE))){say<-"IS column 7 either positive or negative"}
-		if(any(!charmatch(targets_check[targets_check[,8]=="positive",7],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE))){say<-"IS column 7: wrong adduct"}
-		if(any(!charmatch(targets_check[targets_check[,8]=="negative",7],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE))){say<-"IS column 7: wrong adduct"}
+		if(any(!charmatch(targets_check[,8],c("positive","negative"),nomatch=FALSE))){say<-"Invalid target column 8 entry (not positive/negative)"}
+		if(any(!charmatch(targets_check[targets_check[,8]=="positive",7],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE))){
+			wrongadduct<-targets_check[targets_check[,8]=="positive",7][!charmatch(targets_check[targets_check[,8]=="positive",7],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE)]
+			wrongadduct<-wrongadduct[1]
+			say<-paste("target column 7: wrong adduct",wrongadduct)
+		}
+		if(any(!charmatch(targets_check[targets_check[,8]=="negative",7],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE))){
+			wrongadduct<-targets_check[targets_check[,8]=="negative",7][!charmatch(targets_check[targets_check[,8]=="negative",7],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE)]		
+			wrongadduct<-wrongadduct[1]
+			say<-paste("target column 7: wrong adduct",wrongadduct)
+		}
 		if(any(is.na(as.numeric(targets_check[,4])))){say<-"IS column 4 not numeric"}
-		if(any(is.na(as.numeric(targets_check[targets_check[,5]!="FALSE",5])))){say<-"IS column 5 not numeric"}
-		if(any(!charmatch(targets_check[,9],c("TRUE","FALSE"),nomatch=FALSE))){say<-"IS column 9 not logical"}
-		if(any(!charmatch(targets_check[,10],c("TRUE","FALSE"),nomatch=FALSE))){say<-"IS column 10 not logical"}
-		if(any(!(charmatch(targets_check[,11],c("TRUE","FALSE"),nomatch=FALSE))) ){say<-"IS column 11 not logical"}	
+		if(any(is.na(as.numeric(targets_check[targets_check[,5]!="FALSE",5])))){say<-"target compound table column 5 not numeric"}
+		if(any(!charmatch(targets_check[,9],c("TRUE","FALSE"),nomatch=FALSE))){say<-"target compound table column 9 not logical"}
+		if(any(!charmatch(targets_check[,10],c("TRUE","FALSE"),nomatch=FALSE))){say<-"target compound table column 10 not logical"}
+		if(any(!(charmatch(targets_check[,11],c("TRUE","FALSE"),nomatch=FALSE))) ){say<-"target compound table column 11 not logical"}	
 		rm(checked,targets_check)  
 	}   
   # enough compounds for recalibration available? ##############################
