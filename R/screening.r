@@ -106,7 +106,7 @@ screening<-function (	peaklist,
 	cat("\n Screen most intense ...")
     for (i in 1:length(pattern)) {
         pattern[[i]] <- pattern[[i]][order(pattern[[i]][, 2], 
-            decreasing = TRUE), ]
+            decreasing = TRUE), ,drop=FALSE]
     }
     results <- list(0)
     result <- data.frame( "-", "-", "-", "-", "-", "-", "-", 
@@ -119,7 +119,7 @@ screening<-function (	peaklist,
     names(results) <- names(pattern)
     mon <- rep()
     for (i in 1:length(pattern)) {
-        mon <- c(mon, pattern[[i]][1, 1])
+        mon <- c(mon, pattern[[i]][1,1])
     }	
     getit <- search_peak(peaklist, mon, dmz, ppm, RT, dRT)	
     cat(" done.")
@@ -131,7 +131,7 @@ screening<-function (	peaklist,
     for ( i in 1:length(getit) ) {
         if ( getit[i] != FALSE ) {
             hihit <- as.numeric(strsplit(getit[i], " / ")[[1]])
-            pat <- pattern[[from[i]]][, c(1, 2)]
+            pat <- pattern[[from[i]]][, c(1, 2),drop=FALSE]
             for (j in 1:length(hihit)) {
                 pat2 <- as.data.frame(pat)
                 pat2[, 2] <- pat2[, 2]/max(pat2[, 2])

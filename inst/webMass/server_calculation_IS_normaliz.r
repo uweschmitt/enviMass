@@ -31,7 +31,7 @@ if(
 								dmz = as.numeric(logfile$parameters[45]), 
 								ppm = logfile$parameters[46], 
 								dRT = patternDelRT_pos_IS, 
-								dRTwithin = as.numeric(logfile$parameters[43]) , 
+								dRTwithin = as.numeric(logfile$parameters[43]), 
 								dRTblank = FALSE, 
 								dInt = as.numeric(logfile$parameters[47]), 
 								Intcut = as.numeric(logfile$parameters[48]), 
