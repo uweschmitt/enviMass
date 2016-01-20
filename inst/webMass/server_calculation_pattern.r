@@ -104,7 +104,8 @@ if(
 									detect="centroid",
 									plotit=FALSE
 								)
-								pattern_pos_IS[[counter]]<-pattern[[1]]; 								
+								pattern_pos_IS[[counter]]<- pattern[[1]][order(pattern[[1]][, 2], 
+									decreasing = TRUE), ,drop=FALSE]
 								patternRT_pos_IS<-c(patternRT_pos_IS,as.numeric(as.character(rets[i]))*60);
 								if(tolrets[i]!="FALSE"){
 									patternDelRT_pos_IS<-c(patternDelRT_pos_IS,as.numeric(as.character(tolrets[i]))*60)
@@ -235,8 +236,9 @@ if(
 									pattern,
 									detect="centroid",
 									plotit=FALSE
-								)
-								pattern_neg_IS[[counter]]<-pattern[[1]];                    								
+								)   
+								pattern_neg_IS[[counter]]<- pattern[[1]][order(pattern[[1]][, 2], 
+									decreasing = TRUE), ,drop=FALSE]								
 								patternRT_neg_IS<-c(patternRT_neg_IS,as.numeric(as.character(rets[i]))*60);
 								if(tolrets[i]!="FALSE"){
 									patternDelRT_neg_IS<-c(patternDelRT_neg_IS,as.numeric(as.character(tolrets[i]))*60)
@@ -378,8 +380,9 @@ if(
 									pattern,
 									detect="centroid",
 									plotit=FALSE
-								)
-								pattern_pos_target[[counter]]<-pattern[[1]];                    
+								)  
+								pattern_pos_target[[counter]]<- pattern[[1]][order(pattern[[1]][, 2], 
+									decreasing = TRUE), ,drop=FALSE]								
 								patternRT_pos_target<-c(patternRT_pos_target,as.numeric(as.character(rets[i]))*60);
 								if(tolrets[i]!="FALSE"){
 									patternDelRT_pos_target<-c(patternDelRT_pos_target,as.numeric(as.character(tolrets[i]))*60)
@@ -511,7 +514,8 @@ if(
 									detect="centroid",
 									plotit=FALSE
 								)
-								pattern_neg_target[[counter]]<-pattern[[1]];                    
+								pattern_neg_target[[counter]]<- pattern[[1]][order(pattern[[1]][, 2], 
+									decreasing = TRUE), ,drop=FALSE]	                   
 								patternRT_neg_target<-c(patternRT_neg_target,as.numeric(as.character(rets[i]))*60);
 								if(tolrets[i]!="FALSE"){
 									patternDelRT_neg_target<-c(patternDelRT_neg_target,as.numeric(as.character(tolrets[i]))*60)

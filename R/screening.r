@@ -104,10 +104,10 @@ screening<-function (	peaklist,
 	############################################################################
     # Find most intense peak ###################################################
 	cat("\n Screen most intense ...")
-    for (i in 1:length(pattern)) {
-        pattern[[i]] <- pattern[[i]][order(pattern[[i]][, 2], 
-            decreasing = TRUE), ,drop=FALSE]
-    }
+    #for (i in 1:length(pattern)) {
+    #    pattern[[i]] <- pattern[[i]][order(pattern[[i]][, 2], 
+    #        decreasing = TRUE), ,drop=FALSE]
+    #}
     results <- list(0)
     result <- data.frame( "-", "-", "-", "-", "-", "-", "-", 
         "-", "-", "-")
