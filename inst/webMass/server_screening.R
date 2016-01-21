@@ -36,38 +36,36 @@ if(
 				length(pattern_pos_IS[[i]][,1])
 			)
 		}
-		other_peak_mass<-rep(0,count_nonmax)
-		other_peak_ID<-rep(0,count_nonmax)
-		other_peak_number<-rep(0,count_nonmax)
-		other_peak_RT<-rep(0,count_nonmax)
-		other_peak_dRT<-rep(0,count_nonmax)
+		centro_mass<-rep(0,count_nonmax)
+		centro_ID<-rep(0,count_nonmax)
+		centro_number<-rep(0,count_nonmax)
+		centro_RT<-rep(0,count_nonmax)
+		centro_dRT<-rep(0,count_nonmax)
 		at_ID<-1
-		for(i in 1:length(getit_1)){
-			if(getit_1[i]!="FALSE"){
-				n<-length(pattern_pos_IS[[i]][,1])
-				if(n>0){ # more than one centroid per compound?
-					other_peak_mass[at_ID:(at_ID+n-1)]<-pattern_pos_IS[[i]][,1]
-					other_peak_ID[at_ID:(at_ID+n-1)]<-i
-					other_peak_number[at_ID:(at_ID+n-1)]<-(1:n)
-					other_peak_RT[at_ID:(at_ID+n-1)]<-patternRT_pos_IS[i]
-					other_peak_dRT[at_ID:(at_ID+n-1)]<-patternDelRT_pos_IS[i]
-					at_ID<-(at_ID+n)
-				}
-			}
+		centro_list<-as.list(rep("FALSE",length(pattern_pos_IS)))
+		for(i in 1:length(pattern_pos_IS)){
+			n<-length(pattern_pos_IS[[i]][,1])
+			centro_mass[at_ID:(at_ID+n-1)]<-pattern_pos_IS[[i]][,1]
+			centro_ID[at_ID:(at_ID+n-1)]<-i
+			centro_number[at_ID:(at_ID+n-1)]<-(1:n)
+			centro_RT[at_ID:(at_ID+n-1)]<-patternRT_pos_IS[i]
+			centro_dRT[at_ID:(at_ID+n-1)]<-patternDelRT_pos_IS[i]
+			centro_list[[i]]<-as.list(rep("FALSE",n))
+			at_ID<-(at_ID+n)
 		}
 		getit <- search_peak(
 			peaklist, 
-			other_peak_mass, 
+			centro_mass, 
 			dmz=5, 
 			ppm=TRUE, 
 			RT = other_peak_RT, 
 			dRT=other_peak_dRT)	
+		for(i in 1:length(getit)){ # transfer to  list
+			centro_list[[centro_ID[i]]][[centro_number[i]]]<-getit[i]
+		}
 
 
-
-
-
-			
+		
 		
 	
 	
@@ -75,7 +73,8 @@ if(
 	
 	
     ############################################################################
-	# then on targets pos, before swithcing to negative list - upload takes too long
+	# then on targets pos, before switching to negative list - upload takes too long
+	
 	
 }else{
 if(FALSE){
