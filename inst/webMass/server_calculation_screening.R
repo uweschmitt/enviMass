@@ -91,14 +91,32 @@ system.time({
 		}
 		# calculate combinations over centroids&peaks per sample per compoundadduct
 		many<-0
-		for(i in 1:length(res_IS_pos_screen)){
+		for(i in 1:length(res_IS_pos_screen)){ # i - compound_adduct
 			if(!is.null(res_IS_pos_screen[[i]])){
-				for(j in 1:length(res_IS_pos_screen[[i]])){
-					if(!is.null(res_IS_pos_screen[[i]][[j]])){
-						many<-(many+1)
-			
-			
-			
+				for(j in 1:length(res_IS_pos_screen[[i]])){	# j - sample
+				
+				
+				
+				
+				
+					if(!is.null(res_IS_pos_screen[[i]][[j]])){	
+						for(n in 1:length(res_IS_pos_screen[[i]][[j]])){ # centroid
+							if(!is.null(res_IS_pos_screen[[i]][[j]][[n]])){
+								for(m in 1:length(res_IS_pos_screen[[i]][[j]][[n]])){
+									if(!is.null(res_IS_pos_screen[[i]][[j]][[n]][[m]])){
+										many<-(many+1)
+										
+										
+										
+										
+									}
+								}
+							}
+						}
+						
+						
+						
+						
 					}
 				}
 			}
