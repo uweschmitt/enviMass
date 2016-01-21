@@ -79,7 +79,7 @@ maincalc<-reactive({
         ########################################################################
 		# Compound screening ###################################################
         if(do_flow==11){
-			source("server_screening.R", local=TRUE);		
+			source("server_calculation_screening.R", local=TRUE);		
 
 			
 			
