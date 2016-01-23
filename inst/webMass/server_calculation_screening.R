@@ -95,6 +95,10 @@ system.time({
 			if(!is.null(res_IS_pos_screen[[i]])){
 				for(j in 1:length(res_IS_pos_screen[[i]])){
 					if(!is.null(res_IS_pos_screen[[i]][[j]])){
+					
+					
+					
+					
 						many<-(many+1)
 			
 			
@@ -103,6 +107,28 @@ system.time({
 				}
 			}
 		}
+		
+		# define the result table #################################################
+		IS_pos_ID<-c(1,2,3)
+		IS_pos_conc<-c(0.5,0.10,300)
+		IS_pos_score<-c(1,0.8,0.5)
+		IS_screening_pos<- data.frame(
+			ID = IS_pos_ID,
+			Concentration = IS_pos_conc,
+			Score = IS_pos_score
+			#flag = c('<img src="test.png" height="52"></img>',
+           #'<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/200px-Flag_of_the_People%27s_Republic_of_China.svg.png" height="52"></img>'
+           #)
+		)
+		save(
+			IS_screening_pos,
+			file=file.path(logfile$project_folder,"results","screening","IS_screening_pos",fsep = "\\"),
+			precheck=FALSE
+		)
+
+		
+		
+		
 				
 })		
 		

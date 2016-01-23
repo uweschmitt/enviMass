@@ -174,6 +174,9 @@ maincalc2<-reactive({
 		}
 		if(file.exists(file.path(file_in,"logfile.emp"))){
 			load(file.path(file_in,"logfile.emp"),envir=as.environment(".GlobalEnv"))
+			# include version updates #############################################
+			source("server_updates.R", local=TRUE);	 
+			#######################################################################			
 			logfile$project_folder<-as.character(file_in);
 			save(logfile,file=file.path(file_in,"logfile.emp"));
 			output$textit<-renderText(logfile$project_folder);
@@ -300,6 +303,23 @@ maincalc2<-reactive({
 					assign("profpeaks",profpeaks_neg,envir=as.environment(".GlobalEnv"));
 				}
 			}
+			
+			
+if(file.exists(file.path(logfile$project_folder,"results","screening","IS_screening_pos"))){			
+	load(file=file.path(as.character(logfile$project_folder),"results","screening","IS_screening_pos"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
+	output$Table_IS_screening_pos <- DT::renderDataTable({
+		DT::datatable(IS_screening_pos, escape = FALSE) # HERE
+	})
+	output$Table_IS_screening_pos_row = renderPrint({
+    s = input$Table_IS_screening_pos_rows_selected
+    if (length(s)) {
+      cat('These rows were selected:\n\n')
+      cat(IS_screening_pos[s,3], sep = ', ')
+    }
+  })
+		
+}			
+			
 			
 
 			if(file.exists(file.path(logfile$project_folder,"pics","profilehisto.png"))){ 

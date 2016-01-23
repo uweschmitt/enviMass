@@ -33,6 +33,8 @@ newproject<-function(pro_name,pro_dir,IS,targets){
   dir.create(file.path(pro_dir,pro_name,"peaklist"),recursive=TRUE)   # subfolder  
   dir.create(file.path(pro_dir,pro_name,"features"),recursive=TRUE)   # subfolder
   dir.create(file.path(pro_dir,pro_name,"results"),recursive=TRUE)    # subfolder
+	dir.create(file.path(pro_dir,pro_name,"results","screening"),recursive=TRUE)    	# subfolder  
+	dir.create(file.path(pro_dir,pro_name,"results","quantification"),recursive=TRUE)   # subfolder 		
   dir.create(file.path(pro_dir,pro_name,"dataframes"),recursive=TRUE) # subfolder
   dir.create(file.path(pro_dir,pro_name,"pics"),recursive=TRUE)       # subfolder
   dir.create(file.path(pro_dir,pro_name,"exports"),recursive=TRUE)    # subfolder

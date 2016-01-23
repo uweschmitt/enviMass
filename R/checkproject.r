@@ -24,6 +24,8 @@ checkproject<-function(logfile,isotopes,adducts,skipcheck=FALSE){
   if(!file.exists(file.path(logfile[[1]],"MSlist"))){say<-"MSlist directory missing!"}  
   if(!file.exists(file.path(logfile[[1]],"features"))){say<-"features directory missing!"}
   if(!file.exists(file.path(logfile[[1]],"results"))){say<-"results directory missing!"}
+	if(!file.exists(file.path(logfile[[1]],"results","screening"))){say<-"results directory missing!"} 
+	if(!file.exists(file.path(logfile[[1]],"results","quantification"))){say<-"results directory missing!"} 
   if(!file.exists(file.path(logfile[[1]],"dataframes"))){say<-"dataframes directory missing!"}
   if(!file.exists(file.path(logfile[[1]],"pics"))){say<-"pics directory missing!"}
   if(!file.exists(file.path(logfile[[1]],"exports"))){say<-"exports directory missing!"}  

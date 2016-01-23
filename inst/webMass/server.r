@@ -35,7 +35,7 @@ shinyServer(function(input, output, session){
   ##############################################################################
   # start projects or load them - get their individual logfile #################
   # also load parameter settings ###############################################
-  source("server_startup.r", local=TRUE)
+  source("server_startup.r", local=TRUE) 
   ##############################################################################  
   # add compounds, measurements, etc ###########################################
   source("server_obs_Add.r", local=TRUE)

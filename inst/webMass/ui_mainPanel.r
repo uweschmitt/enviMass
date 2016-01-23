@@ -508,7 +508,32 @@
 					imageOutput("recal_pic", height="auto"),
 					imageOutput("peakhist_pic", height="auto"),
 					imageOutput("peakmzRT_pic", height="auto")
-                )				
+                ),
+				
+				
+				tabPanel("Compound screening",
+					tabsetPanel(
+						tabPanel("Positive ionization",
+							selectInput(inputId="Pos_compound_select",label="",choices=c("Target compounds","Internal standards"), 
+								selected = "Target compounds", multiple = FALSE),
+			
+				
+							fluidRow(
+								column(9, DT::dataTableOutput('Table_IS_screening_pos')),
+								column(3, verbatimTextOutput('Table_IS_screening_pos_row'))
+							)
+						
+						
+						),
+						tabPanel("Negative ionization",
+							selectInput(inputId="Neg_compound_select",label="",choices=c("Target compounds","Internal standards"), selected = "Target compounds", multiple = FALSE)
+	
+						
+						)
+					)	
+				)
+
+				
             )
         ),
         ########################################################################
