@@ -109,16 +109,30 @@ system.time({
 		}
 		
 		# define the result table #################################################
-		IS_pos_ID<-c(1,2,3)
-		IS_pos_conc<-c(0.5,0.10,300)
-		IS_pos_score<-c(1,0.8,0.5)
+		IS_pos_ID<-sample(c(1,2,3),10, replace =TRUE)
+		IS_pos_conc<-sample(c(0.5,0.10,300),10, replace =TRUE)
+		IS_pos_score<-sample(c(1,0.8,0.5),10, replace =TRUE)
+		IS_pos_flag<-rep('<img src="ID_1.png" height="22"></img>',10)	
+		
+for(i in 1:1000){		
+png(file = file.path(logfile$project_folder,"results","screening",paste("ID_",as.character(i),sep=""),fsep = "\\"), 
+	width = 300, height = 80, units = "px", pointsize = 12, bg = "transparent")
+	par(mar=c(0,0,0,0))
+	plot(1:10,pch=19,cex=.3,col="red")
+	rect(1, 5, 3, 7, col = "white")
+dev.off()
+}		
+		
+		
 		IS_screening_pos<- data.frame(
 			ID = IS_pos_ID,
 			Concentration = IS_pos_conc,
-			Score = IS_pos_score
-			#flag = c('<img src="test.png" height="52"></img>',
-           #'<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/200px-Flag_of_the_People%27s_Republic_of_China.svg.png" height="52"></img>'
-           #)
+			Score = IS_pos_score,
+			flag = IS_pos_flag#c(
+				#'<img src="ID_1.png" height="22"></img>',
+				#'<img src="project22/results/screening/ID_1.png" height="32"></img>',
+				#'<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/200px-Flag_of_the_People%27s_Republic_of_China.svg.png" height="52"></img>'
+			#)
 		)
 		save(
 			IS_screening_pos,
