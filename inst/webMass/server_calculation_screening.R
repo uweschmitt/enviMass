@@ -27,8 +27,21 @@ if(
 		
 		peaks<-profileList_pos[[7]];
 		peaklist<-peaks[,c(14,16,15)];
+		
+		
+ppm<-TRUE
+mztol<-4
+cutint<-2E3
+int_tol<-.25
+RT_tol_inside<-0.3
 
-system.time({		
+		
+#pattern_pos_IS<-c(pattern_pos_IS,pattern_pos_IS,pattern_pos_IS)
+#length(pattern_pos_IS)
+#patternRT_pos_IS<-rep(patternRT_pos_IS,3)
+#patternDelRT_pos_IS<-rep(patternDelRT_pos_IS,3)
+		
+#system.time({		
 
 		# screen centroids
 		count_nonmax<-0
@@ -72,15 +85,21 @@ system.time({
 				for(j in 1:length(screen_list[[i]])){ # over its centroids = j
 					if(screen_list[[i]][[j]]!="FALSE"){ 
 						profs<-as.numeric(strsplit(screen_list[[i]][[j]]," / ")[[1]])
-						for(k in 1:length(profs)){ # over their matched profiles = k
+						for(k in 1:length(profs)){ # over their matched profile peaks = k
 							if(profileList_pos[[7]][profs[k],4]!=profs[k]){cat("\n debug me: profile ID mismatch");stop();} # just a check
-							for(m in profileList_pos[[7]][profs[k],1]:profileList_pos[[7]][profs[k],2]){ # over their samples
+							for(m in profileList_pos[[7]][profs[k],1]:profileList_pos[[7]][profs[k],2]){ # over their sample peaks
+								delmass<-abs(profileList_pos[[2]][m,1]-pattern_pos_IS[[i]][j,1])		
+								if(!ppm){
+									if(delmass>mztol){next}
+								}else{
+									if(delmass*1E6/pattern_pos_IS[[i]][j,1]>mztol){next}
+								}
 								if(length(res_IS_pos_screen[[i]])<profileList_pos[[2]][m,6][[1]] ){
 									res_IS_pos_screen[[i]][[profileList_pos[[2]][m,6][[1]] ]]<-list() 		# sample level
 								}
 								if(length(res_IS_pos_screen[[i]][[profileList_pos[[2]][m,6][[1]]]])<j){
 									res_IS_pos_screen[[i]][[ profileList_pos[[2]][m,6][[1]]]][[j]]<-list()	# centroid level
-								}	
+								}									
 								len<-length(res_IS_pos_screen[[i]][[profileList_pos[[2]][m,6][[1]]]][[j]]) # peak level
 								res_IS_pos_screen[[i]][[profileList_pos[[2]][m,6][[1]]]][[j]][[len+1]]<-m
 							}							
@@ -89,30 +108,191 @@ system.time({
 				}
 			}
 		}
-		# calculate combinations over centroids&peaks per sample per compoundadduct
+
+		
+system.time({	
+		
+		# calculate combinations over centroids & peaks per sample per compound_adduct
 		many<-0
-		for(i in 1:length(res_IS_pos_screen)){
-			if(!is.null(res_IS_pos_screen[[i]])){
-				for(j in 1:length(res_IS_pos_screen[[i]])){
-					if(!is.null(res_IS_pos_screen[[i]][[j]])){
-					
-					
-					
-					
-						many<-(many+1)
-			
-			
-			
+		doubled<-0
+		max_score<-rep(0,length(pattern_pos_IS))
+		max_peaks<-rep(0,length(pattern_pos_IS))
+		res_IS_pos_screen_logical<-res_IS_pos_screen # store logical results - peak matched?
+		for(i in 1:length(res_IS_pos_screen)){ # i - on compound_adduct
+			if(length(res_IS_pos_screen[[i]])>0){
+				for(m in 1:length(res_IS_pos_screen[[i]])){ # m - sample
+					if(length(res_IS_pos_screen[[i]][[m]])>0){
+						# retrieve ALL unique two-combinations of peaks ##########################################
+						combis<-list();
+						at_combis<-1;
+						if(length(res_IS_pos_screen[[i]][[m]])>1){
+						for(j in 1:(length(res_IS_pos_screen[[i]][[m]])-1)){ # j - on centroid
+							if(length(res_IS_pos_screen[[i]][[m]][[j]])>0){
+								for(k in 1:length(res_IS_pos_screen[[i]][[m]][[j]])){ # k - on peak 
+									if(length(res_IS_pos_screen[[i]][[m]][[j]][[k]])>0){
+										rescaled_intens_lower<-(pattern_pos_IS[[i]][,2]*(
+											( profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[j]][[k]]),2]-(int_tol*profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[j]][[k]]),2]) )
+											/pattern_pos_IS[[i]][j,1])
+										)									
+										rescaled_intens_upper<-(pattern_pos_IS[[i]][,2]*(
+											( profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[j]][[k]]),2]+(int_tol*profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[j]][[k]]),2]) )
+											/pattern_pos_IS[[i]][j,1])
+										)									
+										for(b in (j+1):length(res_IS_pos_screen[[i]][[m]])){ # b - on centroid
+											if(length(res_IS_pos_screen[[i]][[m]][[b]])>0){			
+												for(d in 1:length(res_IS_pos_screen[[i]][[m]][[b]])){
+													if(res_IS_pos_screen[[i]][[m]][[j]][[k]]!=res_IS_pos_screen[[i]][[m]][[b]][[d]]){ # must be two different peaks!
+														if(
+															RT_tol_inside<abs(profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[b]][[d]]),3]-profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[j]][[k]]),3])
+														){next} # within small RT window?
+														if(
+															(profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[b]][[d]]),2]+(int_tol*profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[b]][[d]]),2]))<rescaled_intens_lower[b]
+														){next}
+														if(
+															(profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[b]][[d]]),2]-(int_tol*profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[b]][[d]]),2]))>rescaled_intens_upper[b]
+														){next}													
+															combis[[at_combis]]<-list()
+															combis[[at_combis]][[1]]<-c(j,k)
+															combis[[at_combis]][[2]]<-c(b,d)
+															at_combis<-(at_combis+1)
+															many<-(many+1)
+													}else{
+														doubled<-(doubled+1)
+													}
+												}
+											}
+										}									
+									}
+								}
+							}
+						}
+						}else{"finish me"} # singleton
+						# recombine these 2-tupels ###############################################################
+						#if(length(combis)>0){print(length(combis))}
+						#if(length(combis)>2){stop()}
+						fin_combis<-list()
+						if(length(combis)>1){
+							do_combis<-TRUE
+							while(do_combis){
+								new_combis<-list()
+								for(b in 1:length(combis)){
+									for(d in (b+1):length(combis)){
+								
+
+
+								
+									}
+								}
+								
+								if(length(new_combis)<2){do_combis<-FALSE}
+							}
+						}else{fin_combis<-combis}
+						# annotate results #######################################################################
+						for(b in 1:length(fin_combis)){
+						
+						
+						
+						}
+						
+						
+						
 					}
 				}
 			}
 		}
 		
+				
+})		
+		
+		
+system.time({	
+		
+		# calculate combinations over centroids&peaks per sample per compound_adduct
+		many<-0
+		max_score<-rep(0,length(pattern_pos_IS))
+		max_peaks<-rep(0,length(pattern_pos_IS))
+		res_IS_pos_screen_logical<-res_IS_pos_screen # store logical results - peak matched?
+		for(i in 1:length(res_IS_pos_screen)){ # i - on compound_adduct
+			if(length(res_IS_pos_screen[[i]])>0){
+				for(m in 1:length(res_IS_pos_screen[[i]])){ # m - sample
+					if(length(res_IS_pos_screen[[i]][[m]])>0){
+						for(j in 1:length(res_IS_pos_screen[[i]][[m]])){ # j - on centroid
+							if(length(res_IS_pos_screen[[i]][[m]][[j]])>0){
+								for(k in 1:length(res_IS_pos_screen[[i]][[m]][[j]])){ # k - on peak 
+									if(length(res_IS_pos_screen[[i]][[m]][[j]][[k]])>0){
+									#if(res_IS_pos_screen_logical[[i]][[m]][[j]][[k]]!=0){ # peak positively screened before?
+										rescaled_intens_lower<-(pattern_pos_IS[[i]][,2]*(
+											( profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[j]][[k]]),2]-(int_tol*profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[j]][[k]]),2]) )
+											/pattern_pos_IS[[i]][j,1])
+										)									
+										rescaled_intens_upper<-(pattern_pos_IS[[i]][,2]*(
+											( profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[j]][[k]]),2]+(int_tol*profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[j]][[k]]),2]) )
+											/pattern_pos_IS[[i]][j,1])
+										)									
+										found_intens<-rep(FALSE,length(pattern_pos_IS[[i]][,1]))
+										found_intens[k]<-TRUE
+										# scale to that peak and screen over all others - requires an inner loop
+										for(b in 1:length(res_IS_pos_screen[[i]][[m]])){ # b - on centroid
+										if(length(res_IS_pos_screen[[i]][[m]][[b]])>0){			
+										if(b!=j){
+											for(d in 1:length(res_IS_pos_screen[[i]][[m]][[b]])){
+												# check lower intensity bound
+												if(
+													(profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[b]][[d]]),2]+(int_tol*profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[b]][[d]]),2]))<rescaled_intens_lower[[b]]
+												){next}
+												if(
+													(profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[b]][[d]]),2]-(int_tol*profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[b]][[d]]),2]))>rescaled_intens_upper[[b]]
+												){next}
+												# check adapted RT window
+												if(
+													RT_tol_inside<abs(profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[b]][[d]]),3]-profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[j]][[k]]),3])
+												){next}
+												# matched!
+												found_intens[b]<-TRUE
+												many<-(many+1)
+											}
+										}
+										}
+										}
+										if(sum(found_intens)>max_peaks[i]){max_peaks[i]<-sum(found_intens)}
+										must_intens<-(rescaled_intens_lower>=cutint)
+										aim_intens<-sum(rescaled_intens_lower[must_intens])
+										if(any(must_intens)){
+											local_score<-(sum(rescaled_intens_lower[found_intens & must_intens])/aim_intens)
+											if(local_score>max_score[i]){max_score[i]<-local_score}
+										}else{ # found below threshold!
+											if(max_score[i]==0){
+												aim_intens<-sum(rescaled_intens_lower[rescaled_intens_lower>=min(rescaled_intens_lower[found_intens])])
+												local_score<--(sum(rescaled_intens_lower[found_intens])/aim_intens)
+												if(local_score<max_score[i]){
+													max_score[i]<-local_score
+												}
+											}
+										}
+										#res_IS_pos_screen_logical[[i]][[m]][[b]][[d]]<-0
+										}
+									#}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+				
+})		
+	
+	
+			
 		# define the result table #################################################
 		IS_pos_ID<-sample(c(1,2,3),10, replace =TRUE)
 		IS_pos_conc<-sample(c(0.5,0.10,300),10, replace =TRUE)
 		IS_pos_score<-sample(c(1,0.8,0.5),10, replace =TRUE)
 		IS_pos_flag<-rep('<img src="ID_1.png" height="22"></img>',10)	
+	
+		
+		
 		
 for(i in 1:1000){		
 png(file = file.path(logfile$project_folder,"results","screening",paste("ID_",as.character(i),sep=""),fsep = "\\"), 
@@ -142,9 +322,6 @@ dev.off()
 
 		
 		
-		
-				
-})		
 		
 
 		

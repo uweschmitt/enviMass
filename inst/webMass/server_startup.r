@@ -340,15 +340,16 @@ if(file.exists(file.path(logfile$project_folder,"results","screening","IS_screen
 		server = TRUE
 	)
 	
-	
+	used_rows<-c() # ISSUE with selection! s requires a deselection before a row can be loaded anew
 	output$Table_IS_screening_pos_row = renderPrint({
-    s = input$Table_IS_screening_pos_rows_selected
-	s<-s[length(s)]
-    if (length(s)) {
-      cat('These rows were selected:\n\n')
-      cat(IS_screening_pos[s,3], sep = ', ')
-    }
-  })
+		s = input$Table_IS_screening_pos_rows_selected
+		#s<-s[length(s)]
+		if (length(s)) {
+			cat('These rows were selected:\n\n')
+			#cat(IS_screening_pos[s,3], sep = ', ')
+			cat(s, sep = ', ')
+		}
+	})
 		
 }			
 			
