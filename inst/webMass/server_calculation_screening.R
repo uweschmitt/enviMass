@@ -41,7 +41,7 @@ RT_tol_inside<-0.3
 #patternRT_pos_IS<-rep(patternRT_pos_IS,3)
 #patternDelRT_pos_IS<-rep(patternDelRT_pos_IS,3)
 		
-#system.time({		
+system.time({		
 
 		# screen centroids
 		count_nonmax<-0
@@ -77,7 +77,149 @@ RT_tol_inside<-0.3
 		for(i in 1:length(getit)){ # transfer to a fist list of compoundadduct x centroids
 			screen_list[[centro_ID[i]]][[centro_number[i]]]<-getit[i]
 		}
-		# resort to a full result list: pattern x sample x centroids x matches ( = peak index in profileList_pos)
+		# resort to a full result list: pattern x sample x (centroids,matches) ( = peak index in profileList_pos)
+		IS_pos_screen_listed<-list()  # default: no match at all
+		for(i in 1:length(screen_list)){ # over compound x adduct = i
+			if(any(is.na(screen_list[[i]]==FALSE))){
+				IS_pos_screen_listed[[i]]<-list() # m-level		
+				for(j in 1:length(screen_list[[i]])){ # over its centroids = j
+					if(screen_list[[i]][[j]]!="FALSE"){ 
+						profs<-as.numeric(strsplit(screen_list[[i]][[j]]," / ")[[1]])
+						for(k in 1:length(profs)){ # over their matched profile peaks = k
+							if(profileList_pos[[7]][profs[k],4]!=profs[k]){cat("\n debug me: profile ID mismatch");stop();} # just a check
+							for(m in profileList_pos[[7]][profs[k],1]:profileList_pos[[7]][profs[k],2]){ # over their sample peaks
+								delmass<-abs(profileList_pos[[2]][m,1]-pattern_pos_IS[[i]][j,1])		
+								if(!ppm){
+									if(delmass>mztol){next}
+								}else{
+									if(delmass*1E6/pattern_pos_IS[[i]][j,1]>mztol){next}
+								}
+								if(length(IS_pos_screen_listed[[i]])<profileList_pos[[2]][m,6][[1]] ){
+									IS_pos_screen_listed[[i]][[profileList_pos[[2]][m,6][[1]]]]<-matrix(ncol=2,nrow=0)	# sample level
+								}
+								IS_pos_screen_listed[[i]][[profileList_pos[[2]][m,6][[1]]]]<-rbind(
+									IS_pos_screen_listed[[i]][[profileList_pos[[2]][m,6][[1]]]],c(j,m)
+								)
+							}							
+						}
+					}
+				}
+			}
+		}
+		
+		
+		
+		
+})
+		
+system.time({	
+
+		recomb_score<-function(cent_peak_mat,pattern,profileList,LOD,RT_tol_inside){
+			
+			#######################################################################
+			if(!is.matrix(cent_peak_mat)){stop("cent_peak_mat must be a matrix")}
+			if(!is.matrix(pattern)){stop("pattern must be a matrix")}
+			if((!is.numeric(LOD))||(length(LOD)>1)){stop("LOD must be numeric")}
+			#######################################################################		
+			# internal function to check plausibility #############################
+			check_plaus<-function(cent_peak_mat,profileList,RT_tol_inside){
+				# if only one row with (centroid,peak) left = all is plausible
+				# - plausibility of this one (centroid,peak) must be given at this stage, can be inherited further!
+				# unique centroids combined?
+				if(any(duplicated(cent_peak_mat[,1]))){return(FALSE)}
+				# unique peaks combined?
+				if(any(duplicated(cent_peak_mat[,2]))){return(FALSE)}
+				# all within small RT window ?
+				rangeRT<-range(profileList[[2]][cent_peak_mat[,2],3])
+				if((rangeRT[2]-rangeRT[1])>RT_tol_inside){return(FALSE)}
+				# does intensity pattern match?
+				if(length(cent_peak_mat[,1])>1){ # ... which needs more than one peak
+	# FINISH			
+	# use intercept = 0?
+				}
+				# else all is plausible
+				return(TRUE)
+			}
+			#######################################################################		
+			results<-list(0)
+			at_results<-1
+			checked<-TRUE
+			check_nodes<-list()
+			check_nodes[[1]]<-cent_peak_mat # initialize with full set
+			check_nodes_index<-list()
+			check_nodes_index[[1]]<-length(cent_peak_mat[,1])
+			while(checked){
+				new_nodes<-list()
+				new_nodes_index<-list()
+				at_new_nodes<-1
+				checked<-FALSE
+				for(k in 1:length(check_nodes)){
+					if( check_plaus(check_nodes[[k]],profileList,RT_tol_inside) ){
+						results[[at_results]]<-check_nodes[[k]]
+						at_results<-(at_results+1)
+					}else{
+						# maker smaller combinations by omission of one (centroid,peak)
+						if(check_nodes_index[[k]]>0){ 
+							# nothing to inherit - 
+							# - this combination is either part of another larger one or
+							# - has been build from low-combining that one
+							len<-(length(check_nodes[[k]][,1]):1)
+							len<-(len[1:check_nodes_index[[k]]])
+							len<-rev(len)
+							for(z in 1:check_nodes_index[[k]]){
+								new_nodes[[at_new_nodes]]<-check_nodes[[k]][-(len[z]),,drop=FALSE]
+								new_nodes_index[[at_new_nodes]]<-(check_nodes_index[[1]]-z)
+								at_new_nodes<-(at_new_nodes+1)
+							}
+							checked<-TRUE
+						}
+					}
+				}
+				check_nodes<-new_nodes
+				check_nodes_index<-new_nodes_index
+			}
+			return(results)
+			#######################################################################
+		
+		}
+
+		
+		
+		many<-0
+		res_IS_pos_screen<-list()  # default: no match at all
+		for(i in 1:length(IS_pos_screen_listed)){ # i - on compound_adduct
+			if(length(IS_pos_screen_listed[[i]])>0){	
+				for(m in 1:length(IS_pos_screen_listed[[i]])){ # m - sample
+					if(length(IS_pos_screen_listed[[i]][[m]])>0){
+		#stop()
+						combination_matches<-recomb_score(
+							cent_peak_mat=IS_pos_screen_listed[[i]][[m]],
+							pattern=pattern_pos_IS[[i]],
+							profileList=profileList_pos,
+							LOD=cutint,
+							RT_tol_inside=RT_tol_inside
+						)
+						res_IS_pos_screen[[i]]<-combination_matches
+		
+		
+		
+						many<-(many+1)
+					}
+				}
+			}
+		}
+	
+
+
+	
+})		
+		
+		
+system.time({	
+
+
+
+		# resort to a full result list: pattern x sample x (centroids,matches) ( = peak index in profileList_pos)
 		res_IS_pos_screen<-list()  # default: no match at all
 		for(i in 1:length(screen_list)){ # over compound x adduct = i
 			if(any(is.na(screen_list[[i]]==FALSE))){
@@ -108,104 +250,6 @@ RT_tol_inside<-0.3
 				}
 			}
 		}
-
-		
-system.time({	
-		
-		# calculate combinations over centroids & peaks per sample per compound_adduct
-		many<-0
-		doubled<-0
-		max_score<-rep(0,length(pattern_pos_IS))
-		max_peaks<-rep(0,length(pattern_pos_IS))
-		res_IS_pos_screen_logical<-res_IS_pos_screen # store logical results - peak matched?
-		for(i in 1:length(res_IS_pos_screen)){ # i - on compound_adduct
-			if(length(res_IS_pos_screen[[i]])>0){
-				for(m in 1:length(res_IS_pos_screen[[i]])){ # m - sample
-					if(length(res_IS_pos_screen[[i]][[m]])>0){
-						# retrieve ALL unique two-combinations of peaks ##########################################
-						combis<-list();
-						at_combis<-1;
-						if(length(res_IS_pos_screen[[i]][[m]])>1){
-						for(j in 1:(length(res_IS_pos_screen[[i]][[m]])-1)){ # j - on centroid
-							if(length(res_IS_pos_screen[[i]][[m]][[j]])>0){
-								for(k in 1:length(res_IS_pos_screen[[i]][[m]][[j]])){ # k - on peak 
-									if(length(res_IS_pos_screen[[i]][[m]][[j]][[k]])>0){
-										rescaled_intens_lower<-(pattern_pos_IS[[i]][,2]*(
-											( profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[j]][[k]]),2]-(int_tol*profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[j]][[k]]),2]) )
-											/pattern_pos_IS[[i]][j,1])
-										)									
-										rescaled_intens_upper<-(pattern_pos_IS[[i]][,2]*(
-											( profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[j]][[k]]),2]+(int_tol*profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[j]][[k]]),2]) )
-											/pattern_pos_IS[[i]][j,1])
-										)									
-										for(b in (j+1):length(res_IS_pos_screen[[i]][[m]])){ # b - on centroid
-											if(length(res_IS_pos_screen[[i]][[m]][[b]])>0){			
-												for(d in 1:length(res_IS_pos_screen[[i]][[m]][[b]])){
-													if(res_IS_pos_screen[[i]][[m]][[j]][[k]]!=res_IS_pos_screen[[i]][[m]][[b]][[d]]){ # must be two different peaks!
-														if(
-															RT_tol_inside<abs(profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[b]][[d]]),3]-profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[j]][[k]]),3])
-														){next} # within small RT window?
-														if(
-															(profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[b]][[d]]),2]+(int_tol*profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[b]][[d]]),2]))<rescaled_intens_lower[b]
-														){next}
-														if(
-															(profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[b]][[d]]),2]-(int_tol*profileList_pos[[2]][(res_IS_pos_screen[[i]][[m]][[b]][[d]]),2]))>rescaled_intens_upper[b]
-														){next}													
-															combis[[at_combis]]<-list()
-															combis[[at_combis]][[1]]<-c(j,k)
-															combis[[at_combis]][[2]]<-c(b,d)
-															at_combis<-(at_combis+1)
-															many<-(many+1)
-													}else{
-														doubled<-(doubled+1)
-													}
-												}
-											}
-										}									
-									}
-								}
-							}
-						}
-						}else{"finish me"} # singleton
-						# recombine these 2-tupels ###############################################################
-						#if(length(combis)>0){print(length(combis))}
-						#if(length(combis)>2){stop()}
-						fin_combis<-list()
-						if(length(combis)>1){
-							do_combis<-TRUE
-							while(do_combis){
-								new_combis<-list()
-								for(b in 1:length(combis)){
-									for(d in (b+1):length(combis)){
-								
-
-
-								
-									}
-								}
-								
-								if(length(new_combis)<2){do_combis<-FALSE}
-							}
-						}else{fin_combis<-combis}
-						# annotate results #######################################################################
-						for(b in 1:length(fin_combis)){
-						
-						
-						
-						}
-						
-						
-						
-					}
-				}
-			}
-		}
-		
-				
-})		
-		
-		
-system.time({	
 		
 		# calculate combinations over centroids&peaks per sample per compound_adduct
 		many<-0
