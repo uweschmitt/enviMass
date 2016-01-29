@@ -33,7 +33,7 @@ ppm<-TRUE
 mztol<-4
 cutint<-2E3
 int_tol<-.25
-RT_tol_inside<-0.3
+RT_tol_inside<-15
 
 		
 #pattern_pos_IS<-c(pattern_pos_IS,pattern_pos_IS,pattern_pos_IS)
@@ -168,7 +168,7 @@ system.time({
 							len<-rev(len)
 							for(z in 1:check_nodes_index[[k]]){
 								new_nodes[[at_new_nodes]]<-check_nodes[[k]][-(len[z]),,drop=FALSE]
-								new_nodes_index[[at_new_nodes]]<-(check_nodes_index[[1]]-z)
+								new_nodes_index[[at_new_nodes]]<-(check_nodes_index[[k]]-z)
 								at_new_nodes<-(at_new_nodes+1)
 							}
 							checked<-TRUE
@@ -182,16 +182,15 @@ system.time({
 			#######################################################################
 		
 		}
-
-		
 		
 		many<-0
+		many_unamb<-0
 		res_IS_pos_screen<-list()  # default: no match at all
-		for(i in 1:length(IS_pos_screen_listed)){ # i - on compound_adduct
+		j<-200
+		for(i in j:length(IS_pos_screen_listed)){ # i - on compound_adduct
 			if(length(IS_pos_screen_listed[[i]])>0){	
 				for(m in 1:length(IS_pos_screen_listed[[i]])){ # m - sample
 					if(length(IS_pos_screen_listed[[i]][[m]])>0){
-		#stop()
 						combination_matches<-recomb_score(
 							cent_peak_mat=IS_pos_screen_listed[[i]][[m]],
 							pattern=pattern_pos_IS[[i]],
@@ -200,9 +199,14 @@ system.time({
 							RT_tol_inside=RT_tol_inside
 						)
 						res_IS_pos_screen[[i]]<-combination_matches
-		
-		
-		
+						if(length(res_IS_pos_screen[[i]])>0){
+							plot(
+								log10(pattern_pos_IS[[i]][res_IS_pos_screen[[i]][[1]][,1],2]),
+								log10(profileList_pos[[2]][res_IS_pos_screen[[i]][[1]][,2],2]),
+								pch=19,cex=.8,main=paste(i,"-",m))
+								Sys.sleep(.01)
+						}
+						if(length(combination_matches)>1){many_unamb<-(many_unamb+1)}
 						many<-(many+1)
 					}
 				}
@@ -213,6 +217,16 @@ system.time({
 
 	
 })		
+		
+		
+
+k<-433
+these_peaks<-res_IS_pos_screen[[k]][[1]][,2]
+pattern_pos_IS[[k]]
+res_IS_pos_screen[[k]][[1]][,1]
+cbind(res_IS_pos_screen[[k]][[1]][,1],profileList_pos[[2]][these_peaks,c(1,2)])
+		
+		
 		
 		
 system.time({	
