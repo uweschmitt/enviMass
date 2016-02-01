@@ -28,7 +28,7 @@ maincalc<-reactive({
 			summa<<-logfile$summary
 			summa[1,2]<<-"ok"
 			summa[-1,2]<<-"..."
-			output$summar<<-renderTable(summa[c(1,2,3,4,5,7,8,9,10),]);
+			output$summa_html<-renderText(summary_html(summa));
         }
         ########################################################################
         # peak picking - always run ############################################
@@ -54,7 +54,7 @@ maincalc<-reactive({
         # RT alignment #########################################################
         if(do_flow==6){
 		  cat("Alignment skipped \n");
-          output$dowhat<<-renderText("Alignment skipped ... wait")
+          output$dowhat<<-renderText("Alignment skipped ... wait");
         }
         ########################################################################
         # intensity normalization ##############################################
@@ -62,20 +62,22 @@ maincalc<-reactive({
 			source("server_calculation_normaliz.R", local=TRUE);
         }
         ########################################################################
-		# Compound screening ###################################################
-        if(do_flow==8){
-			#source("server_calculation_screening.R", local=TRUE);		
-		}		
-        ########################################################################
 		# Replicates ###########################################################
-        if(do_flow==9){
+        if(do_flow==8){
 			#source("server_calculation_replicates.R", local=TRUE);		
 		}			
         ########################################################################
         # profiling ############################################################
-        if(do_flow==10){
+        if(do_flow==9){
 			source("server_calculation_profiling.R", local=TRUE);
         }
+        ########################################################################
+		# Compound screening ###################################################
+        if(do_flow==10){
+			#source("server_calculation_screening.R", local=TRUE);		
+		}		
+		
+		
 		########################################################################
 		# IS-normalization #####################################################
         if(do_flow==11){
@@ -146,13 +148,13 @@ maincalc<-reactive({
 			}
         }
         do_flow<<-(do_flow+1);
-		if(do_flow==19){output$summar<<-renderTable(logfile$summary)}
+		if(do_flow==19){output$summa_html<<-renderText(summary_html(logfile$summary));}
         if(do_flow<20){
 			invalidateLater(500, session=NULL)
 			cat("Calculating...");
 			return("Calculating...")
 		}else{		
-			output$summar<<-renderTable(summa[c(1,2,3,4,5,7,8,9,10),]);
+			output$summa_html<<-renderText(summary_html(logfile$summary));
 			isolate(init$b<-(init$b+1))
 			cat("Calculations completed \n")
 			return("Calculations completed \n")

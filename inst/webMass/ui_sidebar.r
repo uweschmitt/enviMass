@@ -6,10 +6,16 @@ sidebarPanel(
         tags$style(type='text/css', ".well { max-width: 230px; }"),
         tags$style(type='text/css', ".span4 { max-width: 350px; }")
       ),
+    conditionalPanel(
+		condition = "output.textit != 'Waiting...'",	  
+			HTML('<p><b><font color=darkgreen size="5">
+				&nbsp enviMass v2.2 </font><br/></b></p>'),
+				helpText("Project folder:")
+	),
     verbatimTextOutput("textit"),
     # start panel ##############################################################
     conditionalPanel(
-		condition = "output.textit == 'Waiting...'",
+		condition = "output.textit == 'Waiting...'",		
 		bsAlert("failed_new"),bsAlert("failed_open"),
 		# (1) to start a new project #############################################
 		tags$h4("Start new project"),
@@ -46,8 +52,8 @@ sidebarPanel(
 	  bsAlert("reset"),
       helpText("Current state:"),
       verbatimTextOutput("dowhat"),
-      helpText("Finished tasks:"),
-      tableOutput("summar"),
+      helpText("Project state:"),
+	  htmlOutput("summa_html"),
 	  HTML('<hr noshade="noshade" />'),
       bsButton("Calc","Calculate",style="danger"),
 	  bsPopover("Calc", 

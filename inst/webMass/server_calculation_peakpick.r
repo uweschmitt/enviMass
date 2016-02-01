@@ -96,7 +96,7 @@
           save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 		  summa[2,2]<-"done"
 		  summa[2,2]<<-"done"
-		  output$summar<<-renderTable(summa);
+		  output$summa_html<<-renderText(summary_html(summa));
           measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 		  output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
 		  if(addit){library(nlme)}

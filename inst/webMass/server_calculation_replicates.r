@@ -74,7 +74,7 @@ if(FALSE){
     save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
     summa[5,2]<-"skipped"
 	summa[5,2]<<-"skipped"
-	output$summar<<-renderTable(summa);
+	output$summa_html<<-renderText(summary_html(summa));
     cat("Mass recalibration skipped \n");
     output$dowhat<<-renderText("Recalibration skipped ... wait")
 }

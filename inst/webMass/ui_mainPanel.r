@@ -2,10 +2,17 @@
     conditionalPanel( 
 		condition = "output.textit != 'Waiting...'",  
 		tags$head(
-			tags$style(type = "text/css", "li a{color: white; background-color: darkgreen}") 
+			tags$style(type = "text/css", "li a{color: black; background-color: darkgrey}") 
 		),		
+		tags$style(HTML("
+			.tabs-above > .nav > li[class=active] > a {
+			background-color: #870000;
+			color: #FFFFFF;}")
+		),
+		tags$h5(""),
 		bsAlert("alert_3"),
 		tabsetPanel(
+		#navbarPage("",
         ########################################################################
         # MEASUREMENTS #########################################################
         ########################################################################
@@ -181,7 +188,7 @@
 				# block 4 ######################################################
 				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Compound screening </font></p> '),
 					checkboxInput("screen_IS_sam", "Screen internal standards?", TRUE),
-					checkboxInput("screen_target_sam", "Screen targets/sustpects?", TRUE)
+					checkboxInput("screen_target_sam", "Screen targets/suspects?", TRUE)
 				#HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Peak grouping (componentization) </font></p>'),
 				#	checkboxInput("Comp_isotop", "Group isotopologue peaks?", TRUE),
 				#	checkboxInput("Comp_add", "Group adduct peaks?", TRUE),

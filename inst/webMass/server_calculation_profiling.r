@@ -70,7 +70,7 @@ if(
     save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
     summa[8,2]<-"done"
 	summa[8,2]<<-"done"
-	output$summar<<-renderTable(summa)
+	output$summa_html<<-renderText(summary_html(summa));
     cat("Profile extraction done \n");
     output$dowhat<<-renderText("Profile extraction ... wait")
 
@@ -85,7 +85,7 @@ if(
     save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
     summa[8,2]<-"skipped";
     summa[8,2]<<-"skipped";
-	output$summar<<-renderTable(summa)
+	output$summa_html<<-renderText(summary_html(summa));
     cat("Profile extraction skipped \n");
     output$dowhat<<-renderText("Profile extraction skipped ... wait")
 

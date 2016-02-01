@@ -54,13 +54,16 @@ pageWithSidebar(
 ################################################################################
 
   ##############################################################################
-  headerPanel(
-	HTML('
-	<p style="background-color:grey">
-	<font color="#FFFFFF" size="5">
-	&nbsp enviMass v2.0
-	</font><br/></p>'),
-	windowTitle="enviMass"
+  conditionalPanel( 
+	condition = "output.textit == 'Waiting...'", 
+		headerPanel(
+			HTML('
+				<p style="background-color: darkgreen">
+				<font color="#FFFFFF" size="6">
+				&nbsp enviMass v2.2
+				</font><br/></p>'),
+				windowTitle="enviMass2"
+			)
   ),
   ##############################################################################
   source("ui_sidebar.R", local=TRUE)$value,   

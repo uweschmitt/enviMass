@@ -189,7 +189,7 @@ if( (logfile$workflow[1]=="yes" && logfile$summary[3,2]=="FALSE") || (logfile$Ta
     ############################################################################    
 	summa[3,2]<-"done"	
 	summa[3,2]<<-"done"
-	output$summar<<-renderTable(summa);
+	output$summa_html<<-renderText(summary_html(summa));
     cat("QC completed \n");
     output$dowhat<<-renderText("QC completed ... wait")
     
@@ -228,7 +228,7 @@ if( (logfile$workflow[1]=="yes" && logfile$summary[3,2]=="FALSE") || (logfile$Ta
     save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp")); 
 	summa[3,2]<-"skipped"
     summa[3,2]<<-"skipped"
-	output$summar<<-renderTable(logfile$summa);
+	output$summa_html<<-renderText(summary_html(summa));
     cat("QC skipped \n");
     output$dowhat<<-renderText("QC skipped ... wait")
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");

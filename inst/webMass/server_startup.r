@@ -22,7 +22,7 @@ observe({
 		if(logfile_path!="FALSE"){
 			output$textit<-renderText(as.character(logfile_path));
 			load(logfile_path,envir=as.environment(".GlobalEnv"));
-			output$summar<-renderTable(logfile[[3]][c(1,2,3,4,5,7,8,9,10),],label="Progress:");
+			output$summa_html<-renderText(summary_html(logfile$summary));
 			output$dowhat<-renderText("Started new project");
 			output$IS<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 			output$targets<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      
@@ -180,7 +180,7 @@ maincalc2<-reactive({
 			logfile$project_folder<-as.character(file_in);
 			save(logfile,file=file.path(file_in,"logfile.emp"));
 			output$textit<-renderText(logfile$project_folder);
-			output$summar<-renderTable(logfile$summary[c(1,2,3,4,5,7,8,9,10),]);
+			output$summa_html<-renderText(summary_html(logfile$summary));
 			output$dowhat<-renderText("Opened existing project");
 			output$IS<-DT::renderDataTable(read.table(file=file.path(logfile$project_folder,"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 			output$targets<-DT::renderDataTable(read.table(file=file.path(logfile$project_folder,"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));              

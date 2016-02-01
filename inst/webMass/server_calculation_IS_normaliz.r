@@ -783,7 +783,7 @@ if(
     save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 	summa[9,2]<<-"done"
     summa[9,2]<-"done"
-	output$summar<<-renderTable(summa)
+	output$summa_html<<-renderText(summary_html(summa));
     cat("IS-based profile normalization done \n");
     output$dowhat<<-renderText("IS-normalization done ... wait")
 
@@ -822,7 +822,7 @@ if(
     save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
     summa[9,2]<-"skipped";
     summa[9,2]<<-"skipped";
-	output$summar<<-renderTable(summa)
+	output$summa_html<<-renderText(summary_html(summa));
     cat("IS-based profile normalization skipped \n");
     output$dowhat<<-renderText("IS-normalization skipped ... wait")
 

@@ -160,7 +160,7 @@ if(
     save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 	summa[7,2]<-"done"
 	summa[7,2]<<-"done"
-	output$summar<<-renderTable(summa)
+	output$summa_html<<-renderText(summary_html(summa));
     cat("Normalization done \n");
     output$dowhat<<-renderText("Normalization done ... wait")
 
@@ -205,7 +205,7 @@ if(
         save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
         summa[7,2]<-"skipped";
         summa[7,2]<<-"skipped";
-		output$summar<<-renderTable(summa)
+		output$summa_html<<-renderText(summary_html(summa));
         cat("Normalization skipped \n");
         output$dowhat<<-renderText("Normalization skipped ... wait")
 

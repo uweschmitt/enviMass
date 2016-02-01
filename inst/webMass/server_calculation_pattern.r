@@ -567,7 +567,7 @@ if(
 	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 	summa[4,2]<-"done"
 	summa[4,2]<<-"done"
-	output$summar<<-renderTable(summa);
+	output$summa_html<<-renderText(summary_html(summa));
 	cat("\nIsotope pattern calculations completed \n");
 	output$dowhat<<-renderText("Isotope pattern calculations done ... wait")
 
@@ -578,7 +578,7 @@ if(
 	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 	summa[4,2]<-"skipped"
 	summa[4,2]<<-"skipped"
-	output$summar<<-renderTable(summa);
+	output$summa_html<<-renderText(summary_html(summa));
 	cat("\nIsotope pattern calculations skipped \n");
 	output$dowhat<<-renderText("Isotope pattern calculations skipped ... wait")
 

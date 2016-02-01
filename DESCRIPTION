@@ -2,7 +2,7 @@ Package: enviMass
 Type: Package
 Title: Utilities to Process Mass Spectrometry (LC-HRMS) Data for Environmental Trend Analysis
 Version: 2.2
-Date: 2014-28-11
+Date: 2016-02-02
 Author: Martin Loos
 Maintainer: Martin Loos <Martin.Loos@eawag.ch>
 Description: Utilities and workflow to process high resolution mass
@@ -11,4 +11,4 @@ License: GPL (>= 3)
 Depends:
     R(>= 3.0.1),shiny(>= 0.10.2.1),shinyFiles(>= 0.4.0),shinyBS(>= 0.20),DT(>= 0.1)
 Imports:
-    enviPick(>= 1.0),enviPat(>= 1.9),nontarget(>= 1.3),mgcv(>= 1.7-22),tcltk(>= 3.0.2)
+    enviPick(>= 1.0),enviPat(>= 1.9),nontarget(>= 1.3),mgcv(>= 1.7-22),tcltk(>= 3.0.2),htmlTable(>= 1.5)

@@ -177,7 +177,7 @@ if(
     save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
     summa[5,2]<-"done"
 	summa[5,2]<<-"done"
-	output$summar<<-renderTable(summa);
+	output$summa_html<<-renderText(summary_html(summa));
     cat("Mass recalibration done \n");
     output$dowhat<<-renderText("Recalibration done ... wait")
     updateSelectInput(session, "sel_meas", label = "Select file by ID:", choices =  c("none",as.character(measurements[,1])), selected = "none")
@@ -201,7 +201,7 @@ if(
     save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
     summa[5,2]<-"skipped"
 	summa[5,2]<<-"skipped"
-	output$summar<<-renderTable(summa);
+	output$summa_html<<-renderText(summary_html(summa));
     cat("Mass recalibration skipped \n");
     output$dowhat<<-renderText("Recalibration skipped ... wait")
 

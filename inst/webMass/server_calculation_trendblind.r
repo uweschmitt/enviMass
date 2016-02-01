@@ -82,7 +82,7 @@ if(
 	logfile$Tasks_to_redo[7]<<-"FALSE";
     save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 	summa[10,2]<<-"done"
-	output$summar<<-renderTable(summa)
+	output$summa_html<<-renderText(summary_html(summa));
     cat("Trend&blind done \n");
     output$dowhat<<-renderText("Trend&blind done ... wait")
 	
@@ -108,7 +108,7 @@ if(
     save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
     summa[10,2]<-"skipped";
     summa[10,2]<<-"skipped";
-	output$summar<<-renderTable(summa)
+	output$summa_html<<-renderText(summary_html(summa));
     cat("Trend/blind skipped \n");
     output$dowhat<<-renderText("Trend/blind skipped ... wait")
 
