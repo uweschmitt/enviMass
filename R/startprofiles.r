@@ -106,6 +106,7 @@ startprofiles<-function(
 				setWinProgressBar(prog, progi, title = "Retrieve matrix length", label = NULL)
 			}
 			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,1])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
+			peaklist<-peaklist[peaklist[,colnames(peaklist)=="keep"]==1,]
 			if(frac!=FALSE){
 				at<-c(at+(floor(length(peaklist[,1])*frac)))
 			}else{
@@ -130,6 +131,7 @@ startprofiles<-function(
 			}
 			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,1])),
 				verbose=FALSE,envir=as.environment(".GlobalEnv"));
+				peaklist<-peaklist[peaklist[,colnames(peaklist)=="keep"]==1,]
 			if(frac!=FALSE){
 				peaklist<-peaklist[order(peaklist[,2],decreasing=TRUE),];
 				that<-c((floor(length(peaklist[,1])*frac)));

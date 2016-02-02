@@ -58,7 +58,9 @@
 				peaklist<-cbind(peaklist,peaklist[,c(1,4,5)])
 				colnames(peaklist)[12]<-"m/z_corr";
 				colnames(peaklist)[13]<-"sum_int_corr";
-				colnames(peaklist)[14]<-"RT_corr";                
+				colnames(peaklist)[14]<-"RT_corr";      
+				keep<-rep(1,length(peaklist[,1])) # 1 == TRUE
+				peaklist<-cbind(peaklist,keep)
 				save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,1])));   
 				cat(" plot -");  
 				path=file.path(logfile[[1]],"pics",paste("peakhist_",as.character(measurements[i,1]),sep=""))

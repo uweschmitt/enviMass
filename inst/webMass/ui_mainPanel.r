@@ -173,7 +173,9 @@
 				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Global intensity normalization </font></p> '),
 					radioButtons("intnorm", "Include?", c("yes"="yes","no"="no")),
 				#HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> RT alignment </font></p> '),
-				#radioButtons("RTalign", "Include?", c("yes"="yes","no"="no")),         
+				#radioButtons("RTalign", "Include?", c("yes"="yes","no"="no")),     
+				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Replicate filter </font></p> '),				
+					#checkboxInput("replic_flexi", "Use recalibrated mass tolerances?", TRUE),
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),                     
 				# block 3 ######################################################
@@ -187,6 +189,7 @@
 				HTML('<h1 align="center"> &#x21e9; </h1> '),                     
 				# block 4 ######################################################
 				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Compound screening </font></p> '),
+					checkboxInput("screen_LOD", "LOD interpolation?", TRUE),
 					checkboxInput("screen_IS_sam", "Screen internal standards?", TRUE),
 					checkboxInput("screen_target_sam", "Screen targets/suspects?", TRUE)
 				#HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Peak grouping (componentization) </font></p>'),
@@ -263,6 +266,14 @@
                 numericInput("recal_drt", "RT tolerance [s]", 30)   
               )
             ),
+			# REPLICATES #######################################################
+            tabPanel("Replicates",
+				tags$h5("Replicate files are defined (i.e., grouped) by the tag3 entry (not FALSE) in the measurements table"),
+				numericInput("replicate_dmz", "m/z tolerance ...", 3),                
+				selectInput("replicate_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),	
+				selectInput("replicate_recalib", "... and corrected by recalibration results (if available)", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "TRUE"),	
+				numericInput("replicate_delRT", "RT tolerance of a compound peaks across replicate samples [s]", 30)
+			),	
             # ALLIGNMENT #######################################################
             #tabPanel("Allignment",
             #  tags$h5("RT allignment")
@@ -384,7 +395,8 @@
 						selectInput("Ion_mode", label=NULL, c("positive","negative"), selected = ("positive"), multiple = FALSE)
 					),
 					HTML('<hr noshade="noshade" />'),  
-					navbarPage("", #tabsetPanel( 
+					#navbarPage("", 
+					tabsetPanel( 
 						tabPanel("Summary",										
 								tags$h5("Filter profile list:"),
 								div(style = widget_style3,numericInput("filterProf_minmass", "Minimum m/z:", 0)),
@@ -479,8 +491,8 @@
 						tabPanel("Normalization",            
 								imageOutput("profnorm", height="auto"),
 								imageOutput("profcount", height="auto")
-						),
-						id="navbar_prof",inverse=FALSE,collapsible=TRUE,fluid=TRUE
+						)#,
+						#id="navbar_prof",inverse=FALSE,collapsible=TRUE,fluid=TRUE
 					)
 				),
 				tabPanel("Quality control",

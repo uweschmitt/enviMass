@@ -76,8 +76,6 @@ maincalc<-reactive({
         if(do_flow==10){
 			#source("server_calculation_screening.R", local=TRUE);		
 		}		
-		
-		
 		########################################################################
 		# IS-normalization #####################################################
         if(do_flow==11){

@@ -11,13 +11,13 @@
 
 summary_html<-function(in_logfile_summary){
 	
-	use_summary<-in_logfile_summary[c(1,2,3,4,5,7,8,9,10),]
+	use_summary<-in_logfile_summary[c(1,2,3,4,5,11,7,8,9,10,12,13),]
 	use_summary[,1]<-as.character(use_summary[,1])
 	use_summary[,2]<-as.character(use_summary[,2])			
 	mat<-matrix(ncol=2,nrow=length(use_summary[,1]),"")
 	mat[use_summary[,2]=="FALSE",2]<-"background-color: darkred;"
 	mat[use_summary[,2]=="TRUE",2]<-"background-color: darkgreen;"	
-	if(use_summary[1,2]=="TRUE"){mat[use_summary[,1]=="Data available?",2]<-"background-color: lightgreen;"}
+	if(use_summary[1,2]=="TRUE"){mat[use_summary[,1]=="Data available?",2]<-"background-color: green;"}
 	mat[use_summary[,2]=="ok",2]<-"background-color: lightgreen;"
 	mat[use_summary[,2]=="...",2]<-"background-color: orange"
 	mat[use_summary[,2]=="done",2]<-"background-color: green"	
