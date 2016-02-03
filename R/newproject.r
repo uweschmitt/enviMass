@@ -34,7 +34,9 @@ newproject<-function(pro_name,pro_dir,IS,targets){
   dir.create(file.path(pro_dir,pro_name,"features"),recursive=TRUE)   # subfolder
   dir.create(file.path(pro_dir,pro_name,"results"),recursive=TRUE)    # subfolder
 	dir.create(file.path(pro_dir,pro_name,"results","screening"),recursive=TRUE)    	# subfolder  
-	dir.create(file.path(pro_dir,pro_name,"results","quantification"),recursive=TRUE)   # subfolder 		
+	dir.create(file.path(pro_dir,pro_name,"results","quantification"),recursive=TRUE)   # subfolder 
+	dir.create(file.path(pro_dir,pro_name,"results","LOD"),recursive=TRUE)    	# subfolder  
+	dir.create(file.path(pro_dir,pro_name,"results","recalibration"),recursive=TRUE)   # subfolder 
   dir.create(file.path(pro_dir,pro_name,"dataframes"),recursive=TRUE) # subfolder
   dir.create(file.path(pro_dir,pro_name,"pics"),recursive=TRUE)       # subfolder
   dir.create(file.path(pro_dir,pro_name,"exports"),recursive=TRUE)    # subfolder
@@ -58,8 +60,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	logfile[[2]]<-rep(FALSE,16);
 	names(logfile[[2]])<-c(
 		"peakpick","QC","recal","normalize","allign","profiling","trendblind","pattern",
-		"screen_tar_file","screen_IS_file","screen_tar_comp","screen_IS_comp",
-		"comp","homol","norm_prof","mass_defect"
+		"replicates","IS_screen","target_screen","-","-","-","norm_prof","-"
 	)	
     names(logfile)[2]<-c("Tasks_to_redo"); 
     # summary project status ###################################################
@@ -74,9 +75,9 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		"Profiled?",
 		"IS norm.?",
 		"Trend+Blind?",
-		"",#"IS file-screen?",
-		"",#"Target file-screen?",
-		"",#"Compon?",
+		"Replicate filter",
+		"IS screening",
+		"Target screening",
 		"",#"IS comp-screen?",
 		"",#"Target comp-screen?",
 		"",#"Homologues?",
@@ -118,6 +119,11 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters[[31]]<-"3"; 						names(logfile$parameters)[31]<-"recal_dmz" 
 		logfile$parameters[[32]]<-"TRUE"; 					names(logfile$parameters)[32]<-"recal_ppm" 
 		logfile$parameters[[33]]<-"30"; 					names(logfile$parameters)[33]<-"recal_drt" 
+		# replicate intersection ################################################
+		logfile$parameters[[15]]<-"3";						names(logfile$parameters)[15]<-"replicate_dmz"
+		logfile$parameters[[16]]<-"TRUE";					names(logfile$parameters)[16]<-"replicate_ppm"		
+		logfile$parameters[[17]]<-"FALSE";					names(logfile$parameters)[17]<-"replicate_recalib"		
+		logfile$parameters[[18]]<-"30";						names(logfile$parameters)[18]<-"replicate_delRT"		
 		# trend detection ######################################################
 		logfile$parameters[[29]]<-"TRUE";		names(logfile$parameters)[29]<-"notrend"
 		logfile$parameters[[34]]<-"4,7,14"; 	names(logfile$parameters)[34]<-"trend_lags" 
@@ -178,17 +184,17 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$workflow[4]<-"yes"; 	names(logfile$workflow)[4]<-"norm" 
 		logfile$workflow[5]<-"yes"; 	names(logfile$workflow)[5]<-"is_pattern" 
 		logfile$workflow[6]<-"yes"; 	names(logfile$workflow)[6]<-"target_pattern" 
-		logfile$workflow[7]<-"TRUE"; 	names(logfile$workflow)[7]<-"Comp_isotop" 
-		logfile$workflow[8]<-"TRUE"; 	names(logfile$workflow)[8]<-"Comp_add" 
+		logfile$workflow[7]<-"TRUE"; 	names(logfile$workflow)[7]<-"-" 
+		logfile$workflow[8]<-"TRUE"; 	names(logfile$workflow)[8]<-"-" 
 		logfile$workflow[9]<-"yes"; 	names(logfile$workflow)[9]<-"profiled" 
 		logfile$workflow[10]<-"yes"; 	names(logfile$workflow)[10]<-"trenddetect"     
-		logfile$workflow[11]<-"TRUE"; 	names(logfile$workflow)[11]<-"screen_IS_sam" 
-		logfile$workflow[12]<-"TRUE"; 	names(logfile$workflow)[12]<-"screen_target_sam" 
-		logfile$workflow[13]<-"TRUE"; 	names(logfile$workflow)[13]<-"screen_IS_comp" 
-		logfile$workflow[14]<-"TRUE"; 	names(logfile$workflow)[14]<-"screen_target_comp" 		
+		logfile$workflow[11]<-"TRUE"; 	names(logfile$workflow)[11]<-"screen_IS" 
+		logfile$workflow[12]<-"TRUE"; 	names(logfile$workflow)[12]<-"screen_target" 
+		logfile$workflow[13]<-"yes"; 	names(logfile$workflow)[13]<-"replicates" 
+		logfile$workflow[14]<-"TRUE"; 	names(logfile$workflow)[14]<-"-" 		
 		logfile$workflow[15]<-"yes"; 	names(logfile$workflow)[15]<-"profnorm" 
-		logfile$workflow[16]<-"yes"; 	names(logfile$workflow)[16]<-"homol" 
-		logfile$workflow[17]<-"yes"; 	names(logfile$workflow)[17]<-"massdef" 	  
+		logfile$workflow[16]<-"yes"; 	names(logfile$workflow)[16]<-"-" 
+		logfile$workflow[17]<-"yes"; 	names(logfile$workflow)[17]<-"-" 	  
 		
 		
 		

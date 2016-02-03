@@ -24,6 +24,11 @@ updateSelectInput(session, "recal_what", "Reference compounds:", c("Internal sta
 updateNumericInput(session, "recal_dmz", "m/z tolerance ...", value = as.numeric(logfile$parameters[[31]]))                
 updateSelectInput(session, "recal_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), selected= as.character(logfile$parameters[[32]]))
 updateNumericInput(session, "recal_drt", "RT tolerance [s]", value = as.numeric(logfile$parameters[[33]]))   
+# REPLICATE INTERSECTION ########################################################
+updateNumericInput(session, "replicate_dmz", "m/z tolerance ...", value = as.numeric(logfile$parameters[[15]]))   
+updateSelectInput(session, "replicate_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"),  selected = as.character(logfile$parameters[[16]]))
+updateSelectInput(session, "replicate_recalib", "... and corrected by recalibration results (if available)", choices = c("TRUE"="TRUE","FALSE"="FALSE"),  selected = as.character(logfile$parameters[[17]]))
+updateNumericInput(session, "replicate_delRT", "RT tolerance of a compound peaks across replicate samples [s]", value = as.numeric(logfile$parameters[[18]]))   
 # PROFILING ####################################################################
 updateSliderInput(session, "prof_sets",value = as.numeric(logfile$parameters[[38]]))
 updateTextInput(session, "upto_file","Up to file with ID:",value = as.character(logfile$parameters$upto_file)) # too risky!
@@ -102,18 +107,13 @@ updateRadioButtons(session, "qc", label = "Include?", choices =  c("yes"="yes","
 updateRadioButtons(session, "recal", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile[[6]][[2]]))
 #updateRadioButtons(session, "RTalign", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile[[6]][[3]]))
 updateRadioButtons(session, "intnorm", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile[[6]][[4]]))
-updateCheckboxInput(session, "screen_IS_sam", value =  as.logical(as.character(logfile[[6]][11])))
-updateCheckboxInput(session, "screen_target_sam", value =  as.logical(as.character(logfile[[6]][12])))
 updateRadioButtons(session, "profnorm", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile[[6]][[15]]))
 updateRadioButtons(session, "profiled", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile[[6]][[9]]))
 updateRadioButtons(session, "trenddetect", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile[[6]][[10]]))
-updateCheckboxInput(session, "Comp_isotop", value =  as.logical(as.character(logfile[[6]][7])))
-updateCheckboxInput(session, "Comp_add", value = as.logical(as.character(logfile[[6]][8])))
-updateCheckboxInput(session, "screen_IS_comp", value = as.logical(as.character(logfile[[6]][13])))
-updateCheckboxInput(session, "screen_target_comp", value = as.logical(as.character(logfile[[6]][14])))
-updateRadioButtons(session, "homol", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile[[6]][[16]]))
-updateRadioButtons(session, "massdef", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile[[6]][[17]]))
+updateRadioButtons(session, "replicates", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile[[6]][[13]]))
 
+updateCheckboxInput(session, "screen_IS", value =  as.logical(as.character(logfile[[6]][11])))
+updateCheckboxInput(session, "screen_target", value =  as.logical(as.character(logfile[[6]][12])))
 ################################################################################
 ################################################################################
 

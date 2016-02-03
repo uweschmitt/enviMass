@@ -1,6 +1,6 @@
 
-measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 
+measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 if(  
 	any(duplicated(measurements$tag3[measurements$tag3!="FALSE"]))
 ){
@@ -131,8 +131,30 @@ if(
 				save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[j])))
 				rm(peaklist)
 			}
-	
+			
+			
 	}
+	logfile$summary[11,2]<<-"TRUE";
+    logfile$summary[11,2]<-"TRUE";
+	#logfile$Tasks_to_redo[3]<-"FALSE";
+	#logfile$Tasks_to_redo[3]<<-"FALSE";
+    save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+    summa[11,2]<-"done"
+	summa[11,2]<<-"done"
+	output$summa_html<<-renderText(summary_html(summa));
+    cat("Replicate intersection done \n");
+    output$dowhat<<-renderText("Replicate intersection done ... wait")
+			
+}else{
+
+	logfile$summary[11,2]<<-"FALSE";
+    logfile$summary[11,2]<-"FALSE";
+    save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+    summa[11,2]<-"skipped"
+	summa[11,2]<<-"skipped"
+	output$summa_html<<-renderText(summary_html(summa));
+    cat("Replicate intersection skipped \n");
+    output$dowhat<<-renderText("Replicate intersection skipped ... wait")
 
 }
 

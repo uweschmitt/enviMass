@@ -175,7 +175,7 @@
 				#HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> RT alignment </font></p> '),
 				#radioButtons("RTalign", "Include?", c("yes"="yes","no"="no")),     
 				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Replicate filter </font></p> '),				
-					#checkboxInput("replic_flexi", "Use recalibrated mass tolerances?", TRUE),
+					radioButtons("replicates", "Include? ", c("yes"="yes","no"="no")),
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),                     
 				# block 3 ######################################################
@@ -189,9 +189,8 @@
 				HTML('<h1 align="center"> &#x21e9; </h1> '),                     
 				# block 4 ######################################################
 				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Compound screening </font></p> '),
-					checkboxInput("screen_LOD", "LOD interpolation?", TRUE),
-					checkboxInput("screen_IS_sam", "Screen internal standards?", TRUE),
-					checkboxInput("screen_target_sam", "Screen targets/suspects?", TRUE)
+					checkboxInput("screen_IS", "Screen internal standards?", TRUE),
+					checkboxInput("screen_target", "Screen targets/suspects?", TRUE)
 				#HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Peak grouping (componentization) </font></p>'),
 				#	checkboxInput("Comp_isotop", "Group isotopologue peaks?", TRUE),
 				#	checkboxInput("Comp_add", "Group adduct peaks?", TRUE),
@@ -271,7 +270,7 @@
 				tags$h5("Replicate files are defined (i.e., grouped) by the tag3 entry (not FALSE) in the measurements table"),
 				numericInput("replicate_dmz", "m/z tolerance ...", 3),                
 				selectInput("replicate_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),	
-				selectInput("replicate_recalib", "... and corrected by recalibration results (if available)", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "TRUE"),	
+				selectInput("replicate_recalib", "... and corrected by recalibration results (if available)", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE"),	
 				numericInput("replicate_delRT", "RT tolerance of a compound peaks across replicate samples [s]", 30)
 			),	
             # ALLIGNMENT #######################################################

@@ -109,8 +109,8 @@ if(
 					  knot=5,
 					  plotit=TRUE,
 					  path_1=file.path(logfile[[1]],"pics",paste("recal_",as.character(measurements[i,1]),sep="")),
-					  path_2="FALSE"
-				   )
+					  path_2=file.path(logfile[[1]],"results","recalibration",paste("recal_gam_",as.character(measurements[i,1]),sep=""))
+				)
 				if(length(peak_recal)>1){
 				  peaklist[,c(12,13,14)]<-peak_recal
 				  save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,1])));   
@@ -144,8 +144,8 @@ if(
 				  knot=5,
 				  plotit=TRUE,
 				  path_1=file.path(logfile[[1]],"pics",paste("recal_",as.character(measurements[i,1]),sep="")),
-				  path_2="FALSE"
-			   )
+				  path_2=file.path(logfile[[1]],"results","recalibration",paste("recal_gam_",as.character(measurements[i,1]),sep=""))
+			)
 			if(length(peak_recal)>1){
 			  peaklist[,c(12,13,14)]<-peak_recal
 			  save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,1])));   

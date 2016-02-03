@@ -787,6 +787,9 @@ observe({
 		logfile$Tasks_to_redo<<-replace(logfile$Tasks_to_redo,-1,TRUE)
 		logfile$Tasks_to_redo<-replace(logfile$Tasks_to_redo,1,FALSE)
 		logfile$Tasks_to_redo<<-replace(logfile$Tasks_to_redo,1,FALSE)
+		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		measurements[,c(11,12,13,14)]<-"FALSE"
+		write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 		createAlert(session,anchorId = "reset", alertId="reset1", title = NULL, content="Project reset w/o peak picking",style = "warning",append=FALSE,dismiss=TRUE)
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		cat("\nReset without peak picking \n")
@@ -797,6 +800,9 @@ observe({
     if( (isolate(init$a)=="TRUE") & isolate(input$reset_2) ){
 		logfile$Tasks_to_redo<-replace(logfile$Tasks_to_redo,,TRUE)
 		logfile$Tasks_to_redo<<-replace(logfile$Tasks_to_redo,,TRUE)
+		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		measurements[,c(11,12,13,14)]<-"FALSE"
+		write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 		createAlert(session,anchorId = "reset", alertId="reset2", title = NULL, content="Project reset",style = "warning",append=FALSE,dismiss=TRUE)
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		cat("\nTotal reset \n")

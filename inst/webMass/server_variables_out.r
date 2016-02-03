@@ -33,7 +33,8 @@ observe({
 		logfile$parameters$peak_weight<-as.character(isolate(input$peak_weight))
 		logfile$parameters$peak_maxint_log10<-as.character(isolate(input$peak_maxint))
 		at2<-logfile$parameters[c(1,2,3,4,5,6,7,8,9,10,11,12,13,14)]
-		if(any(is.na(match(at2,at1)))){ 
+		#if(any(is.na(match(at2,at1)))){ 
+		if(FALSE){
 			# must rerun: everything
 			# must rerun: peak picking
 			logfile$Tasks_to_redo[1]<-TRUE;
@@ -123,7 +124,8 @@ observe({
 		at5<-logfile$adducts_neg
 		logfile$adducts_neg<-as.character(isolate(input$adducts_neg))
 		at6<-logfile$adducts_neg
-		if( any(is.na(match(at2,at1))) || any(is.na(match(at1,at2))) || any(is.na(match(at3,at4))) || any(is.na(match(at4,at3))) || any(is.na(match(at5,at6))) || any(is.na(match(at6,at5))) ){ 
+		if(FALSE){
+		#if( any(is.na(match(at2,at1))) || any(is.na(match(at1,at2))) || any(is.na(match(at3,at4))) || any(is.na(match(at4,at3))) || any(is.na(match(at5,at6))) || any(is.na(match(at6,at5))) ){ 
 			if(logfile$workflow[2]=="yes"){# must rerun: recal
 				logfile$Tasks_to_redo[3]<-TRUE;			
 				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -177,7 +179,8 @@ observe({
         logfile$parameters[[32]]<-as.character(isolate(input$recal_ppm))
         logfile$parameters[[33]]<-as.character(isolate(input$recal_drt))
 		at2<-logfile$parameters[c(30,31,32,33)];
-		if(any(is.na(match(at2,at1)))){ 
+		#if(any(is.na(match(at2,at1)))){ 
+		if(FALSE){
 			# must rerun: peak picking
 			# must not rerun: qc
 			if(logfile$workflow[2]=="yes"){# must rerun: recal
@@ -235,6 +238,21 @@ observe({
 				logfile$Tasks_to_redo[16]<-TRUE;		
 			}			
 		}
+		# replicates ###########################################################
+		at1<-logfile$parameters[c(15,16,17,18)];
+		logfile$parameters[[15]]<-as.character(isolate(input$replicate_dmz))
+		logfile$parameters[[16]]<-as.character(isolate(input$replicate_ppm))
+		logfile$parameters[[17]]<-as.character(isolate(input$replicate_recalib))
+		logfile$parameters[[18]]<-as.character(isolate(input$replicate_delRT))		
+		at2<-logfile$parameters[c(15,16,17,18)];
+		if(any(is.na(match(at2,at1)))){ 
+		
+		
+	
+
+	
+		
+		}
 		# profiling ############################################################
         at1<-c(logfile$parameters[c(38,39,40,41)],logfile$parameters$upto_file);
 		logfile$parameters[[38]]<-as.character(isolate(input$prof_sets))
@@ -243,7 +261,8 @@ observe({
         logfile$parameters[[40]]<-as.character(isolate(input$prof_ppm))
         logfile$parameters[[41]]<-as.character(isolate(input$prof_drt))
 		at2<-c(logfile$parameters[c(38,39,40,41)],logfile$parameters$upto_file);
-		if(any(is.na(match(at2,at1)))){ 
+		#if(any(is.na(match(at2,at1)))){ 
+		if(FALSE){
 			# must not rerun: qc
 			# must not rerun: recal
 			# must not rerun: align
@@ -287,7 +306,8 @@ observe({
 		logfile$parameters[[34]]<-as.character(isolate(input$trend_lags))
 		logfile$parameters[[35]]<-as.character(isolate(input$trend_thres))
 		at2<-logfile$parameters[c(29,34,35)]
-		if(any(is.na(match(at2,at1)))){ 
+		#if(any(is.na(match(at2,at1)))){ 
+		if(FALSE){
 			# must not rerun: qc
 			# must not rerun: recal
 			# must not rerun: align
@@ -327,7 +347,8 @@ observe({
 		logfile$parameters[[36]]<-as.character(isolate(input$blind_do))
 		logfile$parameters[[37]]<-as.character(isolate(input$blind_fold))
 		at2<-logfile$parameters[c(36,37)]
-		if(any(is.na(match(at2,at1)))){ 
+		#if(any(is.na(match(at2,at1)))){ 
+		if(FALSE){
 			# must not rerun: qc
 			# must not rerun: recal
 			# must not rerun: align
@@ -375,7 +396,8 @@ observe({
 		logfile$parameters[[50]]<-as.character(isolate(input$screen_IS_w2))
 		logfile$parameters[[51]]<-as.character(isolate(input$screen_IS_w3))		
 		at2<-logfile$parameters[c(42:51)]
-		if(any(is.na(match(at2,at1)))){ 
+		#if(any(is.na(match(at2,at1)))){ 
+		if(FALSE){
 			# must not rerun: qc
 			# must not rerun: recal
 			# must not rerun: align
@@ -414,7 +436,8 @@ observe({
 		logfile$parameters[[63]]<-as.character(isolate(input$screen_target_w2))
 		logfile$parameters[[64]]<-as.character(isolate(input$screen_target_w3))		
 		at2<-logfile$parameters[c(55:64)]
-		if(any(is.na(match(at2,at1)))){ 
+		#if(any(is.na(match(at2,at1)))){ 
+		if(FALSE){
 			# must not rerun: qc
 			# must not rerun: recal
 			# must not rerun: align
@@ -454,7 +477,8 @@ observe({
 		logfile$parameters[[77]]<-as.character(isolate(input$profnorm_use_nonblank_samplecount))	
 		logfile$parameters[[78]]<-as.character(isolate(input$profnorm_threshold))
 		at2<-logfile$parameters[c(70:78)]
-		if(any(is.na(match(at2,at1)))){ 
+		#if(any(is.na(match(at2,at1)))){ 
+		if(FALSE){
 			# must not rerun: qc
 			# must not rerun: recal
 			# must not rerun: align
@@ -492,7 +516,8 @@ observe({
 		# Componentization #####################################################
 		at1<-"1"
 		at2<-"1"
-		if(any(is.na(match(at2,at1)))){ 
+		#if(any(is.na(match(at2,at1)))){ 
+		if(FALSE){
 			# must not rerun: qc
 			# must not rerun: recal
 			# must not rerun: align
@@ -532,7 +557,8 @@ observe({
 		# Homologue series detection ###########################################
 		at1<-"1"
 		at2<-"1"
-		if(any(is.na(match(at2,at1)))){ 
+		#if(any(is.na(match(at2,at1)))){ 
+		if(FALSE){
 			# must not rerun: qc
 			# must not rerun: recal
 			# must not rerun: align
@@ -562,7 +588,8 @@ observe({
 		at1<-logfile$workflow[1]; 
 		logfile$workflow[1]<-as.character(isolate(input$qc));
 		at2<-logfile$workflow[1];
-		if(at1!=at2){
+		#if(at1!=at2){
+		if(FALSE){
 			if(logfile$workflow[1]=="yes"){# must rerun: qc
 				logfile$Tasks_to_redo[2]<-TRUE;			
 			}else{
@@ -617,7 +644,8 @@ observe({
 		at1<-logfile$workflow[2];
 		logfile$workflow[2]<-as.character(isolate(input$recal));
 		at2<-logfile$workflow[2];
-		if(at1!=at2){
+		#if(at1!=at2){
+		if(FALSE){
 			if(logfile$workflow[2]=="yes"){# must rerun: recal
 				logfile$Tasks_to_redo[3]<-TRUE;			
 			}else{
@@ -665,7 +693,16 @@ observe({
 				logfile$Tasks_to_redo[16]<-TRUE;		
 			}			
 		}
-		# recal ##################################################################	
+		# recplicates ############################################################	
+		at1<-logfile$workflow[13];
+		logfile$workflow[13]<-as.character(isolate(input$replicates));
+		at2<-logfile$workflow[13];		
+		if(at1!=at2){
+		
+
+
+		
+		}
 		# align ##################################################################
 		#at1<-logfile[[6]][3]; # align ###########################################
 		#logfile[[6]][3]<-as.character(isolate(input$RTalign));
@@ -677,7 +714,8 @@ observe({
 		at1<-logfile$workflow[4];
 		logfile$workflow[4]<-as.character(isolate(input$intnorm));
 		at2<-logfile$workflow[4];
-		if(at1!=at2){		
+		#if(at1!=at2){
+		if(FALSE){		
 			if(logfile$workflow[4]=="yes"){# must rerun: norm
 				logfile$Tasks_to_redo[4]<-TRUE;			
 				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -726,7 +764,8 @@ observe({
 		at1<-logfile$workflow[9]; 
 		logfile$workflow[9]<-as.character(isolate(input$profiled));
 		at2<-logfile$workflow[9];
-		if(at1!=at2){		
+		#if(at1!=at2){
+		if(FALSE){		
 			# skip is_pattern
 			# skip target_pattern
 			if(logfile$workflow[7]=="TRUE"){# must rerun: component isotopologues
@@ -769,7 +808,8 @@ observe({
 		at1<-logfile$workflow[10];
 		logfile$workflow[10]<-as.character(isolate(input$trenddetect));
 		at2<-logfile$workflow[10];
-		if(at1!=at2){
+		#if(at1!=at2){
+		if(FALSE){
 			cat("\nchanged trend+blind workflow setting!")
 			# skip is_pattern
 			# skip target_pattern
@@ -813,7 +853,8 @@ observe({
 		at1<-logfile$workflow[15];
 		logfile$workflow[15]<-as.character(isolate(input$profnorm));
 		at2<-logfile$workflow[15];
-		if(at1!=at2){
+		#if(at1!=at2){
+		if(FALSE){
 			# skip is_pattern
 			# skip target_pattern
 			if(logfile$workflow[7]=="TRUE"){# must rerun: component isotopologues
@@ -846,6 +887,16 @@ observe({
 				logfile$Tasks_to_redo[16]<-TRUE;		
 			}			
 		}		
+		# IS screening ###########################################################
+		at1<-logfile$workflow[11];
+		logfile$workflow[11]<-as.character(isolate(input$screen_IS));
+		at2<-logfile$workflow[11];
+		if(at1!=at2){}
+		# target screening #######################################################
+		at1<-logfile$workflow[12];
+		logfile$workflow[12]<-as.character(isolate(input$screen_target));
+		at2<-logfile$workflow[12];
+		if(at1!=at2){}
 		##########################################################################	
 		# set initial workflow dependencies ######################################
 		if(logfile$workflow[2]=="yes"){ # recalibration depends...
