@@ -1,6 +1,6 @@
 # Peak picking ##################################################################
 
-		  output$dowhat<<-renderText("Peak picking ... please wait");
+		  output$dowhat<-renderText("Peak picking ... please wait");
 		  if(any(search()=="package:nlme")){detach(package:nlme,force=TRUE);addit<-TRUE}else{addit<-FALSE}
           measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
           leng<-length(measurements[,1]);         
@@ -75,7 +75,7 @@
 				if(any(objects(envir=as.environment(".GlobalEnv"))=="MSlist")){rm(MSlist,envir=as.environment(".GlobalEnv"))}
 				if(any(objects()=="MSlist")){rm(MSlist)}
 				measurements[i,10]<-TRUE;
-				output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
+				output$measurements<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
 				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 				cat(" picked -"); 
 				formulator<-cbind(
@@ -91,18 +91,10 @@
 				cat(" exported. ");
             }
           }
-          logfile$summary[2,2]<<-"TRUE";
-          logfile$summary[2,2]<-"TRUE";
-		  logfile$Tasks_to_redo[1]<-"FALSE";
-		  logfile$Tasks_to_redo[1]<<-"FALSE";
-          save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
-		  summa[2,2]<-"done"
-		  summa[2,2]<<-"done"
-		  output$summa_html<<-renderText(summary_html(summa));
           measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-		  output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
+		  output$measurements<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
 		  if(addit){library(nlme)}
           cat("Peak picking completed \n"); 	  
           updateSelectInput(session, "sel_meas_ID", label = "Select file by ID:", choices =  c("none",as.character(measurements[,1])), selected = "none")
-		  output$dowhat<<-renderText("Peak picking completed")
+
 

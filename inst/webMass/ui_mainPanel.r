@@ -170,7 +170,7 @@
 				# block 2 ######################################################
 				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Mass recalibration </font></p> '),
 					radioButtons("recal", "Include?", c("yes"="yes","no"="no")),                
-				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Global intensity normalization </font></p> '),
+				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Median intensity normalization </font></p> '),
 					radioButtons("intnorm", "Include?", c("yes"="yes","no"="no")),
 				#HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> RT alignment </font></p> '),
 				#radioButtons("RTalign", "Include?", c("yes"="yes","no"="no")),     
@@ -270,7 +270,7 @@
 				tags$h5("Replicate files are defined (i.e., grouped) by the tag3 entry (not FALSE) in the measurements table"),
 				numericInput("replicate_dmz", "m/z tolerance ...", 3),                
 				selectInput("replicate_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),	
-				selectInput("replicate_recalib", "... and corrected by recalibration results (if available)", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE"),	
+				#selectInput("replicate_recalib", "... and corrected by recalibration results (if available)", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE"),	
 				numericInput("replicate_delRT", "RT tolerance of a compound peaks across replicate samples [s]", 30)
 			),	
             # ALLIGNMENT #######################################################
@@ -568,7 +568,7 @@
           #  )
           # ),
         tabPanel("Manual",
-			tags$iframe(style="height:800px; width:110%", src="manual.pdf")
+			tags$iframe(style="height:800px; width:110%;", src="manual.pdf")
 		),
         ########################################################################
         # ABOUT ################################################################

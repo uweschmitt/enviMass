@@ -83,7 +83,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		"",#"Homologues?",
 		""#"Mass defect?"
 	 )
-    doneit<-c(FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE)
+    doneit<-rep(FALSE,length(tasks))
     summar<-data.frame(tasks,doneit)
     names(summar)<-c("Tasks","Done?")
     logfile[[3]]<-summar
@@ -178,23 +178,23 @@ newproject<-function(pro_name,pro_dir,IS,targets){
     # Workflow settings ########################################################
     logfile$workflow<-0   
     names(logfile)[6]<-c("workflow")
-		logfile$workflow[1]<-"yes"; 	names(logfile$workflow)[1]<-"qc" 
-		logfile$workflow[2]<-"yes"; 	names(logfile$workflow)[2]<-"recal" 
-		logfile$workflow[3]<-"yes"; 	names(logfile$workflow)[3]<-"align" 
-		logfile$workflow[4]<-"yes"; 	names(logfile$workflow)[4]<-"norm" 
-		logfile$workflow[5]<-"yes"; 	names(logfile$workflow)[5]<-"is_pattern" 
-		logfile$workflow[6]<-"yes"; 	names(logfile$workflow)[6]<-"target_pattern" 
-		logfile$workflow[7]<-"TRUE"; 	names(logfile$workflow)[7]<-"-" 
-		logfile$workflow[8]<-"TRUE"; 	names(logfile$workflow)[8]<-"-" 
-		logfile$workflow[9]<-"yes"; 	names(logfile$workflow)[9]<-"profiled" 
-		logfile$workflow[10]<-"yes"; 	names(logfile$workflow)[10]<-"trenddetect"     
-		logfile$workflow[11]<-"TRUE"; 	names(logfile$workflow)[11]<-"screen_IS" 
-		logfile$workflow[12]<-"TRUE"; 	names(logfile$workflow)[12]<-"screen_target" 
-		logfile$workflow[13]<-"yes"; 	names(logfile$workflow)[13]<-"replicates" 
-		logfile$workflow[14]<-"TRUE"; 	names(logfile$workflow)[14]<-"-" 		
-		logfile$workflow[15]<-"yes"; 	names(logfile$workflow)[15]<-"profnorm" 
-		logfile$workflow[16]<-"yes"; 	names(logfile$workflow)[16]<-"-" 
-		logfile$workflow[17]<-"yes"; 	names(logfile$workflow)[17]<-"-" 	  
+	logfile$workflow[1]<-"yes"; 	names(logfile$workflow)[1]<-"qc" 
+	logfile$workflow[2]<-"yes"; 	names(logfile$workflow)[2]<-"recal" 
+	logfile$workflow[3]<-"yes"; 	names(logfile$workflow)[3]<-"align" 
+	logfile$workflow[4]<-"yes"; 	names(logfile$workflow)[4]<-"norm" 
+	logfile$workflow[5]<-"yes"; 	names(logfile$workflow)[5]<-"pattern" 
+	logfile$workflow[6]<-"TRUE"; 	names(logfile$workflow)[6]<-"-" 
+	logfile$workflow[7]<-"yes"; 	names(logfile$workflow)[7]<-"peakpicking" 
+	logfile$workflow[8]<-"TRUE"; 	names(logfile$workflow)[8]<-"-" 
+	logfile$workflow[9]<-"yes"; 	names(logfile$workflow)[9]<-"profiled" 
+	logfile$workflow[10]<-"yes"; 	names(logfile$workflow)[10]<-"trenddetect"     
+	logfile$workflow[11]<-"TRUE"; 	names(logfile$workflow)[11]<-"screen_IS" 
+	logfile$workflow[12]<-"TRUE"; 	names(logfile$workflow)[12]<-"screen_target" 
+	logfile$workflow[13]<-"yes"; 	names(logfile$workflow)[13]<-"replicates" 
+	logfile$workflow[14]<-"TRUE"; 	names(logfile$workflow)[14]<-"-" 		
+	logfile$workflow[15]<-"yes"; 	names(logfile$workflow)[15]<-"profnorm" 
+	logfile$workflow[16]<-"yes"; 	names(logfile$workflow)[16]<-"-" 
+	logfile$workflow[17]<-"yes"; 	names(logfile$workflow)[17]<-"-" 	  
 		
 		
 		

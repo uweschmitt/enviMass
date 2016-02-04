@@ -1,11 +1,4 @@
-if(
 
-	( logfile$summary[4,2]=="FALSE" &  logfile$workflow[2]=="yes") || # run: recal
-	( logfile$summary[4,2]=="FALSE" &  logfile$workflow[4]=="yes") || # run: norm
-	( logfile$summary[4,2]=="FALSE" &  logfile$workflow[3]=="yes") || # run: allign
-	( logfile$Tasks_to_redo[8]=="TRUE") 
-
-){
             measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
             ######################################################################
 			# on IS ##############################################################
@@ -558,32 +551,4 @@ if(
 			}
 			####################################################################	
 				
-	############################################################################
-	# (3) logfile entry 
-	logfile$summary[4,2]<<-"TRUE";
-	logfile$summary[4,2]<-"TRUE";
-	logfile$Tasks_to_redo[8]<-"FALSE";	
-	logfile$Tasks_to_redo[8]<<-"FALSE";	
-	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
-	summa[4,2]<-"done"
-	summa[4,2]<<-"done"
-	output$summa_html<<-renderText(summary_html(summa));
-	cat("\nIsotope pattern calculations completed \n");
-	output$dowhat<<-renderText("Isotope pattern calculations done ... wait")
-
-}else{
-
-	logfile$Tasks_to_redo[8]<-"FALSE";
-	logfile$Tasks_to_redo[8]<<-"FALSE";
-	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
-	summa[4,2]<-"skipped"
-	summa[4,2]<<-"skipped"
-	output$summa_html<<-renderText(summary_html(summa));
-	cat("\nIsotope pattern calculations skipped \n");
-	output$dowhat<<-renderText("Isotope pattern calculations skipped ... wait")
-
-}
-
-
-
 

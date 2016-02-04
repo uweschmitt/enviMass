@@ -84,7 +84,9 @@ if(!any(names(logfile$workflow)=="screen_target")){
 if(!any(names(logfile$workflow)=="replicates")){
 	logfile$workflow[13]<-"yes"; 	names(logfile$workflow)[13]<-"replicates" 
 }
-
+logfile$workflow[5]<-"yes"; 	names(logfile$workflow)[5]<-"pattern" 
+logfile$workflow[6]<-"TRUE"; 	names(logfile$workflow)[6]<-"-" 
+logfile$workflow[7]<-"yes"; 	names(logfile$workflow)[7]<-"peakpicking" 
 logfile$workflow[14]<-"TRUE"; 	names(logfile$workflow)[14]<-"-" 		
 logfile$workflow[16]<-"yes"; 	names(logfile$workflow)[16]<-"-" 
 logfile$workflow[17]<-"yes"; 	names(logfile$workflow)[17]<-"-" 

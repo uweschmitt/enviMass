@@ -1,6 +1,3 @@
-if(
-	(logfile$workflow[15]=="yes" && logfile$summary[9,2]=="FALSE") || (logfile$Tasks_to_redo[15]=="TRUE") 
-){
 
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 	if( (any(measurements[,4]=="positive") & file.exists(file.path(as.character(logfile[[1]]),"results","pattern_pos_IS"))) ){
@@ -775,55 +772,6 @@ if(
 		####################################################################################
 
 	}
-	########################################################################################
-	logfile$summary[9,2]<<-"TRUE";
-    logfile$summary[9,2]<-"TRUE";
-	logfile$Tasks_to_redo[15]<-"FALSE";
-	logfile$Tasks_to_redo[15]<<-"FALSE";
-    save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
-	summa[9,2]<<-"done"
-    summa[9,2]<-"done"
-	output$summa_html<<-renderText(summary_html(summa));
-    cat("IS-based profile normalization done \n");
-    output$dowhat<<-renderText("IS-normalization done ... wait")
 
-}else{
 
-	if(logfile$workflow[15]=="no"){
-		logfile$summary[9,2]<<-"FALSE";
-		logfile$summary[9,2]<-"FALSE";
-		path=file.path(logfile[[1]],"pics","profnorm_pos")
-			png(filename = path, bg = "white")
-			plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
-			dev.off()
-		    expr30p<-list(src=path)
-			output$profnorm_pos<-renderImage(expr30p, deleteFile = FALSE)		
-		path=file.path(logfile[[1]],"pics","profcount_pos")
-			png(filename = path, bg = "white")
-			plot.new();plot.window(xlim=c(1,1),ylim=c(1,1));#box();text(1,1,label="not available",cex=1.5,col="darkred")
-			dev.off()
-		    expr31p<-list(src=path)
-			output$profcount_pos<-renderImage(expr31p, deleteFile = FALSE)
-		path=file.path(logfile[[1]],"pics","profnorm_neg")
-			png(filename = path, bg = "white")
-			plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
-			dev.off()
-		    expr30n<-list(src=path)
-			output$profnorm_neg<-renderImage(expr30n, deleteFile = FALSE)		
-		path=file.path(logfile[[1]],"pics","profcount_neg")
-			png(filename = path, bg = "white")
-			plot.new();plot.window(xlim=c(1,1),ylim=c(1,1));#box();text(1,1,label="not available",cex=1.5,col="darkred")
-			dev.off()
-		    expr31n<-list(src=path)
-			output$profcount_neg<-renderImage(expr31n, deleteFile = FALSE)		
-	}
-	logfile$Tasks_to_redo[15]<-"FALSE";
-	logfile$Tasks_to_redo[15]<<-"FALSE";
-    save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
-    summa[9,2]<-"skipped";
-    summa[9,2]<<-"skipped";
-	output$summa_html<<-renderText(summary_html(summa));
-    cat("IS-based profile normalization skipped \n");
-    output$dowhat<<-renderText("IS-normalization skipped ... wait")
 
-}

@@ -18,10 +18,11 @@ summary_html<-function(in_logfile_summary){
 	mat[use_summary[,2]=="FALSE",2]<-"background-color: darkred;"
 	mat[use_summary[,2]=="TRUE",2]<-"background-color: darkgreen;"	
 	if(use_summary[1,2]=="TRUE"){mat[use_summary[,1]=="Data available?",2]<-"background-color: green;"}
-	mat[use_summary[,2]=="ok",2]<-"background-color: lightgreen;"
+	mat[use_summary[,2]=="ok",2]<-"background-color: lightgreen"
 	mat[use_summary[,2]=="...",2]<-"background-color: orange"
 	mat[use_summary[,2]=="done",2]<-"background-color: green"	
 	mat[use_summary[,2]=="skipped",2]<-"background-color: grey"
+	mat[use_summary[,2]=="removed",2]<-"background-color: blue"
 	use_summary[,2]<-""
 	use_summary[use_summary[,1]=="Data available?",1]<-"Files included"
 	use_summary[use_summary[,1]=="Peak pick?",1]<-"Peak picking"	

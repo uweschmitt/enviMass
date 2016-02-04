@@ -1,0 +1,19 @@
+
+measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+measurements<-measurements[measurements[,8]=="TRUE",]
+replic<-(measurements$tag3[measurements$tag3!="FALSE"])
+replic<-replic[duplicated(replic)]
+replic<-unique(replic)
+if(length(replic)>0){
+	for(i in 1:length(replic)){
+
+		IDs<-measurements$ID[measurements$tag3==replic[i]]
+		load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[1])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
+		keep<-rep(1,length(peaklist[,1]))
+		peaklist[,colnames(peaklist)=="keep"]<-keep
+		save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[j])))
+		rm(peaklist)
+
+	}
+}
+

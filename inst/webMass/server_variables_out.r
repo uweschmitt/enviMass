@@ -6,14 +6,17 @@ observe({
     if(	((exists("logfile")) & (isolate(input$savepar)))||
 		((exists("logfile")) & (isolate(input$saveflow)))
 	){
+		########################################################################   
 		createAlert(session,anchorId = "alert_1", alertId="a1", title = NULL, 
               content="Changes in the workflow settings require a project recalculation to become effective.",
               style = "warning",append=FALSE)
 		createAlert(session,anchorId = "alert_2", alertId="a2", title = NULL, 
               content="Changes in the parameter settings require a project recalculation to become effective.",
               style = "warning",append=FALSE)
-		##########################################################################      
-        # parameter settings #####################################################
+		########################################################################   
+		
+		########################################################################     
+        # parameter settings ###################################################
         # PW path ##############################################################
 		logfile[[4]]<-as.character(isolate(input$PWpath));
 		# peak picking #########################################################
@@ -33,83 +36,8 @@ observe({
 		logfile$parameters$peak_weight<-as.character(isolate(input$peak_weight))
 		logfile$parameters$peak_maxint_log10<-as.character(isolate(input$peak_maxint))
 		at2<-logfile$parameters[c(1,2,3,4,5,6,7,8,9,10,11,12,13,14)]
-		#if(any(is.na(match(at2,at1)))){ 
-		if(FALSE){
-			# must rerun: everything
-			# must rerun: peak picking
-			logfile$Tasks_to_redo[1]<-TRUE;
-			measurements1<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-			measurements1[,10]<-FALSE;
-			write.csv(measurements1,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
-			rm(measurements1);			
-			if(logfile$workflow[1]=="yes"){# must rerun: qc
-				logfile$Tasks_to_redo[2]<-TRUE;			
-			}
-			if(logfile$workflow[2]=="yes"){# must rerun: recal
-				logfile$Tasks_to_redo[3]<-TRUE;			
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements[,12]<-FALSE;
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);				
-			}
-			if(logfile$workflow[3]=="yes"){# must rerun: align
-				logfile$Tasks_to_redo[5]<-TRUE;			
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements[,13]<-FALSE;
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
-			}
-			if(logfile$workflow[4]=="yes"){# must rerun: norm
-				logfile$Tasks_to_redo[4]<-TRUE;			
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements[,14]<-FALSE;
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
-			}
-			# skip is_pattern
-			# skip target_pattern
-			if(logfile$workflow[7]=="TRUE"){# must rerun: component isotopologues
-				logfile$Tasks_to_redo[13]<-TRUE;	
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements[,16]<-FALSE;
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);				
-			}
-			if(logfile$workflow[8]=="TRUE"){# must rerun: component adducts
-				logfile$Tasks_to_redo[13]<-TRUE;
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements[,16]<-FALSE;
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);				
-			}
-			if(logfile$workflow[9]=="yes"){# must rerun: profiled
-				logfile$Tasks_to_redo[6]<-TRUE;				
-			}
-			if(logfile$workflow[10]=="yes"){# must rerun: trendblind
-				logfile$Tasks_to_redo[7]<-TRUE;			
-			}
-			if(logfile$workflow[11]=="TRUE"){# must rerun: screen_IS_sam  
-				logfile$Tasks_to_redo[10]<-TRUE;			
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements[,17]<-FALSE;
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);												
-			}
-			if(logfile$workflow[12]=="TRUE"){# must rerun: screen_target_sam
-				logfile$Tasks_to_redo[9]<-TRUE;			
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements[,18]<-FALSE;
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);												
-			}		
-			if(logfile$workflow[13]=="TRUE"){# must rerun: screen_IS_comp
-				logfile$Tasks_to_redo[12]<-TRUE;			
-			}			
-			if(logfile$workflow[14]=="TRUE"){# must rerun: screen_target_comp
-				logfile$Tasks_to_redo[11]<-TRUE;		
-			}
-			if(logfile$workflow[15]=="yes"){# must rerun: profnorm - IS-based normalization
-				logfile$Tasks_to_redo[15]<-TRUE;			
-			}			
-			if(logfile$workflow[16]=="yes"){# must rerun: homol
-				logfile$Tasks_to_redo[14]<-TRUE;			
-			}			
-			if(logfile$workflow[17]=="yes"){# must rerun: massdef
-				logfile$Tasks_to_redo[16]<-TRUE;			
-			}			
+		if(any(is.na(match(at2,at1)))){ 
+			workflow_set(logfile,down="peakpick",check_node=TRUE)
 		}
         # progbar? #############################################################
         logfile$parameters$progressBar<-as.character(isolate(input$progressbar));
@@ -124,53 +52,8 @@ observe({
 		at5<-logfile$adducts_neg
 		logfile$adducts_neg<-as.character(isolate(input$adducts_neg))
 		at6<-logfile$adducts_neg
-		if(FALSE){
-		#if( any(is.na(match(at2,at1))) || any(is.na(match(at1,at2))) || any(is.na(match(at3,at4))) || any(is.na(match(at4,at3))) || any(is.na(match(at5,at6))) || any(is.na(match(at6,at5))) ){ 
-			if(logfile$workflow[2]=="yes"){# must rerun: recal
-				logfile$Tasks_to_redo[3]<-TRUE;			
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements[,12]<-FALSE;
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);				
-			}
-			# must not rerun: align
-			# must not rerun: norm
-			# must rerun: is_pattern / target_pattern
-			logfile$Tasks_to_redo[8]<-TRUE;		
-			# must not rerun: component isotopologues
-			# must not rerun: component adducts
-			if(logfile$workflow[9]=="yes"){# must rerun: profiled
-				logfile$Tasks_to_redo[6]<-TRUE;				
-			}
-			if(logfile$workflow[10]=="yes"){# must rerun: trendblind
-				logfile$Tasks_to_redo[7]<-TRUE;			
-			}
-			if(logfile$workflow[11]=="TRUE"){# must rerun: screen_IS_sam  
-				logfile$Tasks_to_redo[10]<-TRUE;			
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements[,17]<-FALSE;
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);												
-			}
-			if(logfile$workflow[12]=="TRUE"){# must rerun: screen_target_sam
-				logfile$Tasks_to_redo[9]<-TRUE;			
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements[,18]<-FALSE;
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);												
-			}		
-			if(logfile$workflow[13]=="TRUE"){# must rerun: screen_IS_comp
-				logfile$Tasks_to_redo[12]<-TRUE;			
-			}			
-			if(logfile$workflow[14]=="TRUE"){# must rerun: screen_target_comp
-				logfile$Tasks_to_redo[11]<-TRUE;			
-			}
-			if(logfile$workflow[15]=="yes"){# must rerun: profnorm - IS-based normalization
-				logfile$Tasks_to_redo[15]<-TRUE;			
-			}			
-			if(logfile$workflow[16]=="yes"){# must rerun: homol
-				logfile$Tasks_to_redo[14]<-TRUE;			
-			}			
-			if(logfile$workflow[17]=="yes"){# must rerun: massdef
-				logfile$Tasks_to_redo[16]<-TRUE;		
-			}			
+		if( any(is.na(match(at2,at1))) || any(is.na(match(at1,at2))) || any(is.na(match(at3,at4))) || any(is.na(match(at4,at3))) || any(is.na(match(at5,at6))) || any(is.na(match(at6,at5))) ){ 
+			workflow_set(logfile,down="pattern",check_node=TRUE)
 		}
         # recalibration ######################################################## 
         at1<-logfile$parameters[c(30,31,32,33)];
@@ -179,79 +62,18 @@ observe({
         logfile$parameters[[32]]<-as.character(isolate(input$recal_ppm))
         logfile$parameters[[33]]<-as.character(isolate(input$recal_drt))
 		at2<-logfile$parameters[c(30,31,32,33)];
-		#if(any(is.na(match(at2,at1)))){ 
-		if(FALSE){
-			# must rerun: peak picking
-			# must not rerun: qc
-			if(logfile$workflow[2]=="yes"){# must rerun: recal
-				logfile$Tasks_to_redo[3]<-TRUE;			
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements[,12]<-FALSE;
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);				
-			}
-			if(logfile$workflow[3]=="yes"){# must rerun: align
-				logfile$Tasks_to_redo[5]<-TRUE;			
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements[,13]<-FALSE;
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
-			}
-			# must not rerun: norm
-			# skip is_pattern
-			# skip target_pattern
-			if(logfile$workflow[7]=="TRUE"){# must rerun: component isotopologues - but NOT on file level (measurements[,16])!
-				logfile$Tasks_to_redo[13]<-TRUE;					
-			}
-			if(logfile$workflow[8]=="TRUE"){# must rerun: component adducts - but NOT on file level (measurements[,16])!
-				logfile$Tasks_to_redo[13]<-TRUE;				
-			}			
-			if(logfile$workflow[9]=="yes"){# must rerun: profiled
-				logfile$Tasks_to_redo[6]<-TRUE;			
-			}
-			if(logfile$workflow[10]=="yes"){# must rerun: trendblind
-				logfile$Tasks_to_redo[7]<-TRUE;		
-			}
-			if(logfile$workflow[11]=="TRUE"){# must rerun: screen_IS_sam  
-				logfile$Tasks_to_redo[10]<-TRUE;			
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements[,17]<-FALSE;
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);												
-			}
-			if(logfile$workflow[12]=="TRUE"){# must rerun: screen_target_sam
-				logfile$Tasks_to_redo[9]<-TRUE;			
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements[,18]<-FALSE;
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);												
-			}		
-			if(logfile$workflow[13]=="TRUE"){# must rerun: screen_IS_comp
-				logfile$Tasks_to_redo[12]<-TRUE;			
-			}			
-			if(logfile$workflow[14]=="TRUE"){# must rerun: screen_target_comp
-				logfile$Tasks_to_redo[11]<-TRUE;			
-			}
-			if(logfile$workflow[15]=="yes"){# must rerun: profnorm - IS-based normalization
-				logfile$Tasks_to_redo[15]<-TRUE;			
-			}			
-			if(logfile$workflow[16]=="yes"){# must rerun: homol
-				logfile$Tasks_to_redo[14]<-TRUE;		
-			}			
-			if(logfile$workflow[17]=="yes"){# must rerun: massdef
-				logfile$Tasks_to_redo[16]<-TRUE;		
-			}			
+		if(any(is.na(match(at2,at1)))){ 
+			workflow_set(logfile,down="recal",check_node=TRUE)
 		}
 		# replicates ###########################################################
 		at1<-logfile$parameters[c(15,16,17,18)];
 		logfile$parameters[[15]]<-as.character(isolate(input$replicate_dmz))
 		logfile$parameters[[16]]<-as.character(isolate(input$replicate_ppm))
-		logfile$parameters[[17]]<-as.character(isolate(input$replicate_recalib))
+		#logfile$parameters[[17]]<-as.character(isolate(input$replicate_recalib))
 		logfile$parameters[[18]]<-as.character(isolate(input$replicate_delRT))		
 		at2<-logfile$parameters[c(15,16,17,18)];
 		if(any(is.na(match(at2,at1)))){ 
-		
-		
-	
-
-	
-		
+			workflow_set(logfile,down="replicates",check_node=TRUE)		
 		}
 		# profiling ############################################################
         at1<-c(logfile$parameters[c(38,39,40,41)],logfile$parameters$upto_file);
@@ -261,127 +83,25 @@ observe({
         logfile$parameters[[40]]<-as.character(isolate(input$prof_ppm))
         logfile$parameters[[41]]<-as.character(isolate(input$prof_drt))
 		at2<-c(logfile$parameters[c(38,39,40,41)],logfile$parameters$upto_file);
-		#if(any(is.na(match(at2,at1)))){ 
-		if(FALSE){
-			# must not rerun: qc
-			# must not rerun: recal
-			# must not rerun: align
-			# must not rerun: norm
-			# skip is_pattern
-			# skip target_pattern
-			if(logfile$workflow[7]=="TRUE"){# must rerun: component isotopologues - but NOT on file level (measurements[,16])!
-				logfile$Tasks_to_redo[13]<-TRUE;				
-			}
-			if(logfile$workflow[8]=="TRUE"){# must rerun: component adducts - but NOT on file level (measurements[,16])!
-				logfile$Tasks_to_redo[13]<-TRUE;				
-			}			
-			if(logfile$workflow[9]=="yes"){# must rerun: profiled
-				logfile$Tasks_to_redo[6]<-TRUE;			
-			}
-			if(logfile$workflow[10]=="yes"){# must rerun: trendblind
-				logfile$Tasks_to_redo[7]<-TRUE;			
-			}
-			# must not rerun: screen_IS_sam  
-			# must not rerun: screen_target_sam
-			if(logfile$workflow[13]=="TRUE"){# must rerun: screen_IS_comp
-				logfile$Tasks_to_redo[12]<-TRUE;			
-			}			
-			if(logfile$workflow[14]=="TRUE"){# must rerun: screen_target_comp
-				logfile$Tasks_to_redo[11]<-TRUE;		
-			}
-			if(logfile$workflow[15]=="yes"){# must rerun: profnorm - IS-based normalization
-				logfile$Tasks_to_redo[15]<-TRUE;		
-			}			
-			if(logfile$workflow[16]=="yes"){# must rerun: homol
-				logfile$Tasks_to_redo[14]<-TRUE;			
-			}			
-			if(logfile$workflow[17]=="yes"){# must rerun: massdef
-				logfile$Tasks_to_redo[16]<-TRUE;		
-			}			
+		if(any(is.na(match(at2,at1)))){ 
+			workflow_set(logfile,down="profiling",check_node=TRUE)		
 		}
-
 		# trend detection ######################################################
 		at1<-logfile$parameters[c(29,34,35)]
 		logfile$parameters[[29]]<-as.character(isolate(input$notrend))
 		logfile$parameters[[34]]<-as.character(isolate(input$trend_lags))
 		logfile$parameters[[35]]<-as.character(isolate(input$trend_thres))
 		at2<-logfile$parameters[c(29,34,35)]
-		#if(any(is.na(match(at2,at1)))){ 
-		if(FALSE){
-			# must not rerun: qc
-			# must not rerun: recal
-			# must not rerun: align
-			# must not rerun: norm
-			# skip is_pattern
-			# skip target_pattern
-			if(logfile$workflow[7]=="TRUE"){# must rerun: component isotopologues - but NOT on file level (measurements[,16])!
-				logfile$Tasks_to_redo[13]<-TRUE;				
-			}
-			if(logfile$workflow[8]=="TRUE"){# must rerun: component adducts - but NOT on file level (measurements[,16])!
-				logfile$Tasks_to_redo[13]<-TRUE;			
-			}			
-			# must not rerun: profiled
-			if(logfile$workflow[10]=="yes"){# must rerun: trendblind
-				logfile$Tasks_to_redo[7]<-TRUE;			
-			}
-			# must not rerun: screen_IS_sam  
-			# must not rerun: screen_target_sam
-			if(logfile$workflow[13]=="TRUE"){# must rerun: screen_IS_comp
-				logfile$Tasks_to_redo[12]<-TRUE;			
-			}			
-			if(logfile$workflow[14]=="TRUE"){# must rerun: screen_target_comp
-				logfile$Tasks_to_redo[11]<-TRUE;	
-			}
-			if(logfile$workflow[15]=="yes"){# must rerun: profnorm - IS-based normalization
-				logfile$Tasks_to_redo[15]<-TRUE;		
-			}			
-			if(logfile$workflow[16]=="yes"){# must rerun: homol
-				logfile$Tasks_to_redo[14]<-TRUE;		
-			}			
-			if(logfile$workflow[17]=="yes"){# must rerun: massdef
-				logfile$Tasks_to_redo[16]<-TRUE;	
-			}			
+		if(any(is.na(match(at2,at1)))){ 
+			workflow_set(logfile,down="trendblind",check_node=TRUE)
 		}		
 		# blind subtraction ####################################################		
 		at1<-logfile$parameters[c(36,37)]
 		logfile$parameters[[36]]<-as.character(isolate(input$blind_do))
 		logfile$parameters[[37]]<-as.character(isolate(input$blind_fold))
 		at2<-logfile$parameters[c(36,37)]
-		#if(any(is.na(match(at2,at1)))){ 
-		if(FALSE){
-			# must not rerun: qc
-			# must not rerun: recal
-			# must not rerun: align
-			# must not rerun: norm
-			# skip is_pattern
-			# skip target_pattern
-			if(logfile$workflow[7]=="TRUE"){# must rerun: component isotopologues - but NOT on file level (measurements[,16])!
-				logfile$Tasks_to_redo[13]<-TRUE;					
-			}
-			if(logfile$workflow[8]=="TRUE"){# must rerun: component adducts - but NOT on file level (measurements[,16])!
-				logfile$Tasks_to_redo[13]<-TRUE;			
-			}			
-			# must not rerun: profiled
-			if(logfile$workflow[10]=="yes"){# must rerun: trendblind
-				logfile$Tasks_to_redo[7]<-TRUE;		
-			}
-			# must not rerun: screen_IS_sam  
-			# must not rerun: screen_target_sam
-			if(logfile$workflow[13]=="TRUE"){# must rerun: screen_IS_comp
-				logfile$Tasks_to_redo[12]<-TRUE;			
-			}			
-			if(logfile$workflow[14]=="TRUE"){# must rerun: screen_target_comp
-				logfile$Tasks_to_redo[11]<-TRUE;			
-			}
-			if(logfile$workflow[15]=="yes"){# must rerun: profnorm - IS-based normalization
-				logfile$Tasks_to_redo[15]<-TRUE;			
-			}			
-			if(logfile$workflow[16]=="yes"){# must rerun: homol
-				logfile$Tasks_to_redo[14]<-TRUE;	
-			}			
-			if(logfile$workflow[17]=="yes"){# must rerun: massdef
-				logfile$Tasks_to_redo[16]<-TRUE;
-			}			
+		if(any(is.na(match(at2,at1)))){ 
+			workflow_set(logfile,down="trendblind",check_node=TRUE)
 		}		
 		# IS screening #########################################################
 		at1<-logfile$parameters[c(42:51)]
@@ -396,32 +116,8 @@ observe({
 		logfile$parameters[[50]]<-as.character(isolate(input$screen_IS_w2))
 		logfile$parameters[[51]]<-as.character(isolate(input$screen_IS_w3))		
 		at2<-logfile$parameters[c(42:51)]
-		#if(any(is.na(match(at2,at1)))){ 
-		if(FALSE){
-			# must not rerun: qc
-			# must not rerun: recal
-			# must not rerun: align
-			# must not rerun: norm
-			# skip is_pattern
-			# skip target_pattern
-			# must not rerun: component isotopologues
-			# must not rerun: component adducts
-			# must not rerun: profiled
-			# must not rerun: trendblind
-			if(logfile$workflow[11]=="TRUE"){# must rerun: screen_IS_sam  
-				logfile$Tasks_to_redo[10]<-TRUE;			
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements[,17]<-FALSE;
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);												
-			}
-			# must not rerun: screen_target_sam		
-			if(logfile$workflow[13]=="TRUE"){# must rerun: screen_IS_comp
-				logfile$Tasks_to_redo[12]<-TRUE;			
-			}			
-			# must not rerun: screen_target_comp
-			# must not rerun: profnorm - IS-based normalization
-			# must not rerun: homol
-			# must not rerun: massdef
+		if(any(is.na(match(at2,at1)))){ 
+			workflow_set(logfile,down="IS_screen",check_node=TRUE)
 		}
 		# target screening #####################################################
 		at1<-logfile$parameters[c(55:64)]
@@ -436,34 +132,8 @@ observe({
 		logfile$parameters[[63]]<-as.character(isolate(input$screen_target_w2))
 		logfile$parameters[[64]]<-as.character(isolate(input$screen_target_w3))		
 		at2<-logfile$parameters[c(55:64)]
-		#if(any(is.na(match(at2,at1)))){ 
-		if(FALSE){
-			# must not rerun: qc
-			# must not rerun: recal
-			# must not rerun: align
-			# must not rerun: norm
-			# skip is_pattern
-			# skip target_pattern
-			# must not rerun: component isotopologues
-			# must not rerun: component adducts
-			# must not rerun: profiled
-			# must not rerun: trendblind
-			# must rerun: screen_IS_sam  
-			# must not rerun: screen_target_sam	
-			if(logfile$workflow[12]=="TRUE"){# must rerun: screen_target_sam
-				logfile$Tasks_to_redo[9]<-TRUE;			
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements[,18]<-FALSE;
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);												
-			}							
-			# must not rerun: screen_IS_comp
-			# must  not rerun: screen_target_comp
-			if(logfile$workflow[14]=="TRUE"){# must rerun: screen_target_comp
-				logfile$Tasks_to_redo[11]<-TRUE;			
-			}
-			# must not rerun: profnorm - IS-based normalization
-			# must not rerun: homol
-			# must not rerun: massdef		
+		if(any(is.na(match(at2,at1)))){ 
+			workflow_set(logfile,down="target_screen",check_node=TRUE)
 		}
 		# IS-Normalization #####################################################
 		at1<-logfile$parameters[c(70:78)]
@@ -477,476 +147,85 @@ observe({
 		logfile$parameters[[77]]<-as.character(isolate(input$profnorm_use_nonblank_samplecount))	
 		logfile$parameters[[78]]<-as.character(isolate(input$profnorm_threshold))
 		at2<-logfile$parameters[c(70:78)]
-		#if(any(is.na(match(at2,at1)))){ 
-		if(FALSE){
-			# must not rerun: qc
-			# must not rerun: recal
-			# must not rerun: align
-			# must not rerun: norm
-			# skip is_pattern
-			# skip target_pattern
-			if(logfile$workflow[7]=="TRUE"){# must rerun: component isotopologues - but NOT on file level (measurements[,16])!
-				logfile$Tasks_to_redo[13]<-TRUE;					
-			}
-			if(logfile$workflow[8]=="TRUE"){# must rerun: component adducts - but NOT on file level (measurements[,16])!
-				logfile$Tasks_to_redo[13]<-TRUE;				
-			}
-			# must not rerun: profiled
-			if(logfile$workflow[10]=="yes"){# must rerun: trendblind
-				logfile$Tasks_to_redo[7]<-TRUE;			
-			}
-			# must not rerun: screen_IS_sam  
-			# must not rerun: screen_target_sam
-			if(logfile$workflow[13]=="TRUE"){# must rerun: screen_IS_comp
-				logfile$Tasks_to_redo[12]<-TRUE;			
-			}			
-			if(logfile$workflow[14]=="TRUE"){# must rerun: screen_target_comp
-				logfile$Tasks_to_redo[11]<-TRUE;			
-			}
-			if(logfile$workflow[15]=="yes"){# must rerun: profnorm - IS-based normalization
-				logfile$Tasks_to_redo[15]<-TRUE;			
-			}			
-			if(logfile$workflow[16]=="yes"){# must rerun: homol
-				logfile$Tasks_to_redo[14]<-TRUE;			
-			}			
-			if(logfile$workflow[17]=="yes"){# must rerun: massdef
-				logfile$Tasks_to_redo[16]<-TRUE;			
-			}				
-		}		
-		# Componentization #####################################################
-		at1<-"1"
-		at2<-"1"
-		#if(any(is.na(match(at2,at1)))){ 
-		if(FALSE){
-			# must not rerun: qc
-			# must not rerun: recal
-			# must not rerun: align
-			# must not rerun: norm
-			# skip is_pattern
-			# skip target_pattern
-			if(logfile$workflow[7]=="TRUE"){ # must rerun: component isotopologues
-				logfile$Tasks_to_redo[13]<-TRUE;	
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements[,16]<-FALSE;
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);				
-			}
-			if(logfile$workflow[8]=="TRUE"){ # must rerun: component adducts
-				logfile$Tasks_to_redo[13]<-TRUE;
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements[,16]<-FALSE;
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);				
-			}
-			# must not rerun: profiled
-			# must not rerun: trendblind
-			# must not rerun: screen_IS_sam  
-			# must not rerun: screen_target_sam
-			if(logfile$workflow[13]=="TRUE"){# must rerun: screen_IS_comp
-				logfile$Tasks_to_redo[12]<-TRUE;			
-			}			
-			if(logfile$workflow[14]=="TRUE"){# must rerun: screen_target_comp
-				logfile$Tasks_to_redo[11]<-TRUE;			
-			}
-			# must not rerun: profnorm - IS-based normalization
-			if(logfile$workflow[16]=="yes"){# must rerun: homol
-				logfile$Tasks_to_redo[14]<-TRUE;		
-			}			
-			if(logfile$workflow[17]=="yes"){# must rerun: massdef
-				logfile$Tasks_to_redo[16]<-TRUE;		
-			}			
-		}
-		# Homologue series detection ###########################################
-		at1<-"1"
-		at2<-"1"
-		#if(any(is.na(match(at2,at1)))){ 
-		if(FALSE){
-			# must not rerun: qc
-			# must not rerun: recal
-			# must not rerun: align
-			# must not rerun: norm
-			# skip is_pattern
-			# skip target_pattern
-			# must not rerun: component isotopologues
-			# must not rerun: component adducts
-			# must not rerun: profiled
-			# must not rerun: trendblind
-			# must not rerun: screen_IS_sam  
-			# must not rerun: screen_target_sam
-			# must not rerun: screen_IS_comp
-			# must not rerun: screen_target_comp
-			# must not rerun: profnorm - IS-based normalization
-			if(logfile$workflow[16]=="yes"){# must rerun: homol
-				logfile$Tasks_to_redo[14]<-TRUE;			
-			}			
-			# must not rerun: massdef
-		}
-		########################################################################	
-			
-
+		if(any(is.na(match(at2,at1)))){ 
+			workflow_set(logfile,down="norm_prof",check_node=TRUE)		
+		}	
+		########################################################################   
+		
 		##########################################################################
 		# workflow settings ######################################################
 		# QC #####################################################################
 		at1<-logfile$workflow[1]; 
 		logfile$workflow[1]<-as.character(isolate(input$qc));
 		at2<-logfile$workflow[1];
-		#if(at1!=at2){
-		if(FALSE){
-			if(logfile$workflow[1]=="yes"){# must rerun: qc
-				logfile$Tasks_to_redo[2]<-TRUE;			
-			}else{
-				logfile$Tasks_to_redo[2]<-FALSE; # overwrite a remaining task					
-			}			
-			if(logfile$workflow[2]=="yes"){# must rerun: recal
-				logfile$Tasks_to_redo[3]<-TRUE;			
-			}
-			if(logfile$workflow[3]=="yes"){# must rerun: align
-				logfile$Tasks_to_redo[5]<-TRUE;			
-			}
-			if(logfile$workflow[4]=="yes"){# must rerun: norm
-				logfile$Tasks_to_redo[4]<-TRUE;			
-			}
-			# skip is_pattern
-			# skip target_pattern
-			if(logfile$workflow[7]=="TRUE"){# must rerun: component isotopologues
-				logfile$Tasks_to_redo[13]<-TRUE;
-			}
-			if(logfile$workflow[8]=="TRUE"){# must rerun: component adducts
-				logfile$Tasks_to_redo[13]<-TRUE;
-			}
-			if(logfile$workflow[9]=="yes"){# must rerun: profiled
-				logfile$Tasks_to_redo[6]<-TRUE;		
-			}
-			if(logfile$workflow[10]=="yes"){# must rerun: trendblind
-				logfile$Tasks_to_redo[7]<-TRUE;			
-			}
-			if(logfile$workflow[11]=="TRUE"){# must rerun: screen_IS_sam  
-				logfile$Tasks_to_redo[10]<-TRUE;		
-			}
-			if(logfile$workflow[12]=="TRUE"){# must rerun: screen_target_sam
-				logfile$Tasks_to_redo[9]<-TRUE;		
-			}		
-			if(logfile$workflow[13]=="TRUE"){# must rerun: screen_IS_comp
-				logfile$Tasks_to_redo[12]<-TRUE;			
-			}			
-			if(logfile$workflow[14]=="TRUE"){# must rerun: screen_target_comp
-				logfile$Tasks_to_redo[11]<-TRUE;		
-			}
-			if(logfile$workflow[15]=="yes"){# must rerun: profnorm - IS-based normalization
-				logfile$Tasks_to_redo[15]<-TRUE;		
-			}			
-			if(logfile$workflow[16]=="yes"){# must rerun: homol
-				logfile$Tasks_to_redo[14]<-TRUE;			
-			}			
-			if(logfile$workflow[17]=="yes"){# must rerun: massdef
-				logfile$Tasks_to_redo[16]<-TRUE;			
-			}			
+		if(at1!=at2){
+			workflow_set(logfile,down="QC",check_node=FALSE)
 		}
 		# recal ##################################################################	
 		at1<-logfile$workflow[2];
 		logfile$workflow[2]<-as.character(isolate(input$recal));
 		at2<-logfile$workflow[2];
-		#if(at1!=at2){
-		if(FALSE){
-			if(logfile$workflow[2]=="yes"){# must rerun: recal
-				logfile$Tasks_to_redo[3]<-TRUE;			
-			}else{
-				logfile$Tasks_to_redo[3]<-FALSE;				
-			}
-			if(logfile$workflow[3]=="yes"){# must rerun: align
-				logfile$Tasks_to_redo[5]<-TRUE;			
-			}
-			if(logfile$workflow[4]=="yes"){# must rerun: norm
-				logfile$Tasks_to_redo[4]<-TRUE;			
-			}
-			# skip is_pattern
-			# skip target_pattern
-			if(logfile$workflow[7]=="TRUE"){# must rerun: component isotopologues
-				logfile$Tasks_to_redo[13]<-TRUE;
-			}
-			if(logfile$workflow[8]=="TRUE"){# must rerun: component adducts
-				logfile$Tasks_to_redo[13]<-TRUE;
-			}
-			if(logfile$workflow[9]=="yes"){# must rerun: profiled
-				logfile$Tasks_to_redo[6]<-TRUE;			
-			}
-			if(logfile$workflow[10]=="yes"){# must rerun: trendblind
-				logfile$Tasks_to_redo[7]<-TRUE;		
-			}
-			if(logfile$workflow[11]=="TRUE"){# must rerun: screen_IS_sam  
-				logfile$Tasks_to_redo[10]<-TRUE;		
-			}
-			if(logfile$workflow[12]=="TRUE"){# must rerun: screen_target_sam
-				logfile$Tasks_to_redo[9]<-TRUE;			
-			}		
-			if(logfile$workflow[13]=="TRUE"){# must rerun: screen_IS_comp
-				logfile$Tasks_to_redo[12]<-TRUE;		
-			}			
-			if(logfile$workflow[14]=="TRUE"){# must rerun: screen_target_comp
-				logfile$Tasks_to_redo[11]<-TRUE;	
-			}
-			if(logfile$workflow[15]=="yes"){# must rerun: profnorm - IS-based normalization
-				logfile$Tasks_to_redo[15]<-TRUE;		
-			}			
-			if(logfile$workflow[16]=="yes"){# must rerun: homol
-				logfile$Tasks_to_redo[14]<-TRUE;			
-			}			
-			if(logfile$workflow[17]=="yes"){# must rerun: massdef
-				logfile$Tasks_to_redo[16]<-TRUE;		
-			}			
+		if(at1!=at2){
+			workflow_set(logfile,down="recal",check_node=FALSE)
 		}
 		# recplicates ############################################################	
 		at1<-logfile$workflow[13];
 		logfile$workflow[13]<-as.character(isolate(input$replicates));
 		at2<-logfile$workflow[13];		
 		if(at1!=at2){
-		
-
-
-		
+			workflow_set(logfile,down="replicates",check_node=FALSE)
 		}
 		# align ##################################################################
-		#at1<-logfile[[6]][3]; # align ###########################################
-		#logfile[[6]][3]<-as.character(isolate(input$RTalign));
-		#at2<-logfile[[6]][3];
-		#if(at1!=at2){
-		#	logfile$Tasks_to_redo[3:7]<-rep(TRUE,length(3:7));
-		#}	
+		
 		# norm ###################################################################
 		at1<-logfile$workflow[4];
 		logfile$workflow[4]<-as.character(isolate(input$intnorm));
 		at2<-logfile$workflow[4];
-		#if(at1!=at2){
-		if(FALSE){		
-			if(logfile$workflow[4]=="yes"){# must rerun: norm
-				logfile$Tasks_to_redo[4]<-TRUE;			
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements[,14]<-FALSE;
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
-			}else{
-				logfile$Tasks_to_redo[4]<-FALSE;		
-			}
-			# skip is_pattern
-			# skip target_pattern
-			if(logfile$workflow[7]=="TRUE"){# must rerun: component isotopologues
-				logfile$Tasks_to_redo[13]<-TRUE;
-			}
-			if(logfile$workflow[8]=="TRUE"){# must rerun: component adducts
-				logfile$Tasks_to_redo[13]<-TRUE;
-			}
-			if(logfile$workflow[9]=="yes"){# must rerun: profiled
-				logfile$Tasks_to_redo[6]<-TRUE;		
-			}
-			if(logfile$workflow[10]=="yes"){# must rerun: trendblind
-				logfile$Tasks_to_redo[7]<-TRUE;		
-			}
-			if(logfile$workflow[11]=="TRUE"){# must rerun: screen_IS_sam  
-				logfile$Tasks_to_redo[10]<-TRUE;		
-			}
-			if(logfile$workflow[12]=="TRUE"){# must rerun: screen_target_sam
-				logfile$Tasks_to_redo[9]<-TRUE;			
-			}		
-			if(logfile$workflow[13]=="TRUE"){# must rerun: screen_IS_comp
-				logfile$Tasks_to_redo[12]<-TRUE;		
-			}			
-			if(logfile$workflow[14]=="TRUE"){# must rerun: screen_target_comp
-				logfile$Tasks_to_redo[11]<-TRUE;		
-			}
-			if(logfile$workflow[15]=="yes"){# must rerun: profnorm - IS-based normalization
-				logfile$Tasks_to_redo[15]<-TRUE;			
-			}			
-			if(logfile$workflow[16]=="yes"){# must rerun: homol
-				logfile$Tasks_to_redo[14]<-TRUE;			
-			}			
-			if(logfile$workflow[17]=="yes"){# must rerun: massdef
-				logfile$Tasks_to_redo[16]<-TRUE;		
-			}			
+		if(at1!=at2){
+			workflow_set(logfile,down="normalize",check_node=FALSE)	
 		}
 		# profiling ##############################################################
 		at1<-logfile$workflow[9]; 
 		logfile$workflow[9]<-as.character(isolate(input$profiled));
 		at2<-logfile$workflow[9];
-		#if(at1!=at2){
-		if(FALSE){		
-			# skip is_pattern
-			# skip target_pattern
-			if(logfile$workflow[7]=="TRUE"){# must rerun: component isotopologues
-				logfile$Tasks_to_redo[13]<-TRUE;
-			}
-			if(logfile$workflow[8]=="TRUE"){# must rerun: component adducts
-				logfile$Tasks_to_redo[13]<-TRUE;
-			}
-			if(logfile$workflow[9]=="yes"){# must rerun: profiled
-				logfile$Tasks_to_redo[6]<-TRUE;		
-			}else{
-				logfile$Tasks_to_redo[6]<-FALSE;			
-			}
-			if(logfile$workflow[10]=="yes"){# must rerun: trendblind
-				logfile$Tasks_to_redo[7]<-TRUE;			
-			}
-			if(logfile$workflow[11]=="TRUE"){# must rerun: screen_IS_sam  
-				logfile$Tasks_to_redo[10]<-TRUE;		
-			}
-			if(logfile$workflow[12]=="TRUE"){# must rerun: screen_target_sam
-				logfile$Tasks_to_redo[9]<-TRUE;			
-			}		
-			if(logfile$workflow[13]=="TRUE"){# must rerun: screen_IS_comp
-				logfile$Tasks_to_redo[12]<-TRUE;		
-			}			
-			if(logfile$workflow[14]=="TRUE"){# must rerun: screen_target_comp
-				logfile$Tasks_to_redo[11]<-TRUE;			
-			}
-			if(logfile$workflow[15]=="yes"){# must rerun: profnorm - IS-based normalization
-				logfile$Tasks_to_redo[15]<-TRUE;			
-			}			
-			if(logfile$workflow[16]=="yes"){# must rerun: homol
-				logfile$Tasks_to_redo[14]<-TRUE;		
-			}			
-			if(logfile$workflow[17]=="yes"){# must rerun: massdef
-				logfile$Tasks_to_redo[16]<-TRUE;		
-			}			
+		if(at1!=at2){
+			workflow_set(logfile,down="profiling",check_node=FALSE)		
 		}
 		# trendblind #############################################################
 		at1<-logfile$workflow[10];
 		logfile$workflow[10]<-as.character(isolate(input$trenddetect));
 		at2<-logfile$workflow[10];
-		#if(at1!=at2){
-		if(FALSE){
-			cat("\nchanged trend+blind workflow setting!")
-			# skip is_pattern
-			# skip target_pattern
-			if(logfile$workflow[7]=="TRUE"){# must rerun: component isotopologues
-				logfile$Tasks_to_redo[13]<-TRUE;	
-			}
-			if(logfile$workflow[8]=="TRUE"){# must rerun: component adducts
-				logfile$Tasks_to_redo[13]<-TRUE;
-			}
-			if(logfile$workflow[9]=="yes"){# must rerun: profiled
-				logfile$Tasks_to_redo[6]<-TRUE;			
-			}
-			if(logfile$workflow[10]=="yes"){# must rerun: trendblind
-				logfile$Tasks_to_redo[7]<-TRUE;		
-			}else{
-				logfile$Tasks_to_redo[7]<-FALSE;				
-			}
-			if(logfile$workflow[11]=="TRUE"){# must rerun: screen_IS_sam  
-				logfile$Tasks_to_redo[10]<-TRUE;	
-			}
-			if(logfile$workflow[12]=="TRUE"){# must rerun: screen_target_sam
-				logfile$Tasks_to_redo[9]<-TRUE;			
-			}		
-			if(logfile$workflow[13]=="TRUE"){# must rerun: screen_IS_comp
-				logfile$Tasks_to_redo[12]<-TRUE;			
-			}			
-			if(logfile$workflow[14]=="TRUE"){# must rerun: screen_target_comp
-				logfile$Tasks_to_redo[11]<-TRUE;		
-			}
-			if(logfile$workflow[15]=="yes"){# must rerun: profnorm - IS-based normalization
-				logfile$Tasks_to_redo[15]<-TRUE;		
-			}			
-			if(logfile$workflow[16]=="yes"){# must rerun: homol
-				logfile$Tasks_to_redo[14]<-TRUE;		
-			}			
-			if(logfile$workflow[17]=="yes"){# must rerun: massdef
-				logfile$Tasks_to_redo[16]<-TRUE;		
-			}			
+		if(at1!=at2){
+			workflow_set(logfile,down="trendblind",check_node=FALSE)		
 		}
 		# IS-normalization #######################################################
 		at1<-logfile$workflow[15];
 		logfile$workflow[15]<-as.character(isolate(input$profnorm));
 		at2<-logfile$workflow[15];
-		#if(at1!=at2){
-		if(FALSE){
-			# skip is_pattern
-			# skip target_pattern
-			if(logfile$workflow[7]=="TRUE"){# must rerun: component isotopologues
-				logfile$Tasks_to_redo[13]<-TRUE;
-			}
-			if(logfile$workflow[8]=="TRUE"){# must rerun: component adducts
-				logfile$Tasks_to_redo[13]<-TRUE;
-			}
-			if(logfile$workflow[11]=="TRUE"){# must rerun: screen_IS_sam  
-				logfile$Tasks_to_redo[10]<-TRUE;		
-			}
-			if(logfile$workflow[12]=="TRUE"){# must rerun: screen_target_sam
-				logfile$Tasks_to_redo[9]<-TRUE;		
-			}		
-			if(logfile$workflow[13]=="TRUE"){# must rerun: screen_IS_comp
-				logfile$Tasks_to_redo[12]<-TRUE;		
-			}			
-			if(logfile$workflow[14]=="TRUE"){# must rerun: screen_target_comp
-				logfile$Tasks_to_redo[11]<-TRUE;		
-			}
-			if(logfile$workflow[15]=="yes"){# must rerun: profnorm - IS-based normalization
-				logfile$Tasks_to_redo[15]<-TRUE;		
-			}else{
-				logfile$Tasks_to_redo[15]<-FALSE;			
-			}			
-			if(logfile$workflow[16]=="yes"){# must rerun: homol
-				logfile$Tasks_to_redo[14]<-TRUE;			
-			}			
-			if(logfile$workflow[17]=="yes"){# must rerun: massdef
-				logfile$Tasks_to_redo[16]<-TRUE;		
-			}			
+		if(at1!=at2){
+			workflow_set(logfile,down="norm_prof",check_node=FALSE)
 		}		
 		# IS screening ###########################################################
 		at1<-logfile$workflow[11];
 		logfile$workflow[11]<-as.character(isolate(input$screen_IS));
 		at2<-logfile$workflow[11];
-		if(at1!=at2){}
+		if(at1!=at2){
+			workflow_set(logfile,down="IS_screen",check_node=FALSE)		
+		}
 		# target screening #######################################################
 		at1<-logfile$workflow[12];
 		logfile$workflow[12]<-as.character(isolate(input$screen_target));
 		at2<-logfile$workflow[12];
-		if(at1!=at2){}
+		if(at1!=at2){
+			workflow_set(logfile,down="target_screen",check_node=FALSE)		
+		}
 		##########################################################################	
-		# set initial workflow dependencies ######################################
-		if(logfile$workflow[2]=="yes"){ # recalibration depends...
-			logfile$workflow[5]<-"yes"
-			logfile$workflow[6]<-"yes"
-		}	
-		if(logfile$workflow[10]=="yes"){ # trendblind depends... 
-			logfile$workflow[9]<-"yes"
-		}	
-		#if(logfile$workflow[13]=="yes"){ # screen_IS_comp  depends... 
-		#	logfile$workflow[9]<-"yes"
-		#	logfile$workflow[10]<-"yes"
-		#	if( (logfile$workflow[7]!="TRUE") && (logfile$workflow[8]!="TRUE") ){ # use both as default 	
-		#		logfile$workflow[7]<-"TRUE"
-		#		logfile$workflow[8]<-"TRUE"
-		#	}
-		#}	
-		#if(logfile$workflow[14]=="yes"){ # screen_IS_comp  depends...
-		#	logfile$workflow[9]<-"yes"
-		#	logfile$workflow[10]<-"yes"
-		#	if( (logfile$workflow[7]!="TRUE") && (logfile$workflow[8]!="TRUE") ){ # use both as default 	
-		#		logfile$workflow[7]<-"TRUE"
-		#		logfile$workflow[8]<-"TRUE"
-		#	}
-		#}	
-		#if(logfile$workflow[15]=="yes"){ # profnorm depends...
-		#	logfile$workflow[9]<-"yes"
-		#	logfile$workflow[10]<-"yes"
-		#}	
-		#if(logfile$workflow[16]=="yes"){ # homol depends...
-		#	logfile$workflow[9]<-"yes"
-		#	logfile$workflow[10]<-"yes"
-		#}	
-		#if(logfile$workflow[17]=="yes"){ # mass defect depends...
-		#	logfile$workflow[9]<-"yes"
-		#	logfile$workflow[10]<-"yes"
-		#}		
-		#if(logfile$workflow[7]=="TRUE"){ # Comp_isotop depends...
-		#	logfile$workflow[9]<-"yes"
-		#	logfile$workflow[10]<-"yes"
-		#}	
-		#if(logfile$workflow[8]=="TRUE"){ # Comp_add depends...
-		#	logfile$workflow[9]<-"yes"
-		#	logfile$workflow[10]<-"yes"
-		#}	
-   	  ##########################################################################
-      save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
-      logfile<<-logfile;
-      cat("settings changed \n");
-      output$dowhat<<-renderText("Project settings modified");
+
+		##########################################################################
+		cat("settings changed \n");
+		output$dowhat<<-renderText("Project settings modified");
+		##########################################################################
+		
     }
 
 })

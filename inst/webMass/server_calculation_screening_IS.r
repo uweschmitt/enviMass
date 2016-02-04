@@ -1,8 +1,10 @@
 
 if(  
-	#(logfile$workflow[2]=="yes" && logfile$summary[5,2]=="FALSE")  || 
-	#(logfile$Tasks_to_redo[3]=="TRUE") 
-	FALSE
+	logfile$workflow[names(logfile$workflow)=="screen_IS"]=="yes" && 
+	!(
+		(logfile$summary[(logfile$summary[,1]=="IS screening"),2]=="TRUE") &&
+		(logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="IS_screen"]=="FALSE")
+	)
 ){
 
     ############################################################################
@@ -388,33 +390,42 @@ dev.off()
 	}
 	
 	
-    ############################################################################
-	# then on targets pos, before switching to negative list - upload takes too long
-	
+	logfile$summary[(logfile$summary[,1]=="IS screening"),2]<<-"TRUE";
+	logfile$summary[(logfile$summary[,1]=="IS screening"),2]<-"TRUE";
+	logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="IS_screen"]<<-"FALSE";
+	logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="IS_screen"]<-"FALSE";
+    save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	summa[(logfile$summary[,1]=="IS screening"),2]<<-"done"
+	output$summa_html<<-renderText(summary_html(summa));
+    cat("IS screening done done \n");
+    output$dowhat<<-renderText("IS screening done ... wait")	
 	
 }else{
-if(FALSE){
-	if(logfile$workflow[2]=="no"){
-		logfile$summary[5,2]<<-"FALSE";
-		logfile$summary[5,2]<-"FALSE";
-		path=file.path(logfile[[1]],"pics","recal_none")
-			png(filename = path, bg = "white")
-			plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
-			dev.off()
-		    exprrec<-list(src=path)
-			output$recal_pic<-renderImage(exprrec, deleteFile = FALSE);		
-			output$peakhist_pic<-renderImage(exprrec, deleteFile = FALSE);
-			output$peakmzRT_pic<-renderImage(exprrec, deleteFile = FALSE);	
+
+	if((logfile$workflow[names(logfile$workflow)=="screen_IS"]=="no") ){
+		if(
+			!(
+				(logfile$summary[(logfile$summary[,1]=="IS screening"),2]=="FALSE") &
+				(logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="IS_screen"]=="FALSE")
+			)
+		){
+		
+		
+		
+		
+		}
+		logfile$summary[(logfile$summary[,1]=="IS screening"),2]<<-"FALSE";
+		logfile$summary[(logfile$summary[,1]=="IS screening"),2]<-"FALSE";
+		logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="IS_screen"]<-"FALSE";
+		logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="IS_screen"]<<-"FALSE";
+		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 	}
-	logfile$Tasks_to_redo[3]<-"FALSE";
-	logfile$Tasks_to_redo[3]<<-"FALSE";
-    save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
-    summa[5,2]<-"skipped"
-	summa[5,2]<<-"skipped"
+    summa[(logfile$summary[,1]=="IS screening"),2]<-"skipped"
+	summa[(logfile$summary[,1]=="IS screening"),2]<<-"skipped"
 	output$summa_html<<-renderText(summary_html(summa));
     cat("Mass recalibration skipped \n");
     output$dowhat<<-renderText("Recalibration skipped ... wait")
-}
+
 }
 
 

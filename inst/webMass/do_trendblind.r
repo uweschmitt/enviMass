@@ -1,6 +1,3 @@
-if(
-	(logfile$workflow[10]=="yes" && logfile$summary[10,2]=="FALSE") || (logfile$Tasks_to_redo[7]=="TRUE") 
-){
 
     if( file.exists(file.path(logfile[[1]],"results","profileList_pos")) ){
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
@@ -77,39 +74,5 @@ if(
 			profpeaks<<-profpeaks_neg;
 		}
 	}
-	
-	logfile$summary[10,2]<<-"TRUE";
-	logfile$Tasks_to_redo[7]<<-"FALSE";
-    save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
-	summa[10,2]<<-"done"
-	output$summa_html<<-renderText(summary_html(summa));
-    cat("Trend&blind done \n");
-    output$dowhat<<-renderText("Trend&blind done ... wait")
-	
-}else{
 
-	if(logfile$workflow[10]=="no"){
-		logfile$summary[10,2]<<-"FALSE";
-		path=file.path(logfile[[1]],"pics","boxprofile_pos")
-			png(filename = path, bg = "white")
-			plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
-			dev.off()
-		    expr4p<-list(src=path)
-			output$boxprofile<-renderImage(expr4p, deleteFile = FALSE)
-		path=file.path(logfile[[1]],"pics","boxprofile_neg")
-			png(filename = path, bg = "white")
-			plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
-			dev.off()
-		    expr4n<-list(src=path)
-			output$boxprofile<-renderImage(expr4n, deleteFile = FALSE)			
-	}
-	logfile$Tasks_to_redo[7]<-"FALSE";
-	logfile$Tasks_to_redo[7]<<-"FALSE";
-    save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
-    summa[10,2]<-"skipped";
-    summa[10,2]<<-"skipped";
-	output$summa_html<<-renderText(summary_html(summa));
-    cat("Trend/blind skipped \n");
-    output$dowhat<<-renderText("Trend/blind skipped ... wait")
-
-}
+	

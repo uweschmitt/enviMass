@@ -1,6 +1,3 @@
-if(
-	(logfile$workflow[9]=="yes" && logfile$summary[8,2]=="FALSE") || (logfile$Tasks_to_redo[6]=="TRUE") 
-){
 
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 	if(any(measurements[,4]=="positive")){
@@ -63,30 +60,4 @@ if(
 		profileList_neg<<-profileList_neg
 		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"));
 	}
-	logfile$summary[8,2]<<-"TRUE";
-    logfile$summary[8,2]<-"TRUE";
-	logfile$Tasks_to_redo[6]<-"FALSE";
-	logfile$Tasks_to_redo[6]<<-"FALSE";
-    save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
-    summa[8,2]<-"done"
-	summa[8,2]<<-"done"
-	output$summa_html<<-renderText(summary_html(summa));
-    cat("Profile extraction done \n");
-    output$dowhat<<-renderText("Profile extraction ... wait")
 
-}else{
-
-	if(logfile$workflow[9]=="no"){
-			logfile$summary[8,2]<<-"FALSE";
-			logfile$summary[8,2]<-"FALSE";
-	}
-	logfile$Tasks_to_redo[6]<-"FALSE";
-	logfile$Tasks_to_redo[6]<<-"FALSE";	
-    save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
-    summa[8,2]<-"skipped";
-    summa[8,2]<<-"skipped";
-	output$summa_html<<-renderText(summary_html(summa));
-    cat("Profile extraction skipped \n");
-    output$dowhat<<-renderText("Profile extraction skipped ... wait")
-
-}

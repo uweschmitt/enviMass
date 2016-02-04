@@ -1,9 +1,4 @@
 
-if(  
-	(logfile$workflow[2]=="yes" && logfile$summary[5,2]=="FALSE")  || 
-	(logfile$Tasks_to_redo[3]=="TRUE") 
-){
-
     ############################################################################
     # retrieve monoisotopic masses for IS ######################################
     ############################################################################
@@ -169,43 +164,7 @@ if(
     }
 	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-	output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
-    logfile$summary[5,2]<<-"TRUE";
-    logfile$summary[5,2]<-"TRUE";
-	logfile$Tasks_to_redo[3]<-"FALSE";
-	logfile$Tasks_to_redo[3]<<-"FALSE";
-    save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
-    summa[5,2]<-"done"
-	summa[5,2]<<-"done"
-	output$summa_html<<-renderText(summary_html(summa));
-    cat("Mass recalibration done \n");
-    output$dowhat<<-renderText("Recalibration done ... wait")
-    updateSelectInput(session, "sel_meas", label = "Select file by ID:", choices =  c("none",as.character(measurements[,1])), selected = "none")
+	output$measurements<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
 
-}else{
-
-	if(logfile$workflow[2]=="no"){
-		logfile$summary[5,2]<<-"FALSE";
-		logfile$summary[5,2]<-"FALSE";
-		path=file.path(logfile[[1]],"pics","recal_none")
-			png(filename = path, bg = "white")
-			plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
-			dev.off()
-		    exprrec<-list(src=path)
-			output$recal_pic<-renderImage(exprrec, deleteFile = FALSE);		
-			output$peakhist_pic<-renderImage(exprrec, deleteFile = FALSE);
-			output$peakmzRT_pic<-renderImage(exprrec, deleteFile = FALSE);	
-	}
-	logfile$Tasks_to_redo[3]<-"FALSE";
-	logfile$Tasks_to_redo[3]<<-"FALSE";
-    save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
-    summa[5,2]<-"skipped"
-	summa[5,2]<<-"skipped"
-	output$summa_html<<-renderText(summary_html(summa));
-    cat("Mass recalibration skipped \n");
-    output$dowhat<<-renderText("Recalibration skipped ... wait")
-
-}
-
-
+ 
 
