@@ -18,9 +18,6 @@ use_int<-"max_int"
 				}
 				save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,1])))
 			}
-
-			logfile$summary[7,2]<<-"FALSE";
-			logfile$summary[7,2]<-"FALSE";
 			path=file.path(logfile[[1]],"pics","int_distr_pos")
 				png(filename = path, bg = "white")
 				plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)

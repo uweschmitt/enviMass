@@ -14,6 +14,7 @@ maincalc<-reactive({
       output$dowhat<<-renderText(say)
       if(say=="Project consistent"){
 	  
+		if(any(ls()=="logfile")){print("illegal logfile detected #1 in server_calculation.r!")}
         ########################################################################
         # restart logfile[[3]] & mark data availability ########################        
         if(do_flow==1){
@@ -35,7 +36,7 @@ maincalc<-reactive({
         if(do_flow==2){
 			workflow_node(
 				"peakpicking","Peak pick?","peakpick","Peak picking",
-				path_do="do_peakpick.R",path_undo=FALSE,logfile,output,input
+				path_do="do_peakpick.R",path_undo=FALSE,output,input
 			)  
         }
         ########################################################################
@@ -43,7 +44,7 @@ maincalc<-reactive({
         if(do_flow==3){           
           	workflow_node(
 				"qc","QC?","QC","Quality control",
-				path_do="do_qc.R",path_undo="dont_qc.R",logfile,output,input
+				path_do="do_qc.R",path_undo="dont_qc.R",output,input
 			)   
         }
         ########################################################################
@@ -51,7 +52,7 @@ maincalc<-reactive({
         if(do_flow==4){
 		    workflow_node(
 				"pattern","Isotope pattern?","pattern","Compound isotope patterns",
-				path_do="do_pattern.R",path_undo=FALSE,logfile,output,input
+				path_do="do_pattern.R",path_undo=FALSE,output,input
 			)  		            
         }
         ########################################################################
@@ -59,7 +60,7 @@ maincalc<-reactive({
         if(do_flow==5){
 			workflow_node(
 				"recal","m/z recal.?","recal","Mass recalibration",
-				path_do="do_recal.R",path_undo="dont_recal.R",logfile,output,input
+				path_do="do_recal.R",path_undo="dont_recal.R",output,input
 			)     
         }
         ########################################################################
@@ -73,7 +74,7 @@ maincalc<-reactive({
         if(do_flow==7){
 			workflow_node(
 				"replicates","Replicate filter","replicates","Replicate filter",
-				path_do="do_replicates.R",path_undo="dont_replicates.R",logfile,output,input
+				path_do="do_replicates.R",path_undo="dont_replicates.R",output,input
 			)  	
 		}			
         ########################################################################
@@ -81,7 +82,7 @@ maincalc<-reactive({
         if(do_flow==8){
 			workflow_node(
 				"norm","Intensity norm.?","normalize","Median intensity normalization",
-				path_do="do_normaliz.R",path_undo="dont_normaliz.R",logfile,output,input
+				path_do="do_normaliz.R",path_undo="dont_normaliz.R",output,input
 			)  
         }
         ########################################################################
@@ -89,7 +90,7 @@ maincalc<-reactive({
         if(do_flow==9){
 			workflow_node(
 				"profiled","Profiled?","profiling","Profile extraction",
-				path_do="do_profiling.R",path_undo="dont_profiling.R",logfile,output,input
+				path_do="do_profiling.R",path_undo="dont_profiling.R",output,input
 			)  
         }
         ########################################################################
@@ -107,7 +108,7 @@ maincalc<-reactive({
         if(do_flow==12){
 			workflow_node(
 				"profnorm","IS norm.?","norm_prof","IS-based intensity normalization",
-				path_do="do_IS_normaliz.R",path_undo="dont_IS_normaliz.R",logfile,output,input
+				path_do="do_IS_normaliz.R",path_undo="dont_IS_normaliz.R",output,input
 			)  
 		}
         ########################################################################
@@ -115,7 +116,7 @@ maincalc<-reactive({
         if(do_flow==13){
 			workflow_node(
 				"trenddetect","Trend+Blind?","trendblind","Trend detection and blind subtraction",
-				path_do="do_trendblind.R",path_undo="dont_trendblind.R",logfile,output,input
+				path_do="do_trendblind.R",path_undo="dont_trendblind.R",output,input
 			)  	
         }
         ########################################################################
@@ -152,7 +153,7 @@ maincalc<-reactive({
 			if(any(objects()=="profpeaks_pos")){rm(profpeaks_pos)}
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks_neg")){rm(profpeaks_neg,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="profpeaks_neg")){rm(profpeaks_neg)}
-			logfile$Tasks_to_redo[1:length(logfile$Tasks_to_redo)]<-"FALSE"	
+			logfile$Tasks_to_redo[1:length(logfile$Tasks_to_redo)]<<-"FALSE"	
 			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 			if(file.exists(file.path(as.character(logfile[[1]]),"results","profileList_pos"))){
 				load(file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"),verbose=TRUE)
@@ -178,6 +179,7 @@ maincalc<-reactive({
 		}else{		
 			output$summa_html<<-renderText(summary_html(logfile$summary));
 			isolate(init$b<-(init$b+1))
+			if(any(ls()=="logfile")){print("illegal logfile detected #2 in server_calculation.r!")}
 			cat("Calculations completed \n")
 			return("Calculations completed \n")
 		}

@@ -23,9 +23,6 @@ path=file.path(logfile[[1]],"pics","plotQCb_neg")
 				dev.off()
 				expr2n<-list(src=path)
 				output$plotQCb_neg<-renderImage(expr2n, deleteFile = FALSE)
-logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="QC"]<-"FALSE";
-logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="QC"]<<-"FALSE";
-save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp")); 
 measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 measurements[,11]<-"skip";
 write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);          

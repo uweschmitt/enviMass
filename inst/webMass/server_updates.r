@@ -31,65 +31,66 @@ for(i in 1:length(IDs)){
 
 # extend logfile$summary
 if(!any(logfile$summary[,1]=="Replicate filter")){
-	logfile$summary[,1]<-as.character(logfile$summary[,1])
-	logfile$summary[,2]<-as.character(logfile$summary[,2])
-	logfile$summary[11,1]<-"Replicate filter"
-	logfile$summary[11,2]<-"FALSE"	
+	logfile$summary[,1]<<-as.character(logfile$summary[,1])
+	logfile$summary[,2]<<-as.character(logfile$summary[,2])
+	logfile$summary[11,1]<<-"Replicate filter"
+	logfile$summary[11,2]<<-"FALSE"	
 	logfile$summary
 	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 }
 
 if(!any(logfile$summary[,1]=="IS screening")){
-	logfile$summary[,1]<-as.character(logfile$summary[,1])
-	logfile$summary[,2]<-as.character(logfile$summary[,2])
-	logfile$summary[12,1]<-"IS screening"
-	logfile$summary[12,2]<-"FALSE"	
+	logfile$summary[,1]<<-as.character(logfile$summary[,1])
+	logfile$summary[,2]<<-as.character(logfile$summary[,2])
+	logfile$summary[12,1]<<-"IS screening"
+	logfile$summary[12,2]<<-"FALSE"	
 	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 }
 
 if(!any(logfile$summary[,1]=="Target screening")){
-	logfile$summary[,1]<-as.character(logfile$summary[,1])
-	logfile$summary[,2]<-as.character(logfile$summary[,2])
-	logfile$summary[13,1]<-"Target screening"
-	logfile$summary[13,2]<-"FALSE"	
+	logfile$summary[,1]<<-as.character(logfile$summary[,1])
+	logfile$summary[,2]<<-as.character(logfile$summary[,2])
+	logfile$summary[13,1]<<-"Target screening"
+	logfile$summary[13,2]<<-"FALSE"	
 	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 }
 
 # insert missing parameters
 if(!any(names(logfile$parameters)=="replicate_dmz")){
-	logfile$parameters[[15]]<-"3";names(logfile$parameters)[15]<-"replicate_dmz"
-	logfile$parameters[[16]]<-"TRUE";names(logfile$parameters)[16]<-"replicate_ppm"		
-	logfile$parameters[[17]]<-"FALSE";names(logfile$parameters)[17]<-"replicate_recalib"		
-	logfile$parameters[[18]]<-"30";names(logfile$parameters)[18]<-"replicate_delRT"	
+	logfile$parameters[[15]]<<-"3";names(logfile$parameters)[15]<<-"replicate_dmz"
+	logfile$parameters[[16]]<<-"TRUE";names(logfile$parameters)[16]<<-"replicate_ppm"		
+	logfile$parameters[[17]]<<-"FALSE";names(logfile$parameters)[17]<<-"replicate_recalib"		
+	logfile$parameters[[18]]<<-"30";names(logfile$parameters)[18]<<-"replicate_delRT"	
 	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 }
 
 
-names(logfile[[2]])<-c(
+names(logfile[[2]])<<-c(
 		"peakpick","QC","recal","normalize","allign","profiling","trendblind","pattern",
 		"replicates","IS_screen","target_screen","-",
 		"-","-","norm_prof","-"
 )	
-names(logfile)[2]<-c("Tasks_to_redo"); 
+names(logfile)[2]<<-c("Tasks_to_redo"); 
 if(!any(names(logfile$workflow)=="screen_IS")){
-	logfile$workflow[11]<-"TRUE"; 	names(logfile$workflow)[11]<-"screen_IS" 
+	logfile$workflow[11]<<-"TRUE"; 	names(logfile$workflow)[11]<<-"screen_IS" 
 }
 if(!any(names(logfile$workflow)=="screen_target")){
-	logfile$workflow[12]<-"TRUE"; 	names(logfile$workflow)[12]<-"screen_target" 
+	logfile$workflow[12]<<-"TRUE"; 	names(logfile$workflow)[12]<<-"screen_target" 
 }
 if(!any(names(logfile$workflow)=="replicates")){
-	logfile$workflow[13]<-"yes"; 	names(logfile$workflow)[13]<-"replicates" 
+	logfile$workflow[13]<<-"yes"; 	names(logfile$workflow)[13]<<-"replicates" 
 }
-logfile$workflow[5]<-"yes"; 	names(logfile$workflow)[5]<-"pattern" 
-logfile$workflow[6]<-"TRUE"; 	names(logfile$workflow)[6]<-"-" 
-logfile$workflow[7]<-"yes"; 	names(logfile$workflow)[7]<-"peakpicking" 
-logfile$workflow[14]<-"TRUE"; 	names(logfile$workflow)[14]<-"-" 		
-logfile$workflow[16]<-"yes"; 	names(logfile$workflow)[16]<-"-" 
-logfile$workflow[17]<-"yes"; 	names(logfile$workflow)[17]<-"-" 
+
+logfile$workflow[5]<<-"yes"; 	names(logfile$workflow)[5]<<-"pattern" 
+logfile$workflow[6]<<-"TRUE"; 	names(logfile$workflow)[6]<<-"-" 
+logfile$workflow[7]<<-"yes"; 	names(logfile$workflow)[7]<<-"peakpicking" 
+logfile$workflow[14]<<-"TRUE"; 	names(logfile$workflow)[14]<<-"-" 		
+logfile$workflow[16]<<-"yes"; 	names(logfile$workflow)[16]<<-"-" 
+logfile$workflow[17]<<-"yes"; 	names(logfile$workflow)[17]<<-"-" 
 
 save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 

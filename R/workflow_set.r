@@ -4,7 +4,6 @@
 #'
 #' @description Reset downstream workflow functionalities
 #'
-#' @param logfile logfile with logfile$Tasks_to_redo
 #' @param down Name of node (logfile$Tasks_to_redo) to be altered
 #' @param added Name of node (logfile$Tasks_to_redo) to be added
 #' @param except Name of node (logfile$Tasks_to_redo) to be excluded - dangerous
@@ -17,8 +16,9 @@
 #' @details enviMass workflow function
 #' 
 
-workflow_set<-function(logfile,down,added=FALSE,except=FALSE,single_file=FALSE,check_node=FALSE){
+workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_node=FALSE){
 	
+	if(any(ls()=="logfile")){stop("illegal logfile detected #1 in workflow_set.r!")}
 	########################################################################################
 	if(!is.logical(added) & !is.logical(except)){
 		if((any(!is.na(match(added,except))))||(any(!is.na(match(except,added))))){
@@ -99,7 +99,7 @@ workflow_set<-function(logfile,down,added=FALSE,except=FALSE,single_file=FALSE,c
 	# update Tasks_to_redo #################################################################
 	########################################################################################
 	if(any(work_stream=="peakpick")){
-		logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="peakpick"]<-TRUE;
+		logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="peakpick"]<<-TRUE;
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 		if(!single_file){
 			measurements[,10]<-FALSE;
@@ -110,26 +110,26 @@ workflow_set<-function(logfile,down,added=FALSE,except=FALSE,single_file=FALSE,c
 	########################################################################################
 	if(any(work_stream=="QC")){
 		if(logfile$workflow[names(logfile$workflow)=="qc"]=="yes"){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="QC"]<-TRUE;			
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="QC"]<<-TRUE;			
 		}	
 		if(!check_node){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="QC"]<-TRUE;
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="QC"]<<-TRUE;
 		}
 	}	
 	########################################################################################
 	if(any(work_stream=="pattern")){ 
-		logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="pattern"]<-TRUE;
+		logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="pattern"]<<-TRUE;
 	}	
 	########################################################################################
 	if(any(work_stream=="recal")){
 		if(logfile$workflow[names(logfile$workflow)=="recal"]=="yes"){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="recal"]<-TRUE;			
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="recal"]<<-TRUE;			
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements[,12]<-FALSE;
 			write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 		}
 		if(!check_node){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="recal"]<-TRUE;			
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="recal"]<<-TRUE;			
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements[,12]<-FALSE;
 			write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);		
@@ -138,13 +138,13 @@ workflow_set<-function(logfile,down,added=FALSE,except=FALSE,single_file=FALSE,c
 	########################################################################################
 	if(any(work_stream=="allign")){
 		if(logfile$workflow[names(logfile$workflow)=="align"]=="yes"){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="allign"]<-TRUE;			
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="allign"]<<-TRUE;			
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements[,13]<-FALSE;
 			write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 		}
 		if(!check_node){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="allign"]<-TRUE;			
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="allign"]<<-TRUE;			
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements[,13]<-FALSE;
 			write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);		
@@ -153,13 +153,13 @@ workflow_set<-function(logfile,down,added=FALSE,except=FALSE,single_file=FALSE,c
 	########################################################################################
 	if(any(work_stream=="normalize")){
 		if(logfile$workflow[names(logfile$workflow)=="norm"]=="yes"){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="normalize"]<-TRUE;			
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="normalize"]<<-TRUE;			
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements[,14]<-FALSE;
 			write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 		}
 		if(!check_node){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="normalize"]<-TRUE;			
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="normalize"]<<-TRUE;			
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements[,14]<-FALSE;
 			write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);		
@@ -168,60 +168,61 @@ workflow_set<-function(logfile,down,added=FALSE,except=FALSE,single_file=FALSE,c
 	########################################################################################
 	if(any(work_stream=="replicates")){
 		if(logfile$workflow[names(logfile$workflow)=="replicates"]=="yes"){	
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="replicates"]<-TRUE;
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="replicates"]<<-TRUE;
 		}	
 		if(!check_node){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="replicates"]<-TRUE;
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="replicates"]<<-TRUE;
 		}
 	}	
 	########################################################################################
 	if(any(work_stream=="profiling")){
 		if(logfile$workflow[names(logfile$workflow)=="profiled"]=="yes"){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="profiling"]<-TRUE;				
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="profiling"]<<-TRUE;				
 		}
 		if(!check_node){		
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="profiling"]<-TRUE;	
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="profiling"]<<-TRUE;	
 		}
 	}	
 	########################################################################################
 	if(any(work_stream=="IS_screen")){
 		if(logfile$workflow[names(logfile$workflow)=="screen_IS"]=="yes"){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="IS_screen"]<-TRUE;	
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="IS_screen"]<<-TRUE;	
 		}
 		if(!check_node){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="IS_screen"]<-TRUE;			
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="IS_screen"]<<-TRUE;			
 		}
 	}	
 	########################################################################################
 	if(any(work_stream=="target_screen")){
 		if(logfile$workflow[names(logfile$workflow)=="screen_target"]=="yes"){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="target_screen"]<-TRUE;	
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="target_screen"]<<-TRUE;	
 		}	
 		if(!check_node){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="target_screen"]<-TRUE;			
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="target_screen"]<<-TRUE;			
 		}
 	}	
 	########################################################################################
 	if(any(work_stream=="norm_prof")){
 		if(logfile$workflow[names(logfile$workflow)=="profnorm"]=="yes"){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="norm_prof"]<-TRUE;
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="norm_prof"]<<-TRUE;
 		}
 		if(!check_node){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="norm_prof"]<-TRUE;		
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="norm_prof"]<<-TRUE;		
 		}
 	}	
 	########################################################################################
 	if(any(work_stream=="trendblind")){
 		if(logfile$workflow[names(logfile$workflow)=="trenddetect"]=="yes"){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="trendblind"]<-TRUE;
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="trendblind"]<<-TRUE;
 		}	
 		if(!check_node){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="trendblind"]<-TRUE;		
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="trendblind"]<<-TRUE;		
 		}		
 	}	
 	########################################################################################
 	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
     logfile<<-logfile;
+	if(any(ls()=="logfile")){stop("illegal logfile detected #2 in workflow_set.r!")}
 	########################################################################################	
 				
 }

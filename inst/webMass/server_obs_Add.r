@@ -45,9 +45,10 @@ observe({
 		workflow_set(logfile,down="pattern")		  
 		#############################################################################			
 		output$IS<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
-		logfile[[2]][3:7]<-rep(TRUE,length(3:7));
+		logfile[[2]][3:7]<<-rep(TRUE,length(3:7));
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 		output$dowhat<-renderText("Added IS compound");
+		if(any(ls()=="logfile")){stop("illegal logfile detected #1 in server_obs_Add.r!")}
     }
 })
 
@@ -66,6 +67,7 @@ observe({
 			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));   
  			output$IS<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 			output$dowhat<-renderText("Added IS list");
+			if(any(ls()=="logfile")){stop("illegal logfile detected #1 in server_obs_Add.r!")}
 		}
 	}
 })  
@@ -85,6 +87,7 @@ observe({
 		output$IS<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 		output$dowhat<-renderText("Deleted compound");
+		if(any(ls()=="logfile")){stop("illegal logfile detected #1 in server_obs_Add.r!")}
     }
 })
   
@@ -136,6 +139,7 @@ observe({
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 		output$targets<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      
 		output$dowhat<-renderText("Added target compound");
+		if(any(ls()=="logfile")){stop("illegal logfile detected #1 in server_obs_Add.r!")}
     }
 })
 
@@ -154,6 +158,7 @@ observe({
 			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));   
  			output$targets<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));
 			output$dowhat<-renderText("Added targets list");
+			if(any(ls()=="logfile")){stop("illegal logfile detected #1 in server_obs_Add.r!")}
 		}
 	}
 })  
@@ -173,6 +178,7 @@ observe({
 		output$targets<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      	  
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 		output$dowhat<-renderText("Deleted compound");
+		if(any(ls()=="logfile")){stop("illegal logfile detected #1 in server_obs_Add.r!")}
     }
 })
 ##############################################################################
@@ -305,6 +311,7 @@ addmeasu<-reactive({
 			return("File must be reloaded")
 		}
     } #ok
+	if(any(ls()=="logfile")){stop("illegal logfile detected #1 in server_obs_Add.r!")}
 }) #ok
 output$had_meas_added<-renderText(paste(addmeasu()))  
 ##############################################################################
@@ -344,6 +351,7 @@ observe({
         output$dowhat<-renderText("Invalid ID");
       }
     }
+	if(any(ls()=="logfile")){stop("illegal logfile detected #1 in server_obs_Add.r!")}
 })
 ##############################################################################
 
@@ -415,6 +423,7 @@ observe({
 			cat(" no files to import - project empty?.")
 		}
 	}
+	if(any(ls()=="logfile")){stop("illegal logfile detected #1 in server_obs_Add.r!")}
 })
 ##############################################################################
 

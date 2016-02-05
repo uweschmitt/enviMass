@@ -10,14 +10,14 @@
 #' @param name_output
 #' @param path_do
 #' @param path_undo
-#' @param logfile
 #' @param output
 #' 
 #' @details enviMass workflow function
 #' 
 
-workflow_node<-function(name_workflow,name_summary,name_redo,name_output,path_do=FALSE,path_undo=FALSE,logfile,output,input){
+workflow_node<-function(name_workflow,name_summary,name_redo,name_output,path_do=FALSE,path_undo=FALSE,output,input){
 
+	if(any(ls()=="logfile")){stop(paste("illegal logfile detected #1 in workflow_node.r at",name_output))}
 	######################################################################################
 	if(  
 		logfile$workflow[names(logfile$workflow)==name_workflow]=="yes" && 
@@ -30,8 +30,6 @@ workflow_node<-function(name_workflow,name_summary,name_redo,name_output,path_do
 			source(path_do,local=TRUE);
 		}
 		logfile$summary[(logfile$summary[,1]==name_summary),2]<<-"TRUE";
-		logfile$summary[(logfile$summary[,1]==name_summary),2]<-"TRUE";
-		logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)==name_redo]<-"FALSE";
 		logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)==name_redo]<<-"FALSE";
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		summa[(logfile$summary[,1]==name_summary),2]<-"done"
@@ -63,10 +61,8 @@ workflow_node<-function(name_workflow,name_summary,name_redo,name_output,path_do
 				cat(paste(name_output,"removed \n"));
 				output$dowhat<-renderText(paste(name_output,"removed .... wait"))			
 			}
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)==name_redo]<-"FALSE";
 			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)==name_redo]<<-"FALSE";
 			logfile$summary[(logfile$summary[,1]==name_summary),2]<<-"FALSE";
-			logfile$summary[(logfile$summary[,1]==name_summary),2]<-"FALSE";
 			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		
 		}else{
@@ -78,7 +74,8 @@ workflow_node<-function(name_workflow,name_summary,name_redo,name_output,path_do
 		}
 	}
 	######################################################################################
-
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	if(any(ls()=="logfile")){stop(paste("illegal logfile detected #2 in workflow_node.r at",name_output))}	
 }
 
 

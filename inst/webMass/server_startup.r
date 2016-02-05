@@ -304,7 +304,7 @@ maincalc2<-reactive({
 				}
 			}
 			
-			
+if(FALSE){			
 if(file.exists(file.path(logfile$project_folder,"results","screening","IS_screening_pos"))){			
 	load(file=file.path(as.character(logfile$project_folder),"results","screening","IS_screening_pos"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
 
@@ -352,7 +352,7 @@ if(file.exists(file.path(logfile$project_folder,"results","screening","IS_screen
 	})
 		
 }			
-			
+}			
 			
 
 			if(file.exists(file.path(logfile$project_folder,"pics","profilehisto.png"))){ 

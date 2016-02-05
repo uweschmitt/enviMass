@@ -14,6 +14,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 
   ##############################################################################
   # checks #####################################################################
+  if(any(ls()=="logfile")){stop("illegal logfile detected #1 in newproject.r!")}
   if(grepl("\\",pro_dir,fixed=TRUE)){
 	pro_dir<-gsub("\\",.Platform$file.sep,pro_dir,fixed=TRUE)
   }

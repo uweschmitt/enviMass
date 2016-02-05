@@ -46,6 +46,7 @@ summary_html<-function(in_logfile_summary){
 		align="left",ctable=TRUE,
 		css.cell = mat
 	)
+	if(any(ls()=="logfile")){stop("illegal logfile detected #1 in summary_html.r!")}
 	return(summary_report)
 				
 }

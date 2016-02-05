@@ -12,12 +12,13 @@
 #' @details enviMass workflow function; run before further calculations are started in the workflow.
 #' 
 
-checkproject<-function(logfile,isotopes,adducts,skipcheck=FALSE){
+checkproject<-function(isotopes,adducts,skipcheck=FALSE){
 
   say<-"Project consistent"
   if(skipcheck){
 	return(say);
   }
+  if(any(ls()=="logfile")){stop("illegal logfile detected #1 in check_project.r!")}
   ##############################################################################
   # directories available? ##################################################### 
   if(!file.exists(file.path(logfile[[1]],"files"))){say<-"files directory missing!"}
@@ -154,6 +155,7 @@ checkproject<-function(logfile,isotopes,adducts,skipcheck=FALSE){
 	say<-"Disable the progress bar; works only under Windows OS"
   }
   ##############################################################################
+  if(any(ls()=="logfile")){stop("illegal logfile detected #2 in check_project.r!")}
   return(say);
   
 }
