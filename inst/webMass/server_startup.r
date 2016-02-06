@@ -1,6 +1,7 @@
 observe({
     input$newit
     if(isolate(input$newit)){
+		if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_startup.r!")}
 		# clean workspace from any previous workflow results #####################
 		source("server_cleaner.R", local=TRUE);		  
 		# create alert ###########################################################
@@ -137,6 +138,7 @@ observe({
 			}
 			#updateCheckboxGroupInput(session, "isos", "Select relevant isotopes:", choices = as.character(isotopos),selected=c("13C","34S","81Br","37Cl"))               
 			########################################################################
+			if(any(ls()=="logfile")){stop("\n illegal logfile detected #1b in server_startup.r!")}
 			source("server_variables_in.R", local=TRUE)
 			########################################################################
 			isolate(init$a<-"TRUE")
@@ -148,6 +150,7 @@ observe({
 			cat("Invalid - project already exists or path invalid \n")
 		}
     }
+	if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_startup.r!")}
 })
   
 #  observe({ # didnt work with the busy message, remember?
@@ -155,6 +158,7 @@ maincalc2<-reactive({
     input$openit
     if(isolate(input$openit)){
 		#closeAlert(session, alertId="a3")
+		if(any(ls()=="logfile")){stop("\n illegal logfile detected #3 in server_startup.r!")}
 		# clean workspace from any previous workflow results #####################
 		source("server_cleaner.R", local=TRUE);	  
 		##########################################################################
@@ -177,7 +181,7 @@ maincalc2<-reactive({
 			# include version updates #############################################
 			source("server_updates.R", local=TRUE);	 
 			#######################################################################			
-			logfile$project_folder<-as.character(file_in);
+			logfile$project_folder<<-as.character(file_in);
 			save(logfile,file=file.path(file_in,"logfile.emp"));
 			output$textit<-renderText(logfile$project_folder);
 			output$summa_html<-renderText(summary_html(logfile$summary));
@@ -373,6 +377,7 @@ if(file.exists(file.path(logfile$project_folder,"results","screening","IS_screen
 			#updateCheckboxGroupInput(session, "isos", "Select relevant isotopes:", choices = as.character(isotopos),selected=c("13C","34S","81Br","37Cl"))               		
 			########################################################################        
 			cat(objects())
+			if(any(ls()=="logfile")){stop("\n illegal logfile detected #3b in server_startup.r!")}
 			source("server_variables_in.R", local=TRUE)
 			if(isolate(init$a=="FALSE")){
 				isolate(init$a<-"TRUE")
@@ -390,6 +395,7 @@ if(file.exists(file.path(logfile$project_folder,"results","screening","IS_screen
 			return("Project invalid\n")
 		}
     }
+	if(any(ls()=="logfile")){stop("\n illegal logfile detected #3 in server_startup.r!")}
   })
 output$had_opened<-renderText(paste(maincalc2())) 
 

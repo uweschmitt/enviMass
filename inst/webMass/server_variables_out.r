@@ -7,7 +7,7 @@ observe({
 		((exists("logfile")) & (isolate(input$saveflow)))
 	){
 		########################################################################
-	    if(any(ls()=="logfile")){stop("illegal logfile detected #1 in server_variable_out.r!")}
+	    if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_variable_out.r!")}
 		########################################################################   
 		createAlert(session,anchorId = "alert_1", alertId="a1", title = NULL, 
               content="Changes in the workflow settings require a project recalculation to become effective.",
@@ -220,13 +220,34 @@ observe({
 		if(at1!=at2){
 			workflow_set(down="target_screen",check_node=FALSE)		
 		}
+		
+		# LOD ###################################################################
+		at1<-logfile$workflow[names(logfile$workflow)=="LOD"];
+		logfile$workflow[names(logfile$workflow)=="LOD"]<<-as.character(isolate(input$LOD_interpol));
+		at2<-logfile$workflow[names(logfile$workflow)=="LOD"];
+		if(at1!=at2){
+			workflow_set(down="LOD",check_node=FALSE)		
+		}		
+		# quantification #######################################################
+		at1<-logfile$workflow[names(logfile$workflow)=="quantification"];
+		logfile$workflow[names(logfile$workflow)=="quantification"]<<-as.character(isolate(input$quantif));
+		at2<-logfile$workflow[names(logfile$workflow)=="quantification"];
+		if(at1!=at2){
+			workflow_set(down="quantification",check_node=FALSE)		
+		}		
+		
+		
+		
+		
+		
+		
 		##########################################################################	
 
 		##########################################################################
 		cat("settings changed \n");
 		output$dowhat<<-renderText("Project settings modified");
 		##########################################################################
-		if(any(ls()=="logfile")){stop("illegal logfile detected #2 in server_variable_out.r!")}
+		if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_variable_out.r!")}
 		
 		
     }

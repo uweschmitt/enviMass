@@ -60,7 +60,7 @@ pageWithSidebar(
 			HTML('
 				<p style="background-color: darkgreen">
 				<font color="#FFFFFF" size="6">
-				&nbsp enviMass v2.2
+				&nbsp enviMass v3.1
 				</font><br/></p>'),
 				windowTitle="enviMass2"
 			)

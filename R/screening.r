@@ -46,7 +46,6 @@ screening<-function (	peaklist,
 
 	############################################################################
 	# check arguments ##########################################################
-	if(any(ls()=="logfile")){stop("illegal logfile detected #1 in screening.r!")}
     options(digits = 10)
 	cat("\n Check inputs ...")
     if (is.list(pattern) == FALSE) {

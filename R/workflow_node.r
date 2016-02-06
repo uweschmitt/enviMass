@@ -17,7 +17,7 @@
 
 workflow_node<-function(name_workflow,name_summary,name_redo,name_output,path_do=FALSE,path_undo=FALSE,output,input){
 
-	if(any(ls()=="logfile")){stop(paste("illegal logfile detected #1 in workflow_node.r at",name_output))}
+	if(any(ls()=="logfile")){stop(paste("\n illegal logfile detected #1 in workflow_node.r at",name_output))}
 	######################################################################################
 	if(  
 		logfile$workflow[names(logfile$workflow)==name_workflow]=="yes" && 
@@ -75,7 +75,7 @@ workflow_node<-function(name_workflow,name_summary,name_redo,name_output,path_do
 	}
 	######################################################################################
 	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
-	if(any(ls()=="logfile")){stop(paste("illegal logfile detected #2 in workflow_node.r at",name_output))}	
+	if(any(ls()=="logfile")){stop(paste("\n illegal logfile detected #2 in workflow_node.r at",name_output))}	
 }
 
 

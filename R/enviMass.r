@@ -1,6 +1,6 @@
 #' @title Trend detection in LC-HRMS data
 #'
-#' @description enviMass version 2 provides basic workflow functions and a webbrowser user interface for the proccessing of high resolution
+#' @description enviMass version 3 provides basic workflow functions and a webbrowser user interface for the proccessing of high resolution
 #' LC-MS data, with emphasis on trend detection in time series of LC-HRMS files. 
 #'
 #' @details 
@@ -114,7 +114,7 @@ NULL
 
 .onAttach <- function(lib, pkg)
 {
-	packageStartupMessage("\n \n Welcome to enviMass version 2.2 \n Run webMass() to start the enviMass browser UI \n\n");
+	packageStartupMessage("\n \n Welcome to enviMass version 3.1 \n Run webMass() to start the enviMass browser UI \n\n");
 	# add menus for enviMass & enviPick 
 	if(interactive() && .Platform$OS.type == "windows" && .Platform$GUI == "Rgui" ){
 		winMenuAdd("enviX");

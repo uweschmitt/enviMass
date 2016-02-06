@@ -1,0 +1,6 @@
+#	predict(model,100)
+
+
+
+
+

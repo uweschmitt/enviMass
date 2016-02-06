@@ -32,7 +32,6 @@ intensup<-function(
 ){
 
     ############################################################################
-	if(any(ls()=="logfile")){stop("illegal logfile detected #1 in intensup.r!")}
     if(!profileList[[1]][[3]]){stop("profileList not profiled; aborted.")}
     if(!from){m=1}else{m=from}
     if(!to){n=length(profileList[[7]][,1])}else{n=to}

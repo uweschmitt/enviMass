@@ -1,4 +1,5 @@
 # include updates - if older projects are reopened
+if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_updates.r!")}
 
 # create missing folder
 if(!file.exists(file.path(logfile$project_folder,"results","screening"))
@@ -58,6 +59,24 @@ if(!any(logfile$summary[,1]=="Target screening")){
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 }
 
+if(!any(logfile$summary[,1]=="LOD")){
+	logfile$summary[,1]<<-as.character(logfile$summary[,1])
+	logfile$summary[,2]<<-as.character(logfile$summary[,2])
+	logfile$summary[14,1]<<-"LOD"
+	logfile$summary[14,2]<<-"FALSE"	
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
+}
+
+if(!any(logfile$summary[,1]=="quantification")){
+	logfile$summary[,1]<<-as.character(logfile$summary[,1])
+	logfile$summary[,2]<<-as.character(logfile$summary[,2])
+	logfile$summary[15,1]<<-"quantification"
+	logfile$summary[15,2]<<-"FALSE"	
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
+}
+
 # insert missing parameters
 if(!any(names(logfile$parameters)=="replicate_dmz")){
 	logfile$parameters[[15]]<<-"3";names(logfile$parameters)[15]<<-"replicate_dmz"
@@ -68,13 +87,15 @@ if(!any(names(logfile$parameters)=="replicate_dmz")){
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 }
 
+# logfile$Tasks_to_redo
 
 names(logfile[[2]])<<-c(
-		"peakpick","QC","recal","normalize","allign","profiling","trendblind","pattern",
-		"replicates","IS_screen","target_screen","-",
-		"-","-","norm_prof","-"
+	"peakpick","QC","recal","normalize","allign","profiling","trendblind","pattern",
+	"replicates","IS_screen","target_screen","LOD","quantification","-","norm_prof","-"
 )	
-names(logfile)[2]<<-c("Tasks_to_redo"); 
+ names(logfile)[2]<<-c("Tasks_to_redo"); 
+
+# logfile$workflow
 if(!any(names(logfile$workflow)=="screen_IS")){
 	logfile$workflow[11]<<-"TRUE"; 	names(logfile$workflow)[11]<<-"screen_IS" 
 }
@@ -84,9 +105,13 @@ if(!any(names(logfile$workflow)=="screen_target")){
 if(!any(names(logfile$workflow)=="replicates")){
 	logfile$workflow[13]<<-"yes"; 	names(logfile$workflow)[13]<<-"replicates" 
 }
-
+if(!any(names(logfile$workflow)=="LOD")){
+	logfile$workflow[6]<<-"yes"; 	names(logfile$workflow)[6]<<-"LOD" 
+}
+if(!any(names(logfile$workflow)=="quantification")){
+	logfile$workflow[8]<<-"yes"; 	names(logfile$workflow)[8]<<-"quantification" 
+}
 logfile$workflow[5]<<-"yes"; 	names(logfile$workflow)[5]<<-"pattern" 
-logfile$workflow[6]<<-"TRUE"; 	names(logfile$workflow)[6]<<-"-" 
 logfile$workflow[7]<<-"yes"; 	names(logfile$workflow)[7]<<-"peakpicking" 
 logfile$workflow[14]<<-"TRUE"; 	names(logfile$workflow)[14]<<-"-" 		
 logfile$workflow[16]<<-"yes"; 	names(logfile$workflow)[16]<<-"-" 
@@ -95,7 +120,7 @@ logfile$workflow[17]<<-"yes"; 	names(logfile$workflow)[17]<<-"-"
 save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
 
-
+if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_updates.r!")}
 
 
 

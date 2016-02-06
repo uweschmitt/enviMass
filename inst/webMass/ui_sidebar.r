@@ -9,7 +9,7 @@ sidebarPanel(
     conditionalPanel(
 		condition = "output.textit != 'Waiting...'",	  
 			HTML('<p><b><font color=darkgreen size="5">
-				&nbsp enviMass v2.2 </font><br/></b></p>'),
+				&nbsp enviMass v3.1 </font><br/></b></p>'),
 				helpText("Project folder:")
 	),
     verbatimTextOutput("textit"),

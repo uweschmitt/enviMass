@@ -10,11 +10,12 @@
 maincalc<-reactive({
     input$Calc
     if(input$Calc){
-      say<-enviMass:::checkproject(logfile,isotopes,adducts,skipcheck=isolate(input$do_project_check));
-      output$dowhat<<-renderText(say)
+
+	  say<-enviMass:::checkproject(isotopes,adducts,skipcheck=isolate(input$do_project_check));
+	  output$dowhat<<-renderText(say)
       if(say=="Project consistent"){
 	  
-		if(any(ls()=="logfile")){print("illegal logfile detected #1 in server_calculation.r!")}
+		if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_calculation.r!")}
         ########################################################################
         # restart logfile[[3]] & mark data availability ########################        
         if(do_flow==1){
@@ -94,40 +95,52 @@ maincalc<-reactive({
 			)  
         }
         ########################################################################
-		# IS screening #########################################################
+		# LOD ##################################################################
         if(do_flow==10){
-			#source("server_calculation_screening_IS.R", local=TRUE);		
+			workflow_node(
+				"LOD","LOD","LOD","LOD interpolation",
+				path_do="do_LOD.R",path_undo="dont_LOD.R",output,input
+			)  	
+		}				
+        ########################################################################
+		# IS screening #########################################################
+        if(do_flow==11){
+			workflow_node(
+				"screen_IS","IS screening","IS_screen","IS screening",
+				path_do="do_IS_screening.R",path_undo="dont_IS_screening.R",output,input
+			)  	
 		}		
         ########################################################################
 		# target screening #####################################################
-        if(do_flow==11){
-			#source("server_calculation_screening_target.R", local=TRUE);		
+        if(do_flow==12){
+			workflow_node(
+				"screen_target","Target screening","target_screening","Target screening",
+				path_do="do_target_screening.R",path_undo="dont_target_screening.R",output,input
+			)  		
 		}			
 		########################################################################
 		# IS-normalization #####################################################
-        if(do_flow==12){
+        if(do_flow==13){
 			workflow_node(
 				"profnorm","IS norm.?","norm_prof","IS-based intensity normalization",
 				path_do="do_IS_normaliz.R",path_undo="dont_IS_normaliz.R",output,input
 			)  
 		}
+		########################################################################
+		# Quantification #######################################################
+        if(do_flow==14){
+			workflow_node(
+				"quantification","quantification","quantification","Quantification",
+				path_do="do_quantification.R",path_undo="dont_quantification.R",output,input
+			)  	
+		}		
         ########################################################################
         # trend / blind ########################################################
-        if(do_flow==13){
+        if(do_flow==15){
 			workflow_node(
 				"trenddetect","Trend+Blind?","trendblind","Trend detection and blind subtraction",
 				path_do="do_trendblind.R",path_undo="dont_trendblind.R",output,input
 			)  	
-        }
-        ########################################################################
-        # 
-        if(do_flow==14){
-##	
-        }
-        ########################################################################
-        # 
-        if(do_flow==15){
-##	
         }
         ########################################################################
         # 
@@ -179,7 +192,7 @@ maincalc<-reactive({
 		}else{		
 			output$summa_html<<-renderText(summary_html(logfile$summary));
 			isolate(init$b<-(init$b+1))
-			if(any(ls()=="logfile")){print("illegal logfile detected #2 in server_calculation.r!")}
+			if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_calculation.r!")}
 			cat("Calculations completed \n")
 			return("Calculations completed \n")
 		}

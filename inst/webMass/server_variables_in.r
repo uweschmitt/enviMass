@@ -1,3 +1,4 @@
+if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_variabels_in.r!")}
 ################################################################################
 # get variable settings from logfile ###########################################
 updateTextInput(session, "PWpath",value = as.character(logfile[[4]]))
@@ -103,20 +104,25 @@ updateCheckboxGroupInput(session, "adducts_neg", "Negative ions:", choices =  as
 
 #################################################################################
 # WORKFLOW SETTINGS #############################################################
-updateRadioButtons(session, "qc", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile[[6]][[1]]))
-updateRadioButtons(session, "recal", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile[[6]][[2]]))
+updateRadioButtons(session, "qc", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="qc"]) )
+updateRadioButtons(session, "recal", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="recal"]) )
 #updateRadioButtons(session, "RTalign", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile[[6]][[3]]))
-updateRadioButtons(session, "intnorm", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile[[6]][[4]]))
-updateRadioButtons(session, "profnorm", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile[[6]][[15]]))
-updateRadioButtons(session, "profiled", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile[[6]][[9]]))
-updateRadioButtons(session, "trenddetect", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile[[6]][[10]]))
-updateRadioButtons(session, "replicates", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile[[6]][[13]]))
+updateRadioButtons(session, "intnorm", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="norm"]) )
+updateRadioButtons(session, "profnorm", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="profnorm"]) )
+updateRadioButtons(session, "profiled", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="profiled"]) )
+updateRadioButtons(session, "trenddetect", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="trenddetect"]) )
 
-updateCheckboxInput(session, "screen_IS", value =  as.logical(as.character(logfile[[6]][11])))
+
+updateRadioButtons(session, "LOD_interpol", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="LOD"]) )
+updateRadioButtons(session, "quantif", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="quantification"]) )
+
+
+
+updateCheckboxInput(session, "screen_IS", value =  as.logical(as.character(logfile[[6]][11])) )
 updateCheckboxInput(session, "screen_target", value =  as.logical(as.character(logfile[[6]][12])))
 ################################################################################
 ################################################################################
-
+if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_variabels_in.r!")}
 
 
 

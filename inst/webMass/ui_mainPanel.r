@@ -181,16 +181,21 @@
 				# block 3 ######################################################
 				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> Profile extraction </font></p>'),
 					radioButtons("profiled", "Include? ", c("yes"="yes","no"="no")),
-				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> Normalization using IS-profiles </font></p> '),
-					radioButtons("profnorm", "Include? ", c("yes"="yes","no"="no")),
-				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> Trend detection & blind subtraction </font></p> '),
-					radioButtons("trenddetect", "Include? ", c("yes"="yes","no"="no")),
-				HTML('<hr noshade="noshade" />'),
-				HTML('<h1 align="center"> &#x21e9; </h1> '),                     
-				# block 4 ######################################################
-				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Compound screening </font></p> '),
+				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> LOD interpolation </font></p>'),
+					radioButtons("LOD_interpol", "Include? ", c("yes"="yes","no"="no")),					
+				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> Compound screening </font></p> '),
 					checkboxInput("screen_IS", "Screen internal standards?", TRUE),
-					checkboxInput("screen_target", "Screen targets/suspects?", TRUE)
+					checkboxInput("screen_target", "Screen targets/suspects?", TRUE),	
+				HTML('<hr noshade="noshade" />'),
+				HTML('<h1 align="center"> &#x21e9; </h1> '),  					
+				# block 4 ######################################################
+				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Normalization using IS-profiles </font></p> '),
+					radioButtons("profnorm", "Include? ", c("yes"="yes","no"="no")),
+				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Quantification </font></p> '),
+					radioButtons("quantif", "Include? ", c("yes"="yes","no"="no")),
+				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Trend detection & blind subtraction </font></p> '),
+					radioButtons("trenddetect", "Include? ", c("yes"="yes","no"="no")),
+				HTML('<hr noshade="noshade" />')                  
 				#HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Peak grouping (componentization) </font></p>'),
 				#	checkboxInput("Comp_isotop", "Group isotopologue peaks?", TRUE),
 				#	checkboxInput("Comp_add", "Group adduct peaks?", TRUE),
@@ -557,16 +562,6 @@
         ########################################################################
         # HELP #################################################################
         ########################################################################
-          #wellPanel(
-          #  tags$h5("Need help?"), 
-          #  helpText(   
-          #    a( 
-          #      "Check the manual", 
-          #      target="_new",     
-          #      href="http://www.dfcm.utoronto.ca/Assets/DFCM2+Digital+Assets/Family+and+Community+Medicine/DFCM+Digital+Assets/Faculty+$!26+Staff/DFCM+Faculty+Work+$!26+Leadership+Survey+Poster.pdf"
-          #    )
-          #  )
-          # ),
         tabPanel("Manual",
 			tags$iframe(style="height:800px; width:110%;", src="manual.pdf")
 		),
@@ -575,33 +570,13 @@
         ########################################################################
         tabPanel("About",
 		   tags$h5("Citing enviMass"),
-		   HTML(
-			'<p>
-			Loos, M., Ruff, M., Singer, H., 2013. enviMass v2.0 - Software workflow for the monitoring of temporal micropollutant dynamics using LC-HRMS data
-			</p> 
-			'
-			),
+		   HTML('<p>
+			Loos, M., Ruff, M., Singer, H., 2013. enviMass v3.2 - Software workflow for the monitoring of temporal micropollutant dynamics using LC-HRMS data
+			</p> '),
 		   tags$h5("Contact, maintainer:"),
-		   HTML(
-			'<p>
-			Martin Loos, Martin.Loos@eawag.ch 
- 			</p> 
-			'
-			),
-		   tags$h5("License"),
-		   HTML(
-			'<p>
-			enviMass demo version 2.0 is a non-commercial software workflow distributed at request by its authors only. 
-			Redistribution of enviMass version 2.0 is not permitted. 
-			enviMass version 2.0 is used at own risk. The author(s) is not liable to any hard- or software damages, 
-			data losses and false inferences caused by using enviMass version 2.0 or any associated software parts. 
-			All warranties concerning the use of this software are disclaimed. Technical support for the program 
-			usage is not mandatory. Publications using enviMass are obliged to cite enviMass correctly. We try but do not warrant that the 
-			enviMass files available are or will be free of infections or viruses, worms, Trojan horses or other code that manifest contaminating 
-			or destructive properties. The user is responsible for implementing sufficient procedures and checkpoints to satisfy the particular 
-			requirements for accuracy of data and data input and output.
- 			</p> '
-			)
+		   HTML('<p> Martin Loos, Martin.Loos@eawag.ch </p> '),
+		   tags$h5("License:"),
+		   HTML('<p>GPL-2 </p> ')
         )
         ########################################################################
       ),

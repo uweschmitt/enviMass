@@ -45,7 +45,6 @@ recalib<-function(
 
 
   ##############################################################################
-  if(any(ls()=="logfile")){stop("illegal logfile detected #1 in recalib.r!")}
   # search for concerned peaks #################################################
   if(what!="mass" && what!="ret"){stop("what what?")};
   peaks<-search_peak(peaklist,mz,tolmz,ppm,ret,tolret);

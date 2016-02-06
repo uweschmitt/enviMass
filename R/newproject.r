@@ -14,7 +14,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 
   ##############################################################################
   # checks #####################################################################
-  if(any(ls()=="logfile")){stop("illegal logfile detected #1 in newproject.r!")}
+  if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in newproject.r!")}
   if(grepl("\\",pro_dir,fixed=TRUE)){
 	pro_dir<-gsub("\\",.Platform$file.sep,pro_dir,fixed=TRUE)
   }
@@ -61,7 +61,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	logfile[[2]]<-rep(FALSE,16);
 	names(logfile[[2]])<-c(
 		"peakpick","QC","recal","normalize","allign","profiling","trendblind","pattern",
-		"replicates","IS_screen","target_screen","-","-","-","norm_prof","-"
+		"replicates","IS_screen","target_screen","LOD","quantification","-","norm_prof","-"
 	)	
     names(logfile)[2]<-c("Tasks_to_redo"); 
     # summary project status ###################################################
@@ -79,8 +79,8 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		"Replicate filter",
 		"IS screening",
 		"Target screening",
-		"",#"IS comp-screen?",
-		"",#"Target comp-screen?",
+		"LOD",
+		"quantification",
 		"",#"Homologues?",
 		""#"Mass defect?"
 	 )
@@ -184,9 +184,9 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	logfile$workflow[3]<-"yes"; 	names(logfile$workflow)[3]<-"align" 
 	logfile$workflow[4]<-"yes"; 	names(logfile$workflow)[4]<-"norm" 
 	logfile$workflow[5]<-"yes"; 	names(logfile$workflow)[5]<-"pattern" 
-	logfile$workflow[6]<-"TRUE"; 	names(logfile$workflow)[6]<-"-" 
+	logfile$workflow[6]<-"yes"; 	names(logfile$workflow)[6]<-"LOD" 
 	logfile$workflow[7]<-"yes"; 	names(logfile$workflow)[7]<-"peakpicking" 
-	logfile$workflow[8]<-"TRUE"; 	names(logfile$workflow)[8]<-"-" 
+	logfile$workflow[8]<-"TRUE"; 	names(logfile$workflow)[8]<-"quantification" 
 	logfile$workflow[9]<-"yes"; 	names(logfile$workflow)[9]<-"profiled" 
 	logfile$workflow[10]<-"yes"; 	names(logfile$workflow)[10]<-"trenddetect"     
 	logfile$workflow[11]<-"TRUE"; 	names(logfile$workflow)[11]<-"screen_IS" 
