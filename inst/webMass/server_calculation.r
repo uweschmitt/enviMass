@@ -114,7 +114,7 @@ maincalc<-reactive({
 		# target screening #####################################################
         if(do_flow==12){
 			workflow_node(
-				"screen_target","Target screening","target_screening","Target screening",
+				"screen_target","Target screening","target_screen","Target screening",
 				path_do="do_target_screening.R",path_undo="dont_target_screening.R",output,input
 			)  		
 		}			

@@ -97,10 +97,10 @@ names(logfile[[2]])<<-c(
 
 # logfile$workflow
 if(!any(names(logfile$workflow)=="screen_IS")){
-	logfile$workflow[11]<<-"TRUE"; 	names(logfile$workflow)[11]<<-"screen_IS" 
+	logfile$workflow[11]<<-"yes"; 	names(logfile$workflow)[11]<<-"screen_IS" 
 }
 if(!any(names(logfile$workflow)=="screen_target")){
-	logfile$workflow[12]<<-"TRUE"; 	names(logfile$workflow)[12]<<-"screen_target" 
+	logfile$workflow[12]<<-"yes"; 	names(logfile$workflow)[12]<<-"screen_target" 
 }
 if(!any(names(logfile$workflow)=="replicates")){
 	logfile$workflow[13]<<-"yes"; 	names(logfile$workflow)[13]<<-"replicates" 
@@ -113,7 +113,7 @@ if(!any(names(logfile$workflow)=="quantification")){
 }
 logfile$workflow[5]<<-"yes"; 	names(logfile$workflow)[5]<<-"pattern" 
 logfile$workflow[7]<<-"yes"; 	names(logfile$workflow)[7]<<-"peakpicking" 
-logfile$workflow[14]<<-"TRUE"; 	names(logfile$workflow)[14]<<-"-" 		
+logfile$workflow[14]<<-"yes"; 	names(logfile$workflow)[14]<<-"-" 		
 logfile$workflow[16]<<-"yes"; 	names(logfile$workflow)[16]<<-"-" 
 logfile$workflow[17]<<-"yes"; 	names(logfile$workflow)[17]<<-"-" 
 

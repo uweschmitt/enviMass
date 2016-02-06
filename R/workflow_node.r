@@ -64,7 +64,6 @@ workflow_node<-function(name_workflow,name_summary,name_redo,name_output,path_do
 			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)==name_redo]<<-"FALSE";
 			logfile$summary[(logfile$summary[,1]==name_summary),2]<<-"FALSE";
 			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
-		
 		}else{
 			summa[(logfile$summary[,1]==name_summary),2]<-"ok"
 			summa[(logfile$summary[,1]==name_summary),2]<<-"ok"

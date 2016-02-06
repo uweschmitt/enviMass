@@ -186,13 +186,13 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	logfile$workflow[5]<-"yes"; 	names(logfile$workflow)[5]<-"pattern" 
 	logfile$workflow[6]<-"yes"; 	names(logfile$workflow)[6]<-"LOD" 
 	logfile$workflow[7]<-"yes"; 	names(logfile$workflow)[7]<-"peakpicking" 
-	logfile$workflow[8]<-"TRUE"; 	names(logfile$workflow)[8]<-"quantification" 
+	logfile$workflow[8]<-"yes"; 	names(logfile$workflow)[8]<-"quantification" 
 	logfile$workflow[9]<-"yes"; 	names(logfile$workflow)[9]<-"profiled" 
 	logfile$workflow[10]<-"yes"; 	names(logfile$workflow)[10]<-"trenddetect"     
-	logfile$workflow[11]<-"TRUE"; 	names(logfile$workflow)[11]<-"screen_IS" 
-	logfile$workflow[12]<-"TRUE"; 	names(logfile$workflow)[12]<-"screen_target" 
+	logfile$workflow[11]<-"yes"; 	names(logfile$workflow)[11]<-"screen_IS" 
+	logfile$workflow[12]<-"yes"; 	names(logfile$workflow)[12]<-"screen_target" 
 	logfile$workflow[13]<-"yes"; 	names(logfile$workflow)[13]<-"replicates" 
-	logfile$workflow[14]<-"TRUE"; 	names(logfile$workflow)[14]<-"-" 		
+	logfile$workflow[14]<-"yes"; 	names(logfile$workflow)[14]<-"-" 		
 	logfile$workflow[15]<-"yes"; 	names(logfile$workflow)[15]<-"profnorm" 
 	logfile$workflow[16]<-"yes"; 	names(logfile$workflow)[16]<-"-" 
 	logfile$workflow[17]<-"yes"; 	names(logfile$workflow)[17]<-"-" 	  
@@ -218,6 +218,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
     names(logfile)[9]<-c("version")   
     # measurement data.frame ###################################################
 	save(logfile,file=file.path(pro_dir,pro_name,"logfile.emp"));  
+	rm(logfile)
   ##############################################################################
   return(file.path(pro_dir,pro_name,"logfile.emp"));
 }

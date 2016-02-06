@@ -24,6 +24,7 @@ if(length(those)>0){
 		peaklist<-peaklist[peaklist[,colnames(peaklist)=="keep"]==1,,drop=FALSE]
 		if(length(peaklist[,1])==0){next}
 		# LOD ###################################################################
+		his<-hist(peaklist[,5],breaks=100,plot=FALSE)
 		get_int<-c()
 		get_ret<-c()
 		get_w<-c()
@@ -40,7 +41,7 @@ if(length(those)>0){
 		model<-smooth.spline(x=get_ret,y=get_int)	
 		assign(paste("LOD_",those[i],sep=""),model);rm(model)
 		LOD_splined[[at]]<-get(paste("LOD_",those[i],sep=""))
-		names(LOD_splined[at])<-paste("LOD_",those[i],sep="")
+		names(LOD_splined)[at]<-paste("LOD_",those[i],sep="")
 		at<-(at+1)
 		if(FALSE){
 			png(file=file.path(logfile$project_folder,"results","LOD",paste("plot_LOD_",those[i],".png",sep="")),

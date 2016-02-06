@@ -178,10 +178,10 @@ maincalc2<-reactive({
 		}
 		if(file.exists(file.path(file_in,"logfile.emp"))){
 			load(file.path(file_in,"logfile.emp"),envir=as.environment(".GlobalEnv"))
-			# include version updates #############################################
-			source("server_updates.R", local=TRUE);	 
 			#######################################################################			
 			logfile$project_folder<<-as.character(file_in);
+			# include version updates #############################################
+			source("server_updates.R", local=TRUE);	 
 			save(logfile,file=file.path(file_in,"logfile.emp"));
 			output$textit<-renderText(logfile$project_folder);
 			output$summa_html<-renderText(summary_html(logfile$summary));

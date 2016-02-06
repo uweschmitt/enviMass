@@ -184,8 +184,8 @@
 				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> LOD interpolation </font></p>'),
 					radioButtons("LOD_interpol", "Include? ", c("yes"="yes","no"="no")),					
 				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> Compound screening </font></p> '),
-					checkboxInput("screen_IS", "Screen internal standards?", TRUE),
-					checkboxInput("screen_target", "Screen targets/suspects?", TRUE),	
+					radioButtons("screen_IS", "Screen internal standards?", c("yes"="yes","no"="no")),
+					radioButtons("screen_target", "Screen targets/suspects?", c("yes"="yes","no"="no")),
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),  					
 				# block 4 ######################################################
