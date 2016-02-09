@@ -16,7 +16,6 @@ if(length(those)>0){
 
 	LOD_splined<-list()
 	at<-1;
-	cat("\n")
 	for(i in 1:length(those)){
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="peaklist")){rm(peaklist)}
@@ -43,7 +42,7 @@ if(length(those)>0){
 		LOD_splined[[at]]<-get(paste("LOD_",those[i],sep=""))
 		names(LOD_splined)[at]<-paste("LOD_",those[i],sep="")
 		at<-(at+1)
-		if(FALSE){
+		if(TRUE){
 			png(file=file.path(logfile$project_folder,"results","LOD",paste("plot_LOD_",those[i],".png",sep="")),
 				width = 550, height = 250)
 				par(mar=c(4.2,4.2,0.2,0.2))

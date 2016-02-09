@@ -117,10 +117,21 @@ logfile$workflow[14]<<-"yes"; 	names(logfile$workflow)[14]<<-"-"
 logfile$workflow[16]<<-"yes"; 	names(logfile$workflow)[16]<<-"-" 
 logfile$workflow[17]<<-"yes"; 	names(logfile$workflow)[17]<<-"-" 
 
+
+# enforce a pattern recalculation
+logfile$workflow[names(logfile$workflow)=="pattern"]<<-"yes"; 	
+logfile$summary[logfile$summary[,1]=="Isotope pattern?",2]<<-"TRUE";
+logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="pattern"]<<-TRUE
+
+
+
 save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
 
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_updates.r!")}
+
+
+
 
 
 

@@ -40,11 +40,11 @@
 
 		load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"));	
 		load(file=file.path(logfile[[1]],"results","pattern_pos_target"),envir=as.environment(".GlobalEnv"));
-		pattern<-pattern_pos_target;rm(pattern_pos_target,envir=as.environment(".GlobalEnv"));
+		pattern<<-pattern_pos_target;rm(pattern_pos_target,envir=as.environment(".GlobalEnv"));
 		load(file=file.path(logfile[[1]],"results","patternRT_pos_target"),envir=as.environment(".GlobalEnv"));
-		pattern_RT<-patternRT_pos_target;rm(patternRT_pos_target,envir=as.environment(".GlobalEnv"));
+		pattern_RT<<-patternRT_pos_target;rm(patternRT_pos_target,envir=as.environment(".GlobalEnv"));
 		load(file=file.path(logfile[[1]],"results","patternDelRT_pos_target"),envir=as.environment(".GlobalEnv"));
-		pattern_delRT<-patternDelRT_pos_target;rm(patternDelRT_pos_target,envir=as.environment(".GlobalEnv"));
+		pattern_delRT<<-patternDelRT_pos_target;rm(patternDelRT_pos_target,envir=as.environment(".GlobalEnv"));
 		
 		mztol<-as.numeric(logfile$parameters$tar_dmz)				# m/z tolerance ...
 		ppm<-as.logical(as.character(logfile$parameters$tar_ppm))	# ... given in pppm?
@@ -139,21 +139,14 @@
 							}
 							combination_matches<-recomb_score(
 								cent_peak_mat=target_pos_screen_listed[[i]][[m]],
-								pattern=pattern[[i]],
+								pattern_compound=pattern[[i]],
 								profileList=profileList_pos,
 								LOD=use_cutint,
-								RT_tol_inside=RT_tol_inside
-							)
+								RT_tol_inside=RT_tol_inside,
+								int_tol=int_tol,
+								score_cut=FALSE
+							)			
 							res_target_pos_screen[[i]]<-combination_matches
-							if(FALSE){	
-								if(length(res_target_pos_screen[[i]])>0){
-									plot(
-										log10(pattern[[i]][res_target_pos_screen[[i]][[1]][,1],2]),
-										log10(profileList_pos[[2]][res_target_pos_screen[[i]][[1]][,2],2]),
-										pch=19,cex=.8,main=paste(i,"-",m))
-										Sys.sleep(.01)
-								}
-							}	
 							if(length(combination_matches)>1){many_unamb<-(many_unamb+1)}
 							many<-(many+1)
 						}
@@ -165,6 +158,8 @@
 		save(res_target_pos_screen,file=file.path(logfile$project_folder,"results","screening","res_target_pos_screen"))
 		# assemble output table of length(list) ############################################################
 
+		####################################################################################################
+		rm(pattern,pattern_RT,pattern_delRT)
 }		
 	########################################################################################################
 	########################################################################################################
@@ -190,11 +185,11 @@
 
 		load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"));	
 		load(file=file.path(logfile[[1]],"results","pattern_neg_target"),envir=as.environment(".GlobalEnv"));
-		pattern<-pattern_neg_target;rm(pattern_neg_target,envir=as.environment(".GlobalEnv"));
+		pattern<<-pattern_neg_target;rm(pattern_neg_target,envir=as.environment(".GlobalEnv"));
 		load(file=file.path(logfile[[1]],"results","patternRT_neg_target"),envir=as.environment(".GlobalEnv"));
-		pattern_RT<-patternRT_neg_target;rm(patternRT_neg_target,envir=as.environment(".GlobalEnv"));
+		pattern_RT<<-patternRT_neg_target;rm(patternRT_neg_target,envir=as.environment(".GlobalEnv"));
 		load(file=file.path(logfile[[1]],"results","patternDelRT_neg_target"),envir=as.environment(".GlobalEnv"));
-		pattern_delRT<-patternDelRT_neg_target;rm(patternDelRT_neg_target,envir=as.environment(".GlobalEnv"));
+		pattern_delRT<<-patternDelRT_neg_target;rm(patternDelRT_neg_target,envir=as.environment(".GlobalEnv"));
 		
 		mztol<-as.numeric(logfile$parameters$tar_dmz)				# m/z tolerance ...
 		ppm<-as.logical(as.character(logfile$parameters$tar_ppm))	# ... given in pppm?
@@ -289,21 +284,14 @@
 							}
 							combination_matches<-recomb_score(
 								cent_peak_mat=target_neg_screen_listed[[i]][[m]],
-								pattern=pattern[[i]],
+								pattern_compound=pattern[[i]],
 								profileList=profileList_neg,
 								LOD=use_cutint,
-								RT_tol_inside=RT_tol_inside
+								RT_tol_inside=RT_tol_inside,
+								int_tol=int_tol,
+								score_cut=FALSE
 							)
 							res_target_neg_screen[[i]]<-combination_matches
-							if(FALSE){	
-								if(length(res_target_neg_screen[[i]])>0){
-									plot(
-										log10(pattern[[i]][res_target_neg_screen[[i]][[1]][,1],2]),
-										log10(profileList_neg[[2]][res_target_neg_screen[[i]][[1]][,2],2]),
-										pch=19,cex=.8,main=paste(i,"-",m))
-										Sys.sleep(.01)
-								}
-							}	
 							if(length(combination_matches)>1){many_unamb<-(many_unamb+1)}
 							many<-(many+1)
 						}
@@ -315,6 +303,8 @@
 		save(res_target_neg_screen,file=file.path(logfile$project_folder,"results","screening","res_target_neg_screen"))
 		# assemble output table of length(list) ############################################################
 
+		####################################################################################################
+		rm(pattern,pattern_RT,pattern_delRT)
 }		
 	########################################################################################################
 	########################################################################################################

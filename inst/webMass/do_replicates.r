@@ -2,9 +2,9 @@
 	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 	measurements<-measurements[measurements[,8]=="TRUE",]
 	ppm<-logfile$parameters[[16]]
-	mz_tol<-logfile$parameters[[15]]
-	rt_tol<-logfile$parameters[[18]]
-	with_test<-TRUE # Run a little test along!
+	mz_tol<-as.numeric(logfile$parameters[[15]])
+	rt_tol<-as.numeric(logfile$parameters[[18]])
+	with_test<-TRUE # Run a test along!
 	replic<-(measurements$tag3[measurements$tag3!="FALSE"])
 	replic<-replic[duplicated(replic)]
 	replic<-unique(replic)
@@ -15,7 +15,9 @@
 				IDs<-measurements$ID[measurements$tag3==replic[i]]
 				if(any(duplicated(IDs))){stop("replicates: non-unique IDs found!")} # should not happen anyway
 				# initialize intersection rectangles with first peaklist ################################
-				load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[1])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
+				if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
+				if(any(objects()=="peaklist")){rm(peaklist)}
+				load(file=file.path(logfile$project_folder,"peaklist",as.character(IDs[1])),verbose=FALSE);
 				peaklist<-peaklist[,c(12,13,14)]
 				if(ppm){
 					low_mass<-(peaklist[,1]-(mz_tol/1E6*peaklist[,1]))
@@ -39,7 +41,7 @@
 				rm(peaklist)
 				for(j in 2:length(IDs)){
 					# load next peaklist
-					load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[j])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
+					load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[j])),verbose=FALSE);
 					peaklist<-peaklist[,c(12,13,14)]
 					if(ppm){
 						low_mass<-(peaklist[,1]-(mz_tol/1E6*peaklist[,1]))
@@ -58,6 +60,7 @@
 							c(.3,.3001,39,41),
 							c(800.001,800.002,1400,1430))
 					}
+					rm(peaklist)
 					# build a boxtree with next peaklist
 					tree <- .Call("boxtree", 
 						as.matrix(query),
@@ -111,7 +114,7 @@
 				}
 				# clean peaklists
 				for(j in 1:length(IDs)){
-					load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[j])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
+					load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[j])),verbose=FALSE);
 					keep<-rep(0,length(peaklist[,1]))
 					if(length(intersection[,1])>0){ # any intersections at all?
 						keep_those<-unique(intersection[,(4+j)])

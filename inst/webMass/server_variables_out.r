@@ -153,7 +153,7 @@ observe({
 			workflow_set(down="norm_prof",check_node=TRUE)		
 		}	
 		########################################################################   
-	
+
 		##########################################################################
 		# workflow settings ######################################################
 		# QC #####################################################################
@@ -220,14 +220,13 @@ observe({
 		if(at1!=at2){
 			workflow_set(down="target_screen",check_node=FALSE)		
 		}
-		
 		# LOD ###################################################################
 		at1<-logfile$workflow[names(logfile$workflow)=="LOD"];
 		logfile$workflow[names(logfile$workflow)=="LOD"]<<-as.character(isolate(input$LOD_interpol));
 		at2<-logfile$workflow[names(logfile$workflow)=="LOD"];
 		if(at1!=at2){
 			workflow_set(down="LOD",check_node=FALSE)		
-		}		
+		}			
 		# quantification #######################################################
 		at1<-logfile$workflow[names(logfile$workflow)=="quantification"];
 		logfile$workflow[names(logfile$workflow)=="quantification"]<<-as.character(isolate(input$quantif));
@@ -236,10 +235,7 @@ observe({
 			workflow_set(down="quantification",check_node=FALSE)		
 		}		
 		
-		
-		
-		
-		
+	
 		
 		##########################################################################	
 
