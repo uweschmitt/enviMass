@@ -118,17 +118,60 @@ logfile$workflow[16]<<-"yes"; 	names(logfile$workflow)[16]<<-"-"
 logfile$workflow[17]<<-"yes"; 	names(logfile$workflow)[17]<<-"-" 
 
 
-# enforce a pattern recalculation
-logfile$workflow[names(logfile$workflow)=="pattern"]<<-"yes"; 	
-logfile$summary[logfile$summary[,1]=="Isotope pattern?",2]<<-"TRUE";
-logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="pattern"]<<-TRUE
-
+# enforce a pattern recalculation - zero abundance debug
+if(TRUE){
+	redo_pattern<-FALSE
+	if( file.exists(file.path(logfile[[1]],"results","pattern_pos_IS")) ){	
+		load(file=file.path(logfile[[1]],"results","pattern_pos_IS"),envir=as.environment(".GlobalEnv"));
+		for(i in 1:length(pattern_pos_IS)){
+			if( any(pattern_pos_IS[[i]][,2]==0) ){
+				redo_pattern<-TRUE
+			}
+		}
+		rm(pattern_pos_IS,envir=as.environment(".GlobalEnv"))
+	}
+	if( file.exists(file.path(logfile[[1]],"results","pattern_neg_IS")) ){	
+		load(file=file.path(logfile[[1]],"results","pattern_neg_IS"),envir=as.environment(".GlobalEnv"));
+		for(i in 1:length(pattern_neg_IS)){
+			if( any(pattern_neg_IS[[i]][,2]==0) ){
+				redo_pattern<-TRUE
+			}
+		}
+		rm(pattern_neg_IS,envir=as.environment(".GlobalEnv"))
+	}
+	if( file.exists(file.path(logfile[[1]],"results","pattern_pos_target")) ){	
+		load(file=file.path(logfile[[1]],"results","pattern_pos_target"),envir=as.environment(".GlobalEnv"));
+		for(i in 1:length(pattern_pos_target)){
+			if( any(pattern_pos_target[[i]][,2]==0) ){
+				redo_pattern<-TRUE
+			}
+		}
+		rm(pattern_pos_target,envir=as.environment(".GlobalEnv"))
+	}
+	if( file.exists(file.path(logfile[[1]],"results","pattern_neg_target")) ){	
+		load(file=file.path(logfile[[1]],"results","pattern_neg_target"),envir=as.environment(".GlobalEnv"));
+		for(i in 1:length(pattern_neg_target)){
+			if( any(pattern_neg_target[[i]][,2]==0) ){
+				redo_pattern<-TRUE
+			}
+		}
+		rm(pattern_neg_target,envir=as.environment(".GlobalEnv"))
+	}
+	if(redo_pattern){
+		logfile$workflow[names(logfile$workflow)=="pattern"]<<-"yes"; 	
+		logfile$summary[logfile$summary[,1]=="Isotope pattern?",2]<<-"TRUE";
+		logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="pattern"]<<-TRUE
+	}
+}
 
 
 save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
 
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_updates.r!")}
+
+
+
 
 
 

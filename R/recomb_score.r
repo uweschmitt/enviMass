@@ -74,11 +74,10 @@ recomb_score<-function(cent_peak_mat,pattern_compound,profileList,LOD,RT_tol_ins
 				    w=( profileList[[2]][check_nodes[[k]][,2],2] / (int_tol/100*profileList[[2]][check_nodes[[k]][,2],2]) )
 				)
 				above_LOD<-((pattern_compound[,2]/rescale)>LOD)
-
 				# ... measured "above LOD threshold:"
 				if(any(above_LOD)){
 					score1<-(
-						sum(pattern_compound[check_nodes[[k]][,1],2][above_LOD[check_nodes[[k]][,1]]]) / sum(pattern_compound[above_LOD,2])
+						sum(pattern_compound[check_nodes[[k]][,1],2][above_LOD[check_nodes[[k]][,1]]])/sum(pattern_compound[above_LOD,2])
 					)
 					score1<-round(score1,digits=4)
 				}else{
@@ -96,9 +95,11 @@ recomb_score<-function(cent_peak_mat,pattern_compound,profileList,LOD,RT_tol_ins
 				results[[at_results]][[3]]<-score2
 				results[[at_results]][[4]]<-((pattern_compound[check_nodes[[k]][,1],1]-profileList[[2]][check_nodes[[k]][,2],1])/mean(pattern_compound[check_nodes[[k]][,1],1])*1E6)				
 				results[[at_results]][[5]]<-(mean(profileList[[2]][check_nodes[[k]][,2],3])-profileList[[2]][check_nodes[[k]][,2],3])
+				results[[at_results]][[6]]<-rescale
+				names(results[[at_results]])<-c("Peaks","score_1","score_2","ppm deviation","RT deviation from mean","rescale factor")
 				at_results<-(at_results+1)
 				if(plotit){box(col="green",lwd=5);title(main=paste(score1,score2,sep=" - "));Sys.sleep(3);}
-			}else{
+				}else{
 				# maker smaller combinations by omission of one (centroid,peak)
 				if(check_nodes_index[[k]]>0){ 
 					# nothing to inherit - 

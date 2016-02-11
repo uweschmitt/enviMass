@@ -125,7 +125,8 @@
 		res_IS_pos_screen<-list()  # default: no match at all
 		if(length(IS_pos_screen_listed)>0){
 			for(i in 1:length(IS_pos_screen_listed)){ # i - on compound_adduct
-				if(length(IS_pos_screen_listed[[i]])>0){	
+				if(length(IS_pos_screen_listed[[i]])>0){
+					res_IS_pos_screen[[i]]<-list()
 					for(m in 1:length(IS_pos_screen_listed[[i]])){ # m - sample
 						if(length(IS_pos_screen_listed[[i]][[m]])>0){
 							if(do_LOD){
@@ -147,25 +148,53 @@
 								plotit=FALSE
 							)
 							#if(length(combination_matches)>5){stop()}
-							res_IS_pos_screen[[i]]<-combination_matches
+							if(length(res_IS_pos_screen[[i]])==0){}
+							res_IS_pos_screen[[i]][[m]]<-combination_matches
 							if(length(combination_matches)>1){many_unamb<-(many_unamb+1)}
 							many<-(many+1)
 						}
 					}
 				}
 			}
+			names(res_IS_pos_screen)<-names(IS_pos_screen_listed)
 		}
+		
+
+profileList[[2]][IS_pos_screen_listed[[i]][[m]][,2],]
+
+		
 		# save list ########################################################################################
 		save(res_IS_pos_screen,file=file.path(logfile$project_folder,"results","screening","res_IS_pos_screen"))
 		# assemble output table of length(list) ############################################################
-		
-		
-		
-		
+		# iterator m is directly equal to the sample ID ####################################################
+		if(length(IS_pos_screen_listed)>0){
+			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
+			cut_score<-.75
+			results_screen_IS_pos<-get_screening_results(
+				screened_listed=res_IS_pos_screen,
+				pattern=pattern,
+				profileList=profileList_pos,
+				measurements_table=measurements,
+				compound_table=intstand,
+				cut_score=cut_score
+			)
+			save(results_screen_IS_pos,file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos"))
 
+			
+
+screened_listed=res_IS_pos_screen
+profileList=profileList_pos
+measurements_table=measurements
+compound_table=intstand
+			
+			
+			
+			rm(measurements,intstand);
+		}
 		####################################################################################################
-		rm(pattern,pattern_RT,pattern_delRT)
-
+		rm(res_IS_pos_screen,pattern,pattern_RT,pattern_delRT,IS_pos_screen_listed,res_IS_pos_screen,envir=as.environment(".GlobalEnv"))
+		
 }		
 	########################################################################################################
 	########################################################################################################
@@ -304,13 +333,17 @@
 					}
 				}
 			}
+			names(res_IS_neg_screen)<-names(IS_neg_screen_listed)
 		}
 		# save list ########################################################################################
 		save(res_IS_neg_screen,file=file.path(logfile$project_folder,"results","screening","res_IS_neg_screen"))
 		# assemble output table of length(list) ############################################################
+		if(length(IS_neg_screen_listed)>0){
 
+		
+		}
 		####################################################################################################
-		rm(pattern,pattern_RT,pattern_delRT)
+		rm(pattern,pattern_RT,pattern_delRT,res_IS_neg_screen,IS_neg_screen_listed,envir=as.environment(".GlobalEnv"))
 
 }		
 	########################################################################################################

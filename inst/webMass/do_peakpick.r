@@ -1,12 +1,12 @@
 # Peak picking ##################################################################
 
-		  output$dowhat<-renderText("Peak picking ... please wait");
-		  if(any(search()=="package:nlme")){detach(package:nlme,force=TRUE);addit<-TRUE}else{addit<-FALSE}
-          measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-          leng<-length(measurements[,1]);         
-          for(i in 1:leng){ 
-            # (measurement included & not yet picked) OR (peakpick forced) 
-            if( ((measurements[i,8]=="TRUE")&&(measurements[i,10]=="FALSE"))||(logfile$Tasks_to_redo[1]=="TRUE") ){
+	output$dowhat<-renderText("Peak picking ... please wait");
+	if(any(search()=="package:nlme")){detach(package:nlme,force=TRUE);addit<-TRUE}else{addit<-FALSE}
+    measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+    leng<-length(measurements[,1]);         
+    for(i in 1:leng){ 
+        # (measurement included & not yet picked) OR (peakpick forced) 
+            if( (measurements[i,8]=="TRUE")&&(measurements[i,10]=="FALSE") ){
 				cat(paste("\n    Peak picking sample ",as.character(i)," of ",as.character(leng),": "));                        
 				MSlist<-enviPick::readMSdata(
 					file.path(logfile[[1]],"files",paste(as.character(measurements[i,1]),".mzXML",sep="")),
@@ -90,11 +90,11 @@
 				if(any(objects()=="peaklist")){rm(peaklist)}
 				cat(" exported. ");
             }
-          }
-          measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-		  output$measurements<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
-		  if(addit){library(nlme)}
-          cat("Peak picking completed \n"); 	  
-          updateSelectInput(session, "sel_meas_ID", label = "Select file by ID:", choices =  c("none",as.character(measurements[,1])), selected = "none")
+    }
+    measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+	output$measurements<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
+	if(addit){library(nlme)}
+    cat("Peak picking completed \n"); 	  
+    updateSelectInput(session, "sel_meas_ID", label = "Select file by ID:", choices =  c("none",as.character(measurements[,1])), selected = "none")
 
 

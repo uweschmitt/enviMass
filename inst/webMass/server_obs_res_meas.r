@@ -783,9 +783,9 @@ output$prof_mass<-renderText(paste(maincalc5()))
 observe({
     input$reset_1
     if( (isolate(init$a)=="TRUE") & isolate(input$reset_1) ){
-		logfile$Tasks_to_redo<-replace(logfile$Tasks_to_redo,-1,TRUE)
+
+		if(any(ls()=="logfile")){stop(paste("\n illegal logfile detected in server_obs_res_mean.r #1"))}
 		logfile$Tasks_to_redo<<-replace(logfile$Tasks_to_redo,-1,TRUE)
-		logfile$Tasks_to_redo<-replace(logfile$Tasks_to_redo,1,FALSE)
 		logfile$Tasks_to_redo<<-replace(logfile$Tasks_to_redo,1,FALSE)
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 		measurements[,c(11,12,13,14)]<-"FALSE"
@@ -798,11 +798,23 @@ observe({
 observe({
     input$reset_2
     if( (isolate(init$a)=="TRUE") & isolate(input$reset_2) ){
-		logfile$Tasks_to_redo<-replace(logfile$Tasks_to_redo,,TRUE)
+		if(any(ls()=="logfile")){stop(paste("\n illegal logfile detected in server_obs_res_mean.r #1"))}		
 		logfile$Tasks_to_redo<<-replace(logfile$Tasks_to_redo,,TRUE)
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-		measurements[,c(11,12,13,14)]<-"FALSE"
+		if(TRUE){
+			measurements[,c(10,11,12,13,14)]<-"FALSE"
+		}else{ # in-script switch: only redo peak-picking for replicate files
+			measurements[measurements[,names(measurements)=="tag3"]!=FALSE,c(10,11,12,13,14)]<-FALSE
+		}
 		write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+		rm(measurements)
+		# delete all peaklists
+		those<-list.files(file.path(logfile$project_folder,"peaklist"))
+		if(length(those)>0){
+			for(i in 1:length(those)){
+				file.remove(file.path(logfile$project_folder,"peaklist",those[i]))
+			}
+		}
 		createAlert(session,anchorId = "reset", alertId="reset2", title = NULL, content="Project reset",style = "warning",append=FALSE,dismiss=TRUE)
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		cat("\nTotal reset \n")
@@ -828,4 +840,13 @@ observe({
 	}
 })
 ##############################################################################
+
+
+
+
+
+
+
+
+
 

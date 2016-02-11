@@ -153,13 +153,16 @@
 					}
 				}
 			}
+			names(res_target_pos_screen)<-names(target_pos_screen_listed)
 		}
 		# save list ########################################################################################
 		save(res_target_pos_screen,file=file.path(logfile$project_folder,"results","screening","res_target_pos_screen"))
 		# assemble output table of length(list) ############################################################
-
+		if(length(target_pos_screen_listed)>0){
+		
+		}
 		####################################################################################################
-		rm(pattern,pattern_RT,pattern_delRT)
+		rm(pattern,pattern_RT,pattern_delRT,res_target_pos_screen,target_pos_screen_listed,envir=as.environment(".GlobalEnv"))
 }		
 	########################################################################################################
 	########################################################################################################
@@ -263,6 +266,7 @@
 					}
 				}
 			}
+			names(res_target_neg_screen)<-names(target_neg_screen_listed)
 		}
 		# decompose ###########################################################################		
 		many<-0
@@ -302,9 +306,13 @@
 		# save list ########################################################################################
 		save(res_target_neg_screen,file=file.path(logfile$project_folder,"results","screening","res_target_neg_screen"))
 		# assemble output table of length(list) ############################################################
-
+		if(length(target_neg_screen_listed)>0){
+		
+	
+		
+		}
 		####################################################################################################
-		rm(pattern,pattern_RT,pattern_delRT)
+		rm(pattern,pattern_RT,pattern_delRT,target_neg_screen_listed,res_target_neg_screen,envir=as.environment(".GlobalEnv"))
 }		
 	########################################################################################################
 	########################################################################################################
