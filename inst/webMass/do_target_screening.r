@@ -23,6 +23,7 @@
 	########################################################################################################	
 	########################################################################################################
 	# target screening on positive ionization ##################################################################
+	cut_score<-.75	# used during result filtering
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="peaklist")){rm(peaklist)}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
@@ -79,7 +80,7 @@
 			screen_list[[i]]<-as.list(rep("FALSE",n))
 			at_ID<-(at_ID+n)
 		}
-		getit <- search_peak( ### adapt mz tolerances
+		getit <- search_peak( 
 			peaklist, 
 			centro_mass, 
 			dmz=mztol*4, # precheck
@@ -117,6 +118,8 @@
 						}
 					}
 				}
+			}else{
+				target_pos_screen_listed[[i]]<-numeric(0)
 			}
 		}
 		# decompose ###########################################################################		
@@ -127,6 +130,7 @@
 			j<-1
 			for(i in j:length(target_pos_screen_listed)){ # i - on compound_adduct
 				if(length(target_pos_screen_listed[[i]])>0){	
+					res_target_pos_screen[[i]]<-list()
 					for(m in 1:length(target_pos_screen_listed[[i]])){ # m - sample
 						if(length(target_pos_screen_listed[[i]][[m]])>0){
 							if(do_LOD){
@@ -146,11 +150,13 @@
 								int_tol=int_tol,
 								score_cut=FALSE
 							)			
-							res_target_pos_screen[[i]]<-combination_matches
+							res_target_pos_screen[[i]][[m]]<-combination_matches
 							if(length(combination_matches)>1){many_unamb<-(many_unamb+1)}
 							many<-(many+1)
 						}
 					}
+				}else{
+					res_target_pos_screen[[i]]<-numeric(0)
 				}
 			}
 			names(res_target_pos_screen)<-names(target_pos_screen_listed)
@@ -159,14 +165,27 @@
 		save(res_target_pos_screen,file=file.path(logfile$project_folder,"results","screening","res_target_pos_screen"))
 		# assemble output table of length(list) ############################################################
 		if(length(target_pos_screen_listed)>0){
-		
+			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
+			results_screen_target_pos<-get_screening_results(
+				screened_listed=res_target_pos_screen,
+				pattern=pattern,
+				profileList=profileList_pos,
+				measurements_table=measurements,
+				compound_table=intstand,
+				cut_score=cut_score
+			)
+			save(results_screen_target_pos,file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))
+			rm(measurements,intstand,results_screen_target_pos);		
 		}
 		####################################################################################################
-		rm(pattern,pattern_RT,pattern_delRT,res_target_pos_screen,target_pos_screen_listed,envir=as.environment(".GlobalEnv"))
+		rm(getit,target_pos_screen_listed,res_target_pos_screen)
+		rm(pattern,pattern_RT,pattern_delRT,envir=as.environment(".GlobalEnv"))
 }		
 	########################################################################################################
 	########################################################################################################
-		
+	
+			
 	########################################################################################################	
 	########################################################################################################
 	# target screening on negative ionization ##############################################################
@@ -227,7 +246,7 @@
 			screen_list[[i]]<-as.list(rep("FALSE",n))
 			at_ID<-(at_ID+n)
 		}
-		getit <- search_peak( ### adapt mz tolerances
+		getit <- search_peak(
 			peaklist, 
 			centro_mass, 
 			dmz=mztol*4, # precheck
@@ -265,8 +284,9 @@
 						}
 					}
 				}
+			}else{
+				target_neg_screen_listed[[i]]<-numeric(0)
 			}
-			names(res_target_neg_screen)<-names(target_neg_screen_listed)
 		}
 		# decompose ###########################################################################		
 		many<-0
@@ -276,6 +296,7 @@
 			j<-1
 			for(i in j:length(target_neg_screen_listed)){ # i - on compound_adduct
 				if(length(target_neg_screen_listed[[i]])>0){	
+					res_target_neg_screen[[i]]<-list()
 					for(m in 1:length(target_neg_screen_listed[[i]])){ # m - sample
 						if(length(target_neg_screen_listed[[i]][[m]])>0){
 							if(do_LOD){
@@ -295,33 +316,43 @@
 								int_tol=int_tol,
 								score_cut=FALSE
 							)
-							res_target_neg_screen[[i]]<-combination_matches
+							res_target_neg_screen[[i]][[m]]<-combination_matches
 							if(length(combination_matches)>1){many_unamb<-(many_unamb+1)}
 							many<-(many+1)
 						}
 					}
+				}else{
+					res_target_neg_screen[[i]]<-numeric(0)
 				}
 			}
+			names(res_target_neg_screen)<-names(target_neg_screen_listed)
 		}
 		# save list ########################################################################################
 		save(res_target_neg_screen,file=file.path(logfile$project_folder,"results","screening","res_target_neg_screen"))
 		# assemble output table of length(list) ############################################################
+		# iterator m is directly equal to the sample ID ####################################################
 		if(length(target_neg_screen_listed)>0){
-		
-	
-		
+			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
+			results_screen_target_neg<-get_screening_results(
+				screened_listed=res_target_neg_screen,
+				pattern=pattern,
+				profileList=profileList_neg,
+				measurements_table=measurements,
+				compound_table=intstand,
+				cut_score=cut_score
+			)
+			save(results_screen_target_neg,file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg"))
+			rm(measurements,intstand,results_screen_target_neg);
 		}
 		####################################################################################################
-		rm(pattern,pattern_RT,pattern_delRT,target_neg_screen_listed,res_target_neg_screen,envir=as.environment(".GlobalEnv"))
+		rm(getit,target_neg_screen_listed,res_target_neg_screen)
+		rm(pattern,pattern_RT,pattern_delRT,envir=as.environment(".GlobalEnv"))
 }		
 	########################################################################################################
 	########################################################################################################
 	
 	
-	
-
-
-
 
 
 

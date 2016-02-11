@@ -13,7 +13,7 @@
 
 	get_screening_results<-function(screened_listed,pattern,profileList,measurements_table,compound_table,cut_score){
 
-		IDs<-as.numeric(measurements_table[,1])
+		IDs<-as.numeric(measurements_table[,1]) 
 		num_samples_all<-rep(0,length(screened_listed))
 		num_blanks_all<-rep(0,length(screened_listed))
 		max_score_sample_all<-rep(0,length(screened_listed))
@@ -126,10 +126,10 @@
 				num_peaks_blank_all[[i]]<-num_peaks_blank	
 			}
 		}
+		##########################################################################################
+		# Table with adducts per compound itemized ###############################################
 		results_table_1<-data.frame(
-			IDed,
-			named,
-			adducted,
+			IDed,named,adducted,
 			num_samples_all,
 			round(max_score_sample_all,digits=2),
 			num_peaks_sample_all,
@@ -140,9 +140,7 @@
 			stringsAsFactors=FALSE
 		)
 		names(results_table_1)<-c(
-			"ID",
-			"compound",
-			"adduct",
+			"ID","compound","adduct",
 			"Sample matches",
 			"Max. sample score",
 			"Max. sample peaks",
@@ -151,11 +149,60 @@
 			"Max. blank peaks",
 			"Mean ratio sample/blank"
 		)
-		
-		
-		
-		
+		##########################################################################################
+		# Table with adducts per compound summarized #############################################		
+		ID_comp<-unique(IDed)
+		adduct_sum<-rep("",length(ID_comp))
+		named_sum<-rep("",length(ID_comp))
+		max_score_sample_all_sum<-rep(0,length(ID_comp))
+		max_score_blank_all_sum<-rep(0,length(ID_comp))		
+		num_peaks_sample_all_sum<-rep(0,length(ID_comp))
+		num_peaks_blank_all_sum<-rep(0,length(ID_comp))		
+		for(i in 1:length(ID_comp)){
+			those<-(IDed==ID_comp[i])
+			those[!((max_score_sample_all[those]>0) | (max_score_blank_all[those]>0))]<-FALSE
+			if(any(those)){	
+				named_sum[i]<-unique(named[those])
+				adduct_sum[i]<-paste(adducted[those],collapse=", ")
+				max_score_sample_all_sum[i]<-max(round(max_score_sample_all[those],digits=2))
+				max_score_blank_all_sum[i]<-max(round(max_score_blank_all[those],digits=2))			
+				num_peaks_sample_all_sum[i]<-max(num_peaks_sample_all[those])
+				num_peaks_blank_all_sum[i]<-max(num_peaks_blank_all[those])
+			}else{
+				those<-(IDed==ID_comp[i])
+				named_sum[i]<-unique(named[those])
+			}	
+		}
+		results_table_2<-data.frame(
+			ID_comp,named_sum,adduct_sum,
+			max_score_sample_all_sum,
+			num_peaks_sample_all_sum,
+			max_score_blank_all_sum,
+			num_peaks_blank_all_sum
+		)
+		names(results_table_2)<-c(		
+			"ID","compound","adducts",
+			"Max. sample score",
+			"Max. sample peaks",
+			"Max. blank score",
+			"Max. blank peaks"
+		)
+		##########################################################################################
 		results<-list()
 		results[[1]]<-results_table_1
+		results[[2]]<-results_table_2
 		return(results)
 	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
