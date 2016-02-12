@@ -61,7 +61,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	logfile[[2]]<-rep(FALSE,16);
 	names(logfile[[2]])<-c(
 		"peakpick","QC","recal","normalize","allign","profiling","trendblind","pattern",
-		"replicates","IS_screen","target_screen","LOD","quantification","-","norm_prof","-"
+		"replicates","IS_screen","target_screen","LOD","quantification","blinds","norm_prof","-"
 	)	
     names(logfile)[2]<-c("Tasks_to_redo"); 
     # summary project status ###################################################
@@ -81,7 +81,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		"Target screening",
 		"LOD",
 		"quantification",
-		"",#"Homologues?",
+		"blinds",
 		""#"Mass defect?"
 	 )
     doneit<-rep(FALSE,length(tasks))
@@ -132,6 +132,9 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		# blind subtraction ####################################################
 		logfile$parameters[[36]]<-"yes";		names(logfile$parameters)[36]<-"blind_do"	
 		logfile$parameters[[37]]<-"100";		names(logfile$parameters)[37]<-"blind_threshold"	
+		logfile$parameters[[82]]<-"3";			names(logfile$parameters)[82]<-"blind_dmz"
+		logfile$parameters[[83]]<-"TRUE";		names(logfile$parameters)[83]<-"blind_ppm"		
+		logfile$parameters[[84]]<-"30";			names(logfile$parameters)[84]<-"blind_drt"		
 		# profiling ############################################################
 		logfile$parameters[[38]]<-"100";		names(logfile$parameters)[38]<-"prof_maxfiles"	
 		logfile$parameters[[80]]<-"FALSE";		names(logfile$parameters)[80]<-"upto_file"
@@ -141,25 +144,19 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		# IS screening #########################################################
 		logfile$parameters[[42]]<-"30"; 		names(logfile$parameters)[42]<-"IS_drt1"	# RT tolerance of peaks in sample relative to their expected RT [s]
 		logfile$parameters[[43]]<-"10"; 		names(logfile$parameters)[43]<-"IS_drt2"	# RT tolerance of peaks within an isotope pattern [s]
-		logfile$parameters[[44]]<-"200"; 		names(logfile$parameters)[44]<-"IS_drt3"# RT tolerance of peaks in blank/blind relative to their expected RT [s]
 		logfile$parameters[[45]]<-"3";			names(logfile$parameters)[45]<-"IS_dmz"# m/z tolerance ...
 		logfile$parameters[[46]]<-"TRUE";		names(logfile$parameters)[46]<-"IS_ppm"# ... given in pppm?
 		logfile$parameters[[47]]<-"30";			names(logfile$parameters)[47]<-"IS_inttol"# Intensity tolerance %
 		logfile$parameters[[48]]<-"5E4";		names(logfile$parameters)[48]<-"IS_intcut"	# Lower intensity threhold
-		logfile$parameters[[49]]<-"0.8";    	names(logfile$parameters)[49]<-"IS_w1" # Score weight for mass matching
-		logfile$parameters[[50]]<-"0.2";		names(logfile$parameters)[50]<-"IS_w2"	# Score weight for relative intensity matching
-		logfile$parameters[[51]]<-"0.0";		names(logfile$parameters)[51]<-"IS_w3"	# Score weight for occurrence in blank/blind		
+		logfile$parameters[[49]]<-"0.8";    	names(logfile$parameters)[49]<-"IS_w1" # Score weight for mass matching	
 		# target screening #####################################################
 		logfile$parameters[[55]]<-"30"; 		names(logfile$parameters)[55]<-"tar_drt1"	# RT tolerance of peaks in sample relative to their expected RT [s]
 		logfile$parameters[[56]]<-"10"; 		names(logfile$parameters)[56]<-"tar_drt2"	# RT tolerance of peaks within an isotope pattern [s]
-		logfile$parameters[[57]]<-"200"; 		names(logfile$parameters)[57]<-"tar_drt3"# RT tolerance of peaks in blank/blind relative to their expected RT [s]
 		logfile$parameters[[58]]<-"3";			names(logfile$parameters)[58]<-"tar_dmz"# m/z tolerance ...
 		logfile$parameters[[59]]<-"TRUE";		names(logfile$parameters)[59]<-"tar_ppm"# ... given in pppm?
 		logfile$parameters[[60]]<-"30";			names(logfile$parameters)[60]<-"tar_inttol"# Intensity tolerance %
 		logfile$parameters[[61]]<-"5E4";		names(logfile$parameters)[61]<-"tar_intcut"	# Lower intensity threhold
-		logfile$parameters[[62]]<-"0.8";    	names(logfile$parameters)[62]<-"tar_w1" # Score weight for mass matching
-		logfile$parameters[[63]]<-"0.2";		names(logfile$parameters)[63]<-"tar_w2"	# Score weight for relative intensity matching
-		logfile$parameters[[64]]<-"0.0";		names(logfile$parameters)[64]<-"tar_w3"	# Score weight for occurrence in blank/blind		
+		logfile$parameters[[62]]<-"0.8";    	names(logfile$parameters)[62]<-"tar_w1" # Score weight for mass matching	
 		# IS-based normalization ###############################################
 		logfile$parameters[[70]]<-"90";		names(logfile$parameters)[70]<-"ISnorm_percfiles"# Minimum percentage of files covered by each IS profile %
 		logfile$parameters[[71]]<-"15";		names(logfile$parameters)[71]<-"ISnorm_numbIS"# Minimum number of IS profiles
@@ -192,7 +189,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	logfile$workflow[11]<-"yes"; 	names(logfile$workflow)[11]<-"screen_IS" 
 	logfile$workflow[12]<-"yes"; 	names(logfile$workflow)[12]<-"screen_target" 
 	logfile$workflow[13]<-"yes"; 	names(logfile$workflow)[13]<-"replicates" 
-	logfile$workflow[14]<-"yes"; 	names(logfile$workflow)[14]<-"-" 		
+	logfile$workflow[14]<-"yes"; 	names(logfile$workflow)[14]<-"blinds" 		
 	logfile$workflow[15]<-"yes"; 	names(logfile$workflow)[15]<-"profnorm" 
 	logfile$workflow[16]<-"yes"; 	names(logfile$workflow)[16]<-"-" 
 	logfile$workflow[17]<-"yes"; 	names(logfile$workflow)[17]<-"-" 	  

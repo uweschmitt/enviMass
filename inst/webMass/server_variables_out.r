@@ -98,25 +98,28 @@ observe({
 			workflow_set(down="trendblind",check_node=TRUE)
 		}		
 		# blind subtraction ####################################################		
-		at1<-logfile$parameters[c(36,37)]
+		at1<-logfile$parameters[c(36,37,82,83,84)]
 		logfile$parameters[[36]]<<-as.character(isolate(input$blind_do))
 		logfile$parameters[[37]]<<-as.character(isolate(input$blind_fold))
-		at2<-logfile$parameters[c(36,37)]
+		logfile$parameters[[82]]<<-as.character(isolate(input$blind_dmz))
+		logfile$parameters[[83]]<<-as.character(isolate(input$blind_ppm))
+		logfile$parameters[[84]]<<-as.character(isolate(input$blind_drt))		
+		at2<-logfile$parameters[c(36,37,82,83,84)]
+		if(any(is.na(match(at2,at1)))){ # both steps take partly the same parameters! 
+			workflow_set(down="blinds",check_node=TRUE)
+		}		
 		if(any(is.na(match(at2,at1)))){ 
 			workflow_set(down="trendblind",check_node=TRUE)
-		}		
+		}				
 		# IS screening #########################################################
 		at1<-logfile$parameters[c(42:51)]
 		logfile$parameters[[42]]<<-as.character(isolate(input$screen_IS_delRT))
 		logfile$parameters[[43]]<<-as.character(isolate(input$screen_IS_dRTwithin))
-		logfile$parameters[[44]]<<-as.character(isolate(input$screen_IS_dRTblank))
 		logfile$parameters[[45]]<<-as.character(isolate(input$screen_IS_dmz))
 		logfile$parameters[[46]]<<-as.character(isolate(input$screen_IS_ppm))
 		logfile$parameters[[47]]<<-as.character(isolate(input$screen_IS_dInt))
 		logfile$parameters[[48]]<<-as.character(isolate(input$screen_IS_Intcut))
-		logfile$parameters[[49]]<<-as.character(isolate(input$screen_IS_w1))
-		logfile$parameters[[50]]<<-as.character(isolate(input$screen_IS_w2))
-		logfile$parameters[[51]]<<-as.character(isolate(input$screen_IS_w3))		
+		logfile$parameters[[49]]<<-as.character(isolate(input$screen_IS_w1))	
 		at2<-logfile$parameters[c(42:51)]
 		if(any(is.na(match(at2,at1)))){ 
 			workflow_set(down="IS_screen",check_node=TRUE)
@@ -125,14 +128,11 @@ observe({
 		at1<-logfile$parameters[c(55:64)]
 		logfile$parameters[[55]]<<-as.character(isolate(input$screen_target_delRT))
 		logfile$parameters[[56]]<<-as.character(isolate(input$screen_target_dRTwithin))
-		logfile$parameters[[57]]<<-as.character(isolate(input$screen_target_dRTblank))
 		logfile$parameters[[58]]<<-as.character(isolate(input$screen_target_dmz))
 		logfile$parameters[[59]]<<-as.character(isolate(input$screen_target_ppm))
 		logfile$parameters[[60]]<<-as.character(isolate(input$screen_target_dInt))
 		logfile$parameters[[61]]<<-as.character(isolate(input$screen_target_Intcut))
-		logfile$parameters[[62]]<<-as.character(isolate(input$screen_target_w1))
-		logfile$parameters[[63]]<<-as.character(isolate(input$screen_target_w2))
-		logfile$parameters[[64]]<<-as.character(isolate(input$screen_target_w3))		
+		logfile$parameters[[62]]<<-as.character(isolate(input$screen_target_w1))		
 		at2<-logfile$parameters[c(55:64)]
 		if(any(is.na(match(at2,at1)))){ 
 			workflow_set(down="target_screen",check_node=TRUE)
@@ -170,6 +170,14 @@ observe({
 		if(at1!=at2){
 			workflow_set(down="recal",check_node=FALSE)
 		}
+		# blinds #################################################################	
+		at1<-logfile$workflow[names(logfile$workflow)=="blinds"];
+		logfile$workflow[names(logfile$workflow)=="blinds"]<<-as.character(isolate(input$blind_filter));
+		at2<-logfile$workflow[names(logfile$workflow)=="blinds"];
+		if(at1!=at2){
+			workflow_set(down="blinds",check_node=FALSE)
+		}		
+		
 		# replicates #############################################################	
 		at1<-logfile$workflow[names(logfile$workflow)=="replicates"];
 		logfile$workflow[names(logfile$workflow)=="replicates"]<<-as.character(isolate(input$replicates));

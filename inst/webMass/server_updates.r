@@ -77,6 +77,18 @@ if(!any(logfile$summary[,1]=="quantification")){
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 }
 
+if(!any(logfile$summary[,1]=="blinds")){
+	logfile$summary[,1]<<-as.character(logfile$summary[,1])
+	logfile$summary[,2]<<-as.character(logfile$summary[,2])
+	logfile$summary[16,1]<<-"blinds"
+	logfile$summary[16,2]<<-"FALSE"	
+	logfile$parameters[[82]]<<-"3";			names(logfile$parameters)[82]<<-"blind_dmz"
+	logfile$parameters[[83]]<<-"TRUE";		names(logfile$parameters)[83]<<-"blind_ppm"		
+	logfile$parameters[[84]]<<-"30";			names(logfile$parameters)[84]<<-"blind_drt"	
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
+}
+
 # insert missing parameters
 if(!any(names(logfile$parameters)=="replicate_dmz")){
 	logfile$parameters[[15]]<<-"3";names(logfile$parameters)[15]<<-"replicate_dmz"
@@ -87,11 +99,12 @@ if(!any(names(logfile$parameters)=="replicate_dmz")){
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 }
 
+
 # logfile$Tasks_to_redo
 
 names(logfile[[2]])<<-c(
 	"peakpick","QC","recal","normalize","allign","profiling","trendblind","pattern",
-	"replicates","IS_screen","target_screen","LOD","quantification","-","norm_prof","-"
+	"replicates","IS_screen","target_screen","LOD","quantification","blinds","norm_prof","-"
 )	
  names(logfile)[2]<<-c("Tasks_to_redo"); 
 
@@ -111,9 +124,12 @@ if(!any(names(logfile$workflow)=="LOD")){
 if(!any(names(logfile$workflow)=="quantification")){
 	logfile$workflow[8]<<-"yes"; 	names(logfile$workflow)[8]<<-"quantification" 
 }
+if(!any(names(logfile$workflow)=="blinds")){
+	logfile$workflow[14]<<-"yes"; 	names(logfile$workflow)[14]<<-"blinds" 
+}
+
 logfile$workflow[5]<<-"yes"; 	names(logfile$workflow)[5]<<-"pattern" 
-logfile$workflow[7]<<-"yes"; 	names(logfile$workflow)[7]<<-"peakpicking" 
-logfile$workflow[14]<<-"yes"; 	names(logfile$workflow)[14]<<-"-" 		
+logfile$workflow[7]<<-"yes"; 	names(logfile$workflow)[7]<<-"peakpicking" 		
 logfile$workflow[16]<<-"yes"; 	names(logfile$workflow)[16]<<-"-" 
 logfile$workflow[17]<<-"yes"; 	names(logfile$workflow)[17]<<-"-" 
 

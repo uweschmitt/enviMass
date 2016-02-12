@@ -29,6 +29,7 @@
             textInput("Measadd_place", "Place:", value = "Rhine"),
 			dateInput("Measadd_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en"),
             textInput("Measadd_time", "Time:(HH:MM:SS)", value = "12:00:00"),
+            textInput("Measadd_tag3", "Replicate group", value = "FALSE"),			
             fileInput("Measadd_path", "Select centroided .mzXML file:", multiple = FALSE, accept = c(".mzXML",".raw")),
 			bsPopover("Measadd_path", 
 				title = "WARNING",
@@ -169,32 +170,86 @@
 				HTML('<h1 align="center"> &#x21e9; </h1> '),
 				# block 2 ######################################################
 				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Mass recalibration </font></p> '),
-					radioButtons("recal", "Include?", c("yes"="yes","no"="no")),                
+					fluidRow(
+						column(width = 2, radioButtons("recal", "Include?", c("yes"="yes","no"="no")) ),
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","Theoretical masses of internal standard compounds are used to correct systematic offsets in measured masses.")
+						)
+					),
 				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Median intensity normalization </font></p> '),
 					radioButtons("intnorm", "Include?", c("yes"="yes","no"="no")),
 				#HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> RT alignment </font></p> '),
-				#radioButtons("RTalign", "Include?", c("yes"="yes","no"="no")),     
+				#radioButtons("RTalign", "Include?", c("yes"="yes","no"="no")),  
+				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Blank / blind filter </font></p> '),				
+					fluidRow(
+						column(width = 2, radioButtons("blind_filter", "Include? ", c("yes"="yes","no"="no")) ),
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","")
+						)
+					),				
 				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Replicate filter </font></p> '),				
-					radioButtons("replicates", "Include? ", c("yes"="yes","no"="no")),
+					fluidRow(
+						column(width = 2, radioButtons("replicates", "Include? ", c("yes"="yes","no"="no")) ),
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","Filters out picked peaks which are not ubiquitously present in a set of measurements, within tolerances specified in the Settings/Replicates tab.
+							Typically, such a set would be composed of replicate measurements. 
+							A set can be defined by a joint string other than FALSE (e.g. replicates_A) in the tag_3 column of the file table, as assembled in the Files tab.")
+						)
+					),
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),                     
 				# block 3 ######################################################
 				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> Profile extraction </font></p>'),
-					radioButtons("profiled", "Include? ", c("yes"="yes","no"="no")),
+					fluidRow(
+						column(width = 2, radioButtons("profiled", "Include? ", c("yes"="yes","no"="no")) ),
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","An intensity descent assorts peaks into profiles. Uses a fixed retention time tolerance window and
+							an adaptive mass tolerance window.")
+						)
+					),					
 				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> LOD interpolation </font></p>'),
-					radioButtons("LOD_interpol", "Include? ", c("yes"="yes","no"="no")),					
+					fluidRow(
+						column(width = 2, radioButtons("LOD_interpol", "Include? ", c("yes"="yes","no"="no")) ),
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","For each measurement, estimates a RT-dependent intensity threshold below which peaks are not expected to get picked. 
+							Can be used for the below compound screening.")
+						)
+					),
 				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> Compound screening </font></p> '),
-					radioButtons("screen_IS", "Screen internal standards?", c("yes"="yes","no"="no")),
-					radioButtons("screen_target", "Screen targets/suspects?", c("yes"="yes","no"="no")),
+					fluidRow(
+						column(width = 3, 
+							radioButtons("screen_IS", "Screen internal standards?", c("yes"="yes","no"="no"))
+						),
+						column(width = 3, 
+							radioButtons("screen_target", "Screen targets/suspects?", c("yes"="yes","no"="no"))
+						),						
+						column(width = 6, offset = 0.3,
+							tags$p(align="justify","Uses the LOD thresholds estimated in the above step. If the LOD interpolation is not run, a fixed intensity threshold as specified in the
+							Settings/Screening tabs is used.")
+						)
+					),	
+				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> Quantification </font></p> '),
+					radioButtons("quantif", "Include? ", c("yes"="yes","no"="no")),					
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),  					
 				# block 4 ######################################################
 				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Normalization using IS-profiles </font></p> '),
-					radioButtons("profnorm", "Include? ", c("yes"="yes","no"="no")),
-				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Quantification </font></p> '),
-					radioButtons("quantif", "Include? ", c("yes"="yes","no"="no")),
-				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Trend detection & blind subtraction </font></p> '),
-					radioButtons("trenddetect", "Include? ", c("yes"="yes","no"="no")),
+					fluidRow(
+						column(width = 2, radioButtons("profnorm", "Include? ", c("yes"="yes","no"="no")) ),
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","Relies on the above internal standard screening and profile extraction (see green steps). Intensities of picked peaks in each measurements 
+							are normalized by the median deviation over all internal standards from their individual median intensity taken over their individual profiles. Thus,
+							this approach differs from the less reliable Median intensity normalization above, which can be skipped in this case (see blue steps).")
+						)
+					),					
+				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Trend detection </font></p> '),
+					fluidRow(
+						column(width = 2, radioButtons("trenddetect", "Include? ", c("yes"="yes","no"="no")) ),
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","Contains a separate blind detection step. Herein, intensities of blind/blank peaks are interpolated over the time series.
+							This interpolation and subtraction is only applicable if the separate blind filter step is disabled (see above blue steps).")
+						)
+					),							
 				HTML('<hr noshade="noshade" />')                  
 				#HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Peak grouping (componentization) </font></p>'),
 				#	checkboxInput("Comp_isotop", "Group isotopologue peaks?", TRUE),
@@ -289,11 +344,10 @@
 					div(style = widget_style2,
 						tags$h5("Retention time"),
 						numericInput("screen_IS_delRT", "RT tolerance of peaks in sample relative to their expected RT [s]", 30),
-						numericInput("screen_IS_dRTwithin", "RT tolerance of peaks within an isotope pattern [s]", 50),
-						numericInput("screen_IS_dRTblank", "RT tolerance of peaks in blank/blind relative to their expected RT [s]", 200)
+						numericInput("screen_IS_dRTwithin", "RT tolerance of peaks within an isotope pattern [s]", 50)
 					),
 				  	div(style = widget_style2,
-						tags$h5("m/z"),
+						tags$h5("Mass"),
 						numericInput("screen_IS_dmz", "m/z tolerance ...", 3),                
 						selectInput("screen_IS_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE")
  					),
@@ -304,20 +358,17 @@
 					),
 					div(style = widget_style2,
 						tags$h5("Scoring"),
-						numericInput("screen_IS_w1", "Score weight for mass matching", 0.8),                
-						numericInput("screen_IS_w2", "Score weight for relative intensity matching", 0.2),                
-						numericInput("screen_IS_w3", "Score weight for occurrence in blank/blind", 0.0)                
+						numericInput("screen_IS_w1", "Cutoff score [0,1]", 0.8)              
 					)
                 ),
                 tabPanel("Targets & Suspects",
 					div(style = widget_style2,
 						tags$h5("Retention time"),
 						numericInput("screen_target_delRT", "RT tolerance of peaks in sample relative to their expected RT [s]", 30),
-						numericInput("screen_target_dRTwithin", "RT tolerance of peaks within an isotope pattern [s]", 50),
-						numericInput("screen_target_dRTblank", "RT tolerance of peaks in blank/blind relative to their expected RT [s]", 200)
+						numericInput("screen_target_dRTwithin", "RT tolerance of peaks within an isotope pattern [s]", 50)
 					),
 				  	div(style = widget_style2,
-						tags$h5("m/z"),
+						tags$h5("Mass"),
 						numericInput("screen_target_dmz", "m/z tolerance ...", 3),                
 						selectInput("screen_target_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE")
  					),
@@ -326,11 +377,9 @@
 						sliderInput("screen_target_dInt", "Intensity tolerance %", min = 0, max = 100, value = 30, step= .2),
 						numericInput("screen_target_Intcut", "Lower intensity threhold", 5E4)                
 					),
-					div(style = widget_style,
+					div(style = widget_style2,
 						tags$h5("Scoring"),
-						numericInput("screen_target_w1", "Score weight for mass matching", 0.8),                
-						numericInput("screen_target_w2", "Score weight for relative intensity matching", 0.2),                
-						numericInput("screen_target_w3", "Score weight for occurrence in blank/blind", 0.0)                
+						numericInput("screen_target_w1", "Cutoff score [0,1]", 0.8)           
 					)
                 )
               )
@@ -356,7 +405,8 @@
 				sliderInput("prof_sets", "Maximum number of newest samples to be processed", min = 50, max = 3000, value = 100, step= 1),
 				numericInput("prof_dmz", "Peak deviation within profiles: m/z tolerance ...", 3),                
                 selectInput("prof_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),
-                numericInput("prof_drt", "Peak deviation within profiles: RT tolerance [s]", 60)            ),
+                numericInput("prof_drt", "Peak deviation within profiles: RT tolerance [s]", 60)            
+			),
             # TREND ############################################################
             tabPanel("Trends",
 				tags$h5("Trend detection:"),
@@ -368,7 +418,10 @@
             tabPanel("Blind",
 				tags$h5("Blind subtraction:"),
 				selectInput("blind_do", "Run a blind subtraction...", choices = c("yes"="yes","no"="no"), "yes"),
-				numericInput("blind_fold", "...if intensity ratio sample/blind <", 100)           
+				numericInput("blind_fold", "...if intensity ratio sample/blind <", 100),
+				numericInput("blind_dmz", "Peak mass deviation among measurements (+/-) ...", 3), 
+                selectInput("blind_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),				
+                numericInput("blind_drt", "Peak deviation within profiles: RT tolerance [s]", 60)            			
             ),			
             # GENERAL SETTINGS #################################################
             tabPanel("General",

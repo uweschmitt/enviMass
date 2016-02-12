@@ -43,28 +43,25 @@ updateSelectInput(session, "notrend", "Do not show global trend - instead, repor
 # BLIND ########################################################################
 updateSelectInput(session, "blind_do", "Run a blind subtraction...", c("yes"="yes","no"="no"),selected= as.character(logfile$parameters[[36]]))
 updateNumericInput(session, "blind_fold", "...if intensity ratio sample/blind <", value = as.numeric(logfile$parameters[[37]]))   
+updateNumericInput(session, "blind_dmz", "Peak mass deviation among measurements (+/-) ...", value = as.numeric(logfile$parameters[[82]]))  
+updateSelectInput(session, "blind_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), selected= as.character(logfile$parameters[[83]]))
+updateNumericInput(session, "blind_drt", "Peak deviation within profiles: RT tolerance [s]", value = as.numeric(logfile$parameters[[84]]))  
 # IS SCREENING #########################################################
 updateNumericInput(session, "screen_IS_delRT", "RT tolerance of peaks in sample relative to their expected RT [s]", value = as.numeric(logfile$parameters[42]))   
 updateNumericInput(session, "screen_IS_dRTwithin", "RT tolerance of peaks within an isotope pattern [s]", value = as.numeric(logfile$parameters[43])) 
-updateNumericInput(session, "screen_IS_dRTblank", "RT tolerance of peaks in blank/blind relative to their expected RT [s]", value = as.numeric(logfile$parameters[44])) 
 updateNumericInput(session, "screen_IS_dmz", "m/z tolerance ...", value = as.numeric(logfile$parameters[45])) 
 updateSelectInput(session, "screen_IS_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), selected= as.character(logfile$parameters[[46]]))
 updateSliderInput(session, "screen_IS_dInt", value = as.numeric(logfile$parameters[[47]])) # Intensity tolerance %
 updateNumericInput(session, "screen_IS_Intcut", "Lower intensity threhold", value = as.numeric(logfile$parameters[48])) 
-updateNumericInput(session, "screen_IS_w1", "Score weight for mass matching", value = as.numeric(logfile$parameters[49])) 
-updateNumericInput(session, "screen_IS_w2", "Score weight for relative intensity matching", value = as.numeric(logfile$parameters[50])) 
-updateNumericInput(session, "screen_IS_w3", "Score weight for occurrence in blank/blind", value = as.numeric(logfile$parameters[51])) 
+updateNumericInput(session, "screen_IS_w1", "Cutoff score [0,1]", value = as.numeric(logfile$parameters[49])) 
 # TARGET SCREENING ######################################################
 updateNumericInput(session, "screen_target_delRT", "RT tolerance of peaks in sample relative to their expected RT [s]", value = as.numeric(logfile$parameters[55]))   
 updateNumericInput(session, "screen_target_dRTwithin", "RT tolerance of peaks within an isotope pattern [s]", value = as.numeric(logfile$parameters[56])) 
-updateNumericInput(session, "screen_target_dRTblank", "RT tolerance of peaks in blank/blind relative to their expected RT [s]", value = as.numeric(logfile$parameters[57])) 
 updateNumericInput(session, "screen_target_dmz", "m/z tolerance ...", value = as.numeric(logfile$parameters[58])) 
 updateSelectInput(session, "screen_target_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), selected= as.character(logfile$parameters[[59]]))
 updateSliderInput(session, "screen_target_dInt", value = as.numeric(logfile$parameters[[60]])) # Intensity tolerance %
 updateNumericInput(session, "screen_target_Intcut", "Lower intensity threhold", value = as.numeric(logfile$parameters[61])) 
-updateNumericInput(session, "screen_target_w1", "Score weight for mass matching", value = as.numeric(logfile$parameters[62])) 
-updateNumericInput(session, "screen_target_w2", "Score weight for relative intensity matching", value = as.numeric(logfile$parameters[63])) 
-updateNumericInput(session, "screen_target_w3", "Score weight for occurrence in blank/blind", value = as.numeric(logfile$parameters[64])) 
+updateNumericInput(session, "screen_target_w1", "Cutoff score [0,1]", value = as.numeric(logfile$parameters[62]))  
 # IS-based NORMALIZATION ###############################################		
 updateSliderInput(session, "profnorm_cover_files", value = as.numeric(logfile$parameters[[70]])) # Minimum percentage of files covered by each IS profile %
 updateNumericInput(session, "profnorm_cover_isccount", "Minimum number of IS profiles", value = as.numeric(logfile$parameters[71])) 
@@ -111,11 +108,12 @@ updateRadioButtons(session, "intnorm", label = "Include?", choices =  c("yes"="y
 updateRadioButtons(session, "profnorm", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="profnorm"]) )
 updateRadioButtons(session, "profiled", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="profiled"]) )
 updateRadioButtons(session, "trenddetect", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="trenddetect"]) )
-
+updateRadioButtons(session, "replicates", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="replicates"]) )
+updateRadioButtons(session, "blind_filter", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="blinds"]) )
 updateRadioButtons(session, "LOD_interpol", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="LOD"]) )
 updateRadioButtons(session, "quantif", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="quantification"]) )
-updateRadioButtons(session, "screen_IS", label = "Screen internal standards?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="LOD"]) )
-updateRadioButtons(session, "screen_target", label = "Screen targets/suspects?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="quantification"]) )
+updateRadioButtons(session, "screen_IS", label = "Screen internal standards?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="screen_IS"]) )
+updateRadioButtons(session, "screen_target", label = "Screen targets/suspects?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="screen_target"]) )
 ################################################################################
 ################################################################################
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_variabels_in.r!")}

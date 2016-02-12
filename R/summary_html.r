@@ -11,7 +11,7 @@
 
 summary_html<-function(in_logfile_summary){
 	
-	use_summary<-in_logfile_summary[c(1,2,3,4,5,11,7,8,14,12,13,9,10,15),]
+	use_summary<-in_logfile_summary[c(1,2,3,4,5,16,11,7,8,14,12,13,9,10,15),]
 	use_summary[,1]<-as.character(use_summary[,1])
 	use_summary[,2]<-as.character(use_summary[,2])			
 	mat<-matrix(ncol=2,nrow=length(use_summary[,1]),"")
@@ -32,9 +32,10 @@ summary_html<-function(in_logfile_summary){
 	use_summary[use_summary[,1]=="Intensity norm.?",1]<-"Median intensity normalization "				
 	use_summary[use_summary[,1]=="Profiled?",1]<-"Profile extraction"	
 	use_summary[use_summary[,1]=="IS norm.?",1]<-"IS-based intensity normalization"	
-	use_summary[use_summary[,1]=="Trend+Blind?",1]<-"Trend detection, blind subtraction"	
+	use_summary[use_summary[,1]=="Trend+Blind?",1]<-"Trend detection"	
 	use_summary[use_summary[,1]=="LOD",1]<-"LOD interpolation"
 	use_summary[use_summary[,1]=="quantification",1]<-"Quantification"
+	use_summary[use_summary[,1]=="blinds",1]<-"Blind filter"	
 	
 	for(i in 1:length(mat[,1])){
 		if(i%%2==0){

@@ -74,13 +74,21 @@ maincalc<-reactive({
 		# Replicates ###########################################################
         if(do_flow==7){
 			workflow_node(
+				"blinds","blinds","blinds","Blind filter",
+				path_do="do_blind.R",path_undo="dont_blind.R",session,output,input
+			)  	
+		}			
+        ########################################################################
+		# Replicates ###########################################################
+        if(do_flow==8){
+			workflow_node(
 				"replicates","Replicate filter","replicates","Replicate filter",
 				path_do="do_replicates.R",path_undo="dont_replicates.R",session,output,input
 			)  	
 		}			
         ########################################################################
         # intensity normalization ##############################################
-        if(do_flow==8){
+        if(do_flow==9){
 			workflow_node(
 				"norm","Intensity norm.?","normalize","Median intensity normalization",
 				path_do="do_normaliz.R",path_undo="dont_normaliz.R",session,output,input
@@ -88,7 +96,7 @@ maincalc<-reactive({
         }
         ########################################################################
         # profiling ############################################################
-        if(do_flow==9){
+        if(do_flow==10){
 			workflow_node(
 				"profiled","Profiled?","profiling","Profile extraction",
 				path_do="do_profiling.R",path_undo="dont_profiling.R",session,output,input
@@ -96,7 +104,7 @@ maincalc<-reactive({
         }
         ########################################################################
 		# LOD ##################################################################
-        if(do_flow==10){
+        if(do_flow==11){
 			workflow_node(
 				"LOD","LOD","LOD","LOD interpolation",
 				path_do="do_LOD.R",path_undo="dont_LOD.R",session,output,input
@@ -104,7 +112,7 @@ maincalc<-reactive({
 		}				
         ########################################################################
 		# IS screening #########################################################
-        if(do_flow==11){
+        if(do_flow==12){
 			workflow_node(
 				"screen_IS","IS screening","IS_screen","IS screening",
 				path_do="do_IS_screening.R",path_undo="dont_IS_screening.R",session,output,input
@@ -112,7 +120,7 @@ maincalc<-reactive({
 		}		
         ########################################################################
 		# target screening #####################################################
-        if(do_flow==12){
+        if(do_flow==13){
 			workflow_node(
 				"screen_target","Target screening","target_screen","Target screening",
 				path_do="do_target_screening.R",path_undo="dont_target_screening.R",session,output,input
@@ -120,7 +128,7 @@ maincalc<-reactive({
 		}			
 		########################################################################
 		# IS-normalization #####################################################
-        if(do_flow==13){
+        if(do_flow==14){
 			workflow_node(
 				"profnorm","IS norm.?","norm_prof","IS-based intensity normalization",
 				path_do="do_IS_normaliz.R",path_undo="dont_IS_normaliz.R",session,output,input
@@ -128,7 +136,7 @@ maincalc<-reactive({
 		}
 		########################################################################
 		# Quantification #######################################################
-        if(do_flow==14){
+        if(do_flow==15){
 			workflow_node(
 				"quantification","quantification","quantification","Quantification",
 				path_do="do_quantification.R",path_undo="dont_quantification.R",session,output,input
@@ -136,16 +144,11 @@ maincalc<-reactive({
 		}		
         ########################################################################
         # trend / blind ########################################################
-        if(do_flow==15){
+        if(do_flow==16){
 			workflow_node(
 				"trenddetect","Trend+Blind?","trendblind","Trend detection and blind subtraction",
 				path_do="do_trendblind.R",path_undo="dont_trendblind.R",session,output,input
 			)  	
-        }
-        ########################################################################
-        # 
-        if(do_flow==16){
-##	
         }
         ########################################################################
         # 

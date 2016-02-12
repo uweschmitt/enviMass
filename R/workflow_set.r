@@ -35,7 +35,7 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 	# define workflow order of logfile$Tasks_to_redo by server.calculation.r ###############
 	# dependencies must simply go after their parent node ################################## 
 	# order here actually irrelevant, because calculation order set in server_calculation  #
-	work_order<-c(1,2,8,3,5,4,9,6,12,10,11,15,13,7)
+	work_order<-c(1,2,8,3,5,4,14,9,6,12,10,11,15,13,7)
 	work_names<-(names(logfile$Tasks_to_redo)[work_order])
 	########################################################################################
 	# leave funtion if check_node=TRUE (=parameters changed) but node not run ##############
@@ -53,21 +53,22 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 	# below specified in a row-wise fashion (but stored columnwise): #######################
 	depend<-matrix(ncol=length(work_names),nrow=length(work_names),0)
 	colnames(depend)<-work_names
-	rownames(depend)<-work_names					# peakpick	QC	pattern	recal	allign	normalize	replicates	profiling	IS_screen	target_screen	norm_prof	trendblind	LOD		quantification
-	depend[,colnames(depend)=="peakpick"]<-			c(0,		1,	0,		1,		1,		1,			1,			1,			1,			1,				1,			1,			1,		1)
-	depend[,colnames(depend)=="QC"]<-				c(0,		0,	0,		1,		1,		0,			1,			1,			1,			1,				1,			1,			1,		1)
-	depend[,colnames(depend)=="pattern"]<-			c(0,		0,	0,		1,		1,		0,			0,			0,			1,			1,				1,			0,			0,		1)
-	depend[,colnames(depend)=="recal"]<-			c(0,		0,	0,		0,		1,		0,			1,			1,			1,			1,				1,			0,			0,		1)
-	depend[,colnames(depend)=="allign"]<-			c(0,		0,	0,		0,		0,		0,			1,			1,			1,			1,				1,			0,			0,		0)
-	depend[,colnames(depend)=="normalize"]<-		c(0,		0,	0,		0,		0,		0,			0,			1,			1,			1,				0,			1,			1,		1)
-	depend[,colnames(depend)=="replicates"]<-		c(0,		0,	0,		0,		0,		0,			0,			1,			1,			1,				1,			1,			1,		1)
-	depend[,colnames(depend)=="profiling"]<-		c(0,		0,	0,		0,		0,		0,			0,			0,			1,			1,				1,			1,			0,		1)
-	depend[,colnames(depend)=="IS_screen"]<-		c(0,		0,	0,		0,		0,		0,			0,			0,			0,			1,				1,			0,			0,		1)
-	depend[,colnames(depend)=="target_screen"]<-	c(0,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		1)
-	depend[,colnames(depend)=="norm_prof"]<-		c(0,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			1,			0,		0)
-	depend[,colnames(depend)=="trendblind"]<-		c(0,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		1)
-	depend[,colnames(depend)=="LOD"]<-				c(0,		0,	0,		0,		0,		0,			0,			0,			1,			1,				1,			1,			0,		1)
-	depend[,colnames(depend)=="quantification"]<-	c(0,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			1,			0,		0)	
+	rownames(depend)<-work_names					# peakpick	QC	pattern	recal	allign	normalize	replicates	profiling	IS_screen	target_screen	norm_prof	trendblind	LOD		quantification	blinds
+	depend[,colnames(depend)=="peakpick"]<-			c(0,		1,	0,		1,		1,		1,			1,			1,			1,			1,				1,			1,			1,		1,				1)
+	depend[,colnames(depend)=="QC"]<-				c(0,		0,	0,		1,		1,		0,			1,			1,			1,			1,				1,			1,			1,		1,				1)
+	depend[,colnames(depend)=="pattern"]<-			c(0,		0,	0,		1,		1,		0,			0,			0,			1,			1,				1,			0,			0,		1,				0)
+	depend[,colnames(depend)=="recal"]<-			c(0,		0,	0,		0,		1,		0,			1,			1,			1,			1,				1,			0,			0,		1,				1)
+	depend[,colnames(depend)=="allign"]<-			c(0,		0,	0,		0,		0,		0,			1,			1,			1,			1,				1,			0,			0,		0,				1)
+	depend[,colnames(depend)=="normalize"]<-		c(0,		0,	0,		0,		0,		0,			0,			1,			1,			1,				0,			1,			1,		1,				1)
+	depend[,colnames(depend)=="blinds"]<-			c(0,		0,	0,		0,		0,		0,			1,			1,			1,			1,				1,			1,			1,		1,				1)
+	depend[,colnames(depend)=="replicates"]<-		c(0,		0,	0,		0,		0,		0,			0,			1,			1,			1,				1,			1,			1,		1,				0)
+	depend[,colnames(depend)=="profiling"]<-		c(0,		0,	0,		0,		0,		0,			0,			0,			1,			1,				1,			1,			0,		1,				0)
+	depend[,colnames(depend)=="IS_screen"]<-		c(0,		0,	0,		0,		0,		0,			0,			0,			0,			1,				1,			0,			0,		1,				0)
+	depend[,colnames(depend)=="target_screen"]<-	c(0,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		1,				0)
+	depend[,colnames(depend)=="norm_prof"]<-		c(0,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			1,			0,		0,				0)
+	depend[,colnames(depend)=="trendblind"]<-		c(0,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		1,				0)
+	depend[,colnames(depend)=="LOD"]<-				c(0,		0,	0,		0,		0,		0,			0,			0,			1,			1,				1,			1,			0,		1,				0)
+	depend[,colnames(depend)=="quantification"]<-	c(0,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			1,			0,		0,				0)	
 	diag(depend)<-1
 	########################################################################################
 	# retrieve tasks to redo ###############################################################
@@ -176,6 +177,15 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 		}	
 		if(!check_node){
 			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="replicates"]<<-TRUE;
+		}
+	}	
+	########################################################################################
+	if(any(work_stream=="blinds")){
+		if(logfile$workflow[names(logfile$workflow)=="blinds"]=="yes"){	
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="blinds"]<<-TRUE;
+		}	
+		if(!check_node){
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="blinds"]<<-TRUE;
 		}
 	}	
 	########################################################################################

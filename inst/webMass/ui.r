@@ -62,7 +62,7 @@ pageWithSidebar(
 				<font color="#FFFFFF" size="6">
 				&nbsp enviMass v3.1
 				</font><br/></p>'),
-				windowTitle="enviMass2"
+				windowTitle="enviMass v3.1"
 			)
   ),
   ##############################################################################

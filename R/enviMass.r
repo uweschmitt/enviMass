@@ -129,5 +129,15 @@ NULL
 			recursive = FALSE,
 			copy.mode = TRUE
 	)
+	# copy the enviMass favicon to shiny`s localhost folder
+	file.copy(	
+			from=paste(path.package("enviMass", quiet = FALSE),"/favicon.ico",sep=""), 
+			to=paste(path.package("shiny", quiet = FALSE),"/www/favicon.ico",sep=""), 
+			overwrite = TRUE, 
+			recursive = FALSE,
+			copy.mode = TRUE
+	)	
+	
+	
 }
 

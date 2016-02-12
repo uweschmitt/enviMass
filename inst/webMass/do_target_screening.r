@@ -23,7 +23,6 @@
 	########################################################################################################	
 	########################################################################################################
 	# target screening on positive ionization ##################################################################
-	cut_score<-.75	# used during result filtering
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="peaklist")){rm(peaklist)}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
@@ -53,6 +52,7 @@
 		int_tol<-as.numeric(logfile$parameters$tar_inttol)			# Intensity tolerance %
 		RT_tol_outside<-as.numeric(logfile$parameters$tar_drt1)		# RT tolerance of peaks in sample relative to their expected RT [s]
 		RT_tol_inside<-as.numeric(logfile$parameters$tar_drt2)		# RT tolerance of peaks within an isotope pattern [s]
+		cut_score<-as.numeric(logfile$parameters$tar_w1)	
 		
 		peaks<-profileList_pos[[7]];
 		peaklist<-peaks[,c(14,16,15)];
@@ -219,6 +219,7 @@
 		int_tol<-as.numeric(logfile$parameters$tar_inttol)			# Intensity tolerance %
 		RT_tol_outside<-as.numeric(logfile$parameters$tar_drt1)		# RT tolerance of peaks in sample relative to their expected RT [s]
 		RT_tol_inside<-as.numeric(logfile$parameters$tar_drt2)		# RT tolerance of peaks within an isotope pattern [s]
+		cut_score<-as.numeric(logfile$parameters$tar_w1)	
 		
 		peaks<-profileList_neg[[7]];
 		peaklist<-peaks[,c(14,16,15)];
