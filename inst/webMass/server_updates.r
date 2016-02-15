@@ -4,7 +4,8 @@ if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_updates.
 
 
 
-if(logfile[[10]]<3.100){	
+#if(logfile[[10]]<3.100){	
+if(TRUE){
 	
 	# create missing folder
 	if(!file.exists(file.path(logfile$project_folder,"results","screening"))
@@ -36,29 +37,29 @@ if(logfile[[10]]<3.100){
 	}
 
 	# extend logfile$summary
-	if(!any(logfile$summary[,1]=="Replicate filter")){
+	if(!any(logfile$summary[,1]=="replicates")){
 		logfile$summary[,1]<<-as.character(logfile$summary[,1])
 		logfile$summary[,2]<<-as.character(logfile$summary[,2])
-		logfile$summary[11,1]<<-"Replicate filter"
+		logfile$summary[11,1]<<-"replicates"
 		logfile$summary[11,2]<<-"FALSE"	
 		logfile$summary
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 	}
 
-	if(!any(logfile$summary[,1]=="IS screening")){
+	if(!any(logfile$summary[,1]=="IS_screen")){
 		logfile$summary[,1]<<-as.character(logfile$summary[,1])
 		logfile$summary[,2]<<-as.character(logfile$summary[,2])
-		logfile$summary[12,1]<<-"IS screening"
+		logfile$summary[12,1]<<-"IS_screen"
 		logfile$summary[12,2]<<-"FALSE"	
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 	}
 
-	if(!any(logfile$summary[,1]=="Target screening")){
+	if(!any(logfile$summary[,1]=="target_screen")){
 		logfile$summary[,1]<<-as.character(logfile$summary[,1])
 		logfile$summary[,2]<<-as.character(logfile$summary[,2])
-		logfile$summary[13,1]<<-"Target screening"
+		logfile$summary[13,1]<<-"target_screen"
 		logfile$summary[13,2]<<-"FALSE"	
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
@@ -105,20 +106,19 @@ if(logfile[[10]]<3.100){
 	}
 
 
-	# logfile$Tasks_to_redo
-
+	# logfile$Tasks_to_redo ##################################################################
 	names(logfile[[2]])<<-c(
-		"peakpick","QC","recal","normalize","allign","profiling","trendblind","pattern",
-		"replicates","IS_screen","target_screen","LOD","quantification","blinds","norm_prof","-"
+		"peakpicking","qc","recal","norm","allign","profiling","trendblind","pattern",
+		"replicates","IS_screen","target_screen","LOD","quantification","blinds","IS_normaliz","-"
 	)	
 	 names(logfile)[2]<<-c("Tasks_to_redo"); 
 
-	# logfile$workflow
-	if(!any(names(logfile$workflow)=="screen_IS")){
-		logfile$workflow[11]<<-"yes"; 	names(logfile$workflow)[11]<<-"screen_IS" 
+	# logfile$workflow ######################################################################
+	if(!any(names(logfile$workflow)=="IS_screen")){
+		logfile$workflow[11]<<-"yes"; 	names(logfile$workflow)[11]<<-"IS_screen" 
 	}
-	if(!any(names(logfile$workflow)=="screen_target")){
-		logfile$workflow[12]<<-"yes"; 	names(logfile$workflow)[12]<<-"screen_target" 
+	if(!any(names(logfile$workflow)=="target_screen")){
+		logfile$workflow[12]<<-"yes"; 	names(logfile$workflow)[12]<<-"target_screen" 
 	}
 	if(!any(names(logfile$workflow)=="replicates")){
 		logfile$workflow[13]<<-"yes"; 	names(logfile$workflow)[13]<<-"replicates" 
@@ -132,12 +132,37 @@ if(logfile[[10]]<3.100){
 	if(!any(names(logfile$workflow)=="blinds")){
 		logfile$workflow[14]<<-"yes"; 	names(logfile$workflow)[14]<<-"blinds" 
 	}
-
+	if(any(names(logfile$workflow)=="profnorm")){
+		logfile$workflow[15]<<-"yes"; 	names(logfile$workflow)[15]<<-"IS_normaliz" 
+	}	
+	if(any(names(logfile$workflow)=="profiled")){
+		logfile$workflow[15]<<-"yes"; 	names(logfile$workflow)[9]<<-"profiling" 
+	}	
 	logfile$workflow[5]<<-"yes"; 	names(logfile$workflow)[5]<<-"pattern" 
 	logfile$workflow[7]<<-"yes"; 	names(logfile$workflow)[7]<<-"peakpicking" 		
 	logfile$workflow[16]<<-"yes"; 	names(logfile$workflow)[16]<<-"-" 
 	logfile$workflow[17]<<-"yes"; 	names(logfile$workflow)[17]<<-"-" 
 
+	# logfile$summary #################################################################
+	logfile$summary[,1]<<-c(
+		"Data available?",
+		"peakpicking",
+		"qc",
+		"pattern",
+		"recal",
+		"Alligned?",
+		"norm",
+		"profiling",
+		"IS_normaliz",
+		"trendblind",
+		"replicates",
+		"IS_screen",
+		"target_screen",
+		"LOD",
+		"quantification",
+		"blinds",
+		""
+	 )
 
 	# enforce a pattern recalculation - zero abundance debug
 	if(TRUE){
@@ -180,7 +205,7 @@ if(logfile[[10]]<3.100){
 		}
 		if(redo_pattern){
 			logfile$workflow[names(logfile$workflow)=="pattern"]<<-"yes"; 	
-			logfile$summary[logfile$summary[,1]=="Isotope pattern?",2]<<-"TRUE";
+			logfile$summary[logfile$summary[,1]=="pattern",2]<<-"TRUE";
 			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="pattern"]<<-TRUE
 		}
 	}
@@ -199,22 +224,22 @@ if(logfile[[10]]<3.100){
 	work_names<-(names(logfile$Tasks_to_redo)[work_order])
 	depend<-matrix(ncol=length(work_names),nrow=length(work_names),0)
 	colnames(depend)<-work_names
-	rownames(depend)<-work_names					# peakpick	QC	pattern	recal	allign	normalize	replicates	profiling	IS_screen	target_screen	norm_prof	trendblind	LOD		quantification	blinds
-	depend[,colnames(depend)=="peakpick"]<-			c(0,		1,	0,		1,		1,		1,			1,			1,			1,			1,				1,			1,			1,		1,				1)
-	depend[,colnames(depend)=="QC"]<-				c(0,		0,	0,		1,		1,		0,			1,			1,			1,			1,				1,			1,			1,		1,				1)
-	depend[,colnames(depend)=="pattern"]<-			c(0,		0,	0,		1,		1,		0,			0,			0,			1,			1,				1,			0,			0,		1,				0)
-	depend[,colnames(depend)=="recal"]<-			c(0,		0,	0,		0,		1,		0,			1,			1,			1,			1,				1,			0,			0,		1,				1)
-	depend[,colnames(depend)=="allign"]<-			c(0,		0,	0,		0,		0,		0,			1,			1,			1,			1,				1,			0,			0,		0,				1)
-	depend[,colnames(depend)=="normalize"]<-		c(0,		0,	0,		0,		0,		0,			0,			1,			1,			1,				0,			1,			1,		1,				1)
-	depend[,colnames(depend)=="blinds"]<-			c(0,		0,	0,		0,		0,		0,			1,			1,			1,			1,				1,			1,			1,		1,				1)
-	depend[,colnames(depend)=="replicates"]<-		c(0,		0,	0,		0,		0,		0,			0,			1,			1,			1,				1,			1,			1,		1,				0)
-	depend[,colnames(depend)=="profiling"]<-		c(0,		0,	0,		0,		0,		0,			0,			0,			1,			1,				1,			1,			0,		1,				0)
-	depend[,colnames(depend)=="IS_screen"]<-		c(0,		0,	0,		0,		0,		0,			0,			0,			0,			1,				1,			0,			0,		1,				0)
-	depend[,colnames(depend)=="target_screen"]<-	c(0,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		1,				0)
-	depend[,colnames(depend)=="norm_prof"]<-		c(0,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			1,			0,		0,				0)
-	depend[,colnames(depend)=="trendblind"]<-		c(0,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		1,				0)
-	depend[,colnames(depend)=="LOD"]<-				c(0,		0,	0,		0,		0,		0,			0,			0,			1,			1,				1,			1,			0,		1,				0)
-	depend[,colnames(depend)=="quantification"]<-	c(0,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			1,			0,		0,				0)	
+	rownames(depend)<-work_names					# peakpicking	qc	pattern	recal	allign	norm	replicates	profiling	IS_screen	target_screen		IS_normaliz	trendblind	LOD		quantification	blinds
+	depend[,colnames(depend)=="peakpicking"]<-		c(0,			1,	0,		1,		1,		1,			1,			1,			1,			1,				1,			1,			1,		1,				1)
+	depend[,colnames(depend)=="qc"]<-				c(0,			0,	0,		1,		1,		0,			1,			1,			1,			1,				1,			1,			1,		1,				1)
+	depend[,colnames(depend)=="pattern"]<-			c(0,			0,	0,		1,		1,		0,			0,			0,			1,			1,				1,			0,			0,		1,				0)
+	depend[,colnames(depend)=="recal"]<-			c(0,			0,	0,		0,		1,		0,			1,			1,			1,			1,				1,			0,			0,		1,				1)
+	depend[,colnames(depend)=="allign"]<-			c(0,			0,	0,		0,		0,		0,			1,			1,			1,			1,				1,			0,			0,		0,				1)
+	depend[,colnames(depend)=="norm"]<-				c(0,			0,	0,		0,		0,		0,			0,			1,			1,			1,				0,			1,			1,		1,				1)
+	depend[,colnames(depend)=="blinds"]<-			c(0,			0,	0,		0,		0,		0,			1,			1,			1,			1,				1,			1,			1,		1,				1)
+	depend[,colnames(depend)=="replicates"]<-		c(0,			0,	0,		0,		0,		0,			0,			1,			1,			1,				1,			1,			1,		1,				0)
+	depend[,colnames(depend)=="profiling"]<-		c(0,			0,	0,		0,		0,		0,			0,			0,			1,			1,				1,			1,			0,		1,				0)
+	depend[,colnames(depend)=="IS_screen"]<-		c(0,			0,	0,		0,		0,		0,			0,			0,			0,			1,				1,			0,			0,		1,				0)
+	depend[,colnames(depend)=="target_screen"]<-	c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		1,				0)
+	depend[,colnames(depend)=="IS_normaliz"]<-		c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			1,			0,		0,				0)
+	depend[,colnames(depend)=="trendblind"]<-		c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		1,				0)
+	depend[,colnames(depend)=="LOD"]<-				c(0,			0,	0,		0,		0,		0,			0,			0,			1,			1,				1,			1,			0,		1,				0)
+	depend[,colnames(depend)=="quantification"]<-	c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			1,			0,		0,				0)	
 	logfile[[11]]<<-depend
 	names(logfile)[11]<<-"workflow_depend"
 	################################################################################################
@@ -222,22 +247,22 @@ if(logfile[[10]]<3.100){
 	# depends. 0 = not dependent. 1 = dependent. -1 = MUST NOT be executed ######################### 
 	must<-matrix(ncol=length(work_names),nrow=length(work_names),0)
 	colnames(must)<-work_names
-	rownames(must)<-work_names					# peakpick	QC	pattern	recal	allign	normalize	replicates	profiling	IS_screen	target_screen	norm_prof	trendblind	LOD		quantification	blinds
-	must[,colnames(must)=="peakpick"]<-			c(0,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
-	must[,colnames(must)=="QC"]<-				c(1,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
-	must[,colnames(must)=="pattern"]<-			c(0,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
-	must[,colnames(must)=="recal"]<-			c(1,		0,	1,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
-	must[,colnames(must)=="allign"]<-			c(1,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
-	must[,colnames(must)=="normalize"]<-		c(1,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
-	must[,colnames(must)=="blinds"]<-			c(1,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
-	must[,colnames(must)=="replicates"]<-		c(1,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
-	must[,colnames(must)=="profiling"]<-		c(1,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
-	must[,colnames(must)=="IS_screen"]<-		c(1,		0,	1,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
-	must[,colnames(must)=="target_screen"]<-	c(1,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
-	must[,colnames(must)=="norm_prof"]<-		c(1,		0,	1,		0,		0,		0,			0,			1,			1,			0,				0,			0,			0,		0,				0)
-	must[,colnames(must)=="trendblind"]<-		c(1,		0,	0,		0,		0,		0,			0,			1,			0,			0,				0,			0,			0,		0,				0)
-	must[,colnames(must)=="LOD"]<-				c(1,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
-	must[,colnames(must)=="quantification"]<-	c(1,		0,	1,		0,		0,		0,			0,			0,			1,			1,				0,			0,			0,		0,				0)
+	rownames(must)<-work_names					# peakpicking	qc	pattern	recal	allign	norm		replicates	profiling	IS_screen	target_screen	IS_normaliz	trendblind	LOD		quantification	blinds
+	must[,colnames(must)=="peakpicking"]<-		c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
+	must[,colnames(must)=="qc"]<-				c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
+	must[,colnames(must)=="pattern"]<-			c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
+	must[,colnames(must)=="recal"]<-			c(1,			0,	1,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
+	must[,colnames(must)=="allign"]<-			c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
+	must[,colnames(must)=="norm"]<-				c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
+	must[,colnames(must)=="blinds"]<-			c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
+	must[,colnames(must)=="replicates"]<-		c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
+	must[,colnames(must)=="profiling"]<-		c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
+	must[,colnames(must)=="IS_screen"]<-		c(1,			0,	1,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
+	must[,colnames(must)=="target_screen"]<-	c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
+	must[,colnames(must)=="IS_normaliz"]<-		c(1,			0,	1,		0,		0,		0,			0,			1,			1,			0,				0,			0,			0,		0,				0)
+	must[,colnames(must)=="trendblind"]<-		c(1,			0,	0,		0,		0,		0,			0,			1,			0,			0,				0,			0,			0,		0,				0)
+	must[,colnames(must)=="LOD"]<-				c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		0,				0)
+	must[,colnames(must)=="quantification"]<-	c(1,			0,	1,		0,		0,		0,			0,			0,			1,			1,				0,			0,			0,		0,				0)
 	logfile[[12]]<<-must
 	names(logfile)[12]<<-"workflow_must"	
 	################################################################################################	

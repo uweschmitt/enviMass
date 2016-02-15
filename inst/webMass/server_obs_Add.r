@@ -238,7 +238,7 @@ addmeasu<-reactive({
 						doit<-as.character(isolate(input$Measadd_incl))
 						doit<<-as.character(isolate(input$Measadd_incl))
 						if(doit=="TRUE"){
-							workflow_set(logfile,down="peakpick",single_file=TRUE)	
+							workflow_set(logfile,down="peakpicking",single_file=TRUE)	
 						}
 						#############################################################################			
 						save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
@@ -292,7 +292,7 @@ addmeasu<-reactive({
 					doit<-as.character(isolate(input$Measadd_incl))
 					doit<<-as.character(isolate(input$Measadd_incl))
 					if(doit=="TRUE"){
-						workflow_set(logfile,down="peakpick",single_file=TRUE)	
+						workflow_set(logfile,down="peakpicking",single_file=TRUE)	
 					}
 					#############################################################################			
 					output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"));
@@ -341,7 +341,7 @@ observe({
 		#############################################################################
 		# adjust task/workflow settings #############################################
 		if(adjustit=="TRUE"){
-			workflow_set(logfile,down="peakpick",single_file=TRUE)	
+			workflow_set(logfile,down="peakpicking",single_file=TRUE)	
 		}	
         #############################################################################			
         output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"));
@@ -417,7 +417,7 @@ observe({
 			write.csv(measurements_1,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
 			rm(measurements_1,measurements_2);
-			workflow_set(logfile,down="peakpick",single_file=TRUE) 
+			workflow_set(logfile,down="peakpicking",single_file=TRUE) 
 			cat(" done.")		
 		}else{
 			cat(" no files to import - project empty?.")

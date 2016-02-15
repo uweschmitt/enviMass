@@ -26,7 +26,7 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 		}
 	}
 	if(is.na(match(down,names(logfile$Tasks_to_redo)))){
-		stop("workflow_set: unknown down argument.")
+		stop(paste("workflow_set: unknown down argument",down))
 	}
 	if(length(down)>1){
 		stop("workflow_set: which down?")
@@ -76,8 +76,8 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 	########################################################################################
 	# update Tasks_to_redo #################################################################
 	########################################################################################
-	if(any(work_stream=="peakpick")){
-		logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="peakpick"]<<-TRUE;
+	if(any(work_stream=="peakpicking")){
+		logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="peakpicking"]<<-TRUE;
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 		if(!single_file){
 			measurements[,10]<-FALSE;
@@ -86,12 +86,12 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 		rm(measurements1);	
 	}
 	########################################################################################
-	if(any(work_stream=="QC")){
+	if(any(work_stream=="qc")){
 		if(logfile$workflow[names(logfile$workflow)=="qc"]=="yes"){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="QC"]<<-TRUE;			
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="qc"]<<-TRUE;			
 		}	
 		if(!check_node){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="QC"]<<-TRUE;
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="qc"]<<-TRUE;
 		}
 	}	
 	########################################################################################
@@ -129,15 +129,15 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 		}
 	}	
 	########################################################################################
-	if(any(work_stream=="normalize")){
+	if(any(work_stream=="norm")){
 		if(logfile$workflow[names(logfile$workflow)=="norm"]=="yes"){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="normalize"]<<-TRUE;			
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="norm"]<<-TRUE;			
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements[,14]<-FALSE;
 			write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 		}
 		if(!check_node){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="normalize"]<<-TRUE;			
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="norm"]<<-TRUE;			
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements[,14]<-FALSE;
 			write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);		
@@ -163,7 +163,7 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 	}	
 	########################################################################################
 	if(any(work_stream=="profiling")){
-		if(logfile$workflow[names(logfile$workflow)=="profiled"]=="yes"){
+		if(logfile$workflow[names(logfile$workflow)=="profiling"]=="yes"){
 			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="profiling"]<<-TRUE;				
 		}
 		if(!check_node){		
@@ -172,7 +172,7 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 	}	
 	########################################################################################
 	if(any(work_stream=="IS_screen")){
-		if(logfile$workflow[names(logfile$workflow)=="screen_IS"]=="yes"){
+		if(logfile$workflow[names(logfile$workflow)=="IS_screen"]=="yes"){
 			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="IS_screen"]<<-TRUE;	
 		}
 		if(!check_node){
@@ -181,7 +181,7 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 	}	
 	########################################################################################
 	if(any(work_stream=="target_screen")){
-		if(logfile$workflow[names(logfile$workflow)=="screen_target"]=="yes"){
+		if(logfile$workflow[names(logfile$workflow)=="target_screen"]=="yes"){
 			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="target_screen"]<<-TRUE;	
 		}	
 		if(!check_node){
@@ -189,12 +189,12 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 		}
 	}	
 	########################################################################################
-	if(any(work_stream=="norm_prof")){
-		if(logfile$workflow[names(logfile$workflow)=="profnorm"]=="yes"){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="norm_prof"]<<-TRUE;
+	if(any(work_stream=="IS_normaliz")){
+		if(logfile$workflow[names(logfile$workflow)=="IS_normaliz"]=="yes"){
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="IS_normaliz"]<<-TRUE;
 		}
 		if(!check_node){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="norm_prof"]<<-TRUE;		
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="IS_normaliz"]<<-TRUE;		
 		}
 	}	
 	########################################################################################

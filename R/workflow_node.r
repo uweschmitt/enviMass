@@ -17,7 +17,7 @@
 #' @details enviMass workflow function
 #' 
 
-workflow_node<-function(name_workflow,name_summary,name_redo,name_output,path_do=FALSE,path_undo=FALSE,session,output,input){
+workflow_node<-function(name_workflow,name_summary,name_redo,name_output,path_do=FALSE,path_undo=FALSE,session,output,input,...){
 
 	if(any(ls()=="logfile")){stop(paste("\n illegal logfile detected #1 in workflow_node.r at",name_output))}
 	######################################################################################

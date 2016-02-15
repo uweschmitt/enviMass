@@ -20,13 +20,14 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 
   if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in check_project.r!")}
   ###############################################################################
-  # adjust upstream "must" executions ###########################################
+  # wrong upstream "must" executions? ###########################################
   must<-logfile[[12]]
   for(i in 1:length(must[1,])){
 	for(j in 1:length(must[,i])){	
-		if(must[j,i]==1){
-		}
 		if(must[j,i]==-1){
+			if(logfile$workflow[names(logfile$workflow)==rownames(must)[j]]=="yes"){
+				say<-paste("wokflow step",names(logfile$workflow)[i],"excludes",names(logfile$workflow)[j],"- adapt workflow settings!")
+			}		
 		}		
 	}
   }

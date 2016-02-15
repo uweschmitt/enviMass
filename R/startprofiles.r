@@ -37,7 +37,7 @@ startprofiles<-function(
     # set up raw format ########################################################
     profiles<-list(0)
     profiles[[1]]<-data.frame(TRUE,FALSE,FALSE,FALSE)    # state
-    colnames(profiles[[1]])<-c("peaks?","agglom?","profiled?","trends?")
+    colnames(profiles[[1]])<-c("peaks?","agglom?","profiling","trends?")
     profiles[[2]]<-0  # peaks
     profiles[[3]]<-0  # datetime
     profiles[[4]]<-0  # time

@@ -60,25 +60,25 @@ newproject<-function(pro_name,pro_dir,IS,targets){
     # what MUST be done? ####################################################### 
 	logfile[[2]]<-rep(FALSE,16);
 	names(logfile[[2]])<-c(
-		"peakpick","QC","recal","normalize","allign","profiling","trendblind","pattern",
-		"replicates","IS_screen","target_screen","LOD","quantification","blinds","norm_prof","-"
+		"peakpicking","qc","recal","norm","allign","profiling","trendblind","pattern",
+		"replicates","IS_screen","target_screen","LOD","quantification","blinds","IS_normaliz","-"
 	)	
     names(logfile)[2]<-c("Tasks_to_redo"); 
     # summary project status ###################################################
     tasks<-c(
 		"Data available?",
-		"Peak pick?",
-		"QC?",
-		"Isotope pattern?",
-		"m/z recal.?",
+		"peakpicking",
+		"qc",
+		"pattern",
+		"recal",
 		"Alligned?",
-		"Intensity norm.?",
-		"Profiled?",
-		"IS norm.?",
-		"Trend+Blind?",
-		"Replicate filter",
-		"IS screening",
-		"Target screening",
+		"norm",
+		"profiling",
+		"IS_normaliz",
+		"trendblind",
+		"replicates",
+		"IS_screen",
+		"target_screen",
 		"LOD",
 		"quantification",
 		"blinds",
@@ -184,13 +184,13 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	logfile$workflow[6]<-"yes"; 	names(logfile$workflow)[6]<-"LOD" 
 	logfile$workflow[7]<-"yes"; 	names(logfile$workflow)[7]<-"peakpicking" 
 	logfile$workflow[8]<-"yes"; 	names(logfile$workflow)[8]<-"quantification" 
-	logfile$workflow[9]<-"yes"; 	names(logfile$workflow)[9]<-"profiled" 
+	logfile$workflow[9]<-"yes"; 	names(logfile$workflow)[9]<-"profiling" 
 	logfile$workflow[10]<-"yes"; 	names(logfile$workflow)[10]<-"trenddetect"     
-	logfile$workflow[11]<-"yes"; 	names(logfile$workflow)[11]<-"screen_IS" 
-	logfile$workflow[12]<-"yes"; 	names(logfile$workflow)[12]<-"screen_target" 
+	logfile$workflow[11]<-"yes"; 	names(logfile$workflow)[11]<-"IS_screen" 
+	logfile$workflow[12]<-"yes"; 	names(logfile$workflow)[12]<-"target_screen" 
 	logfile$workflow[13]<-"yes"; 	names(logfile$workflow)[13]<-"replicates" 
 	logfile$workflow[14]<-"yes"; 	names(logfile$workflow)[14]<-"blinds" 		
-	logfile$workflow[15]<-"yes"; 	names(logfile$workflow)[15]<-"profnorm" 
+	logfile$workflow[15]<-"yes"; 	names(logfile$workflow)[15]<-"IS_normaliz" 
 	logfile$workflow[16]<-"yes"; 	names(logfile$workflow)[16]<-"-" 
 	logfile$workflow[17]<-"yes"; 	names(logfile$workflow)[17]<-"-" 	  
 		

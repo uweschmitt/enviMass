@@ -39,7 +39,7 @@ observe({
 		logfile$parameters$peak_maxint_log10<<-as.character(isolate(input$peak_maxint))
 		at2<-logfile$parameters[c(1,2,3,4,5,6,7,8,9,10,11,12,13,14)]
 		if(any(is.na(match(at2,at1)))){ 
-			workflow_set(down="peakpick",check_node=TRUE)
+			workflow_set(down="peakpicking",check_node=TRUE)
 		}
         # progbar? #############################################################
         logfile$parameters$progressBar<<-as.character(isolate(input$progressbar));
@@ -150,18 +150,18 @@ observe({
 		logfile$parameters[[78]]<<-as.character(isolate(input$profnorm_threshold))
 		at2<-logfile$parameters[c(70:78)]
 		if(any(is.na(match(at2,at1)))){ 
-			workflow_set(down="norm_prof",check_node=TRUE)		
+			workflow_set(down="IS_normaliz",check_node=TRUE)		
 		}	
 		########################################################################   
 
 		##########################################################################
 		# workflow settings ######################################################
-		# QC #####################################################################
+		# qc #####################################################################
 		at1<-logfile$workflow[names(logfile$workflow)=="qc"]; 
 		logfile$workflow[names(logfile$workflow)=="qc"]<<-as.character(isolate(input$qc));
 		at2<-logfile$workflow[names(logfile$workflow)=="qc"];
 		if(at1!=at2){
-			workflow_set(down="QC",check_node=FALSE)
+			workflow_set(down="qc",check_node=FALSE)
 		}
 		# recal ##################################################################	
 		at1<-logfile$workflow[names(logfile$workflow)=="recal"];
@@ -191,12 +191,12 @@ observe({
 		logfile$workflow[names(logfile$workflow)=="norm"]<<-as.character(isolate(input$intnorm));
 		at2<-logfile$workflow[names(logfile$workflow)=="norm"];
 		if(at1!=at2){
-			workflow_set(down="normalize",check_node=FALSE)	
+			workflow_set(down="norm",check_node=FALSE)	
 		}
 		# profiling ##############################################################
-		at1<-logfile$workflow[names(logfile$workflow)=="profiled"]; 
-		logfile$workflow[names(logfile$workflow)=="profiled"]<<-as.character(isolate(input$profiled));
-		at2<-logfile$workflow[names(logfile$workflow)=="profiled"];
+		at1<-logfile$workflow[names(logfile$workflow)=="profiling"]; 
+		logfile$workflow[names(logfile$workflow)=="profiling"]<<-as.character(isolate(input$profiled));
+		at2<-logfile$workflow[names(logfile$workflow)=="profiling"];
 		if(at1!=at2){
 			workflow_set(down="profiling",check_node=FALSE)		
 		}
@@ -208,23 +208,23 @@ observe({
 			workflow_set(down="trendblind",check_node=FALSE)
 		}
 		# IS-normalization #######################################################
-		at1<-logfile$workflow[names(logfile$workflow)=="profnorm"];
-		logfile$workflow[names(logfile$workflow)=="profnorm"]<<-as.character(isolate(input$profnorm));
-		at2<-logfile$workflow[names(logfile$workflow)=="profnorm"];
+		at1<-logfile$workflow[names(logfile$workflow)=="IS_normaliz"];
+		logfile$workflow[names(logfile$workflow)=="IS_normaliz"]<<-as.character(isolate(input$profnorm));
+		at2<-logfile$workflow[names(logfile$workflow)=="IS_normaliz"];
 		if(at1!=at2){
-			workflow_set(down="norm_prof",check_node=FALSE)
+			workflow_set(down="IS_normaliz",check_node=FALSE)
 		}		
 		# IS screening ###########################################################
-		at1<-logfile$workflow[names(logfile$workflow)=="screen_IS"];
-		logfile$workflow[names(logfile$workflow)=="screen_IS"]<<-as.character(isolate(input$screen_IS));
-		at2<-logfile$workflow[names(logfile$workflow)=="screen_IS"];
+		at1<-logfile$workflow[names(logfile$workflow)=="IS_screen"];
+		logfile$workflow[names(logfile$workflow)=="IS_screen"]<<-as.character(isolate(input$screen_IS));
+		at2<-logfile$workflow[names(logfile$workflow)=="IS_screen"];
 		if(at1!=at2){
 			workflow_set(down="IS_screen",check_node=FALSE)		
 		}
 		# target screening #######################################################
-		at1<-logfile$workflow[names(logfile$workflow)=="screen_target"];
-		logfile$workflow[names(logfile$workflow)=="screen_target"]<<-as.character(isolate(input$screen_target));
-		at2<-logfile$workflow[names(logfile$workflow)=="screen_target"];
+		at1<-logfile$workflow[names(logfile$workflow)=="target_screen"];
+		logfile$workflow[names(logfile$workflow)=="target_screen"]<<-as.character(isolate(input$screen_target));
+		at2<-logfile$workflow[names(logfile$workflow)=="target_screen"];
 		if(at1!=at2){
 			workflow_set(down="target_screen",check_node=FALSE)		
 		}
