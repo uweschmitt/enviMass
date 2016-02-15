@@ -12,13 +12,24 @@
 #' @details enviMass workflow function; run before further calculations are started in the workflow.
 #' 
 
-checkproject<-function(isotopes,adducts,skipcheck=FALSE){
+checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
   say<-"Project consistent"
   if(skipcheck){
 	return(say);
   }
 
   if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in check_project.r!")}
+  ###############################################################################
+  # adjust upstream "must" executions ###########################################
+  must<-logfile[[12]]
+  for(i in 1:length(must[1,])){
+	for(j in 1:length(must[,i])){	
+		if(must[j,i]==1){
+		}
+		if(must[j,i]==-1){
+		}		
+	}
+  }
   ##############################################################################
   # directories available? ##################################################### 
   if(!file.exists(file.path(logfile[[1]],"files"))){say<-"files directory missing!"}

@@ -16,12 +16,12 @@
 #' @details enviMass workflow function
 #' 
 
-workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_node=FALSE){
+workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_node=FALSE,...){
 	
 	if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in workflow_set.r!")}
 	########################################################################################
 	if(!is.logical(added) & !is.logical(except)){
-		if((any(!is.na(match(added,except))))||(any(!is.na(match(except,added))))){
+		if((any(!is.na(match(added,except)))) || (any(!is.na(match(except,added))))){
 			stop("workflow_set: added or except but not both.")
 		}
 	}
@@ -31,12 +31,6 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 	if(length(down)>1){
 		stop("workflow_set: which down?")
 	}
-	########################################################################################
-	# define workflow order of logfile$Tasks_to_redo by server.calculation.r ###############
-	# dependencies must simply go after their parent node ################################## 
-	# order here actually irrelevant, because calculation order set in server_calculation  #
-	work_order<-c(1,2,8,3,5,4,14,9,6,12,10,11,15,13,7)
-	work_names<-(names(logfile$Tasks_to_redo)[work_order])
 	########################################################################################
 	# leave funtion if check_node=TRUE (=parameters changed) but node not run ##############
 	if(check_node){
@@ -48,28 +42,7 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 		}		
 	}
 	########################################################################################
-	# define matrix of downstream workflow dependencies ####################################
-	# requires only a definition of direct ones - inderect ones will be retrieved below ####
-	# below specified in a row-wise fashion (but stored columnwise): #######################
-	depend<-matrix(ncol=length(work_names),nrow=length(work_names),0)
-	colnames(depend)<-work_names
-	rownames(depend)<-work_names					# peakpick	QC	pattern	recal	allign	normalize	replicates	profiling	IS_screen	target_screen	norm_prof	trendblind	LOD		quantification	blinds
-	depend[,colnames(depend)=="peakpick"]<-			c(0,		1,	0,		1,		1,		1,			1,			1,			1,			1,				1,			1,			1,		1,				1)
-	depend[,colnames(depend)=="QC"]<-				c(0,		0,	0,		1,		1,		0,			1,			1,			1,			1,				1,			1,			1,		1,				1)
-	depend[,colnames(depend)=="pattern"]<-			c(0,		0,	0,		1,		1,		0,			0,			0,			1,			1,				1,			0,			0,		1,				0)
-	depend[,colnames(depend)=="recal"]<-			c(0,		0,	0,		0,		1,		0,			1,			1,			1,			1,				1,			0,			0,		1,				1)
-	depend[,colnames(depend)=="allign"]<-			c(0,		0,	0,		0,		0,		0,			1,			1,			1,			1,				1,			0,			0,		0,				1)
-	depend[,colnames(depend)=="normalize"]<-		c(0,		0,	0,		0,		0,		0,			0,			1,			1,			1,				0,			1,			1,		1,				1)
-	depend[,colnames(depend)=="blinds"]<-			c(0,		0,	0,		0,		0,		0,			1,			1,			1,			1,				1,			1,			1,		1,				1)
-	depend[,colnames(depend)=="replicates"]<-		c(0,		0,	0,		0,		0,		0,			0,			1,			1,			1,				1,			1,			1,		1,				0)
-	depend[,colnames(depend)=="profiling"]<-		c(0,		0,	0,		0,		0,		0,			0,			0,			1,			1,				1,			1,			0,		1,				0)
-	depend[,colnames(depend)=="IS_screen"]<-		c(0,		0,	0,		0,		0,		0,			0,			0,			0,			1,				1,			0,			0,		1,				0)
-	depend[,colnames(depend)=="target_screen"]<-	c(0,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		1,				0)
-	depend[,colnames(depend)=="norm_prof"]<-		c(0,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			1,			0,		0,				0)
-	depend[,colnames(depend)=="trendblind"]<-		c(0,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			0,			0,		1,				0)
-	depend[,colnames(depend)=="LOD"]<-				c(0,		0,	0,		0,		0,		0,			0,			0,			1,			1,				1,			1,			0,		1,				0)
-	depend[,colnames(depend)=="quantification"]<-	c(0,		0,	0,		0,		0,		0,			0,			0,			0,			0,				0,			1,			0,		0,				0)	
-	diag(depend)<-1
+	depend<-logfile[[11]]
 	########################################################################################
 	# retrieve tasks to redo ###############################################################
 	# redefined dependencies:
