@@ -25,9 +25,11 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
   for(i in 1:length(must[1,])){
 	for(j in 1:length(must[,i])){	
 		if(must[j,i]==-1){
-			if(logfile$workflow[names(logfile$workflow)==rownames(must)[j]]=="yes"){
-				say<-paste("wokflow step",names(logfile$workflow)[i],"excludes",names(logfile$workflow)[j],"- adapt workflow settings!")
-			}		
+			if(logfile$workflow[names(logfile$workflow)==colnames(must)[i]]=="yes"){
+				if(logfile$workflow[names(logfile$workflow)==rownames(must)[j]]=="yes"){
+					say<-paste("wokflow step",names(logfile$workflow)[i],"excludes",names(logfile$workflow)[j],"- adapt workflow settings!")
+				}
+			}
 		}		
 	}
   }

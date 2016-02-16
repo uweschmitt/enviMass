@@ -17,7 +17,6 @@
 #' 
 #' @seealso \code{agglomer}, \code{partcluster} 
 
-
 startprofiles<-function(
 	logfile,
 	frac=FALSE,

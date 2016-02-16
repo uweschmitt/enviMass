@@ -17,7 +17,8 @@
 #' 
 
 workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_node=FALSE,...){
-	
+
+	########################################################################################	
 	if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in workflow_set.r!")}
 	########################################################################################
 	if(!is.logical(added) & !is.logical(except)){
@@ -43,6 +44,7 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 	}
 	########################################################################################
 	depend<-logfile[[11]]
+	diag(depend)<-1
 	########################################################################################
 	# retrieve tasks to redo ###############################################################
 	# redefined dependencies:
@@ -114,15 +116,15 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 		}
 	}	
 	########################################################################################
-	if(any(work_stream=="allign")){
+	if(any(work_stream=="align")){
 		if(logfile$workflow[names(logfile$workflow)=="align"]=="yes"){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="allign"]<<-TRUE;			
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="align"]<<-TRUE;			
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements[,13]<-FALSE;
 			write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 		}
 		if(!check_node){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="allign"]<<-TRUE;			
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="align"]<<-TRUE;			
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements[,13]<-FALSE;
 			write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);		
@@ -199,7 +201,7 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 	}	
 	########################################################################################
 	if(any(work_stream=="trendblind")){
-		if(logfile$workflow[names(logfile$workflow)=="trenddetect"]=="yes"){
+		if(logfile$workflow[names(logfile$workflow)=="trendblind"]=="yes"){
 			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="trendblind"]<<-TRUE;
 		}	
 		if(!check_node){

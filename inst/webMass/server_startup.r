@@ -308,56 +308,6 @@ maincalc2<-reactive({
 				}
 			}
 			
-if(FALSE){			
-if(file.exists(file.path(logfile$project_folder,"results","screening","IS_screening_pos"))){			
-	load(file=file.path(as.character(logfile$project_folder),"results","screening","IS_screening_pos"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
-
-	addResourcePath("project22", file.path(as.character(logfile$project_folder)))
-	
-	dir.create(file.path(path.package("shiny", quiet = FALSE),"www","screening_pics"), showWarnings = FALSE, recursive = TRUE, mode = "0777")
-	copy_files<-list.files(file.path(as.character(logfile$project_folder),"results","screening"))
-	if(length(copy_files)>0){	for(i in 1:length(copy_files)){
-		file.copy(	
-				from=file.path(as.character(logfile$project_folder),"results","screening",copy_files[i]),
-				to=file.path(path.package("shiny", quiet = FALSE),"www","screening_pics",copy_files[i]),				
-				overwrite = TRUE, 
-				recursive = FALSE,
-				copy.mode = TRUE
-		)
-	}}
-	
-	
-	#output$Table_IS_screening_pos <- DT::renderDataTable({
-	#	DT::datatable(IS_screening_pos, escape = FALSE,selection = 'single') # HERE
-	#})
-	output$Table_IS_screening_pos <- DT::renderDataTable({
-			DT::datatable(IS_screening_pos, escape = FALSE,selection = 'single') %>% 
-				formatStyle(
-					'Score',
-					background = styleColorBar(c(0,1), 'lightgreen'),
-					#backgroundSize = '1 0',
-					#backgroundRepeat = 'no-repeat',
-					backgroundPosition = 'left'
-		)
-		
-		},
-		server = TRUE
-	)
-	
-	used_rows<-c() # ISSUE with selection! s requires a deselection before a row can be loaded anew
-	output$Table_IS_screening_pos_row = renderPrint({
-		s = input$Table_IS_screening_pos_rows_selected
-		#s<-s[length(s)]
-		if (length(s)) {
-			cat('These rows were selected:\n\n')
-			#cat(IS_screening_pos[s,3], sep = ', ')
-			cat(s, sep = ', ')
-		}
-	})
-		
-}			
-}			
-			
 
 			if(file.exists(file.path(logfile$project_folder,"pics","profilehisto.png"))){ 
 				expr6<-list(src=file.path(logfile$project_folder,"pics","profilehisto.png"))
@@ -375,7 +325,57 @@ if(file.exists(file.path(logfile$project_folder,"results","screening","IS_screen
 				}
 			}
 			#updateCheckboxGroupInput(session, "isos", "Select relevant isotopes:", choices = as.character(isotopos),selected=c("13C","34S","81Br","37Cl"))               		
-			########################################################################        
+			########################################################################  
+			# screening results - show only target results by default ##############
+			if( isolate(input$Pos_compound_select=="Target compounds") ){
+				cat("\n Looking at positive targets")
+				if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos")) ){
+					load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))
+					if( isolate(input$screen_pos_summarize=="yes") ){
+						results_screen_target_pos<<-results_screen_target_pos[[1]]
+					}else{
+						results_screen_target_pos<<-results_screen_target_pos[[2]]
+					}
+					output$Table_screening_pos <- DT::renderDataTable({
+						DT::datatable(results_screen_target_pos, escape = FALSE,selection = 'single',rownames=FALSE) %>% 
+							formatStyle(
+								'Max. sample score',
+								background = styleColorBar(c(0,1), 'lightgreen'),
+								backgroundPosition = 'left'
+							)
+					},server = TRUE)
+					rm(results_screen_target_pos)	
+				}else{	
+					output$Table_screening_pos <- DT::renderDataTable({
+						DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No target screening results available")
+					},server = TRUE)		
+				}
+			}
+			if( isolate(input$Pos_compound_select=="Target compounds") ){
+				cat("\n Looking at negative targets")
+				if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg")) ){
+					load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg"))
+					if( isolate(input$screen_neg_summarize=="yes") ){
+						results_screen_target_neg<<-results_screen_target_neg[[1]]
+					}else{
+						results_screen_target_neg<<-results_screen_target_neg[[2]]
+					}
+					output$Table_screening_neg <- DT::renderDataTable({
+						DT::datatable(results_screen_target_neg, escape = FALSE,selection = 'single',rownames=FALSE) %>% 
+							formatStyle(
+								'Max. sample score',
+								background = styleColorBar(c(0,1), 'lightgreen'),
+								backgroundPosition = 'left'
+							)
+					},server = TRUE)
+					rm(results_screen_target_neg)	
+				}else{	
+					output$Table_screening_neg <- DT::renderDataTable({
+						DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No target screening results available")
+					},server = TRUE)		
+				}
+			}
+			###########################################################################	
 			cat(objects())
 			if(any(ls()=="logfile")){stop("\n illegal logfile detected #3b in server_startup.r!")}
 			source("server_variables_in.R", local=TRUE)

@@ -201,9 +201,9 @@ observe({
 			workflow_set(down="profiling",check_node=FALSE)		
 		}
 		# trendblind #############################################################
-		at1<-logfile$workflow[names(logfile$workflow)=="trenddetect"];
-		logfile$workflow[names(logfile$workflow)=="trenddetect"]<<-as.character(isolate(input$trenddetect));
-		at2<-logfile$workflow[names(logfile$workflow)=="trenddetect"];
+		at1<-logfile$workflow[names(logfile$workflow)=="trendblind"];
+		logfile$workflow[names(logfile$workflow)=="trendblind"]<<-as.character(isolate(input$trenddetect));
+		at2<-logfile$workflow[names(logfile$workflow)=="trendblind"];
 		if(at1!=at2){
 			workflow_set(down="trendblind",check_node=FALSE)
 		}

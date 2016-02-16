@@ -26,10 +26,13 @@ maincalc<-reactive({
 			# adapt upstream requirements if set to "no" #######################
 			must<-logfile[[12]]
 			for(i in 1:length(must[1,])){
-				for(j in 1:length(must[,i])){	
+				for(j in 1:length(must[,1])){	
 					if(must[j,i]==1){
-						if(logfile$workflow[names(logfile$workflow)==rownames(must)[j]]!="yes"){
-							logfile$workflow[names(logfile$workflow)==rownames(must)[j]]<-"yes"
+						if(logfile$workflow[names(logfile$workflow)==(colnames(must)[i])]=="yes"){
+							if(logfile$workflow[names(logfile$workflow)==(rownames(must)[j])]!="yes"){
+								#cat("\n",colnames(must)[i]," depends on ",rownames(must)[j])
+								logfile$workflow[names(logfile$workflow)==(rownames(must)[j])]<-"yes"
+							}
 						}
 					}
 				}
@@ -105,7 +108,7 @@ maincalc<-reactive({
         if(do_flow==9){
 			workflow_node(
 				"norm","norm","norm","Median intensity normalization",
-				path_do="do_norm",path_undo="dont_norm.R",session,output,input
+				path_do="do_norm.R",path_undo="dont_norm.R",session,output,input
 			)  
         }
         ########################################################################
@@ -160,7 +163,7 @@ maincalc<-reactive({
         # trend / blind ########################################################
         if(do_flow==16){
 			workflow_node(
-				"trenddetect","trendblind","trendblind","Trend detection and blind subtraction",
+				"trendblind","trendblind","trendblind","Trend detection and blind subtraction",
 				path_do="do_trendblind.R",path_undo="dont_trendblind.R",session,output,input
 			)  	
         }

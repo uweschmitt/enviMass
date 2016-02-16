@@ -136,7 +136,7 @@
 			num_blanks_all,
 			round(max_score_blank_all,digits=2),
 			num_peaks_blank_all,
-			mean_int_ratio,
+			round(mean_int_ratio,digits=1),
 			stringsAsFactors=FALSE
 		)
 		names(results_table_1)<-c(

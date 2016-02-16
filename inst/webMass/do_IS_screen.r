@@ -3,7 +3,7 @@
 	those<-list.files(file.path(logfile$project_folder,"results","screening"))
 	if(length(those)>0){
 		for(i in 1:length(those)){
-			if(grepl("IS",those[i])){ # distinguish with targets
+			if(grepl("IS",those[i])){ # distinguish wfrom targets
 				file.remove(file.path(logfile$project_folder,"results","screening",those[i]))
 			}
 		}
@@ -182,14 +182,17 @@
 			save(results_screen_IS_pos,file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos"))
 			rm(measurements,intstand,results_screen_IS_pos);
 		}
-		rm(getit,IS_pos_screen_listed,res_IS_pos_screen)
+		
+		
+		
 		####################################################################################################
+		rm(getit,IS_pos_screen_listed,res_IS_pos_screen)
 		rm(pattern,pattern_RT,pattern_delRT,envir=as.environment(".GlobalEnv"))
+		####################################################################################################
 		
 }		
 	########################################################################################################
 	########################################################################################################
-
 	
 	########################################################################################################	
 	########################################################################################################
@@ -358,35 +361,6 @@
 }		
 	########################################################################################################
 	########################################################################################################
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	

@@ -334,8 +334,8 @@
 				numericInput("replicate_delRT", "RT tolerance of a compound peaks across replicate samples [s]", 30)
 			),	
             # ALLIGNMENT #######################################################
-            #tabPanel("Allignment",
-            #  tags$h5("RT allignment")
+            #tabPanel("Alignment",
+            #  tags$h5("RT alignment")
             #),
             # SCREENING ########################################################
             tabPanel("Screening",
@@ -590,20 +590,28 @@
 				tabPanel("Compound screening",
 					tabsetPanel(
 						tabPanel("Positive ionization",
-							selectInput(inputId="Pos_compound_select",label="",choices=c("Target compounds","Internal standards"), 
-								selected = "Target compounds", multiple = FALSE),
-			
-				
 							fluidRow(
-								column(9, DT::dataTableOutput('Table_IS_screening_pos')),
-								column(3, verbatimTextOutput('Table_IS_screening_pos_row'))
+								column(4, selectInput(inputId="Pos_compound_select",label="",choices=c("Target compounds","Internal standards"), 
+									selected = "Target compounds", multiple = FALSE)),
+								column(4, selectInput(inputId="screen_pos_summarize", label="", choices = c("Show all adducts"="yes","Collapse adducts"="no"), "yes"))
+							),
+							HTML('<hr noshade="noshade" />'),
+							fluidRow(
+								column(9, DT::dataTableOutput('Table_screening_pos')),
+								column(3, verbatimTextOutput('Table_screening_pos_row'))
 							)
-						
-						
 						),
 						tabPanel("Negative ionization",
-							selectInput(inputId="Neg_compound_select",label="",choices=c("Target compounds","Internal standards"), selected = "Target compounds", multiple = FALSE)
-	
+							fluidRow(
+								column(4, selectInput(inputId="Neg_compound_select",label="",choices=c("Target compounds","Internal standards"), 
+									selected = "Target compounds", multiple = FALSE)),
+								column(4, selectInput(inputId="screen_neg_summarize", label="", choices = c("Show all adducts"="yes","Collapse adducts"="no"), "yes"))
+							),
+							HTML('<hr noshade="noshade" />'),
+							fluidRow(
+								column(9, DT::dataTableOutput('Table_screening_neg')),
+								column(3, verbatimTextOutput('Table_screening_neg_row'))
+							)	
 						
 						)
 					)	
