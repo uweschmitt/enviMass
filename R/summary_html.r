@@ -37,6 +37,8 @@ summary_html<-function(in_logfile_summary){
 	use_summary[use_summary[,1]=="quantification",1]<-"Quantification"
 	use_summary[use_summary[,1]=="blinds",1]<-"Blind filter"	
 	use_summary[use_summary[,1]=="replicates",1]<-"Replicate filter"	
+	use_summary[use_summary[,1]=="IS_screen",1]<-"IS screening"
+	use_summary[use_summary[,1]=="target_screen",1]<-"Target screening"
 	
 	for(i in 1:length(mat[,1])){
 		if(i%%2==0){

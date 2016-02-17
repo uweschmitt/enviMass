@@ -28,7 +28,9 @@ shinyServer(function(input, output, session){
   updateSelectInput(session, "resolution", "Instrument resolution:", choices =  names(resolution_list), selected= (names(resolution_list)[1]))                   
   init<-reactiveValues() 	# reactive value to indicate ...
   init$a<-"FALSE"  			# ... if/when a project is opened
-  init$b<-1					# ... increments each time a calculation is run or ion mode selected; trigger observers to refresh results
+  init$b<-1					# ... increments each time a calculation is run or ion mode selected; trigger observers to refresh results				
+s_pos<-c()
+s_neg<-c()
   logobusy<-list(src="circ.gif");
   output$logobusy1<-renderImage(logobusy, deleteFile = FALSE);
   output$logobusy2<-renderImage(logobusy, deleteFile = FALSE);

@@ -328,23 +328,22 @@ maincalc2<-reactive({
 			########################################################################  
 			# screening results - show only target results by default ##############
 			if( isolate(input$Pos_compound_select=="Target compounds") ){
-				cat("\n Looking at positive targets")
+				cat("Looking at positive targets_startup \n")
 				if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos")) ){
 					load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))
 					if( isolate(input$screen_pos_summarize=="yes") ){
-						results_screen_target_pos<<-results_screen_target_pos[[1]]
+						results_screen<-results_screen_target_pos[[1]]
 					}else{
-						results_screen_target_pos<<-results_screen_target_pos[[2]]
+						results_screen<-results_screen_target_pos[[2]]
 					}
-					output$Table_screening_pos <- DT::renderDataTable({
-						DT::datatable(results_screen_target_pos, escape = FALSE,selection = 'single',rownames=FALSE) %>% 
-							formatStyle(
+					table_screening<-DT::datatable(results_screen, escape = FALSE,selection = 'single',rownames=FALSE) %>% 
+						formatStyle(
 								'Max. sample score',
 								background = styleColorBar(c(0,1), 'lightgreen'),
 								backgroundPosition = 'left'
-							)
-					},server = TRUE)
-					rm(results_screen_target_pos)	
+							)			
+					output$Table_screening_pos <- DT::renderDataTable({table_screening},server = TRUE)			
+					rm(results_screen_target_pos,table_screening)	
 				}else{	
 					output$Table_screening_pos <- DT::renderDataTable({
 						DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No target screening results available")
@@ -352,23 +351,23 @@ maincalc2<-reactive({
 				}
 			}
 			if( isolate(input$Pos_compound_select=="Target compounds") ){
-				cat("\n Looking at negative targets")
+				cat("Looking at negative targets_startup \n")
 				if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg")) ){
 					load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg"))
 					if( isolate(input$screen_neg_summarize=="yes") ){
-						results_screen_target_neg<<-results_screen_target_neg[[1]]
+						results_screen<-results_screen_target_neg[[1]]
 					}else{
-						results_screen_target_neg<<-results_screen_target_neg[[2]]
+						results_screen<-results_screen_target_neg[[2]]
 					}
-					output$Table_screening_neg <- DT::renderDataTable({
-						DT::datatable(results_screen_target_neg, escape = FALSE,selection = 'single',rownames=FALSE) %>% 
+					table_screening<-DT::datatable(results_screen, escape = FALSE,selection = 'single',rownames=FALSE) %>% 
 							formatStyle(
 								'Max. sample score',
 								background = styleColorBar(c(0,1), 'lightgreen'),
 								backgroundPosition = 'left'
 							)
-					},server = TRUE)
-					rm(results_screen_target_neg)	
+					
+					output$Table_screening_neg <- DT::renderDataTable({table_screening},server = TRUE)
+					rm(results_screen_target_neg,table_screening)	
 				}else{	
 					output$Table_screening_neg <- DT::renderDataTable({
 						DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No target screening results available")
