@@ -39,7 +39,7 @@ observe({
 		logfile$parameters$peak_maxint_log10<<-as.character(isolate(input$peak_maxint))
 		at2<-logfile$parameters[c(1,2,3,4,5,6,7,8,9,10,11,12,13,14)]
 		if(any(is.na(match(at2,at1)))){ 
-			workflow_set(down="peakpicking",check_node=TRUE)
+			enviMass::workflow_set(down="peakpicking",check_node=TRUE)
 		}
         # progbar? #############################################################
         logfile$parameters$progressBar<<-as.character(isolate(input$progressbar));
@@ -55,7 +55,7 @@ observe({
 		logfile$adducts_neg<<-as.character(isolate(input$adducts_neg))
 		at6<-logfile$adducts_neg
 		if( any(is.na(match(at2,at1))) || any(is.na(match(at1,at2))) || any(is.na(match(at3,at4))) || any(is.na(match(at4,at3))) || any(is.na(match(at5,at6))) || any(is.na(match(at6,at5))) ){ 
-			workflow_set(down="pattern",check_node=TRUE)
+			enviMass::workflow_set(down="pattern",check_node=TRUE)
 		}
         # recalibration ######################################################## 
         at1<-logfile$parameters[c(30,31,32,33)];
@@ -65,7 +65,7 @@ observe({
         logfile$parameters[[33]]<<-as.character(isolate(input$recal_drt))
 		at2<-logfile$parameters[c(30,31,32,33)];
 		if(any(is.na(match(at2,at1)))){ 
-			workflow_set(down="recal",check_node=TRUE)
+			enviMass::workflow_set(down="recal",check_node=TRUE)
 		}
 		# replicates ###########################################################
 		at1<-logfile$parameters[c(15,16,17,18)];
@@ -75,7 +75,7 @@ observe({
 		logfile$parameters[[18]]<<-as.character(isolate(input$replicate_delRT))		
 		at2<-logfile$parameters[c(15,16,17,18)];
 		if(any(is.na(match(at2,at1)))){ 
-			workflow_set(down="replicates",check_node=TRUE)		
+			enviMass::workflow_set(down="replicates",check_node=TRUE)		
 		}
 		# profiling ############################################################
         at1<-c(logfile$parameters[c(38,39,40,41)],logfile$parameters$upto_file);
@@ -86,7 +86,7 @@ observe({
         logfile$parameters[[41]]<<-as.character(isolate(input$prof_drt))
 		at2<-c(logfile$parameters[c(38,39,40,41)],logfile$parameters$upto_file);
 		if(any(is.na(match(at2,at1)))){ 
-			workflow_set(down="profiling",check_node=TRUE)		
+			enviMass::workflow_set(down="profiling",check_node=TRUE)		
 		}
 		# trend detection ######################################################
 		at1<-logfile$parameters[c(29,34,35)]
@@ -95,7 +95,7 @@ observe({
 		logfile$parameters[[35]]<<-as.character(isolate(input$trend_thres))
 		at2<-logfile$parameters[c(29,34,35)]
 		if(any(is.na(match(at2,at1)))){ 
-			workflow_set(down="trendblind",check_node=TRUE)
+			enviMass::workflow_set(down="trendblind",check_node=TRUE)
 		}		
 		# blind subtraction ####################################################		
 		at1<-logfile$parameters[c(36,37,82,83,84)]
@@ -106,10 +106,10 @@ observe({
 		logfile$parameters[[84]]<<-as.character(isolate(input$blind_drt))		
 		at2<-logfile$parameters[c(36,37,82,83,84)]
 		if(any(is.na(match(at2,at1)))){ # both steps take partly the same parameters! 
-			workflow_set(down="blinds",check_node=TRUE)
+			enviMass::workflow_set(down="blinds",check_node=TRUE)
 		}		
 		if(any(is.na(match(at2,at1)))){ 
-			workflow_set(down="trendblind",check_node=TRUE)
+			enviMass::workflow_set(down="trendblind",check_node=TRUE)
 		}				
 		# IS screening #########################################################
 		at1<-logfile$parameters[c(42:51)]
@@ -122,7 +122,7 @@ observe({
 		logfile$parameters[[49]]<<-as.character(isolate(input$screen_IS_w1))	
 		at2<-logfile$parameters[c(42:51)]
 		if(any(is.na(match(at2,at1)))){ 
-			workflow_set(down="IS_screen",check_node=TRUE)
+			enviMass::workflow_set(down="IS_screen",check_node=TRUE)
 		}
 		# target screening #####################################################
 		at1<-logfile$parameters[c(55:64)]
@@ -135,7 +135,7 @@ observe({
 		logfile$parameters[[62]]<<-as.character(isolate(input$screen_target_w1))		
 		at2<-logfile$parameters[c(55:64)]
 		if(any(is.na(match(at2,at1)))){ 
-			workflow_set(down="target_screen",check_node=TRUE)
+			enviMass::workflow_set(down="target_screen",check_node=TRUE)
 		}
 		# IS-Normalization #####################################################
 		at1<-logfile$parameters[c(70:78)]
@@ -150,7 +150,7 @@ observe({
 		logfile$parameters[[78]]<<-as.character(isolate(input$profnorm_threshold))
 		at2<-logfile$parameters[c(70:78)]
 		if(any(is.na(match(at2,at1)))){ 
-			workflow_set(down="IS_normaliz",check_node=TRUE)		
+			enviMass::workflow_set(down="IS_normaliz",check_node=TRUE)		
 		}	
 		########################################################################   
 
@@ -161,21 +161,21 @@ observe({
 		logfile$workflow[names(logfile$workflow)=="qc"]<<-as.character(isolate(input$qc));
 		at2<-logfile$workflow[names(logfile$workflow)=="qc"];
 		if(at1!=at2){
-			workflow_set(down="qc",check_node=FALSE)
+			enviMass::workflow_set(down="qc",check_node=FALSE)
 		}
 		# recal ##################################################################	
 		at1<-logfile$workflow[names(logfile$workflow)=="recal"];
 		logfile$workflow[names(logfile$workflow)=="recal"]<<-as.character(isolate(input$recal));
 		at2<-logfile$workflow[names(logfile$workflow)=="recal"];
 		if(at1!=at2){
-			workflow_set(down="recal",check_node=FALSE)
+			enviMass::workflow_set(down="recal",check_node=FALSE)
 		}
 		# blinds #################################################################	
 		at1<-logfile$workflow[names(logfile$workflow)=="blinds"];
 		logfile$workflow[names(logfile$workflow)=="blinds"]<<-as.character(isolate(input$blind_filter));
 		at2<-logfile$workflow[names(logfile$workflow)=="blinds"];
 		if(at1!=at2){
-			workflow_set(down="blinds",check_node=FALSE)
+			enviMass::workflow_set(down="blinds",check_node=FALSE)
 		}		
 		
 		# replicates #############################################################	
@@ -183,7 +183,7 @@ observe({
 		logfile$workflow[names(logfile$workflow)=="replicates"]<<-as.character(isolate(input$replicates));
 		at2<-logfile$workflow[names(logfile$workflow)=="replicates"];		
 		if(at1!=at2){
-			workflow_set(down="replicates",check_node=FALSE)
+			enviMass::workflow_set(down="replicates",check_node=FALSE)
 		}
 		# align ##################################################################
 		# norm ###################################################################
@@ -191,56 +191,56 @@ observe({
 		logfile$workflow[names(logfile$workflow)=="norm"]<<-as.character(isolate(input$intnorm));
 		at2<-logfile$workflow[names(logfile$workflow)=="norm"];
 		if(at1!=at2){
-			workflow_set(down="norm",check_node=FALSE)	
+			enviMass::workflow_set(down="norm",check_node=FALSE)	
 		}
 		# profiling ##############################################################
 		at1<-logfile$workflow[names(logfile$workflow)=="profiling"]; 
 		logfile$workflow[names(logfile$workflow)=="profiling"]<<-as.character(isolate(input$profiled));
 		at2<-logfile$workflow[names(logfile$workflow)=="profiling"];
 		if(at1!=at2){
-			workflow_set(down="profiling",check_node=FALSE)		
+			enviMass::workflow_set(down="profiling",check_node=FALSE)		
 		}
 		# trendblind #############################################################
 		at1<-logfile$workflow[names(logfile$workflow)=="trendblind"];
 		logfile$workflow[names(logfile$workflow)=="trendblind"]<<-as.character(isolate(input$trenddetect));
 		at2<-logfile$workflow[names(logfile$workflow)=="trendblind"];
 		if(at1!=at2){
-			workflow_set(down="trendblind",check_node=FALSE)
+			enviMass::workflow_set(down="trendblind",check_node=FALSE)
 		}
 		# IS-normalization #######################################################
 		at1<-logfile$workflow[names(logfile$workflow)=="IS_normaliz"];
 		logfile$workflow[names(logfile$workflow)=="IS_normaliz"]<<-as.character(isolate(input$profnorm));
 		at2<-logfile$workflow[names(logfile$workflow)=="IS_normaliz"];
 		if(at1!=at2){
-			workflow_set(down="IS_normaliz",check_node=FALSE)
+			enviMass::workflow_set(down="IS_normaliz",check_node=FALSE)
 		}		
 		# IS screening ###########################################################
 		at1<-logfile$workflow[names(logfile$workflow)=="IS_screen"];
 		logfile$workflow[names(logfile$workflow)=="IS_screen"]<<-as.character(isolate(input$screen_IS));
 		at2<-logfile$workflow[names(logfile$workflow)=="IS_screen"];
 		if(at1!=at2){
-			workflow_set(down="IS_screen",check_node=FALSE)		
+			enviMass::workflow_set(down="IS_screen",check_node=FALSE)		
 		}
 		# target screening #######################################################
 		at1<-logfile$workflow[names(logfile$workflow)=="target_screen"];
 		logfile$workflow[names(logfile$workflow)=="target_screen"]<<-as.character(isolate(input$screen_target));
 		at2<-logfile$workflow[names(logfile$workflow)=="target_screen"];
 		if(at1!=at2){
-			workflow_set(down="target_screen",check_node=FALSE)		
+			enviMass::workflow_set(down="target_screen",check_node=FALSE)		
 		}
 		# LOD ###################################################################
 		at1<-logfile$workflow[names(logfile$workflow)=="LOD"];
 		logfile$workflow[names(logfile$workflow)=="LOD"]<<-as.character(isolate(input$LOD_interpol));
 		at2<-logfile$workflow[names(logfile$workflow)=="LOD"];
 		if(at1!=at2){
-			workflow_set(down="LOD",check_node=FALSE)		
+			enviMass::workflow_set(down="LOD",check_node=FALSE)		
 		}			
 		# quantification #######################################################
 		at1<-logfile$workflow[names(logfile$workflow)=="quantification"];
 		logfile$workflow[names(logfile$workflow)=="quantification"]<<-as.character(isolate(input$quantif));
 		at2<-logfile$workflow[names(logfile$workflow)=="quantification"];
 		if(at1!=at2){
-			workflow_set(down="quantification",check_node=FALSE)		
+			enviMass::workflow_set(down="quantification",check_node=FALSE)		
 		}		
 		
 	

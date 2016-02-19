@@ -14,7 +14,16 @@
 #' @details enviMass workflow function
 #' 
 
-recomb_score<-function(cent_peak_mat,pattern_compound,profileList,LOD,RT_tol_inside,int_tol,score_cut,plotit=FALSE){
+recomb_score<-function(
+		cent_peak_mat,
+		pattern_compound,
+		profileList,
+		LOD,
+		RT_tol_inside,
+		int_tol,
+		score_cut,
+		plotit=FALSE
+	){
 			
 	#######################################################################
 	if(!is.matrix(cent_peak_mat)){stop("cent_peak_mat must be a matrix")}
@@ -39,14 +48,15 @@ recomb_score<-function(cent_peak_mat,pattern_compound,profileList,LOD,RT_tol_ins
 			if(plotit){	
 				rescale<-weighted.mean(
 					x=(pattern_compound[check_nodes[[k]][,1],2]/profileList[[2]][check_nodes[[k]][,2],2]),
-				    w=( profileList[[2]][check_nodes[[k]][,2],2] / (int_tol/100*profileList[[2]][check_nodes[[k]][,2],2]) )
+				    w=(profileList[[2]][check_nodes[[k]][,2],2] / (int_tol/100*profileList[[2]][check_nodes[[k]][,2],2]) )
 				)
 				plot(
 					log10(pattern_compound[,2]/rescale),
 					log10(pattern_compound[,2]/rescale),
 					pch=19,col="lightgray",cex=1.5,
-					xlab="Theoretical intensity",
-					ylab="Measured intensity"
+					xlab="Theoretical intensity",ylab="Measured intensity",
+					xlim=c(min(log10(pattern_compound[,2]/rescale)),max(log10(pattern_compound[,2]/rescale))),
+					ylim=c(min(log10(profileList[[2]][check_nodes[[k]][,2],2])),max(log10(profileList[[2]][check_nodes[[k]][,2],2])))
 				)
 				abline(h=log10(LOD),col="red")
 				abline(v=log10(LOD),col="red")
@@ -98,30 +108,55 @@ recomb_score<-function(cent_peak_mat,pattern_compound,profileList,LOD,RT_tol_ins
 				results[[at_results]][[6]]<-rescale
 				names(results[[at_results]])<-c("Peaks","score_1","score_2","ppm deviation","RT deviation from mean","rescale factor")
 				at_results<-(at_results+1)
-				if(plotit){box(col="green",lwd=5);title(main=paste(score1,score2,sep=" - "));Sys.sleep(3);}
-				}else{
+				if(plotit){box(col="green",lwd=5);title(main=paste(score1,score2,k,sep=" - "));Sys.sleep(3);}
+			}else{
 				# maker smaller combinations by omission of one (centroid,peak)
 				if(check_nodes_index[[k]]>0){ 
 					# nothing to inherit - 
 					# - this combination is either part of another larger one or
 					# - has been build from low-combining that one
+					
+					
 					len<-(length(check_nodes[[k]][,1]):1)
 					len<-(len[1:check_nodes_index[[k]]])
 					len<-rev(len)
 					for(z in 1:check_nodes_index[[k]]){
-						new_nodes[[at_new_nodes]]<-check_nodes[[k]][-(len[z]),,drop=FALSE]
+						new_nodes[[at_new_nodes]]<-(check_nodes[[k]][-(len[z]),,drop=FALSE])
+						#cat(len[z]);cat(" - ")
 						new_nodes_index[[at_new_nodes]]<-(check_nodes_index[[k]]-z)
+						#cat(check_nodes_index[[k]]-z);cat(" - ")
 						at_new_nodes<-(at_new_nodes+1)
 					}
 					checked<-TRUE
+					
+										
 				}
-				if(plotit){box(col="red",lwd=5);Sys.sleep(2);}
+				if(plotit){box(col="red",lwd=5);title(main=k);Sys.sleep(2);}
 			}
 		}
 		check_nodes<-new_nodes
 		check_nodes_index<-new_nodes_index
 	}
-	return(results)
+	#######################################################################	
+	# resort list - largest combinations go first #########################
+	results2<-list()
+	
+if(FALSE){
+	len<-rep(0,length(results))
+	for(k in 1:length(results)){
+		len[k]<-length(results[[i]][,1])
+	}
+	ord<-order(len)
+	for(k in 1:length(results)){	
+		results2[[k]]<-results[[ord[k]]]
+	}
+	
+	
+}else{
+	results2<-results
+}
+	#######################################################################
+	return(results2)
 	#######################################################################
 	
 }

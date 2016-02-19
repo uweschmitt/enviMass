@@ -114,7 +114,7 @@ observe({
 					}
 					points(pattern_sel[,1],pattern_sel[,2],type="h",lwd=3,col="red",xlab="m/z",ylab="Rescaled intensity",ylim=c(0,110))
 					plot.window(xlim=c(0,1),ylim=c(0,1))
-					legend(0.8,1,legend=c("Theoretical pattern","Matches","Co-occurences"),fill=c("red","darkgreen","grey"),border=c("red","darkgreen","grey"))
+					legend(0.8,1,legend=c("Theoretical pattern","Matches","Co-occurrences"),fill=c("red","darkgreen","grey"),border=c("red","darkgreen","grey"))
 				}
 			})
 			# make Table over samples
@@ -124,7 +124,9 @@ observe({
 					use_comp<-(	grepl(paste(results_screen_pos[s,1],"_",sep=""),names(pattern),fixed=TRUE)&
 								grepl(paste("_",results_screen_pos[s,3],"_",sep=""),names(pattern),fixed=TRUE) )
 					res_pos_screen_sel<-res_pos_screen[use_comp][[1]]
-					which_where<-c();which_peaks<-c();sample_type<-c();score_1<-c();score_2<-c();delppm<-c();delRT<-c();inte<-c()
+					which_where<-c();which_peaks<-c();sample_type<-c();score_1<-c();score_2<-c();delppm<-c();delRT<-c();inte<-c();
+					with_peaks<-c();with_file<-c();with_s<-c();
+					
 					if(length(res_pos_screen_sel)>0){
 						for(i in 1:length(res_pos_screen_sel)){
 							if(length(res_pos_screen_sel[[i]])>0){
@@ -137,19 +139,24 @@ observe({
 									delppm<-c(delppm,paste(as.character(round(res_pos_screen_sel[[i]][[j]][[4]],digits=2)),collapse=", "));
 									#delRT<-c(delRT,paste(as.character(round(res_pos_screen_sel[[i]][[j]][[4]],digits=2)),collapse=", "));
 									found_matches<-res_pos_screen_sel[[i]][[j]]$Peaks
+									with_peaks<-c(with_peaks,paste(as.character(found_matches[,2]),collapse=", "));
 									delRT<-c(delRT,
 										paste(as.character(round(profileList_pos[[2]][found_matches[,2],3],digits=2)),collapse=", ")
 									)
 									inte<-c(inte,
 										paste(as.character(round(log10(profileList_pos[[2]][found_matches[,2],2]),digits=2)),collapse=", ")									
 									)
+									with_file<-c(with_file,i)
+									with_s<-c(with_s,s)
 								}
 							}
 						}
 					}
 					DT::datatable(
-						as.data.frame(cbind(which_where,sample_type,which_peaks,score_1,score_2,delppm,delRT,inte),row.names = NULL,stringsAsFactors=FALSE),
-						rownames = FALSE, colnames=c("File ID","File type","Pattern matches","Score > LOD","Score < LOD","m/z deviation (ppm)","RT","log Intensity")
+						as.data.frame(cbind(which_where,sample_type,which_peaks,score_1,score_2,delppm,delRT,inte,
+						with_peaks,with_file,with_s),row.names = NULL,stringsAsFactors=FALSE),
+						rownames = FALSE, colnames=c("File ID","File type","Pattern matches","Score > LOD","Score < LOD",
+							"m/z deviation (ppm)","RT","log Intensity","Peak IDs","m","i")
 					)
 				}
 			})

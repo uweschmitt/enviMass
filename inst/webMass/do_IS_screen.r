@@ -151,8 +151,6 @@
 								score_cut=FALSE,
 								plotit=FALSE
 							)
-							#if(length(combination_matches)>5){stop()}
-							if(length(res_IS_pos_screen[[i]])==0){}
 							res_IS_pos_screen[[i]][[m]]<-combination_matches
 							if(length(combination_matches)>1){many_unamb<-(many_unamb+1)}
 							many<-(many+1)

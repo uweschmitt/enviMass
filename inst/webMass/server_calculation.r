@@ -44,12 +44,12 @@ maincalc<-reactive({
 			summa<<-logfile$summary
 			summa[1,2]<<-"ok"
 			summa[-1,2]<<-"..."
-			output$summa_html<-renderText(summary_html(summa));
+			output$summa_html<-renderText(enviMass::summary_html(summa));
         }
         ########################################################################
         # peak picking - always run ############################################
         if(do_flow==2){
-			workflow_node(
+			enviMass::workflow_node(
 				name_workflow="peakpicking",
 				name_summary="peakpicking",
 				name_redo="peakpicking",
@@ -60,7 +60,7 @@ maincalc<-reactive({
         ########################################################################
         # quality check ########################################################
         if(do_flow==3){           
-          	workflow_node(
+          	enviMass::workflow_node(
 				"qc","qc","qc","Quality control",
 				path_do="do_qc.R",path_undo="dont_qc.R",session,output,input
 			)   
@@ -68,7 +68,7 @@ maincalc<-reactive({
         ########################################################################
         # isotope pattern calculation ##########################################
         if(do_flow==4){
-		    workflow_node(
+		    enviMass::workflow_node(
 				"pattern","pattern","pattern","Compound isotope patterns",
 				path_do="do_pattern.R",path_undo=FALSE,session,output,input
 			)  		            
@@ -76,7 +76,7 @@ maincalc<-reactive({
         ########################################################################
         # m/z recalibration ####################################################
         if(do_flow==5){
-			workflow_node(
+			enviMass::workflow_node(
 				"recal","recal","recal","Mass recalibration",
 				path_do="do_recal.R",path_undo="dont_recal.R",session,output,input
 			)     
@@ -90,7 +90,7 @@ maincalc<-reactive({
         ########################################################################
 		# Replicates ###########################################################
         if(do_flow==7){
-			workflow_node(
+			enviMass::workflow_node(
 				"blinds","blinds","blinds","Blind filter",
 				path_do="do_blind.R",path_undo="dont_blind.R",session,output,input
 			)  	
@@ -98,7 +98,7 @@ maincalc<-reactive({
         ########################################################################
 		# Replicates ###########################################################
         if(do_flow==8){
-			workflow_node(
+			enviMass::workflow_node(
 				"replicates","replicates","replicates","Replicate filter",
 				path_do="do_replicates.R",path_undo="dont_replicates.R",session,output,input
 			)  	
@@ -106,7 +106,7 @@ maincalc<-reactive({
         ########################################################################
         # intensity normalization ##############################################
         if(do_flow==9){
-			workflow_node(
+			enviMass::workflow_node(
 				"norm","norm","norm","Median intensity normalization",
 				path_do="do_norm.R",path_undo="dont_norm.R",session,output,input
 			)  
@@ -114,7 +114,7 @@ maincalc<-reactive({
         ########################################################################
         # profiling ############################################################
         if(do_flow==10){
-			workflow_node(
+			enviMass::workflow_node(
 				"profiling","profiling","profiling","Profile extraction",
 				path_do="do_profiling.R",path_undo="dont_profiling.R",session,output,input
 			)  
@@ -122,7 +122,7 @@ maincalc<-reactive({
         ########################################################################
 		# LOD ##################################################################
         if(do_flow==11){
-			workflow_node(
+			enviMass::workflow_node(
 				"LOD","LOD","LOD","LOD interpolation",
 				path_do="do_LOD.R",path_undo="dont_LOD.R",session,output,input
 			)  	
@@ -130,7 +130,7 @@ maincalc<-reactive({
         ########################################################################
 		# IS screening #########################################################
         if(do_flow==12){
-			workflow_node(
+			enviMass::workflow_node(
 				"IS_screen","IS_screen","IS_screen","IS screening",
 				path_do="do_IS_screen.R",path_undo="dont_IS_screen.R",session,output,input
 			)  	
@@ -138,7 +138,7 @@ maincalc<-reactive({
         ########################################################################
 		# target screening #####################################################
         if(do_flow==13){
-			workflow_node(
+			enviMass::workflow_node(
 				"target_screen","target_screen","target_screen","Target screening",
 				path_do="do_target_screen.R",path_undo="dont_target_screen.R",session,output,input
 			)  		
@@ -146,7 +146,7 @@ maincalc<-reactive({
 		########################################################################
 		# IS-normalization #####################################################
         if(do_flow==14){
-			workflow_node(
+			enviMass::workflow_node(
 				"IS_normaliz","IS_normaliz","IS_normaliz","IS-based intensity normalization",
 				path_do="do_IS_normaliz.R",path_undo="dont_IS_normaliz.R",session,output,input
 			)  
@@ -154,7 +154,7 @@ maincalc<-reactive({
 		########################################################################
 		# Quantification #######################################################
         if(do_flow==15){
-			workflow_node(
+			enviMass::workflow_node(
 				"quantification","quantification","quantification","Quantification",
 				path_do="do_quantification.R",path_undo="dont_quantification.R",session,output,input
 			)  	
@@ -162,7 +162,7 @@ maincalc<-reactive({
         ########################################################################
         # trend / blind ########################################################
         if(do_flow==16){
-			workflow_node(
+			enviMass::workflow_node(
 				"trendblind","trendblind","trendblind","Trend detection and blind subtraction",
 				path_do="do_trendblind.R",path_undo="dont_trendblind.R",session,output,input
 			)  	
@@ -203,14 +203,14 @@ maincalc<-reactive({
         }
         do_flow<<-(do_flow+1);
 		if(do_flow==19){
-			output$summa_html<<-renderText(summary_html(logfile$summary));
+			output$summa_html<<-renderText(enviMass::summary_html(logfile$summary));
 		}
         if(do_flow<20){
 			invalidateLater(500, session=NULL)
 			cat("Calculating...");
 			return("Calculating...")
 		}else{		
-			output$summa_html<<-renderText(summary_html(logfile$summary));
+			output$summa_html<<-renderText(enviMass::summary_html(logfile$summary));
 			isolate(init$b<-(init$b+1))
 			if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_calculation.r!")}
 			cat("Calculations completed \n")
