@@ -42,7 +42,7 @@ observe({
 		rm(IS,IS1,IS2);
 		#############################################################################
 		# adjust task/workflow settings #############################################
-		enviMass::workflow_set(logfile,down="pattern")		  
+		enviMass:::workflow_set(logfile,down="pattern")		  
 		#############################################################################			
 		output$IS<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 		logfile[[2]][3:7]<<-rep(TRUE,length(3:7));
@@ -62,7 +62,7 @@ observe({
 			rm(IS)
 			#############################################################################
 			# adjust task/workflow settings #############################################
-			enviMass::workflow_set(logfile,down="pattern")	
+			enviMass:::workflow_set(logfile,down="pattern")	
 			####################################################################
 			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));   
  			output$IS<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
@@ -82,7 +82,7 @@ observe({
 		write.table(IS,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)
 		#############################################################################
 		# adjust task/workflow settings #############################################
-		enviMass::workflow_set(logfile,down="pattern")	
+		enviMass:::workflow_set(logfile,down="pattern")	
 		####################################################################
 		output$IS<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
@@ -134,7 +134,7 @@ observe({
 		rm(targets,targets1,targets2);
 		#############################################################################
 		# adjust task/workflow settings #############################################
-		enviMass::workflow_set(logfile,down="pattern")	
+		enviMass:::workflow_set(logfile,down="pattern")	
 		#############################################################################			
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 		output$targets<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      
@@ -173,7 +173,7 @@ observe({
 		write.table(targets,file=file.path(logfile[[1]],"dataframes","targets.txt"),row.names=FALSE,sep="\t",quote=FALSE)      	  
 		#############################################################################
 		# adjust task/workflow settings #############################################
-		enviMass::workflow_set(logfile,down="pattern")	
+		enviMass:::workflow_set(logfile,down="pattern")	
 		#############################################################################			
 		output$targets<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      	  
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
@@ -238,7 +238,7 @@ addmeasu<-reactive({
 						doit<-as.character(isolate(input$Measadd_incl))
 						doit<<-as.character(isolate(input$Measadd_incl))
 						if(doit=="TRUE"){
-							enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
+							enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
 						}
 						#############################################################################			
 						save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
@@ -292,7 +292,7 @@ addmeasu<-reactive({
 					doit<-as.character(isolate(input$Measadd_incl))
 					doit<<-as.character(isolate(input$Measadd_incl))
 					if(doit=="TRUE"){
-						enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
+						enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
 					}
 					#############################################################################			
 					output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"));
@@ -341,7 +341,7 @@ observe({
 		#############################################################################
 		# adjust task/workflow settings #############################################
 		if(adjustit=="TRUE"){
-			enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
+			enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
 		}	
         #############################################################################			
         output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"));
@@ -417,7 +417,7 @@ observe({
 			write.csv(measurements_1,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
 			rm(measurements_1,measurements_2);
-			enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE) 
+			enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE) 
 			cat(" done.")		
 		}else{
 			cat(" no files to import - project empty?.")
