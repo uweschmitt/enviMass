@@ -595,11 +595,24 @@
 									selected = "Target compounds", multiple = FALSE)),
 								column(4, selectInput(inputId="screen_pos_summarize", label="", choices = c("Show all adducts"="yes","Collapse adducts"="no"), "yes"))
 							),
+							
+							bsCollapse(multiple = FALSE, open = NULL, id = "collapse_Screen_pos",
+								bsCollapsePanel(title="Pattern match for selected compound", #style="info",
+									textOutput('screening_details_comp_pos'),
+									plotOutput("plot_pattern")
+								),
+								bsCollapsePanel(title="Data distributions for selected compound",
+								textOutput('screening_details_comp_pos2')
+								),
+								bsCollapsePanel(title="Screening table for selected compound", 
+									textOutput('screening_details_comp_pos3'),
+									HTML('<hr noshade="noshade" />'),
+									DT::dataTableOutput('Table_screening_selected_pos')
+								)
+							),
+
 							HTML('<hr noshade="noshade" />'),
-							fluidRow(
-								column(9, DT::dataTableOutput('Table_screening_pos')),
-								column(3, verbatimTextOutput('Table_screening_pos_row'))
-							)
+							DT::dataTableOutput('Table_screening_pos')
 						),
 						tabPanel("Negative ionization",
 							fluidRow(

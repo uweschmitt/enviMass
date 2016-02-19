@@ -182,9 +182,6 @@
 			save(results_screen_IS_pos,file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos"))
 			rm(measurements,intstand,results_screen_IS_pos);
 		}
-		
-		
-		
 		####################################################################################################
 		rm(getit,IS_pos_screen_listed,res_IS_pos_screen)
 		rm(pattern,pattern_RT,pattern_delRT,envir=as.environment(".GlobalEnv"))

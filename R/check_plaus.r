@@ -26,13 +26,13 @@
 				for(m in (n+1):length(cent_peak_combi[,1])){
 					ratio_int<-(profileList[[2]][cent_peak_combi[n,2],2]/profileList[[2]][cent_peak_combi[m,2],2])
 					ratio_int_theo_high<-(
-						(pattern_centro[cent_peak_combi[n,1],1]+(pattern_centro[cent_peak_combi[n,1],1]*int_tol/100))/
-						(pattern_centro[cent_peak_combi[m,1],1]-(pattern_centro[cent_peak_combi[m,1],1]*int_tol/100))
+						(pattern_centro[cent_peak_combi[n,1],2]+(pattern_centro[cent_peak_combi[n,1],2]*int_tol/100))/
+						(pattern_centro[cent_peak_combi[m,1],2]-(pattern_centro[cent_peak_combi[m,1],2]*int_tol/100))
 					)
 					if(ratio_int_theo_high<ratio_int){return(FALSE)}
 					ratio_int_theo_low<-(
-						(pattern_centro[cent_peak_combi[n,1],1]-(pattern_centro[cent_peak_combi[n,1],1]*int_tol/100))/
-						(pattern_centro[cent_peak_combi[m,1],1]+(pattern_centro[cent_peak_combi[m,1],1]*int_tol/100))
+						(pattern_centro[cent_peak_combi[n,1],2]-(pattern_centro[cent_peak_combi[n,1],2]*int_tol/100))/
+						(pattern_centro[cent_peak_combi[m,1],2]+(pattern_centro[cent_peak_combi[m,1],2]*int_tol/100))
 					)
 					if(ratio_int_theo_low>ratio_int){return(FALSE)}	
 				}

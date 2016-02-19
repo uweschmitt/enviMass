@@ -40,7 +40,7 @@
 			if(length(screened_listed[[i]])>0){
 				for(m in 1:length(screened_listed[[i]])){
 					if(length(screened_listed[[i]][[m]])>0){
-						is_sample<-(measurements_table[IDs==m,3]=="sample")
+						is_sample<-(measurements_table[IDs==m,3]=="sample")					
 						if(!is_sample){ # could still be doted or blind or ...
 							is_blank<-(measurements_table[IDs==m,3]=="blank")
 						}else{
@@ -55,9 +55,11 @@
 								if(!is.na(screened_listed[[i]][[m]][[k]]$score_1)){
 									local_score<-(local_score+screened_listed[[i]][[m]][[k]]$score_1)
 								}
-								if(!is.na(screened_listed[[i]][[m]][[k]]$score_2)){
-									local_score<-(local_score+screened_listed[[i]][[m]][[k]]$score_2)
-								}										
+								if( (local_score>=1) || (is.na(screened_listed[[i]][[m]][[k]]$score_1)) ){
+									if(!is.na(screened_listed[[i]][[m]][[k]]$score_2)){
+										local_score<-(local_score+screened_listed[[i]][[m]][[k]]$score_2)
+									}
+								}									
 								if(local_score>max_score){
 									max_score<-local_score
 								}
