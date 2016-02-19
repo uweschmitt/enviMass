@@ -36,7 +36,7 @@ workflow_node<-function(name_workflow,name_summary,name_redo,name_output,path_do
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		summa[(logfile$summary[,1]==name_summary),2]<-"done"
 		summa[(logfile$summary[,1]==name_summary),2]<<-"done"
-		output$summa_html<-renderText(enviMass::summary_html(summa));
+		output$summa_html<-renderText(enviMass:::summary_html(summa));
 		cat(paste(name_output,"done \n"));
 		output$dowhat<-renderText(paste(name_output,"done ... wait"))
 	######################################################################################
@@ -52,14 +52,14 @@ workflow_node<-function(name_workflow,name_summary,name_redo,name_output,path_do
 					source(path_undo,local=TRUE)
 					summa[(logfile$summary[,1]==name_summary),2]<-"removed"
 					summa[(logfile$summary[,1]==name_summary),2]<<-"removed"
-					output$summa_html<-renderText(enviMass::summary_html(summa));		
+					output$summa_html<-renderText(enviMass:::summary_html(summa));		
 					cat(paste(name_output,"removed \n"));
 					output$dowhat<-renderText(paste(name_output,"removed .... wait"))
 				}
 			}else{
 				summa[(logfile$summary[,1]==name_summary),2]<-"skipped"
 				summa[(logfile$summary[,1]==name_summary),2]<<-"skipped"
-				output$summa_html<-renderText(enviMass::summary_html(summa));		
+				output$summa_html<-renderText(enviMass:::summary_html(summa));		
 				cat(paste(name_output,"removed \n"));
 				output$dowhat<-renderText(paste(name_output,"removed .... wait"))			
 			}
@@ -69,7 +69,7 @@ workflow_node<-function(name_workflow,name_summary,name_redo,name_output,path_do
 		}else{
 			summa[(logfile$summary[,1]==name_summary),2]<-"ok"
 			summa[(logfile$summary[,1]==name_summary),2]<<-"ok"
-			output$summa_html<-renderText(enviMass::summary_html(summa));
+			output$summa_html<-renderText(enviMass:::summary_html(summa));
 			cat(paste(name_output,"done before \n"));
 			output$dowhat<-renderText(paste(name_output,"done before .... wait"))
 		}
