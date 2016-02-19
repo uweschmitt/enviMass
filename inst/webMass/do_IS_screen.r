@@ -169,7 +169,7 @@
 		if(length(IS_pos_screen_listed)>0){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
-			results_screen_IS_pos<-get_screening_results(
+			results_screen_IS_pos<-enviMass:::get_screening_results(
 				screened_listed=res_IS_pos_screen,
 				pattern=pattern,
 				profileList=profileList_pos,
@@ -338,7 +338,7 @@
 		if(length(IS_neg_screen_listed)>0){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
-			results_screen_IS_neg<-get_screening_results(
+			results_screen_IS_neg<-enviMass:::get_screening_results(
 				screened_listed=res_IS_neg_screen,
 				pattern=pattern,
 				profileList=profileList_neg,

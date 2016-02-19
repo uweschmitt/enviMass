@@ -44,7 +44,7 @@ maincalc<-reactive({
 			summa<<-logfile$summary
 			summa[1,2]<<-"ok"
 			summa[-1,2]<<-"..."
-			output$summa_html<-renderText(enviMass::summary_html(summa));
+			output$summa_html<-renderText(enviMass:::summary_html(summa));
         }
         ########################################################################
         # peak picking - always run ############################################
@@ -203,14 +203,14 @@ maincalc<-reactive({
         }
         do_flow<<-(do_flow+1);
 		if(do_flow==19){
-			output$summa_html<<-renderText(enviMass::summary_html(logfile$summary));
+			output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
 		}
         if(do_flow<20){
 			invalidateLater(500, session=NULL)
 			cat("Calculating...");
 			return("Calculating...")
 		}else{		
-			output$summa_html<<-renderText(enviMass::summary_html(logfile$summary));
+			output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
 			isolate(init$b<-(init$b+1))
 			if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_calculation.r!")}
 			cat("Calculations completed \n")

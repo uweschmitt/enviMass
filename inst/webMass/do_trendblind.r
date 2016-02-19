@@ -27,7 +27,7 @@
 		dev.off()
 		expr4p<-list(src=file.path(logfile[[1]],"pics","boxprofile_pos"))
 		output$boxprofile<-renderImage(expr4p, deleteFile = FALSE)
-		profpeaks_pos<-profiletopeak(profileList_pos,progbar=logfile$parameters[21])
+		profpeaks_pos<-enviMass:::profiletopeak(profileList_pos,progbar=logfile$parameters[21])
 		profpeaks_pos<-profpeaks_pos[order(profpeaks_pos[,13],decreasing=TRUE),]
 		profpeaks_pos<<-profpeaks_pos;
 		save(profpeaks_pos,file=file.path(as.character(logfile[[1]]),"results","profpeaks_pos"));
@@ -65,7 +65,7 @@
 		dev.off()
 		expr4n<-list(src=file.path(logfile[[1]],"pics","boxprofile_neg"))
 		output$boxprofile<-renderImage(expr4n, deleteFile = FALSE)
-		profpeaks_neg<-profiletopeak(profileList_neg,progbar=logfile$parameters[21])
+		profpeaks_neg<-enviMass:::profiletopeak(profileList_neg,progbar=logfile$parameters[21])
 		profpeaks_neg<-profpeaks_neg[order(profpeaks_neg[,13],decreasing=TRUE),]
 		profpeaks_neg<<-profpeaks_neg;
 		save(profpeaks_neg,file=file.path(as.character(logfile[[1]]),"results","profpeaks_neg"));
