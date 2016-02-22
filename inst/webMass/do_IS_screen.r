@@ -149,7 +149,8 @@
 								RT_tol_inside=RT_tol_inside,
 								int_tol=int_tol,
 								score_cut=FALSE,
-								plotit=FALSE
+								plotit=FALSE,
+								verbose=FALSE
 							)
 							res_IS_pos_screen[[i]][[m]]<-combination_matches
 							if(length(combination_matches)>1){many_unamb<-(many_unamb+1)}
@@ -166,7 +167,7 @@
 		save(res_IS_pos_screen,file=file.path(logfile$project_folder,"results","screening","res_IS_pos_screen"))
 		# assemble output table of length(list) ############################################################
 		# iterator m is directly equal to the sample ID ####################################################
-		if(length(IS_pos_screen_listed)>0){
+		if( length(IS_pos_screen_listed)>0 ){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
 			results_screen_IS_pos<-enviMass:::get_screening_results(

@@ -331,6 +331,8 @@ maincalc2<-reactive({
 				cat("Looking at positive targets_startup \n")
 				if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos")) ){
 					load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))
+					screen_dev_pos<-results_screen_target_pos[[3]]
+					rat_sam_blank_pos<-results_screen_target_pos[[1]][,10,drop=FALSE]
 					if( isolate(input$screen_pos_summarize=="yes") ){
 						results_screen<-results_screen_target_pos[[1]]
 					}else{
@@ -354,6 +356,8 @@ maincalc2<-reactive({
 				cat("Looking at negative targets_startup \n")
 				if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg")) ){
 					load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg"))
+					screen_dev_neg<-results_screen_target_neg[[3]]
+					rat_sam_blank_neg<-results_screen_target_neg[[1]][,10,drop=FALSE]
 					if( isolate(input$screen_neg_summarize=="yes") ){
 						results_screen<-results_screen_target_neg[[1]]
 					}else{

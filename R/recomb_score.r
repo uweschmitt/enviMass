@@ -10,6 +10,7 @@
 #' @param int_tol
 #' @param score_cut 
 #' @param plotit
+#' @param verbose
 #' 
 #' @details enviMass workflow function
 #' 
@@ -22,7 +23,8 @@ recomb_score<-function(
 		RT_tol_inside,
 		int_tol,
 		score_cut,
-		plotit=FALSE
+		plotit=FALSE,
+		verbose=FALSE
 	){
 			
 	#######################################################################
@@ -32,7 +34,7 @@ recomb_score<-function(
 	if((!is.numeric(RT_tol_inside))||(length(RT_tol_inside)>1)){stop("LOD must be numeric")}
 	if((!is.numeric(int_tol))||(length(int_tol)>1)){stop("LOD must be numeric")}	
 	#######################################################################		
-	results<-list(0)
+	results<-list()
 	at_results<-1
 	checked<-TRUE
 	check_nodes<-list()
@@ -40,11 +42,13 @@ recomb_score<-function(
 	check_nodes_index<-list()
 	check_nodes_index[[1]]<-length(cent_peak_mat[,1])
 	while(checked){
+		if(verbose){cat("\n new round:")}
 		new_nodes<-list()
 		new_nodes_index<-list()
 		at_new_nodes<-1
 		checked<-FALSE
 		for(k in 1:length(check_nodes)){
+			if(verbose){cat(" :: "); cat(paste(check_nodes[[k]][,2],collapse=","))}
 			if(plotit){	
 				rescale<-weighted.mean(
 					x=(pattern_compound[check_nodes[[k]][,1],2]/profileList[[2]][check_nodes[[k]][,2],2]),
@@ -76,47 +80,62 @@ recomb_score<-function(
 					int_tol
 				) 
 			){
-				results[[at_results]]<-list()
-				results[[at_results]][[1]]<-check_nodes[[k]]
-				# score intensities ...
-				rescale<-weighted.mean(
-					x=(pattern_compound[check_nodes[[k]][,1],2]/profileList[[2]][check_nodes[[k]][,2],2]),
-				    w=( profileList[[2]][check_nodes[[k]][,2],2] / (int_tol/100*profileList[[2]][check_nodes[[k]][,2],2]) )
-				)
-				above_LOD<-((pattern_compound[,2]/rescale)>LOD)
-				# ... measured "above LOD threshold:"
-				if(any(above_LOD)){
-					score1<-(
-						sum(pattern_compound[check_nodes[[k]][,1],2][above_LOD[check_nodes[[k]][,1]]])/sum(pattern_compound[above_LOD,2])
-					)
-					score1<-round(score1,digits=4)
-				}else{
-					score1<-NA
+				if(verbose){cat("-TRUE");stop()}
+				contained<-FALSE
+				if(length(results)>0){
+					for(n in 1:length(results)){
+						if( !any(is.na(match(check_nodes[[k]][,2],results[[n]][[1]][,2]))) ){
+							contained<-TRUE;
+							break; # skip - already contained in some larger combination
+						}
+					}
 				}
-				results[[at_results]][[2]]<-score1
-				# ... measured "below LOD threshold:"
-				if(any(!above_LOD)){
-					score2<-(
-						sum(pattern_compound[check_nodes[[k]][,1],2][!above_LOD[check_nodes[[k]][,1]]]) / sum(pattern_compound[!above_LOD,2])
+				if(!contained){
+					if(verbose){cat("-ok")}
+					results[[at_results]]<-list()
+					results[[at_results]][[1]]<-check_nodes[[k]]
+					# score intensities ...
+					rescale<-weighted.mean(
+						x=(pattern_compound[check_nodes[[k]][,1],2]/profileList[[2]][check_nodes[[k]][,2],2]),
+						w=( profileList[[2]][check_nodes[[k]][,2],2] / (int_tol/100*profileList[[2]][check_nodes[[k]][,2],2]) )
 					)
-				}else{
-					score2<-NA
-				}
-				results[[at_results]][[3]]<-score2
-				results[[at_results]][[4]]<-((pattern_compound[check_nodes[[k]][,1],1]-profileList[[2]][check_nodes[[k]][,2],1])/mean(pattern_compound[check_nodes[[k]][,1],1])*1E6)				
-				results[[at_results]][[5]]<-(mean(profileList[[2]][check_nodes[[k]][,2],3])-profileList[[2]][check_nodes[[k]][,2],3])
-				results[[at_results]][[6]]<-rescale
-				names(results[[at_results]])<-c("Peaks","score_1","score_2","ppm deviation","RT deviation from mean","rescale factor")
-				at_results<-(at_results+1)
-				if(plotit){box(col="green",lwd=5);title(main=paste(score1,score2,k,sep=" - "));Sys.sleep(3);}
+					above_LOD<-((pattern_compound[,2]/rescale)>LOD)
+					# ... measured "above LOD threshold:"
+					if(any(above_LOD)){
+						score1<-(
+							sum(pattern_compound[check_nodes[[k]][,1],2][above_LOD[check_nodes[[k]][,1]]])/sum(pattern_compound[above_LOD,2])
+						)
+						score1<-round(score1,digits=4)
+					}else{
+						score1<-NA
+					}
+					results[[at_results]][[2]]<-score1
+					# ... measured "below LOD threshold:"
+					if(any(!above_LOD)){
+						score2<-(
+							sum(pattern_compound[check_nodes[[k]][,1],2][!above_LOD[check_nodes[[k]][,1]]]) / sum(pattern_compound[!above_LOD,2])
+						)
+					}else{
+						score2<-NA
+					}
+					results[[at_results]][[3]]<-score2
+					results[[at_results]][[4]]<-((pattern_compound[check_nodes[[k]][,1],1]-profileList[[2]][check_nodes[[k]][,2],1])/mean(pattern_compound[check_nodes[[k]][,1],1])*1E6)				
+					results[[at_results]][[5]]<-(mean(profileList[[2]][check_nodes[[k]][,2],3])-profileList[[2]][check_nodes[[k]][,2],3])
+					results[[at_results]][[6]]<-rescale
+					results[[at_results]][[7]]<-profileList[[2]][check_nodes[[k]][,2],1]
+					results[[at_results]][[8]]<-log10(profileList[[2]][check_nodes[[k]][,2],2])
+					results[[at_results]][[9]]<-profileList[[2]][check_nodes[[k]][,2],3]
+					names(results[[at_results]])<-c("Peaks","score_1","score_2","ppm deviation","RT deviation from mean","rescale factor","m/z","Intensity","RT")
+					at_results<-(at_results+1)
+					if(plotit){box(col="green",lwd=5);title(main=paste(score1,score2,k,sep=" - "));Sys.sleep(3);}
+				}	
 			}else{
+				if(verbose){cat("-FALSE")}
 				# maker smaller combinations by omission of one (centroid,peak)
 				if(check_nodes_index[[k]]>0){ 
 					# nothing to inherit - 
 					# - this combination is either part of another larger one or
 					# - has been build from low-combining that one
-					
-					
 					len<-(length(check_nodes[[k]][,1]):1)
 					len<-(len[1:check_nodes_index[[k]]])
 					len<-rev(len)
@@ -128,8 +147,6 @@ recomb_score<-function(
 						at_new_nodes<-(at_new_nodes+1)
 					}
 					checked<-TRUE
-					
-										
 				}
 				if(plotit){box(col="red",lwd=5);title(main=k);Sys.sleep(2);}
 			}
@@ -140,8 +157,6 @@ recomb_score<-function(
 	#######################################################################	
 	# resort list - largest combinations go first #########################
 	results2<-list()
-	
-if(FALSE){
 	len<-rep(0,length(results))
 	for(k in 1:length(results)){
 		len[k]<-length(results[[i]][,1])
@@ -150,11 +165,7 @@ if(FALSE){
 	for(k in 1:length(results)){	
 		results2[[k]]<-results[[ord[k]]]
 	}
-	
-	
-}else{
 	results2<-results
-}
 	#######################################################################
 	return(results2)
 	#######################################################################

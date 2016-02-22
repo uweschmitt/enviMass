@@ -11,7 +11,14 @@
 #' @details enviMass workflow function
 #' 
 
-	get_screening_results<-function(screened_listed,pattern,profileList,measurements_table,compound_table,cut_score){
+	get_screening_results<-function(
+		screened_listed,
+		pattern,
+		profileList,
+		measurements_table,
+		compound_table,
+		cut_score
+	){
 
 		IDs<-as.numeric(measurements_table[,1]) 
 		num_samples_all<-rep(0,length(screened_listed))
@@ -23,7 +30,11 @@
 		mean_int_ratio<-rep(0,length(screened_listed))
 		IDed<-rep("")
 		named<-rep("")
-		adducted<-rep("")
+		adducted<-rep("")	
+		at_len<-1		
+		max_len<-10000
+		at_matrix<-matrix(nrow=10000,ncol=6,0)
+		colnames(at_matrix)<-c("m/z","log Intensity","RT","m/z deviation [ppm]","RT deviation","above_cutscore")
 		for(i in 1:length(screened_listed)){
 			IDed[i]<-strsplit(names(pattern)[i],"_")[[1]][1]
 			named[i]<-compound_table[compound_table[,1]==strsplit(names(pattern)[i],"_")[[1]][1],2]
@@ -82,7 +93,24 @@
 											profileList[[2]][screened_listed[[i]][[m]][[k]][[1]][d,2],2]	
 										)
 									}
-								}									
+								}
+								local_len<-length(screened_listed[[i]][[m]][[k]][[7]])
+								if((at_len+local_len)>max_len){
+									at_matrix<-rbind(
+										at_matrix, 
+										matrix(nrow=10000,ncol=6,0)
+									)
+									max_len<-(max_len+1000)
+								}
+								at_matrix[at_len:(at_len+local_len-1),1]<-screened_listed[[i]][[m]][[k]][[7]]
+								at_matrix[at_len:(at_len+local_len-1),2]<-screened_listed[[i]][[m]][[k]][[8]]
+								at_matrix[at_len:(at_len+local_len-1),3]<-screened_listed[[i]][[m]][[k]][[9]]
+								at_matrix[at_len:(at_len+local_len-1),4]<-screened_listed[[i]][[m]][[k]][[4]]
+								at_matrix[at_len:(at_len+local_len-1),5]<-screened_listed[[i]][[m]][[k]][[5]]
+								if(local_score>=cut_score){
+									at_matrix[at_len:(at_len+local_len-1),6]<-1
+								}
+								at_len<-(at_len+local_len)
 							}
 						}
 						if(is_sample){
@@ -149,7 +177,7 @@
 			"Blank matches",
 			"Max. blank score",
 			"Max. blank peaks",
-			"Mean ratio sample/blank"
+			"Int. ratio sample/blank"
 		)
 		##########################################################################################
 		# Table with adducts per compound summarized #############################################		
@@ -193,6 +221,12 @@
 		results<-list()
 		results[[1]]<-results_table_1
 		results[[2]]<-results_table_2
+		if(at_len>0){
+			at_matrix<-at_matrix[1:(at_len-1),]
+			results[[3]]<-at_matrix
+		}else{
+			results_table_3<-numeric(0)
+		}	
 		return(results)
 	}
 

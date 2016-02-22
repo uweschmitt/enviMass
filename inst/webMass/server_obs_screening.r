@@ -15,6 +15,8 @@ observe({
 			cat("\n Looking at positive targets_selec")
 			if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos")) ){
 				load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))
+				screen_dev_pos<-results_screen_target_pos[[3]]
+				rat_sam_blank_pos<-results_screen_target_pos[[1]][,10,drop=FALSE]
 				if( isolate(input$screen_pos_summarize=="yes") ){
 					results_screen_pos<-results_screen_target_pos[[1]]
 				}else{
@@ -47,6 +49,8 @@ observe({
 			cat("\n Looking at positive standards_selec")
 			if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos")) ){
 				load(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos"))
+				screen_dev_pos<-results_screen_IS_pos[[3]]		
+				rat_sam_blank_pos<-results_screen_IS_pos[[1]][,10,drop=FALSE]				
 				if( isolate(input$screen_pos_summarize=="yes") ){
 					results_screen_pos<-results_screen_IS_pos[[1]]
 				}else{
@@ -125,8 +129,7 @@ observe({
 								grepl(paste("_",results_screen_pos[s,3],"_",sep=""),names(pattern),fixed=TRUE) )
 					res_pos_screen_sel<-res_pos_screen[use_comp][[1]]
 					which_where<-c();which_peaks<-c();sample_type<-c();score_1<-c();score_2<-c();delppm<-c();delRT<-c();inte<-c();
-					with_peaks<-c();with_file<-c();with_s<-c();
-					
+					with_peaks<-c();#with_file<-c();with_s<-c();
 					if(length(res_pos_screen_sel)>0){
 						for(i in 1:length(res_pos_screen_sel)){
 							if(length(res_pos_screen_sel[[i]])>0){
@@ -138,28 +141,63 @@ observe({
 									score_2<-c(score_2,round(res_pos_screen_sel[[i]][[j]]$score_2,digits=2));
 									delppm<-c(delppm,paste(as.character(round(res_pos_screen_sel[[i]][[j]][[4]],digits=2)),collapse=", "));
 									#delRT<-c(delRT,paste(as.character(round(res_pos_screen_sel[[i]][[j]][[4]],digits=2)),collapse=", "));
-									found_matches<-res_pos_screen_sel[[i]][[j]]$Peaks
-									with_peaks<-c(with_peaks,paste(as.character(found_matches[,2]),collapse=", "));
+									with_peaks<-c(with_peaks,paste(as.character(res_pos_screen_sel[[i]][[j]]$Peaks[,2]),collapse=", "));
 									delRT<-c(delRT,
-										paste(as.character(round(profileList_pos[[2]][found_matches[,2],3],digits=2)),collapse=", ")
+										paste(as.character(round(res_pos_screen_sel[[i]][[j]]$RT,digits=2)),collapse=", ")
 									)
 									inte<-c(inte,
-										paste(as.character(round(log10(profileList_pos[[2]][found_matches[,2],2]),digits=2)),collapse=", ")									
+										paste(as.character(round(log10(res_pos_screen_sel[[i]][[j]]$Intensity),digits=2)),collapse=", ")									
 									)
-									with_file<-c(with_file,i)
-									with_s<-c(with_s,s)
+									#with_file<-c(with_file,i)
+									#with_s<-c(with_s,s)
 								}
 							}
 						}
 					}
 					DT::datatable(
-						as.data.frame(cbind(which_where,sample_type,which_peaks,score_1,score_2,delppm,delRT,inte,
-						with_peaks,with_file,with_s),row.names = NULL,stringsAsFactors=FALSE),
+						as.data.frame(cbind(which_where,sample_type,which_peaks,score_1,score_2,delppm,delRT,inte,with_peaks),
+						#with_file,with_s),
+						row.names = NULL,stringsAsFactors=FALSE),
 						rownames = FALSE, colnames=c("File ID","File type","Pattern matches","Score > LOD","Score < LOD",
-							"m/z deviation (ppm)","RT","log Intensity","Peak IDs","m","i")
+							"m/z deviation (ppm)","RT","log Intensity","Peak IDs")#,"m","i")
 					)
 				}
 			})
+			output$plot_pattern_distrib_pos <- renderPlot({
+				if(length(screen_dev_pos)>0){
+					use_x<-input$Summ_pos_x
+					use_y<-input$Summ_pos_y
+					par(mar=c(4,4,.5,.5))
+					plot(
+						screen_dev_pos[,colnames(screen_dev_pos)==use_x],
+						screen_dev_pos[,colnames(screen_dev_pos)==use_y],
+						pch=19,cex=.3,xlab=use_x,ylab=use_y,col="lightgrey"
+					)
+					points(
+						screen_dev_pos[screen_dev_pos[,6]==1,colnames(screen_dev_pos)==use_x],
+						screen_dev_pos[screen_dev_pos[,6]==1,colnames(screen_dev_pos)==use_y],
+						pch=19,cex=.4,xlab=use_x,ylab=use_y,col="black"
+					)					
+					if(use_x=="m/z deviation [ppm]" | use_x=="RT deviation"){abline(v=0,col="red")}
+					if(use_y=="m/z deviation [ppm]" | use_y=="RT deviation"){abline(h=0,col="red")}
+					plot.window(xlim=c(0,1),ylim=c(0,1))
+					legend(0.9,1,title="Cutoff score",legend=c("below","above"),fill=c("lightgrey","black"),border=c("lightgrey","black"))
+				}
+			})
+			output$plot_aboveBlank_pos <- renderPlot({
+				if(any(rat_sam_blank_pos>0)){
+					par(mar=c(4,4,.5,.5))
+					if(input$screen_pos_log_rat=="yes"){
+						boxplot(log10(rat_sam_blank_pos[rat_sam_blank_pos>0]),
+						horizontal=TRUE,xlab="log10 intensity ratio",width=1.3)
+					}else{
+						boxplot((rat_sam_blank_pos[rat_sam_blank_pos>0]),
+						horizontal=TRUE,xlab="Intensity ratio",width=1.3)
+					}
+				}else{
+					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(.5,.5,labels="No ratios available",col="red",cex=1.6)
+				}
+			},width = "auto", height = 250)
 			
 		}
 		
@@ -179,6 +217,8 @@ observe({
 			cat("\n Looking at negative targets")
 			if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg")) ){
 				load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg"))
+				screen_dev_neg<-results_screen_target_neg[[3]]
+				rat_sam_blank_neg<-results_screen_target_neg[[1]][,10,drop=FALSE]
 				if( isolate(input$screen_neg_summarize=="yes") ){
 					results_screen<-results_screen_target_neg[[1]]
 				}else{
@@ -198,6 +238,8 @@ observe({
 			cat("\n Looking at negative standards")
 			if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_neg")) ){
 				load(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_neg"))
+				screen_dev_neg<-results_screen_IS_neg[[3]]
+				rat_sam_blank_neg<-results_screen_target_neg[[1]][,10,drop=FALSE]
 				if( isolate(input$screen_neg_summarize=="yes") ){
 					results_screen<-results_screen_IS_neg[[1]]
 				}else{

@@ -595,14 +595,32 @@
 									selected = "Target compounds", multiple = FALSE)),
 								column(4, selectInput(inputId="screen_pos_summarize", label="", choices = c("Show all adducts"="yes","Collapse adducts"="no"), "yes"))
 							),
-							
-							bsCollapse(multiple = FALSE, open = NULL, id = "collapse_Screen_pos",
+							bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_pos_one",
 								bsCollapsePanel(title="Pattern match for selected compound", #style="info",
 									textOutput('screening_details_comp_pos'),
 									plotOutput("plot_pattern")
 								),
-								bsCollapsePanel(title="Data distributions for selected compound",
-								textOutput('screening_details_comp_pos2')
+								bsCollapsePanel(title="Characteristics for selected compound",
+									textOutput('screening_details_comp_pos2'),
+									HTML('<hr noshade="noshade" />'),
+									fluidRow(										
+										column(4, selectInput(inputId="selec_pos_x",label="x axis",
+											choices=c("m/z","RT","Intensity","Date&time"),selected = "m/z", multiple = FALSE)),
+										column(4, selectInput(inputId="selec_pos_y",label="y axis",
+											choices=c("m/z","RT","Intensity","Date&time"),selected = "RT", multiple = FALSE)),									
+										column(4, radioButtons("selec_pos_log_rat", "Log intensity?", c("yes"="yes","no"="no"),inline=TRUE))
+									),
+									HTML('<hr noshade="noshade" />'),
+									
+									
+									
+									HTML('<hr noshade="noshade" />'),
+									fluidRow(										
+										column(4,tags$p(align="justify","Adopt a new log intensity range for future screening of the selected compound-adduct?")),
+										column(3,numericInput("screen_int_pos_low", "Lower bound", 0)),
+										column(3,numericInput("screen_int_pos_up", "Upper boundbound", 10)),
+										column(2,bsButton("save_int_pos","Adopt",style="warning",icon=icon("bookmark")))
+									)
 								),
 								bsCollapsePanel(title="Screening table for selected compound", 
 									textOutput('screening_details_comp_pos3'),
@@ -610,9 +628,27 @@
 									DT::dataTableOutput('Table_screening_selected_pos')
 								)
 							),
-
 							HTML('<hr noshade="noshade" />'),
-							DT::dataTableOutput('Table_screening_pos')
+							DT::dataTableOutput('Table_screening_pos'),
+							HTML('<hr noshade="noshade" />'),
+							bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_pos_all",
+								bsCollapsePanel(title="Summary plots",
+									fluidRow(
+										column(width = 4, offset = 0.6,
+												tags$p(align="justify","Characteristics of all signal peaks for screened compounds from the above table.")
+										),
+										column(4, selectInput(inputId="Summ_pos_x",label="x axis",choices=c("m/z","RT","log Intensity","m/z deviation [ppm]","RT deviation"),selected = "m/z", multiple = FALSE)),
+										column(4, selectInput(inputId="Summ_pos_y",label="y axis",choices=c("m/z","RT","log Intensity","m/z deviation [ppm]","RT deviation"),selected = "RT", multiple = FALSE))									
+									),
+									plotOutput("plot_pattern_distrib_pos"),
+									HTML('<hr noshade="noshade" />'),
+									fluidRow(										
+										column(4,tags$p(align="justify","Ratios of sample vs. blank intensities for screened compounds from the above table.")),
+										column(4,radioButtons("screen_pos_log_rat", "Log scale?", c("yes"="yes","no"="no"),inline=TRUE))
+									),
+									plotOutput("plot_aboveBlank_pos",height = 250)
+								)
+							)	
 						),
 						tabPanel("Negative ionization",
 							fluidRow(
