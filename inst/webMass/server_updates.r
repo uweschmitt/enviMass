@@ -8,7 +8,6 @@ if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_updates.
 if(TRUE){
 	
 	cat("\n Updating to version 3.1 ...")
-	################################################################################################
 	# create missing folder
 	if(!file.exists(file.path(logfile$project_folder,"results","screening"))
 	){
@@ -276,32 +275,7 @@ if(TRUE){
 if(logfile[[10]]<3.101){	
 
 	cat("\n Updating to version 3.101 ...")
-	################################################################################################
-	# create missing folder
-	if(!file.exists(file.path(logfile$project_folder,"quantification"))
-	){
-		dir.create(file.path(logfile$project_folder,"quantification"),recursive=TRUE)    	# subfolder  
-	}
-	################################################################################################	
-	# updating columns in IS compound table ########################################################
- 	intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
-	if(!any(names(intstand)=="Lower intensity bound")){
-		names_1<-names(intstand)
-		intstand<-cbind(intstand,rep(-Inf,length(intstand[,1])),rep(Inf,length(intstand[,1])))
-		names(intstand)<-c(names_1,"Lower intensity bound","Upper intensity bound")
-		write.table(intstand,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE) 
-	}
-	rm(intstand)
-	################################################################################################	
-	# updating columns in targets compound table ################################################### 	
- 	targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");	
-	if(!any(names(targets)=="intensity_warn_1")){	
-		names_1<-names(targets)
-		targets<-cbind(targets,rep("FALSE",length(targets[,1])),rep("FALSE",length(targets[,1])))		
-		names(targets)<-c(names_1,"intensity_warn_1","intensity_warn_2")
-		write.table(targets,file=file.path(logfile[[1]],"dataframes","targets.txt"),row.names=FALSE,sep="\t",quote=FALSE)	
-	}
-	rm(targets)
+
 	################################################################################################	
 	logfile[[10]]<<-3.101
 	names(logfile)[10]<<-"version"

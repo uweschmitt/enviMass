@@ -161,7 +161,7 @@
 			bsButton("saveflow","Apply",style="warning"),
 			bsAlert("alert_1"),
 			HTML('<hr noshade="noshade" />'),
-			tags$p(align="justify","Below is an illustrative network graph of dependencies between steps in the workflow. Enabled steps are shown in 
+			tags$p(align="justify","Below is a network graph of dependencies between steps in the workflow. Enabled steps are shown in 
 				dark blue; disabled ones in light blue; interactive and zoomable. When modifying workflow steps, parameters or inputs, enviMass 
 				dynamically adjusts and minimizes all required recalculations via their relevant dependencies. These recalculations will ultimately be 
 				enforced when pressing the left-sided Calculate button."),
