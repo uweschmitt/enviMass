@@ -33,8 +33,8 @@
 		adducted<-rep("")	
 		at_len<-1		
 		max_len<-10000
-		at_matrix<-matrix(nrow=10000,ncol=6,0)
-		colnames(at_matrix)<-c("m/z","log Intensity","RT","m/z deviation [ppm]","RT deviation","above_cutscore")
+		at_matrix<-matrix(nrow=10000,ncol=7,0)
+		colnames(at_matrix)<-c("m/z","log Intensity","RT","m/z deviation [ppm]","RT deviation","above_cutscore","Time sequence")
 		for(i in 1:length(screened_listed)){
 			IDed[i]<-strsplit(names(pattern)[i],"_")[[1]][1]
 			named[i]<-compound_table[compound_table[,1]==strsplit(names(pattern)[i],"_")[[1]][1],2]
@@ -84,7 +84,6 @@
 											profileList[[2]][screened_listed[[i]][[m]][[k]][[1]][d,2],2]	
 										)
 									}
-									next; # no need to check blank
 								}
 								if(is_blank & (local_score>cut_score)){
 									for(d in 1:length(screened_listed[[i]][[m]][[k]][[1]][,1])){
@@ -98,7 +97,7 @@
 								if((at_len+local_len)>max_len){
 									at_matrix<-rbind(
 										at_matrix, 
-										matrix(nrow=10000,ncol=6,0)
+										matrix(nrow=10000,ncol=7,0)
 									)
 									max_len<-(max_len+1000)
 								}
@@ -109,7 +108,11 @@
 								at_matrix[at_len:(at_len+local_len-1),5]<-screened_listed[[i]][[m]][[k]][[5]]
 								if(local_score>=cut_score){
 									at_matrix[at_len:(at_len+local_len-1),6]<-1
-								}
+								}		
+								at_matrix[at_len:(at_len+local_len-1),7]<-(
+									as.numeric(as.Date(measurements_table[IDs==m,6]))+
+									as.numeric(as.difftime(measurements_table[IDs==m,7])/24)
+								)
 								at_len<-(at_len+local_len)
 							}
 						}

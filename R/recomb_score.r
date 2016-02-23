@@ -123,7 +123,7 @@ recomb_score<-function(
 					results[[at_results]][[5]]<-(mean(profileList[[2]][check_nodes[[k]][,2],3])-profileList[[2]][check_nodes[[k]][,2],3])
 					results[[at_results]][[6]]<-rescale
 					results[[at_results]][[7]]<-profileList[[2]][check_nodes[[k]][,2],1]
-					results[[at_results]][[8]]<-log10(profileList[[2]][check_nodes[[k]][,2],2])
+					results[[at_results]][[8]]<-profileList[[2]][check_nodes[[k]][,2],2]
 					results[[at_results]][[9]]<-profileList[[2]][check_nodes[[k]][,2],3]
 					names(results[[at_results]])<-c("Peaks","score_1","score_2","ppm deviation","RT deviation from mean","rescale factor","m/z","Intensity","RT")
 					at_results<-(at_results+1)
@@ -159,7 +159,7 @@ recomb_score<-function(
 	results2<-list()
 	len<-rep(0,length(results))
 	for(k in 1:length(results)){
-		len[k]<-length(results[[i]][,1])
+		len[k]<-length(results[[k]][[1]][,1])
 	}
 	ord<-order(len)
 	for(k in 1:length(results)){	

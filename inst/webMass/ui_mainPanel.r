@@ -160,6 +160,12 @@
 			tags$h5("Apply settings to project?"), 
 			bsButton("saveflow","Apply",style="warning"),
 			bsAlert("alert_1"),
+			HTML('<hr noshade="noshade" />'),
+			tags$p(align="justify","Below is a network graph of dependencies between steps in the workflow. Enabled steps are shown in 
+				dark blue; disabled ones in light blue; interactive and zoomable. When modifying workflow steps, parameters or inputs, enviMass 
+				dynamically adjusts and minimizes all required recalculations via their relevant dependencies. These recalculations will ultimately be 
+				enforced when pressing the left-sided Calculate button."),
+			networkD3:::forceNetworkOutput("force_workflow", width = 1500, height = 400),
 				# block 1 ######################################################
 				HTML('<hr noshade="noshade" />'),
 				HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> File upload </font></p> '),
@@ -250,7 +256,7 @@
 							This interpolation and subtraction is only applicable if the separate blind filter step is disabled (see above blue steps).")
 						)
 					),							
-				HTML('<hr noshade="noshade" />')                  
+				HTML('<hr noshade="noshade" />')             
 				#HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Peak grouping (componentization) </font></p>'),
 				#	checkboxInput("Comp_isotop", "Group isotopologue peaks?", TRUE),
 				#	checkboxInput("Comp_add", "Group adduct peaks?", TRUE),
@@ -266,6 +272,8 @@
 					#radioButtons("massdef", "Include? ", c("yes"="yes","no"="no")),	
 				#HTML('<hr noshade="noshade" />')
 				################################################################
+
+				
         ),
         ########################################################################
         # PARAMETER SETTINGS ###################################################
@@ -598,28 +606,29 @@
 							bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_pos_one",
 								bsCollapsePanel(title="Pattern match for selected compound", #style="info",
 									textOutput('screening_details_comp_pos'),
-									plotOutput("plot_pattern")
+									plotOutput("plot_pattern_pos")
 								),
 								bsCollapsePanel(title="Characteristics for selected compound",
 									textOutput('screening_details_comp_pos2'),
 									HTML('<hr noshade="noshade" />'),
 									fluidRow(										
 										column(4, selectInput(inputId="selec_pos_x",label="x axis",
-											choices=c("m/z","RT","Intensity","Date&time"),selected = "m/z", multiple = FALSE)),
+											choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "m/z", multiple = FALSE)),
 										column(4, selectInput(inputId="selec_pos_y",label="y axis",
-											choices=c("m/z","RT","Intensity","Date&time"),selected = "RT", multiple = FALSE)),									
+											choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "RT", multiple = FALSE)),									
 										column(4, radioButtons("selec_pos_log_rat", "Log intensity?", c("yes"="yes","no"="no"),inline=TRUE))
 									),
-									HTML('<hr noshade="noshade" />'),
-									
-									
-									
-									HTML('<hr noshade="noshade" />'),
-									fluidRow(										
-										column(4,tags$p(align="justify","Adopt a new log intensity range for future screening of the selected compound-adduct?")),
-										column(3,numericInput("screen_int_pos_low", "Lower bound", 0)),
-										column(3,numericInput("screen_int_pos_up", "Upper boundbound", 10)),
-										column(2,bsButton("save_int_pos","Adopt",style="warning",icon=icon("bookmark")))
+									HTML('<hr noshade="noshade" />'),						
+									plotOutput("plot_selec_dist_pos"),
+									conditionalPanel(				
+										condition = "input.Pos_compound_select == 'Internal standards'",					
+										HTML('<hr noshade="noshade" />'),
+										fluidRow(										
+											column(4,tags$p(align="justify","Adopt a new log intensity range for the future screening of this selected compound-adduct?")),
+											column(3,numericInput("screen_int_pos_low", "Lower bound", 0,step=0.1)),
+											column(3,numericInput("screen_int_pos_up", "Upper bound", 10,step=0.1)),
+											column(2,bsButton("save_int_pos"," Adopt",style="warning",icon=icon("bookmark")))
+										)
 									)
 								),
 								bsCollapsePanel(title="Screening table for selected compound", 
@@ -637,8 +646,8 @@
 										column(width = 4, offset = 0.6,
 												tags$p(align="justify","Characteristics of all signal peaks for screened compounds from the above table.")
 										),
-										column(4, selectInput(inputId="Summ_pos_x",label="x axis",choices=c("m/z","RT","log Intensity","m/z deviation [ppm]","RT deviation"),selected = "m/z", multiple = FALSE)),
-										column(4, selectInput(inputId="Summ_pos_y",label="y axis",choices=c("m/z","RT","log Intensity","m/z deviation [ppm]","RT deviation"),selected = "RT", multiple = FALSE))									
+										column(4, selectInput(inputId="Summ_pos_x",label="x axis",choices=c("m/z","RT","log Intensity","m/z deviation [ppm]","RT deviation","Time sequence"),selected = "m/z", multiple = FALSE)),
+										column(4, selectInput(inputId="Summ_pos_y",label="y axis",choices=c("m/z","RT","log Intensity","m/z deviation [ppm]","RT deviation","Time sequence"),selected = "RT", multiple = FALSE))									
 									),
 									plotOutput("plot_pattern_distrib_pos"),
 									HTML('<hr noshade="noshade" />'),

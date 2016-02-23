@@ -54,6 +54,8 @@ shinyServer(function(input, output, session){
   ############################################################################## 
   # output screening results ###################################################
   source("server_obs_screening.r", local=TRUE)  
+  # output network js ##########################################################
+  source("server_force.r", local=TRUE)    
   ##############################################################################  
   # run calculations ###########################################################
   source("server_calculation.r", local=TRUE)
