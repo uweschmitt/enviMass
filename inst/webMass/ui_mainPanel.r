@@ -17,138 +17,178 @@
         # MEASUREMENTS #########################################################
         ########################################################################
 		tabPanel("Files",
-   		  div(style = widget_style,
-            tags$h4("Add LC-HRMS files"),
-            helpText("To add a new file, set the below specifications accordingly and press Add"),
-            textInput("Measadd_ID", "Numeric ID:", value = "123"),
-			radioButtons("Measadd_ID_autom", "...or assign ID automatically?", c("yes"="yes","no"="no")),
-            textInput("Measadd_name", "Name:", value = "Sample 1"),
-            selectInput("Measadd_type", "Type:", choices = c("sample", "blank", "doted", "other")),
-            selectInput("Measadd_incl", "Include?", choices = c("TRUE","FALSE")),
-            selectInput("Measadd_mode", "Choose ionization mode:", choices = c("positive", "negative")),
-            textInput("Measadd_place", "Place:", value = "Rhine"),
-			dateInput("Measadd_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en"),
-            textInput("Measadd_time", "Time:(HH:MM:SS)", value = "12:00:00"),
-            textInput("Measadd_tag3", "Replicate group", value = "FALSE"),			
-            fileInput("Measadd_path", "Select centroided .mzXML file:", multiple = FALSE, accept = c(".mzXML",".raw")),
-			bsPopover("Measadd_path", 
-				title = "WARNING",
-				content = "Files must be centroided. Check Package enviPick whether peaks can be picked properly from your files. Tested with Orbitrap files only.
-				If reload fails, press cancel in the file upload window first", 
-				placement = "right", trigger = "hover"),
-			textOutput("had_meas_added")
-		  ),
-          div(style = widget_style,
-            tags$h4("Delete file"),
-            textInput("Measdel_ID", "ID:", value = "123"),
-            actionButton("Measdel","Remove")
-          ),
-		  div(style = widget_style,
-            tags$h4("Import project (files only)"),
-			textInput("import_pro_dir", "", value = "C:\\...\\old_project_name"),
-			bsPopover("import_pro_dir", 
-				title = "Insert full path, including the project folder, but excluding the logfile.emp.",
-				content = "Using your OS explorer, you may navigate into your project folder and copy/paste the full path.", 
-				placement = "right", trigger = "hover"),
-			checkboxInput("Merge_project", "Omit duplicates?", FALSE),
-			bsPopover("Merge_project", 
-				title = "File duplicate handling",
-				content = "A file with the same type, time, date, ionization and place as one which already exists will not be imported.", 
-				placement = "right", trigger = "hover"),
-            actionButton("Import_project","Import")
-          ),
-          helpText(""),
-          DT::dataTableOutput("measurements")
-        ),
+			HTML('<hr noshade="noshade" />'),
+				bsCollapse(multiple = FALSE, open = "files_open", id = "files",
+					bsCollapsePanel("Add a LC-HRMS file", 		
+						helpText("To add a new file, set the below specifications accordingly and select it."),
+						HTML('<hr noshade="noshade" />'),												
+						fluidRow(
+							column(width = 5, textInput("Measadd_ID", "Numeric ID:", value = "123")),
+							column(width = 5, radioButtons("Measadd_ID_autom", "...or assign ID automatically?", c("yes"="yes","no"="no")))							
+						),
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(
+							column(width = 5, textInput("Measadd_name", "Name:", value = "Sample 1")),
+							column(width = 5, selectInput("Measadd_type", "Type:", choices = c("sample", "blank", "doted", "other"))),
+							column(width = 5, selectInput("Measadd_incl", "Include?", choices = c("TRUE","FALSE"))),
+							column(width = 5, selectInput("Measadd_mode", "Choose ionization mode:", choices = c("positive", "negative")))	
+							
+						),
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(
+							column(width = 5,textInput("Measadd_place", "Place:", value = "Rhine")),		
+							column(width = 5,dateInput("Measadd_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
+							column(width = 5,textInput("Measadd_time", "Time:(HH:MM:SS)", value = "12:00:00")),							
+							column(width = 5,textInput("Measadd_tag3", "Replicate group", value = "FALSE"))	
+						),
+						HTML('<hr noshade="noshade" />'),
+						div(style = widget_style,
+							fileInput("Measadd_path", "Select centroided .mzXML file:", multiple = FALSE, accept = c(".mzXML",".raw")),
+							bsPopover("Measadd_path", 
+								title = "WARNING",
+								content = "Files must be centroided. Check Package enviPick whether peaks can be picked properly from your files. Tested with Orbitrap files only.
+								If reload fails, press cancel in the file upload window first", 
+								placement = "right", trigger = "hover"),
+							textOutput("had_meas_added")		
+						)
+					),
+					bsCollapsePanel("Delete LC-HRMS file", 		
+						tags$h5("Delete file by its unique ID from the below file table"),
+						textInput("Measdel_ID", "ID:", value = "123"),
+						actionButton("Measdel","Remove")		
+					),					
+					bsCollapsePanel("Import files from another project", 		
+						tags$h5("Select project folder to import files from:"),
+						textInput("import_pro_dir", "", value = "C:\\...\\old_project_name"),
+						bsPopover("import_pro_dir", 
+							title = "Insert full path, including the project folder, but excluding the logfile.emp.",
+							content = "Using your OS explorer, you may navigate into your project folder and copy/paste the full path.", 
+							placement = "right", trigger = "hover"),
+						checkboxInput("Merge_project", "Omit duplicates?", FALSE),
+						bsPopover("Merge_project", 
+							title = "File duplicate handling",
+							content = "A file with the same type, time, date, ionization and place as one which already exists will not be imported.", 
+							placement = "right", trigger = "hover"),
+						actionButton("Import_project","Import")		
+					)					
+				),	
+			HTML('<hr noshade="noshade" />'),
+			DT::dataTableOutput("measurements")	
+	    ),
         ########################################################################
         # Compounds ############################################################
         ########################################################################
         tabPanel("Compounds",
 		 tabsetPanel(
             tabPanel("Internal standards",
-                  div(style = widget_style,
-                    tags$h4("Add internal standard compound"),
-                    helpText("To add a new internal standard, fill out the below form and press Add"),
-                    textInput("ISadd_ID", "Unique ID:", value = "123_XYZ"),          
-                    textInput("ISadd_name", "Name:", value = "CompoundX"),
-                    textInput("ISadd_formula", "Formula:", value = "C10H12O10"),          
-                    textInput("ISadd_RT", "Retention time (RT) [min]:", value = "7.52"),    
-					checkboxInput("ISadd_RTtol_use", "Use specific +/- RT tolerance [min]:", FALSE),                    
-                    textInput("ISadd_RTtol","", value = "2"),          
-                    selectInput(inputId="ISadd_charge", label="Ionization mode", choices=c("positive","negative"), selected = "positive", multiple = FALSE),
-					popify(
-						selectInput(inputId="ISadd_add", label="Main adduct:", choices= "FALSE", selected = "FALSE", multiple = FALSE),
-							title = "Adduct definition for a compound",
-							content = 	"A compound-specific adduct can be defined here; non-specific adducts are defined in the Settings tab. Unless the below restriction is enabled, the compound-specific adduct is used alongside the non-specific ones. Seperate compound entries have to be made when including more than one compound-specific adduct.", 
-							placement = "right", trigger = "hover"),		
-					checkboxInput("ISadd_rest_adduct", "Restrict screening to main adduct?", FALSE),       
-					checkboxInput("ISadd_use_recal", "To be used for m/z recalibration?", TRUE),
-					checkboxInput("ISadd_use_screen", "To be used for screening?", TRUE),
-					textInput("ISadd_remark", "remark", value = "none"),
-                    textInput("ISadd_tag1", "tag1", value = "none"),
-                    textInput("ISadd_tag2", "tag2", value = "none"),
-                    textInput("ISadd_tag3", "tag3", value = "none"),			
-					checkboxInput("ISadd_date", "Restrict to temporal range?", FALSE),	
-					dateRangeInput("ISadd_date_range", label="", start = NULL, end = NULL,
-						min = NULL, max = NULL, format = "yyyy-mm-dd",
-						startview = "month", weekstart = 0, language = "en",
-						separator = " to "),
-					actionButton("AddIS","Add")
-                  ),
-                  div(style = widget_style,
-                    tags$h4("Remove internal standard compound"),
-                    helpText("To delete a compound from the list, type in its ID and press Delete"),
-                    textInput("ISdelete_ID", "ID for deletion:", value = "123_XYZ"),          
-                    actionButton("DeleteIS","Delete")
-                  ),
-				  div(style = widget_style2,
-                    tags$h4("Import compound list"),
-					fileInput("ISlist_path", "Select IS.txt file, e.g. from dataframes folder of another project", multiple = FALSE, accept = c(".txt"))
-                  ),
-                helpText(""),
+				HTML('<hr noshade="noshade" />'),
+				bsCollapse(multiple = FALSE, open = "IS_comp_open", id = "IS_comp",
+					bsCollapsePanel("Add internal standard compound", 
+						fluidRow(
+							column(width = 5, helpText("To add a new internal standard, fill out the below form and press Add") ),
+							column(width = 2, offset = 0.3, actionButton("AddIS","Add"))
+						),
+						HTML('<hr noshade="noshade" />'),
+						div(style = widget_style,
+							textInput("ISadd_ID", "Unique ID:", value = "123_XYZ"),          
+							textInput("ISadd_name", "Name:", value = "CompoundX"),
+							textInput("ISadd_formula", "Formula:", value = "C10H12O10")
+						),
+						div(style = widget_style,
+							textInput("ISadd_RT", "Retention time (RT) [min]:", value = "7.52"),    
+							checkboxInput("ISadd_RTtol_use", "Use specific +/- RT tolerance [min]:", FALSE),                    
+							textInput("ISadd_RTtol","", value = "2"),          
+							selectInput(inputId="ISadd_charge", label="Ionization mode", choices=c("positive","negative"), selected = "positive", multiple = FALSE),
+							popify(
+								selectInput(inputId="ISadd_add", label="Main adduct:", choices= "FALSE", selected = "FALSE", multiple = FALSE),
+									title = "Adduct definition for a compound",
+									content = 	"A compound-specific adduct can be defined here; non-specific adducts are defined in the Settings tab. Unless the below restriction is enabled, the compound-specific adduct is used alongside the non-specific ones. Seperate compound entries have to be made when including more than one compound-specific adduct.", 
+									placement = "right", trigger = "hover"),		
+							checkboxInput("ISadd_rest_adduct", "Restrict screening to main adduct?", FALSE),       
+							checkboxInput("ISadd_use_recal", "To be used for m/z recalibration?", TRUE),
+							checkboxInput("ISadd_use_screen", "To be used for screening?", TRUE)
+						),
+						div(style = widget_style,
+							textInput("ISadd_remark", "remark", value = "none"),
+							textInput("ISadd_tag1", "tag1", value = "none"),
+							textInput("ISadd_tag2", "tag2", value = "none"),
+							textInput("ISadd_tag3", "tag3", value = "none")
+						),
+						div(style = widget_style,							
+							checkboxInput("ISadd_date", "Restrict to temporal range?", FALSE),	
+							dateRangeInput("ISadd_date_range", label="", start = NULL, end = NULL,
+								min = NULL, max = NULL, format = "yyyy-mm-dd",
+								startview = "month", weekstart = 0, language = "en",
+								separator = " to "),
+							textInput("Lower_intensity_bound", "Screening: lower intensity bound (.-separated)", value = "0"),						
+							textInput("Upper_intensity_bound", "Screening: upper intensity bound (.-separated)", value = "Inf")
+						)
+					),
+					bsCollapsePanel("Remove internal standard compound", 					
+						helpText("To delete a compound from the list, type in its ID and press Delete"),
+						textInput("ISdelete_ID", "ID for deletion:", value = "123_XYZ"),          
+						actionButton("DeleteIS","Delete")					
+					),
+					bsCollapsePanel("Import compound list", 					
+						fileInput("ISlist_path", "Select IS.txt file, e.g. from dataframes folder of another project", multiple = FALSE, accept = c(".txt"))
+					)
+				),
+                HTML('<hr noshade="noshade" />'),
                 DT::dataTableOutput("IS")
             ),
             tabPanel("Targets", 
-                  div(style = widget_style,
-                    tags$h4("Add target or suspect compound"),
-                    helpText("To add a new target, fill out the below form and press Add."), #For suspects, define RT tolerances <br> spannning the full elution time range and set its RT to the middle time point."),
-                    textInput("targetsadd_ID", "Unique ID:", value = "123_XYZ"),          
-                    textInput("targetsadd_name", "Name:", value = "CompoundY"),
-                    textInput("targetsadd_formula", "Formula:", value = "C10H12O10"),          
-                    textInput("targetsadd_RT", "Retention time (RT) [min]:", value = "7.52"),    
-					checkboxInput("targetsadd_RTtol_use", "Use specific +/- RT tolerance [min]:", FALSE),                    
-                    textInput("targetsadd_RTtol","", value = "2"),          
-                    selectInput(inputId="targetsadd_charge", label="Ionization mode", choices=c("positive","negative"), selected = "positive", multiple = FALSE),
-					popify(
-						selectInput(inputId="targetsadd_add", label="Main adduct:", choices= "FALSE", selected = "FALSE", multiple = FALSE),
-							title = "Adduct definition for a compound",
-							content = 	"A compound-specific adduct can be defined here; non-specific adducts are defined in the Settings tab. Unless the below restriction is enabled, the compound-specific adduct is used alongside the non-specific ones. Seperate compound entries have to be made when including more than one compound-specific adduct.", 
-							placement = "right", trigger = "hover"),		
-					checkboxInput("targetsadd_rest_adduct", "Restrict screening to main adduct?", FALSE),                    
-					checkboxInput("targetsadd_use_recal", "To be used for m/z recalibration?", TRUE),
-					checkboxInput("targetsadd_use_screen", "To be used for screening?", TRUE),
-					textInput("targetsadd_remark", "remark", value = "none"),
-                    textInput("targetsadd_tag1", "tag1", value = "none"),
-                    textInput("targetsadd_tag2", "tag2", value = "none"),
-                    textInput("targetsadd_tag3", "tag3", value = "none"),			
-					checkboxInput("targetsadd_date", "Restrict to temporal range?", FALSE),	
-					dateRangeInput("targetsadd_date_range", label="", start = NULL, end = NULL,
-						min = NULL, max = NULL, format = "yyyy-mm-dd",
-						startview = "month", weekstart = 0, language = "en",
-						separator = " to "),
-                    actionButton("Addtargets","Add")
-                  ),
-                  div(style = widget_style,
-                    tags$h4("Remove target compound"),
-                    helpText("To delete a compound from the list, type in its ID and press Delete"),
-                    textInput("targetsdelete_ID", "ID for deletion:", value = "123_XYZ"),          
-                    actionButton("Deletetargets","Delete")
-                  ),
-                  div(style = widget_style2,
-                    tags$h4("Import compound list"),
-					fileInput("targetlist_path", "Select targets.txt file, e.g. from dataframes folder of another project", multiple = FALSE, accept = c(".txt"))
-                  ),
-                helpText(""),
+				HTML('<hr noshade="noshade" />'),
+				bsCollapse(multiple = FALSE, open = "target_comp_open", id = "target_comp",
+					bsCollapsePanel("Add target compound", 
+						fluidRow(
+							column(width = 5, helpText("To add a new target, fill out the below form and press Add.") ),
+							column(width = 2, offset = 0.3,  actionButton("Addtargets","Add"))
+						),			
+						div(style = widget_style,
+							textInput("targetsadd_ID", "Unique ID:", value = "123_XYZ"),          
+							textInput("targetsadd_name", "Name:", value = "CompoundY"),
+							textInput("targetsadd_formula", "Formula:", value = "C10H12O10")          
+						),
+						div(style = widget_style,						
+							textInput("targetsadd_RT", "Retention time (RT) [min]:", value = "7.52"),    
+							checkboxInput("targetsadd_RTtol_use", "Use specific +/- RT tolerance [min]:", FALSE),                    
+							textInput("targetsadd_RTtol","", value = "2"),          
+							selectInput(inputId="targetsadd_charge", label="Ionization mode", choices=c("positive","negative"), selected = "positive", multiple = FALSE),
+							popify(
+								selectInput(inputId="targetsadd_add", label="Main adduct:", choices= "FALSE", selected = "FALSE", multiple = FALSE),
+									title = "Adduct definition for a compound",
+									content = 	"A compound-specific adduct can be defined here; non-specific adducts are defined in the Settings tab. Unless the below restriction is enabled, the compound-specific adduct is used alongside the non-specific ones. Seperate compound entries have to be made when including more than one compound-specific adduct.", 
+									placement = "right", trigger = "hover"),		
+							checkboxInput("targetsadd_rest_adduct", "Restrict screening to main adduct?", FALSE),                    
+							checkboxInput("targetsadd_use_recal", "To be used for m/z recalibration?", TRUE),
+							checkboxInput("targetsadd_use_screen", "To be used for screening?", TRUE)
+						),
+						div(style = widget_style,							
+							textInput("targetsadd_remark", "remark", value = "none"),
+							textInput("targetsadd_tag1", "tag1", value = "none"),
+							textInput("targetsadd_tag2", "tag2", value = "none"),
+							textInput("targetsadd_tag3", "tag3", value = "none")
+						),
+						div(style = widget_style,
+							checkboxInput("targetsadd_date", "Restrict to temporal range?", FALSE),	
+							dateRangeInput("targetsadd_date_range", label="", start = NULL, end = NULL,
+								min = NULL, max = NULL, format = "yyyy-mm-dd",
+								startview = "month", weekstart = 0, language = "en",
+								separator = " to "),
+							textInput("warn_1", "First concentration warn level (.-separated)", value = "FALSE"),							
+							textInput("warn_2", "Second concentration warn level (.-separated)", value = "FALSE")						
+						)
+					),
+					bsCollapsePanel("Remove target compound", 
+						helpText("To delete a compound from the list, type in its ID and press Delete"),
+						textInput("targetsdelete_ID", "ID for deletion:", value = "123_XYZ"),          
+						actionButton("Deletetargets","Delete")					
+					),
+					bsCollapsePanel("Import compound list", 					
+						fileInput("targetlist_path", "Select targets.txt file, e.g. from dataframes folder of another project", multiple = FALSE, accept = c(".txt"))
+					)
+				),  
+				HTML('<hr noshade="noshade" />'),  
                 DT::dataTableOutput("targets")
             )
           )  
@@ -161,7 +201,7 @@
 			bsButton("saveflow","Apply",style="warning"),
 			bsAlert("alert_1"),
 			HTML('<hr noshade="noshade" />'),
-			tags$p(align="justify","Below is a network graph of dependencies between steps in the workflow. Enabled steps are shown in 
+			tags$p(align="justify","Below is an illustrative network graph of dependencies between steps in the workflow. Enabled steps are shown in 
 				dark blue; disabled ones in light blue; interactive and zoomable. When modifying workflow steps, parameters or inputs, enviMass 
 				dynamically adjusts and minimizes all required recalculations via their relevant dependencies. These recalculations will ultimately be 
 				enforced when pressing the left-sided Calculate button."),
@@ -190,7 +230,7 @@
 					fluidRow(
 						column(width = 2, radioButtons("blind_filter", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","")
+							tags$p(align="justify","Removes sample peaks which are also present in the blind/blank file preceding the sample file by its date & time (if available).")
 						)
 					),				
 				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Replicate filter </font></p> '),				
@@ -425,8 +465,7 @@
             # BLIND #############################################################
             tabPanel("Blind",
 				tags$h5("Blind subtraction:"),
-				selectInput("blind_do", "Run a blind subtraction...", choices = c("yes"="yes","no"="no"), "yes"),
-				numericInput("blind_fold", "...if intensity ratio sample/blind <", 100),
+				numericInput("blind_fold", "Intensity threshold ratio sample/blind <", 100),
 				numericInput("blind_dmz", "Peak mass deviation among measurements (+/-) ...", 3), 
                 selectInput("blind_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),				
                 numericInput("blind_drt", "Peak deviation within profiles: RT tolerance [s]", 60)            			
@@ -638,6 +677,8 @@
 								)
 							),
 							HTML('<hr noshade="noshade" />'),
+							tags$p(align="justify","The below sample and blank matches give the number of files with matches above the cutoff score, 
+							with multiple matches per file above this cutoff merged."),
 							DT::dataTableOutput('Table_screening_pos'),
 							HTML('<hr noshade="noshade" />'),
 							bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_pos_all",
@@ -659,19 +700,76 @@
 								)
 							)	
 						),
+						
+### Baustelle
 						tabPanel("Negative ionization",
 							fluidRow(
 								column(4, selectInput(inputId="Neg_compound_select",label="",choices=c("Target compounds","Internal standards"), 
 									selected = "Target compounds", multiple = FALSE)),
 								column(4, selectInput(inputId="screen_neg_summarize", label="", choices = c("Show all adducts"="yes","Collapse adducts"="no"), "yes"))
 							),
+							bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_pos_one",
+								bsCollapsePanel(title="Pattern match for selected compound", #style="info",
+									textOutput('screening_details_comp_neg'),
+									plotOutput("plot_pattern_neg")
+								),
+								bsCollapsePanel(title="Characteristics for selected compound",
+									textOutput('screening_details_comp_neg2'),
+									HTML('<hr noshade="noshade" />'),
+									fluidRow(										
+										column(4, selectInput(inputId="selec_neg_x",label="x axis",
+											choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "m/z", multiple = FALSE)),
+										column(4, selectInput(inputId="selec_neg_y",label="y axis",
+											choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "RT", multiple = FALSE)),									
+										column(4, radioButtons("selec_neg_log_rat", "Log intensity?", c("yes"="yes","no"="no"),inline=TRUE))
+									),
+									HTML('<hr noshade="noshade" />'),						
+									plotOutput("plot_selec_dist_neg"),
+									conditionalPanel(				
+										condition = "input.Neg_compound_select == 'Internal standards'",					
+										HTML('<hr noshade="noshade" />'),
+										fluidRow(										
+											column(4,tags$p(align="justify","Adopt a new log intensity range for the future screening of this selected compound-adduct?")),
+											column(3,numericInput("screen_int_neg_low", "Lower bound", 0,step=0.1)),
+											column(3,numericInput("screen_int_neg_up", "Upper bound", 10,step=0.1)),
+											column(2,bsButton("save_int_neg"," Adopt",style="warning",icon=icon("bookmark")))
+										)
+									)
+								),
+								bsCollapsePanel(title="Screening table for selected compound", 
+									textOutput('screening_details_comp_neg3'),
+									HTML('<hr noshade="noshade" />'),
+									DT::dataTableOutput('Table_screening_selected_neg')
+								)
+							),
 							HTML('<hr noshade="noshade" />'),
-							fluidRow(
-								column(9, DT::dataTableOutput('Table_screening_neg')),
-								column(3, verbatimTextOutput('Table_screening_neg_row'))
+							tags$p(align="justify","The below sample and blank matches give the number of files with matches above the cutoff score, 
+							with multiple matches per file above this cutoff merged."),
+							DT::dataTableOutput('Table_screening_neg'),
+							HTML('<hr noshade="noshade" />'),
+							bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_neg_all",
+								bsCollapsePanel(title="Summary plots",
+									fluidRow(
+										column(width = 4, offset = 0.6,
+												tags$p(align="justify","Characteristics of all signal peaks for screened compounds from the above table.")
+										),
+										column(4, selectInput(inputId="Summ_neg_x",label="x axis",choices=c("m/z","RT","log Intensity","m/z deviation [ppm]","RT deviation","Time sequence"),selected = "m/z", multiple = FALSE)),
+										column(4, selectInput(inputId="Summ_neg_y",label="y axis",choices=c("m/z","RT","log Intensity","m/z deviation [ppm]","RT deviation","Time sequence"),selected = "RT", multiple = FALSE))									
+									),
+									plotOutput("plot_pattern_distrib_neg"),
+									HTML('<hr noshade="noshade" />'),
+									fluidRow(										
+										column(4,tags$p(align="justify","Ratios of sample vs. blank intensities for screened compounds from the above table.")),
+										column(4,radioButtons("screen_neg_log_rat", "Log scale?", c("yes"="yes","no"="no"),inline=TRUE))
+									),
+									plotOutput("plot_aboveBlank_neg",height = 250)
+								)
 							)	
+						)					
+### Baustelle			
+
+			
 						
-						)
 					)	
 				)
 

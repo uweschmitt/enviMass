@@ -98,13 +98,12 @@ observe({
 			enviMass:::workflow_set(down="trendblind",check_node=TRUE)
 		}		
 		# blind subtraction ####################################################		
-		at1<-logfile$parameters[c(36,37,82,83,84)]
-		logfile$parameters[[36]]<<-as.character(isolate(input$blind_do))
+		at1<-logfile$parameters[c(37,82,83,84)]
 		logfile$parameters[[37]]<<-as.character(isolate(input$blind_fold))
 		logfile$parameters[[82]]<<-as.character(isolate(input$blind_dmz))
 		logfile$parameters[[83]]<<-as.character(isolate(input$blind_ppm))
 		logfile$parameters[[84]]<<-as.character(isolate(input$blind_drt))		
-		at2<-logfile$parameters[c(36,37,82,83,84)]
+		at2<-logfile$parameters[c(37,82,83,84)]
 		if(any(is.na(match(at2,at1)))){ # both steps take partly the same parameters! 
 			enviMass:::workflow_set(down="blinds",check_node=TRUE)
 		}		

@@ -8,6 +8,7 @@ if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_updates.
 if(TRUE){
 	
 	cat("\n Updating to version 3.1 ...")
+	################################################################################################
 	# create missing folder
 	if(!file.exists(file.path(logfile$project_folder,"results","screening"))
 	){
@@ -33,6 +34,7 @@ if(TRUE){
 		if(any(colnames(peaklist)=="keep")){break} # ok, has been done before
 		keep<-rep(1,length(peaklist[,1])) # 1 == TRUE
 		peaklist<-cbind(peaklist,keep)
+		colnames(peaklist)[15]<-"keep_2";
 		save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])))
 		rm(peaklist)
 	}
@@ -211,10 +213,6 @@ if(TRUE){
 			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="pattern"]<<-TRUE
 		}
 	}
-
-	################################################################################################	
-	logfile[[10]]<<-3.100
-	names(logfile)[10]<<-"version"
 	################################################################################################
 	# define matrix of downstream workflow dependencies ############################################
 	# requires only a definition of direct ones - indirect ones will be in workflow_set.r ##########
@@ -266,7 +264,10 @@ if(TRUE){
 	must[,colnames(must)=="quantification"]<-	c(1,			0,	0,		0,		0,		0,			0,			1,			0,			1,			1,				0,		0,				0,		0)
 	logfile[[12]]<<-must
 	names(logfile)[12]<<-"workflow_must"	
-	################################################################################################	
+	################################################################################################		
+	logfile[[10]]<<-3.100
+	names(logfile)[10]<<-"version"
+	################################################################################################
 	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
 
@@ -275,10 +276,59 @@ if(TRUE){
 if(logfile[[10]]<3.101){	
 
 	cat("\n Updating to version 3.101 ...")
-
+	################################################################################################
+	# create missing folder
+	if(!file.exists(file.path(logfile$project_folder,"quantification"))){
+		dir.create(file.path(logfile$project_folder,"quantification"),recursive=TRUE) # subfolder
+	}
+ 	################################################################################################
+	# updating columns in IS compound table ########################################################
+	intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
+	if(any(names(intstand)=="Lower intensity bound")){# remove misnomer
+		intstand<-intstand[,!(names(intstand)=="Lower intensity bound")]
+		intstand<-intstand[,!(names(intstand)=="Lower intensity bound")]
+	}
+	if(any(names(intstand)=="Lower.intensity.bound")){# remove misnomer
+		intstand<-intstand[,!(names(intstand)=="Lower.intensity.bound")]
+		intstand<-intstand[,!(names(intstand)=="Upper.intensity.bound")]
+	}
+	if(!any(names(intstand)=="Lower_intensity_bound")){
+		names_1<-names(intstand)
+		intstand<-cbind(intstand,rep(0,length(intstand[,1])),rep(Inf,length(intstand[,1])))
+		names(intstand)<-c(names_1,"Lower_intensity_bound","Upper_intensity_bound")
+	}	
+	write.table(intstand,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)
+	rm(intstand)
+	################################################################################################
+	# updating columns in targets compound table ###################################################
+	targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
+	if(!any(names(targets)=="warn_1")){
+		names_1<-names(targets)
+		targets<-cbind(targets,rep("FALSE",length(targets[,1])),rep("FALSE",length(targets[,1])))
+		names(targets)<-c(names_1,"warn_1","warn_2")
+	}
+	if(any(names(targets)=="intensity_warn_1")){	# remove misnomer
+		targets<-targets[,!(names(targets)=="intensity_warn_1")]
+		targets<-targets[,!(names(targets)=="intensity_warn_2")]		
+	}
+	write.table(targets,file=file.path(logfile[[1]],"dataframes","targets.txt"),row.names=FALSE,sep="\t",quote=FALSE)
+	rm(targets)
+	################################################################################################
+	# another column in peaklists for the blind subtraction ########################################
+	IDs<-list.files(file.path(logfile[[1]],"peaklist"))
+	for(i in 1:length(IDs)){
+		load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
+		if(any(colnames(peaklist)=="keep_2")){break} # ok, has been done before
+		keep_2<-rep(1,length(peaklist[,1])) # 1 == TRUE
+		peaklist<-cbind(peaklist,keep_2)
+		colnames(peaklist)[16]<-"keep_2";
+		save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])))
+		rm(peaklist)
+	}
 	################################################################################################	
 	logfile[[10]]<<-3.101
 	names(logfile)[10]<<-"version"
+	################################################################################################		
 	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
 }

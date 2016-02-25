@@ -77,7 +77,7 @@
 								if(length(screened_listed[[i]][[m]][[k]]$Peaks[,1])>max_num_peaks){
 									max_num_peaks<-length(screened_listed[[i]][[m]][[k]]$Peaks[,1])
 								}
-								if(is_sample & (local_score>cut_score)){
+								if(is_sample & (local_score>=cut_score)){
 									for(d in 1:length(screened_listed[[i]][[m]][[k]][[1]][,1])){
 										centro_sample[[ screened_listed[[i]][[m]][[k]][[1]][d,1] ]]<-c(
 											centro_sample[[ screened_listed[[i]][[m]][[k]][[1]][d,1] ]],
@@ -85,7 +85,7 @@
 										)
 									}
 								}
-								if(is_blank & (local_score>cut_score)){
+								if(is_blank & (local_score>=cut_score)){
 									for(d in 1:length(screened_listed[[i]][[m]][[k]][[1]][,1])){
 										centro_blank[[ screened_listed[[i]][[m]][[k]][[1]][d,1] ]]<-c(
 											centro_blank[[ screened_listed[[i]][[m]][[k]][[1]][d,1] ]],
@@ -117,7 +117,7 @@
 							}
 						}
 						if(is_sample){
-							if(max_score>cut_score){
+							if(max_score>=cut_score){
 								num_samples<-(num_samples+1)
 							}
 							if(max_score>max_score_sample){
@@ -128,7 +128,7 @@
 							}
 						}
 						if(is_blank){
-							if(max_score>cut_score){
+							if(max_score>=cut_score){
 								num_blanks<-(num_blanks+1)
 							}
 							if(max_score>max_score_blank){
@@ -151,12 +151,12 @@
 				if(length(ratios)>0){			
 					mean_int_ratio[[i]]<-mean(x=ratios,w=wei)
 				}
-				num_samples_all[[i]]<-num_samples
-				num_blanks_all[[i]]<-num_blanks
-				max_score_sample_all[[i]]<-max_score_sample
-				max_score_blank_all[[i]]<-max_score_blank
-				num_peaks_sample_all[[i]]<-num_peaks_sample
-				num_peaks_blank_all[[i]]<-num_peaks_blank	
+				num_samples_all[i]<-num_samples
+				num_blanks_all[i]<-num_blanks
+				max_score_sample_all[i]<-max_score_sample
+				max_score_blank_all[i]<-max_score_blank
+				num_peaks_sample_all[i]<-num_peaks_sample
+				num_peaks_blank_all[i]<-num_peaks_blank	
 			}
 		}
 		##########################################################################################

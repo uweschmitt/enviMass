@@ -37,6 +37,8 @@ observe({
 			IS2[15]<-as.character(isolate(input$ISadd_date_range[1]))
 			IS2[16]<-as.character(isolate(input$ISadd_date_range[2]))
 		}
+		IS2[17]<-as.character(isolate(input$Lower_intensity_bound))
+		IS2[18]<-as.character(isolate(input$Upper_intensity_bound))
 		IS<-rbind(IS2,IS1);
 		write.table(IS,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)
 		rm(IS,IS1,IS2);
@@ -127,8 +129,8 @@ observe({
 			targets2[16]<-as.character(isolate(input$targetsadd_date_range[1]))
 			targets2[17]<-as.character(isolate(input$targetsadd_date_range[2]))
 		}
-		#  targets2[18]<-  .... intercept 
-		#  targets2[19]<-  .... slope	
+		targets2[18]<-as.character(isolate(input$warn_1)) 
+		targets2[19]<-as.character(isolate(input$warn_2))	
 		targets<-rbind(targets2,targets1);
 		write.table(targets,file=file.path(logfile[[1]],"dataframes","targets.txt"),row.names=FALSE,sep="\t",quote=FALSE)      
 		rm(targets,targets1,targets2);

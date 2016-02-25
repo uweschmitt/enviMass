@@ -129,8 +129,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters[[29]]<-"TRUE";		names(logfile$parameters)[29]<-"notrend"
 		logfile$parameters[[34]]<-"4,7,14"; 	names(logfile$parameters)[34]<-"trend_lags" 
 		logfile$parameters[[35]]<-"3";			names(logfile$parameters)[35]<-"trend_threshold"
-		# blind subtraction ####################################################
-		logfile$parameters[[36]]<-"yes";		names(logfile$parameters)[36]<-"blind_do"	
+		# blind subtraction ####################################################	
 		logfile$parameters[[37]]<-"100";		names(logfile$parameters)[37]<-"blind_threshold"	
 		logfile$parameters[[82]]<-"3";			names(logfile$parameters)[82]<-"blind_dmz"
 		logfile$parameters[[83]]<-"TRUE";		names(logfile$parameters)[83]<-"blind_ppm"		
@@ -194,8 +193,8 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	logfile$workflow[16]<-"yes"; 	names(logfile$workflow)[16]<-"-" 
 	logfile$workflow[17]<-"yes"; 	names(logfile$workflow)[17]<-"-" 	  
 	################################################################################################	
-	logfile[[10]]<<-3.100
-	names(logfile)[10]<<-"version"
+	logfile[[10]]<-3.101
+	names(logfile)[10]<-"version"
 	################################################################################################
 	# define matrix of downstream workflow dependencies ############################################
 	# requires only a definition of direct ones - inderect ones will be in workflow_set.r ##########
@@ -222,8 +221,8 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	depend[,colnames(depend)=="trendblind"]<-		c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,				0,		0)
 	depend[,colnames(depend)=="LOD"]<-				c(0,			0,	0,		0,		0,		0,			0,			0,			0,			1,			1,				0,		1,				0,		1)
 	depend[,colnames(depend)=="quantification"]<-	c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,				0,		0)	
-	logfile[[11]]<<-depend
-	names(logfile)[11]<<-"workflow_depend"
+	logfile[[11]]<-depend
+	names(logfile)[11]<-"workflow_depend"
 	################################################################################################
 	# define upstream workflow "musts", i.e., upstream nodes on which`s execution a node ###########
 	# depends. 0 = not dependent. 1 = dependent. -1 = MUST NOT be executed ######################### 
@@ -245,8 +244,8 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	must[,colnames(must)=="trendblind"]<-		c(1,			0,	0,		0,		0,		1,			0,			0,			0,			0,			0,				0,		0,				0,		0)
 	must[,colnames(must)=="LOD"]<-				c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,				0,		0)
 	must[,colnames(must)=="quantification"]<-	c(1,			0,	0,		0,		0,		0,			0,			1,			0,			1,			1,				0,		0,				0,		0)
-	logfile[[12]]<<-must
-	names(logfile)[12]<<-"workflow_must"	
+	logfile[[12]]<-must
+	names(logfile)[12]<-"workflow_must"	
 	################################################################################################	
     # positive adducts #########################################################
     logfile[[7]]<-0   

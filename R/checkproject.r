@@ -52,6 +52,12 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 	if(length(intstand_check$Formula[intstand_check$Formula!="-"])==0){
 		cat("No internal standards available \n") 
 	}else{
+		if(any(grepl(",",intstand_check[,names(intstand_check)=="Lower_intensity_bound"],fixed=TRUE))){
+			say<-"Correct IS table: use .-separator, no commas for bounds."
+		}
+		if(any(grepl(",",intstand_check[,names(intstand_check)=="Upper_intensity_bound"],fixed=TRUE))){
+			say<-"Correct IS table: use .-separator, no commas for bounds."
+		}		
 		if(any(duplicated(intstand_check[,1]))){say<-"Duplicated IS IDs found ... abort."}  
 		checked<-enviPat::check_chemform(isotopes, intstand_check[,3])
 		if(any(checked[,1])){
@@ -83,6 +89,12 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 	if(length(targets_check$Formula[targets_check$Formula!="-"])==0){
 		  cat("No internal targets available \n")    
 	}else{
+		if(any(grepl(",",targets_check[,names(targets_check)=="warn_1"],fixed=TRUE))){
+			say<-"Correct targets table: use .-separator, no commas for warn_1."
+		}
+		if(any(grepl(",",targets_check[,names(targets_check)=="warn_2"],fixed=TRUE))){
+			say<-"Correct targets table: use .-separator, no commas for warn_2."
+		}		
 		if(any(duplicated(targets_check[,1]))){say<-"Duplicated target IDs found ... abort."}  
 		checked<-enviPat::check_chemform(isotopes, targets_check[,3])
 		if(any(checked[,1])){
@@ -166,7 +178,7 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
   ##############################################################################
   # progress bar? ##############################################################
   if(interactive() && !.Platform$OS.type == "windows" && .Platform$GUI == "Rgui" && logfile[[5]][21]=="TRUE"){
-	say<-"Disable the progress bar; works only under Windows OS"
+	say<-"Disable the progress bar in the Settings General Tab; works only under Windows OS"
   }
   ##############################################################################
   if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in check_project.r!")}

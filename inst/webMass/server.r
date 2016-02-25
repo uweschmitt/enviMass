@@ -6,7 +6,7 @@ shinyServer(function(input, output, session){
 ################################################################################
 
 
-  if(any(ls()=="logfile")){stop("\n illegal logfile detected!")}
+  if(any(ls()=="logfile")){stop("\n illegal logfile detected in server.r #1")}  
   ##############################################################################
   # load data ##################################################################  
   if(!any(objects(envir=as.environment(".GlobalEnv"))=="isotopes")){data(isotopes,package="enviPat",envir=as.environment(".GlobalEnv"))}

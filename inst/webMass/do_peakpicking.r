@@ -60,7 +60,9 @@
 				colnames(peaklist)[13]<-"sum_int_corr";
 				colnames(peaklist)[14]<-"RT_corr";      
 				keep<-rep(1,length(peaklist[,1])) # 1 == TRUE
-				peaklist<-cbind(peaklist,keep)
+				peaklist<-cbind(peaklist,keep,keep) # replicate & blind indicators
+				colnames(peaklist)[15]<-"keep";
+				colnames(peaklist)[16]<-"keep_2";
 				save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,1])));   
 				cat(" plot -");  
 				path=file.path(logfile[[1]],"pics",paste("peakhist_",as.character(measurements[i,1]),sep=""))
