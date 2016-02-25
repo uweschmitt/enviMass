@@ -98,18 +98,37 @@ observe({
 			enviMass:::workflow_set(down="trendblind",check_node=TRUE)
 		}		
 		# blind subtraction ####################################################		
-		at1<-logfile$parameters[c(37,82,83,84)]
+		at1<-logfile$parameters[c(37,82,83,84,85,86,87,88)]
 		logfile$parameters[[37]]<<-as.character(isolate(input$blind_fold))
 		logfile$parameters[[82]]<<-as.character(isolate(input$blind_dmz))
 		logfile$parameters[[83]]<<-as.character(isolate(input$blind_ppm))
-		logfile$parameters[[84]]<<-as.character(isolate(input$blind_drt))		
-		at2<-logfile$parameters[c(37,82,83,84)]
+		logfile$parameters[[84]]<<-as.character(isolate(input$blind_drt))	
+		logfile$parameters[[85]]<<-as.character(isolate(input$subtract_pos_bydate))		
+		logfile$parameters[[86]]<<-as.character(isolate(input$subtract_pos_byfile))		
+		logfile$parameters[[87]]<<-as.character(isolate(input$subtract_neg_bydate))			
+		logfile$parameters[[88]]<<-as.character(isolate(input$subtract_neg_byfile))		
+		at2<-logfile$parameters[c(37,82,83,84,85,86,87,88)]
 		if(any(is.na(match(at2,at1)))){ # both steps take partly the same parameters! 
 			enviMass:::workflow_set(down="blinds",check_node=TRUE)
 		}		
 		if(any(is.na(match(at2,at1)))){ 
 			enviMass:::workflow_set(down="trendblind",check_node=TRUE)
 		}				
+		# subtraction files
+		at1<-logfile$Positive_subtraction_files
+		logfile$Positive_subtraction_files<<-isolate(input$files_pos_select_subtract)
+		at2<-logfile$Positive_subtraction_files
+		if(any(is.na(match(at2,at1)))){ # both steps take partly the same parameters! 
+			enviMass:::workflow_set(down="blinds",check_node=TRUE)
+		}	
+		at1<-logfile$Negative_subtraction_files
+		logfile$Negative_subtraction_files<<-isolate(input$files_pos_select_subtract)
+		at2<-logfile$Negative_subtraction_files
+		if(any(is.na(match(at2,at1)))){ # both steps take partly the same parameters! 
+			enviMass:::workflow_set(down="blinds",check_node=TRUE)
+		}	
+		########################################################################  
+	
 		# IS screening #########################################################
 		at1<-logfile$parameters[c(42:51)]
 		logfile$parameters[[42]]<<-as.character(isolate(input$screen_IS_delRT))
@@ -152,7 +171,8 @@ observe({
 			enviMass:::workflow_set(down="IS_normaliz",check_node=TRUE)		
 		}	
 		########################################################################   
-
+		
+		
 		##########################################################################
 		# workflow settings ######################################################
 		# qc #####################################################################

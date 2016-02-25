@@ -226,11 +226,11 @@
 					radioButtons("intnorm", "Include?", c("yes"="yes","no"="no")),
 				#HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> RT alignment </font></p> '),
 				#radioButtons("RTalign", "Include?", c("yes"="yes","no"="no")),  
-				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Blank / blind filter </font></p> '),				
+				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Blank / blind subtraction filter </font></p> '),				
 					fluidRow(
 						column(width = 2, radioButtons("blind_filter", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","Removes sample peaks which are also present in the blind/blank file preceding the sample file by its date & time (if available).")
+							tags$p(align="justify","Removes sample peaks which are also present in blind/blank files. Check Settings Blind Tab for file selection.")
 						)
 					),				
 				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Replicate filter </font></p> '),				
@@ -468,7 +468,17 @@
 				numericInput("blind_fold", "Intensity threshold ratio sample/blind <", 100),
 				numericInput("blind_dmz", "Peak mass deviation among measurements (+/-) ...", 3), 
                 selectInput("blind_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),				
-                numericInput("blind_drt", "Peak deviation within profiles: RT tolerance [s]", 60)            			
+                numericInput("blind_drt", "Peak deviation within profiles: RT tolerance [s]", 60),       
+				HTML('<hr noshade="noshade" />'),
+				tags$h5("Positive ionization mode"),
+				checkboxInput("subtract_pos_bydate", "Subtract with the next blank/blind file preceding a sample by its date & time?", FALSE),				
+				checkboxInput("subtract_pos_byfile", "Additional non-sample files to subtract each sample file with (i.e. not preceding by date only), choose file ID:", FALSE),				
+				checkboxGroupInput("files_pos_select_subtract", label="", choices=c("FALSE"), selected = NULL),
+				HTML('<hr noshade="noshade" />'),
+				tags$h5("Negative ionization mode"),
+				checkboxInput("subtract_neg_bydate", "Subtract with the next blank/blind file preceding a sample by its date & time?", FALSE),				
+				checkboxInput("subtract_neg_byfile", "Additional non-sample files to subtract each sample file with (i.e. not preceding by date only), choose file ID:", FALSE),							
+				checkboxGroupInput("files_neg_select_subtract", label="", choices=c("FALSE"), selected = NULL)
             ),			
             # GENERAL SETTINGS #################################################
             tabPanel("General",

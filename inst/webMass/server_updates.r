@@ -300,6 +300,16 @@ if(logfile[[10]]<3.101){
 	write.table(intstand,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)
 	rm(intstand)
 	################################################################################################
+	# insert missing parameters ####################################################################
+	if(!any(names(logfile$parameters)=="subtract_pos_bydate")){
+		logfile$parameters[[85]]<<-"FALSE";		names(logfile$parameters)[85]<<-"subtract_pos_bydate"
+		logfile$parameters[[86]]<<-"FALSE";		names(logfile$parameters)[86]<<-"subtract_pos_byfile"
+		logfile$parameters[[87]]<<-"FALSE";		names(logfile$parameters)[87]<<-"subtract_neg_bydate"
+		logfile$parameters[[88]]<<-"FALSE";		names(logfile$parameters)[88]<<-"subtract_neg_byfile"	
+		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
+	}
+	################################################################################################
 	# updating columns in targets compound table ###################################################
 	targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
 	if(!any(names(targets)=="warn_1")){
@@ -324,6 +334,16 @@ if(logfile[[10]]<3.101){
 		colnames(peaklist)[16]<-"keep_2";
 		save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])))
 		rm(peaklist)
+	}
+	################################################################################################	
+	# store subtraction files ######################################################################
+	if(!any(names(logfile)=="Positive_subtraction_files")){
+		logfile[[13]]<<-"FALSE"
+		names(logfile)[13]<<-"Positive_subtraction_files"
+	}
+	if(!any(names(logfile)=="Negative_subtraction_files")){
+		logfile[[14]]<<-"FALSE"
+		names(logfile)[14]<<-"Negative_subtraction_files"
 	}
 	################################################################################################	
 	logfile[[10]]<<-3.101

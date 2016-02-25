@@ -134,6 +134,10 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters[[82]]<-"3";			names(logfile$parameters)[82]<-"blind_dmz"
 		logfile$parameters[[83]]<-"TRUE";		names(logfile$parameters)[83]<-"blind_ppm"		
 		logfile$parameters[[84]]<-"30";			names(logfile$parameters)[84]<-"blind_drt"		
+		logfile$parameters[[85]]<-"FALSE";		names(logfile$parameters)[85]<-"subtract_pos_bydate"
+		logfile$parameters[[86]]<-"FALSE";		names(logfile$parameters)[86]<-"subtract_pos_byfile"
+		logfile$parameters[[87]]<-"FALSE";		names(logfile$parameters)[87]<-"subtract_neg_bydate"
+		logfile$parameters[[88]]<-"FALSE";		names(logfile$parameters)[88]<-"subtract_neg_byfile"		
 		# profiling ############################################################
 		logfile$parameters[[38]]<-"100";		names(logfile$parameters)[38]<-"prof_maxfiles"	
 		logfile$parameters[[80]]<-"FALSE";		names(logfile$parameters)[80]<-"upto_file"
@@ -192,9 +196,6 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	logfile$workflow[15]<-"yes"; 	names(logfile$workflow)[15]<-"IS_normaliz" 
 	logfile$workflow[16]<-"yes"; 	names(logfile$workflow)[16]<-"-" 
 	logfile$workflow[17]<-"yes"; 	names(logfile$workflow)[17]<-"-" 	  
-	################################################################################################	
-	logfile[[10]]<-3.101
-	names(logfile)[10]<-"version"
 	################################################################################################
 	# define matrix of downstream workflow dependencies ############################################
 	# requires only a definition of direct ones - inderect ones will be in workflow_set.r ##########
@@ -262,8 +263,13 @@ newproject<-function(pro_name,pro_dir,IS,targets){
     names(logfile)[9]<-c("isotopes")
     logfile[[9]]<-"";
 	# enviMass version number ##################################################
-    logfile[[10]]<-2.2   
-    names(logfile)[9]<-c("version")   
+    logfile[[10]]<-3.101 
+    names(logfile)[10]<-c("version")   
+	# subtraction files ########################################################
+	logfile[[13]]<-"FALSE"
+	names(logfile)[13]<-"Positive_subtraction_files"
+	logfile[[14]]<-"FALSE"
+	names(logfile)[14]<-"Positive_subtraction_files"
     # measurement data.frame ###################################################
 	save(logfile,file=file.path(pro_dir,pro_name,"logfile.emp"));  
 	rm(logfile)

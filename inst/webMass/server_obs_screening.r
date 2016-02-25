@@ -368,7 +368,7 @@ observe({
 	if(isolate(init$a)=="TRUE"){
 		found_table<-FALSE
 		if( isolate(input$Neg_compound_select=="Target compounds") ){
-			cat("\n Looking at negitive targets_selec")
+			cat("\n Looking at negative targets_selec")
 			if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg")) ){
 				load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg"))
 				screen_dev_neg<-results_screen_target_neg[[3]] # contains sample vs. blank intensity ratios
@@ -405,7 +405,7 @@ observe({
 			}
 		}
 		if( isolate(input$Neg_compound_select=="Internal standards") ){
-			cat("\n Looking at negitive standards_selec")
+			cat("\n Looking at negative standards_selec")
 			if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_neg")) ){
 				load(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_neg"))
 				screen_dev_neg<-results_screen_IS_neg[[3]] # contains sample vs. blank intensity ratios		

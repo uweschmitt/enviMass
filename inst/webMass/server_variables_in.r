@@ -45,6 +45,10 @@ updateNumericInput(session, "blind_fold", "...if intensity ratio sample/blind <"
 updateNumericInput(session, "blind_dmz", "Peak mass deviation among measurements (+/-) ...", value = as.numeric(logfile$parameters[[82]]))  
 updateSelectInput(session, "blind_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), selected= as.character(logfile$parameters[[83]]))
 updateNumericInput(session, "blind_drt", "Peak deviation within profiles: RT tolerance [s]", value = as.numeric(logfile$parameters[[84]]))  
+updateCheckboxInput(session,"subtract_neg_bydate", "Subtract with the next blank/blind file preceding a sample by its date & time?", value=as.character(logfile$parameters[[85]]))
+updateCheckboxInput(session,"subtract_neg_byfile", "Additional non-sample files to subtract each sample file with (i.e. not preceding by date only), choose file ID:", value=as.character(logfile$parameters[[86]]))							
+updateCheckboxInput(session,"subtract_pos_bydate", "Subtract with the next blank/blind file preceding a sample by its date & time?", value=as.character(logfile$parameters[[87]]))
+updateCheckboxInput(session,"subtract_pos_byfile", "Additional non-sample files to subtract each sample file with (i.e. not preceding by date only), choose file ID:", value=as.character(logfile$parameters[[88]]))				
 # IS SCREENING #########################################################
 updateNumericInput(session, "screen_IS_delRT", "RT tolerance of peaks in sample relative to their expected RT [s]", value = as.numeric(logfile$parameters[42]))   
 updateNumericInput(session, "screen_IS_dRTwithin", "RT tolerance of peaks within an isotope pattern [s]", value = as.numeric(logfile$parameters[43])) 
@@ -89,14 +93,41 @@ updateSliderInput(session, "profnorm_threshold", value = as.numeric(logfile$para
 updateCheckboxGroupInput(session, "adducts_pos", "Positive ions:", choices =  as.character(adducts[adducts[,6]=="positive",1]),selected=as.character(logfile[[7]]))
 updateCheckboxGroupInput(session, "adducts_neg", "Negative ions:", choices =  as.character(adducts[adducts[,6]=="negative",1]),selected=as.character(logfile[[8]]))                              
 
-
+#########################################################################
+# subtraction files, positive: ##########################################
+if(any( (measurements[,1]!="-") & (measurements[,4]=="positive") & (measurements[,3]!="sample"))){
+	IDs_pos<-measurements[
+		(measurements[,4]=="positive") & (measurements[,3]!="sample")
+	,1]
+	names_pos<-measurements[
+		(measurements[,4]=="positive") & (measurements[,3]!="sample")
+	,2]
+	if(any(logfile[[13]]!="FALSE")){
+		select_pos<-logfile[[13]]
+	}else{
+		select_pos<-NULL
+	}
+	IDs_pos<-paste(IDs_pos,names_pos,sep=" - ")
+	updateCheckboxGroupInput(session,inputId="files_pos_select_subtract", label="", choices=IDs_pos, selected = select_pos)
+}
 
 #########################################################################
-
-
-
-
-
+# subtraction files, negative: ##########################################
+if(any( (measurements[,1]!="-") & (measurements[,4]=="negative") & (measurements[,3]!="sample"))){
+	IDs_neg<-measurements[
+		(measurements[,4]=="negative") & (measurements[,3]!="sample")
+	,1]
+	names_neg<-measurements[
+		(measurements[,4]=="negative") & (measurements[,3]!="sample")
+	,2]
+	if(any(logfile[[14]]!="FALSE")){
+		select_neg<-logfile[[14]]
+	}else{
+		select_neg<-NULL
+	}
+	IDs_neg<-paste(IDs_neg,names_pos,sep=" - ")
+	updateCheckboxGroupInput(session,inputId="files_neg_select_subtract", label="", choices=IDs_neg, selected = select_neg)
+}
 
 #################################################################################
 # WORKFLOW SETTINGS #############################################################
