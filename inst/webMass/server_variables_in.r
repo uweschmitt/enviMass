@@ -45,10 +45,10 @@ updateNumericInput(session, "blind_fold", "...if intensity ratio sample/blind <"
 updateNumericInput(session, "blind_dmz", "Peak mass deviation among measurements (+/-) ...", value = as.numeric(logfile$parameters[[82]]))  
 updateSelectInput(session, "blind_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), selected= as.character(logfile$parameters[[83]]))
 updateNumericInput(session, "blind_drt", "Peak deviation within profiles: RT tolerance [s]", value = as.numeric(logfile$parameters[[84]]))  
-updateCheckboxInput(session,"subtract_neg_bydate", "Subtract with the next blank/blind file preceding a sample by its date & time?", value=as.character(logfile$parameters[[85]]))
-updateCheckboxInput(session,"subtract_neg_byfile", "Additional non-sample files to subtract each sample file with (i.e. not preceding by date only), choose file ID:", value=as.character(logfile$parameters[[86]]))							
-updateCheckboxInput(session,"subtract_pos_bydate", "Subtract with the next blank/blind file preceding a sample by its date & time?", value=as.character(logfile$parameters[[87]]))
-updateCheckboxInput(session,"subtract_pos_byfile", "Additional non-sample files to subtract each sample file with (i.e. not preceding by date only), choose file ID:", value=as.character(logfile$parameters[[88]]))				
+updateCheckboxInput(session,"subtract_pos_bydate", label =  "Subtract with the next blank/blind file preceding a sample by its date & time?", value=as.logical(logfile$parameters[[85]]))
+updateCheckboxInput(session,"subtract_pos_byfile", label = "Additional non-sample files to subtract each sample file with (i.e. not preceding by date only), choose file ID:", value=as.logical(logfile$parameters[[86]]))							
+updateCheckboxInput(session,"subtract_neg_bydate", label = "Subtract with the next blank/blind file preceding a sample by its date & time?", value=as.logical(logfile$parameters[[87]]))
+updateCheckboxInput(session,"subtract_neg_byfile",label =  "Additional non-sample files to subtract each sample file with (i.e. not preceding by date only), choose file ID:", value=as.logical(logfile$parameters[[88]]))				
 # IS SCREENING #########################################################
 updateNumericInput(session, "screen_IS_delRT", "RT tolerance of peaks in sample relative to their expected RT [s]", value = as.numeric(logfile$parameters[42]))   
 updateNumericInput(session, "screen_IS_dRTwithin", "RT tolerance of peaks within an isotope pattern [s]", value = as.numeric(logfile$parameters[43])) 
@@ -68,11 +68,11 @@ updateNumericInput(session, "screen_target_w1", "Cutoff score [0,1]", value = as
 # IS-based NORMALIZATION ###############################################		
 updateSliderInput(session, "profnorm_cover_files", value = as.numeric(logfile$parameters[[70]])) # Minimum percentage of files covered by each IS profile %
 updateNumericInput(session, "profnorm_cover_isccount", "Minimum number of IS profiles", value = as.numeric(logfile$parameters[71])) 
-updateCheckboxInput(session, "profnorm_use_blank", label = "Show median deviation of blank/blind profiles?",value = as.character(logfile$parameters[72]))
-updateCheckboxInput(session, "profnorm_use_blank_sample", label = "Use subsampling",value = as.character(logfile$parameters[73]))
+updateCheckboxInput(session, "profnorm_use_blank", label = "Show median deviation of blank/blind profiles?",value = as.logical(logfile$parameters[72]))
+updateCheckboxInput(session, "profnorm_use_blank_sample", label = "Use subsampling",value = as.logical(logfile$parameters[73]))
 updateNumericInput(session, "profnorm_use_blank_samplecount", "Number of blank/blind profiles in subsample", value = as.numeric(logfile$parameters[74])) 
-updateCheckboxInput(session, "profnorm_use_nonblank", label = "Show median deviation of sample (i.e., non-blank) profiles?",value = as.character(logfile$parameters[75]))
-updateCheckboxInput(session, "profnorm_use_nonblank_sample", label = "Use subsampling",value = as.character(logfile$parameters[76]))
+updateCheckboxInput(session, "profnorm_use_nonblank", label = "Show median deviation of sample (i.e., non-blank) profiles?",value = as.logical(logfile$parameters[75]))
+updateCheckboxInput(session, "profnorm_use_nonblank_sample", label = "Use subsampling",value = as.logical(logfile$parameters[76]))
 updateNumericInput(session, "profnorm_use_nonblank_samplecount", "Number of sample profiles in subsample", value = as.numeric(logfile$parameters[77])) 
 updateSliderInput(session, "profnorm_threshold", value = as.numeric(logfile$parameters[[78]])) 
 
@@ -102,15 +102,17 @@ if(any( (measurements[,1]!="-") & (measurements[,4]=="positive") & (measurements
 	names_pos<-measurements[
 		(measurements[,4]=="positive") & (measurements[,3]!="sample")
 	,2]
+	IDs_pos<-paste(IDs_pos,names_pos,sep=" - ")
 	if(any(logfile[[13]]!="FALSE")){
 		select_pos<-logfile[[13]]
+		select_pos<-select_pos[select_pos!="FALSE"]
+		# include changes from file additions / removals
+		select_pos<-select_pos[!is.na(match(select_pos,IDs_pos))]
 	}else{
 		select_pos<-NULL
 	}
-	IDs_pos<-paste(IDs_pos,names_pos,sep=" - ")
 	updateCheckboxGroupInput(session,inputId="files_pos_select_subtract", label="", choices=IDs_pos, selected = select_pos)
 }
-
 #########################################################################
 # subtraction files, negative: ##########################################
 if(any( (measurements[,1]!="-") & (measurements[,4]=="negative") & (measurements[,3]!="sample"))){
@@ -120,14 +122,17 @@ if(any( (measurements[,1]!="-") & (measurements[,4]=="negative") & (measurements
 	names_neg<-measurements[
 		(measurements[,4]=="negative") & (measurements[,3]!="sample")
 	,2]
+	IDs_neg<-paste(IDs_neg,names_neg,sep=" - ")
 	if(any(logfile[[14]]!="FALSE")){
 		select_neg<-logfile[[14]]
+		select_neg<-select_neg[select_neg!="FALSE"]
+		select_neg<-select_neg[!is.na(match(select_neg,IDs_neg))]
 	}else{
 		select_neg<-NULL
 	}
-	IDs_neg<-paste(IDs_neg,names_pos,sep=" - ")
 	updateCheckboxGroupInput(session,inputId="files_neg_select_subtract", label="", choices=IDs_neg, selected = select_neg)
 }
+#########################################################################
 
 #################################################################################
 # WORKFLOW SETTINGS #############################################################

@@ -14,3 +14,14 @@ exprrec<-list(src=path)
 output$recal_pic<-renderImage(exprrec, deleteFile = FALSE);		
 output$peakhist_pic<-renderImage(exprrec, deleteFile = FALSE);
 output$peakmzRT_pic<-renderImage(exprrec, deleteFile = FALSE);		
+
+IDs<-list.files(file.path(logfile[[1]],"peaklist"))
+if(length(IDs)>0){
+for(i in 1:length(IDs)){
+	load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),verbose=FALSE);
+	peaklist[,12]<-peaklist[,1]		
+	save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])))
+	rm(peaklist)
+}
+}
+

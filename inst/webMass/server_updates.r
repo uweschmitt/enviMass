@@ -1,9 +1,6 @@
 # include updates - if older projects are reopened
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_updates.r!")}
 
-
-
-
 #if(logfile[[10]]<3.100){	
 if(TRUE){
 	
@@ -29,16 +26,17 @@ if(TRUE){
 
 	# another column in peaklists for the replicates!
 	IDs<-list.files(file.path(logfile[[1]],"peaklist"))
-	for(i in 1:length(IDs)){
-		load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
-		if(any(colnames(peaklist)=="keep")){break} # ok, has been done before
-		keep<-rep(1,length(peaklist[,1])) # 1 == TRUE
-		peaklist<-cbind(peaklist,keep)
-		colnames(peaklist)[15]<-"keep_2";
-		save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])))
-		rm(peaklist)
+	if(length(IDs)>0){
+		for(i in 1:length(IDs)){
+			load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
+			if(any(colnames(peaklist)=="keep")){break} # ok, has been done before
+			keep<-rep(1,length(peaklist[,1])) # 1 == TRUE
+			peaklist<-cbind(peaklist,keep)
+			colnames(peaklist)[15]<-"keep_2";
+			save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])))
+			rm(peaklist)
+		}
 	}
-
 	# extend logfile$summary
 	if(!any(logfile$summary[,1]=="replicates")){
 		logfile$summary[,1]<<-as.character(logfile$summary[,1])
@@ -326,14 +324,16 @@ if(logfile[[10]]<3.101){
 	################################################################################################
 	# another column in peaklists for the blind subtraction ########################################
 	IDs<-list.files(file.path(logfile[[1]],"peaklist"))
-	for(i in 1:length(IDs)){
-		load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
-		if(any(colnames(peaklist)=="keep_2")){break} # ok, has been done before
-		keep_2<-rep(1,length(peaklist[,1])) # 1 == TRUE
-		peaklist<-cbind(peaklist,keep_2)
-		colnames(peaklist)[16]<-"keep_2";
-		save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])))
-		rm(peaklist)
+	if(length(IDs)>0){
+		for(i in 1:length(IDs)){
+			load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
+			if(any(colnames(peaklist)=="keep_2")){break} # ok, has been done before
+			keep_2<-rep(1,length(peaklist[,1])) # 1 == TRUE
+			peaklist<-cbind(peaklist,keep_2)
+			colnames(peaklist)[16]<-"keep_2";
+			save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])))
+			rm(peaklist)
+		}
 	}
 	################################################################################################	
 	# store subtraction files ######################################################################

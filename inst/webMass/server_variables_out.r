@@ -106,7 +106,7 @@ observe({
 		logfile$parameters[[85]]<<-as.character(isolate(input$subtract_pos_bydate))		
 		logfile$parameters[[86]]<<-as.character(isolate(input$subtract_pos_byfile))		
 		logfile$parameters[[87]]<<-as.character(isolate(input$subtract_neg_bydate))			
-		logfile$parameters[[88]]<<-as.character(isolate(input$subtract_neg_byfile))		
+		logfile$parameters[[88]]<<-as.character(isolate(input$subtract_neg_byfile))	
 		at2<-logfile$parameters[c(37,82,83,84,85,86,87,88)]
 		if(any(is.na(match(at2,at1)))){ # both steps take partly the same parameters! 
 			enviMass:::workflow_set(down="blinds",check_node=TRUE)
@@ -116,13 +116,13 @@ observe({
 		}				
 		# subtraction files
 		at1<-logfile$Positive_subtraction_files
-		logfile$Positive_subtraction_files<<-isolate(input$files_pos_select_subtract)
+		logfile$Positive_subtraction_files<<-c(isolate(input$files_pos_select_subtract),"FALSE")
 		at2<-logfile$Positive_subtraction_files
 		if(any(is.na(match(at2,at1)))){ # both steps take partly the same parameters! 
 			enviMass:::workflow_set(down="blinds",check_node=TRUE)
 		}	
 		at1<-logfile$Negative_subtraction_files
-		logfile$Negative_subtraction_files<<-isolate(input$files_pos_select_subtract)
+		logfile$Negative_subtraction_files<<-c(isolate(input$files_neg_select_subtract),"FALSE")
 		at2<-logfile$Negative_subtraction_files
 		if(any(is.na(match(at2,at1)))){ # both steps take partly the same parameters! 
 			enviMass:::workflow_set(down="blinds",check_node=TRUE)
@@ -261,12 +261,10 @@ observe({
 		if(at1!=at2){
 			enviMass:::workflow_set(down="quantification",check_node=FALSE)		
 		}		
-		
-	
-		
 		##########################################################################	
 
 		##########################################################################
+		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		cat("settings changed \n");
 		output$dowhat<<-renderText("Project settings modified");
 		##########################################################################

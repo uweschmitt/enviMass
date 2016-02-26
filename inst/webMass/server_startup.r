@@ -27,6 +27,7 @@ observe({
 			output$dowhat<-renderText("Started new project");
 			output$IS<-DT:::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 			output$targets<-DT:::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      
+			measurements<-read.csv(file=file.path(logfile$project_folder,"dataframes","measurements"),colClasses = "character")
 			output$measurements<-DT:::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"))      		
 			# SET DUMMY RESULTS ####################################################
 			# (1) Peak picking #####################################################

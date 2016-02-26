@@ -1,6 +1,6 @@
 #' @title Convert dates
 #'
-#' @description \code{convDate} streamlines date inputs for interlan workflow usage
+#' @description \code{convDate} streamlines date inputs for workflow usage
 #'
 #' @param measurements enviMass file list
 #' 

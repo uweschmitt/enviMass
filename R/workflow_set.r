@@ -8,7 +8,7 @@
 #' @param added Name of node (logfile$Tasks_to_redo) to be added
 #' @param except Name of node (logfile$Tasks_to_redo) to be excluded - dangerous
 #' @param single_file File-wise handler
-#' @param check_node Only evaluate if concerned node is enabled in workflow?
+#' @param check_node Only evaluate whether the concerned node is enabled in workflow?
 #' @param
 #' @param
 #' @param
@@ -85,7 +85,7 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 			measurements[,10]<-FALSE;
 		}
 		write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
-		rm(measurements1);	
+		rm(measurements);	
 	}
 	########################################################################################
 	if(any(work_stream=="qc")){

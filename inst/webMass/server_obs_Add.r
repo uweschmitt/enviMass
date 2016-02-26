@@ -308,6 +308,51 @@ addmeasu<-reactive({
 					return("File corrupted? - upload failed!")					
 				}
 			}
+			#########################################################################			
+			# subtraction files, positive: ##########################################
+			measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+			if(any( (measurements3[,1]!="-") & (measurements3[,4]=="positive") & (measurements3[,3]!="sample"))){
+				IDs_pos<-measurements3[
+					(measurements3[,4]=="positive") & (measurements3[,3]!="sample")
+				,1]
+				names_pos<-measurements3[
+					(measurements3[,4]=="positive") & (measurements3[,3]!="sample")
+				,2]
+				IDs_pos<-paste(IDs_pos,names_pos,sep=" - ")
+				if(any(logfile[[13]]!="FALSE")){
+					select_pos<-logfile[[13]]
+					select_pos<-select_pos[select_pos!="FALSE"]
+					# include changes from file additions / removals
+					select_pos<-select_pos[!is.na(match(select_pos,IDs_pos))]
+					logfile[[13]]<<-c(select_pos,"FALSE")
+				}else{
+					select_pos<-NULL
+				}
+				updateCheckboxGroupInput(session,inputId="files_pos_select_subtract", label="", choices=IDs_pos, selected = select_pos)
+			}
+			# subtraction files, negative: ##########################################
+			if(any( (measurements3[,1]!="-") & (measurements3[,4]=="negative") & (measurements3[,3]!="sample"))){
+				IDs_neg<-measurements3[
+					(measurements3[,4]=="negative") & (measurements3[,3]!="sample")
+				,1]
+				names_neg<-measurements3[
+					(measurements3[,4]=="negative") & (measurements3[,3]!="sample")
+				,2]
+				IDs_neg<-paste(IDs_neg,names_pos,sep=" - ")
+				if(any(logfile[[14]]!="FALSE")){
+					select_neg<-logfile[[14]]
+					select_neg<-select_neg[select_neg!="FALSE"]
+					select_neg<-select_neg[!is.na(match(select_neg,IDs_neg))]
+					logfile[[14]]<<-c(select_neg,"FALSE")
+				}else{
+					select_neg<-NULL
+				}
+				updateCheckboxGroupInput(session,inputId="files_neg_select_subtract", label="", choices=IDs_neg, selected = select_neg)
+			}
+			rm(measurements3)
+			#########################################################################
+			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+			#########################################################################
 		}else{
 			output$dowhat<-renderText("File must be reloaded");
 			return("File must be reloaded")
@@ -345,6 +390,50 @@ observe({
 		if(adjustit=="TRUE"){
 			enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
 		}	
+		#########################################################################			
+		# subtraction files, positive: ##########################################
+		measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		if(any( (measurements3[,1]!="-") & (measurements3[,4]=="positive") & (measurements3[,3]!="sample"))){
+			IDs_pos<-measurements3[
+				(measurements3[,4]=="positive") & (measurements3[,3]!="sample")
+			,1]
+			names_pos<-measurements3[
+				(measurements3[,4]=="positive") & (measurements3[,3]!="sample")
+			,2]
+			IDs_pos<-paste(IDs_pos,names_pos,sep=" - ")
+			if(any(logfile[[13]]!="FALSE")){
+				select_pos<-logfile[[13]]
+				select_pos<-select_pos[select_pos!="FALSE"]
+				# include changes from file additions / removals
+				select_pos<-select_pos[!is.na(match(select_pos,IDs_pos))]
+				logfile[[13]]<<-c(select_pos,"FALSE")
+			}else{
+				select_pos<-NULL
+			}
+			updateCheckboxGroupInput(session,inputId="files_pos_select_subtract", label="", choices=IDs_pos, selected = select_pos)
+		}
+		# subtraction files, negative: ##########################################
+		if(any( (measurements3[,1]!="-") & (measurements3[,4]=="negative") & (measurements3[,3]!="sample"))){
+			IDs_neg<-measurements3[
+				(measurements3[,4]=="negative") & (measurements3[,3]!="sample")
+			,1]
+			names_neg<-measurements3[
+				(measurements3[,4]=="negative") & (measurements3[,3]!="sample")
+			,2]
+			IDs_neg<-paste(IDs_neg,names_pos,sep=" - ")
+			if(any(logfile[[14]]!="FALSE")){
+				select_neg<-logfile[[14]]
+				select_neg<-select_neg[select_neg!="FALSE"]
+				select_neg<-select_neg[!is.na(match(select_neg,IDs_neg))]
+				logfile[[14]]<<-c(select_neg,"FALSE")
+			}else{
+				select_neg<-NULL
+			}
+			updateCheckboxGroupInput(session,inputId="files_neg_select_subtract", label="", choices=IDs_neg, selected = select_neg)
+		}
+		rm(measurements3)
+		############################################################################
+		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
         #############################################################################			
         output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"));
         save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
@@ -362,9 +451,9 @@ observe({
     input$Import_project
     if(input$Import_project){
 		cat("\n Importing project files ...")
-        measurements_1<<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+        measurements_1<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 		file_in<<-as.character(isolate(input$import_pro_dir))
-		measurements_2<<-read.csv(file=file.path(file_in,"dataframes","measurements"),colClasses = "character");
+		measurements_2<-read.csv(file=file.path(file_in,"dataframes","measurements"),colClasses = "character");
 		if(any(measurements_2[,1]!="-")){
 			for(i in 1:length(measurements_2[,1])){
 				print(as.character(i))
@@ -420,37 +509,184 @@ observe({
 			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
 			rm(measurements_1,measurements_2);
 			enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE) 
+			#########################################################################			
+			# subtraction files, positive: ##########################################
+			measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+			if(any( (measurements3[,1]!="-") & (measurements3[,4]=="positive") & (measurements3[,3]!="sample"))){
+				IDs_pos<-measurements3[
+					(measurements3[,4]=="positive") & (measurements3[,3]!="sample")
+				,1]
+				names_pos<-measurements3[
+					(measurements3[,4]=="positive") & (measurements3[,3]!="sample")
+				,2]
+				IDs_pos<-paste(IDs_pos,names_pos,sep=" - ")
+				if(any(logfile[[13]]!="FALSE")){
+					select_pos<-logfile[[13]]
+					select_pos<-select_pos[select_pos!="FALSE"]
+					# include changes from file additions / removals
+					select_pos<-select_pos[!is.na(match(select_pos,IDs_pos))]
+					logfile[[13]]<<-c(select_pos,"FALSE")
+				}else{
+					select_pos<-NULL
+				}
+				updateCheckboxGroupInput(session,inputId="files_pos_select_subtract", label="", choices=IDs_pos, selected = select_pos)
+			}
+			# subtraction files, negative: ##########################################
+			if(any( (measurements3[,1]!="-") & (measurements3[,4]=="negative") & (measurements3[,3]!="sample"))){
+				IDs_neg<-measurements3[
+					(measurements3[,4]=="negative") & (measurements3[,3]!="sample")
+				,1]
+				names_neg<-measurements3[
+					(measurements3[,4]=="negative") & (measurements3[,3]!="sample")
+				,2]
+				IDs_neg<-paste(IDs_neg,names_pos,sep=" - ")
+				if(any(logfile[[14]]!="FALSE")){
+					select_neg<-logfile[[14]]
+					select_neg<-select_neg[select_neg!="FALSE"]
+					select_neg<-select_neg[!is.na(match(select_neg,IDs_neg))]
+					logfile[[14]]<<-c(select_neg,"FALSE")
+				}else{
+					select_neg<-NULL
+				}
+				updateCheckboxGroupInput(session,inputId="files_neg_select_subtract", label="", choices=IDs_neg, selected = select_neg)
+			}
+			rm(measurements3)
+			#########################################################################
+			output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
+			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+			#########################################################################			
+			output$dowhat<-renderText("Files imported.");
 			cat(" done.")		
 		}else{
 			cat(" no files to import - project empty?.")
+			output$dowhat<-renderText("Failed import: no files.");
 		}
 	}
 	if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_Add.r!")}
 })
 ##############################################################################
 
+# MODIFY MEASUREMENTS ########################################################  
+# LOAD
+observe({
+	input$Modif_load
+	if(isolate(input$Modif_load)){
+		measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		atID<-as.character(isolate(input$Modif_ID))
+		if(any(measurements3[,1]==atID)){
+			updateTextInput(session, "Modif_name",value = as.character(measurements3[measurements3[,1]==atID,2]))
+			updateSelectInput(session,"Modif_type","Type:", choices = c("sample", "blank", "doted", "other"), selected = as.character(measurements3[measurements3[,1]==atID,3]))
+			updateSelectInput(session, "Modif_incl", selected = as.character(measurements3[measurements3[,1]==atID,8]))		
+			updateSelectInput(session, "Modif_mode", selected = as.character(measurements3[measurements3[,1]==atID,4]))
+			updateTextInput(session, "Modif_place",value = as.character(measurements3[measurements3[,1]==atID,5]))
+			updateDateInput(session, "Modif_date", value = as.character(measurements3[measurements3[,1]==atID,6]))
+			updateTextInput(session, "Modif_time",value = as.character(measurements3[measurements3[,1]==atID,7]))		
+			updateTextInput(session, "Modif_tag3",value = as.character(measurements3[measurements3[,1]==atID,21]))
+			output$dowhat<-renderText("Specifications loaded into mask.");
+			cat("\n specifications loaded into mask")
+			rm(measurements3)
+		}
+	}
+})  
+# EXPORT
+observe({
+	input$Modif_export
+	if(isolate(input$Modif_export)){
+		measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		atID<-as.character(isolate(input$Modif_ID))
+		measurements3[measurements3[,1]==atID,2]<-as.character(isolate(input$Modif_name))
+		measurements3[measurements3[,1]==atID,3]<-as.character(isolate(input$Modif_type))
+		measurements3[measurements3[,1]==atID,8]<-as.character(isolate(input$Modif_incl))
+		measurements3[measurements3[,1]==atID,4]<-as.character(isolate(input$Modif_mode))
+		measurements3[measurements3[,1]==atID,5]<-as.character(isolate(input$Modif_place))
+		measurements3[measurements3[,1]==atID,6]<-as.character(isolate(input$Modif_date))
+		measurements3[measurements3[,1]==atID,]<-enviMass:::convDate(measurements3[measurements3[,1]==atID,]);
+		measurements3[measurements3[,1]==atID,7]<-as.character(isolate(input$Modif_time))		
+		measurements3[measurements3[,1]==atID,21]<-as.character(isolate(input$Modif_tag3))		
+		enviMass:::workflow_set(down="peakpicking",check_node=TRUE,single_file=TRUE)
+		write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+		output$dowhat<-renderText("Specifications saved to file table.");
+		cat("\n specifications exported from mask to file table")
+		rm(measurements3)
+		output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
+		######################################################################			
+		# subtraction files, positive: #######################################
+		measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		if(any( (measurements3[,1]!="-") & (measurements3[,4]=="positive") & (measurements3[,3]!="sample"))){
+			IDs_pos<-measurements3[
+				(measurements3[,4]=="positive") & (measurements3[,3]!="sample")
+			,1]
+			names_pos<-measurements3[
+				(measurements3[,4]=="positive") & (measurements3[,3]!="sample")
+			,2]
+			IDs_pos<-paste(IDs_pos,names_pos,sep=" - ")
+			if(any(logfile[[13]]!="FALSE")){
+				select_pos<-logfile[[13]]
+				select_pos<-select_pos[select_pos!="FALSE"]
+				# include changes from file additions / removals
+				select_pos<-select_pos[!is.na(match(select_pos,IDs_pos))]
+				logfile[[13]]<<-c(select_pos,"FALSE")
+			}else{
+				select_pos<-NULL
+			}
+			updateCheckboxGroupInput(session,inputId="files_pos_select_subtract", label="", choices=IDs_pos, selected = select_pos)
+		}
+		# subtraction files, negative: #######################################
+		if(any( (measurements3[,1]!="-") & (measurements3[,4]=="negative") & (measurements3[,3]!="sample"))){
+			IDs_neg<-measurements3[
+				(measurements3[,4]=="negative") & (measurements3[,3]!="sample")
+			,1]
+			names_neg<-measurements3[
+				(measurements3[,4]=="negative") & (measurements3[,3]!="sample")
+			,2]
+			IDs_neg<-paste(IDs_neg,names_pos,sep=" - ")
+			if(any(logfile[[14]]!="FALSE")){
+				select_neg<-logfile[[14]]
+				select_neg<-select_neg[select_neg!="FALSE"]
+				select_neg<-select_neg[!is.na(match(select_neg,IDs_neg))]
+				logfile[[14]]<<-c(select_neg,"FALSE")
+			}else{
+				select_neg<-NULL
+			}
+			updateCheckboxGroupInput(session,inputId="files_neg_select_subtract", label="", choices=IDs_neg, selected = select_neg)
+		}
+		rm(measurements3)
+		######################################################################
+		output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
+		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+		######################################################################
+	}
+})  
+##############################################################################  
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+############################################################################## 
+# Import parameters ##########################################################  
+observe({
+    input$Import_project_para
+    if(input$Import_project_para){
+		cat("\n Importing project parameters ...")
+		logfile_here<<-logfile;
+		file_in<-as.character(isolate(input$import_pro_dir_paras))
+		load(file.path(file_in,"logfile.emp"),envir=as.environment(".GlobalEnv"))
+		logfile_other<<-logfile;
+		rm(logfile,envir=as.environment(".GlobalEnv"))
+		logfile<<-logfile_here
+		logfile[[4]]<<-logfile_other[[4]]
+		logfile[[5]]<<-logfile_other[[5]]
+		logfile[[7]]<<-logfile_other[[7]]		
+		logfile[[8]]<<-logfile_other[[8]]		 
+ 		logfile[[9]]<<-logfile_other[[9]]		
+		rm(logfile_other,logfile_here,envir=as.environment(".GlobalEnv"))
+ 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp")); 
+		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		source("server_variables_in.R", local=TRUE)
+		output$dowhat<<-renderText("Parameters imported.");
+		cat(" done. \n")
+	}
+	if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_Add.r!")}
+}) 
+############################################################################## 
+ 
   
   
   

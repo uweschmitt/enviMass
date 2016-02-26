@@ -1,6 +1,7 @@
 measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 types<-measurements[,3]
 IDs<-list.files(file.path(logfile[[1]],"peaklist"))
+if(length(IDs)>0){
 for(i in 1:length(IDs)){
 	if(types[measurements[,1]==IDs[i]]=="sample"){
 		load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
@@ -9,4 +10,5 @@ for(i in 1:length(IDs)){
 		save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])))
 		rm(peaklist)
 	}
+}
 }

@@ -19,7 +19,7 @@
 		tabPanel("Files",
 			HTML('<hr noshade="noshade" />'),
 				bsCollapse(multiple = FALSE, open = "files_open", id = "files",
-					bsCollapsePanel("Add a LC-HRMS file", 		
+					bsCollapsePanel("Add LC-HRMS file", 		
 						helpText("To add a new file, set the below specifications accordingly and select it."),
 						HTML('<hr noshade="noshade" />'),												
 						fluidRow(
@@ -56,7 +56,37 @@
 						tags$h5("Delete file by its unique ID from the below file table"),
 						textInput("Measdel_ID", "ID:", value = "123"),
 						actionButton("Measdel","Remove")		
-					),					
+					),				
+####### Baustelle
+					
+					bsCollapsePanel("Modify a file specification", 
+						fluidRow(
+							column(width = 4, helpText("Load settings of a file into below mask by its ID, modify and then export the new settings into the main table. Modifications make a full recalculation default.")),
+							column(width = 3, textInput("Modif_ID", "ID:", value = "123"), actionButton("Modif_load","Load"))
+						),
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(
+							column(width = 5, textInput("Modif_name", "Name:", value = "Sample 1")),
+							column(width = 5, selectInput("Modif_type", "Type:", choices = c("sample", "blank", "doted", "other"))),
+							column(width = 5, selectInput("Modif_incl", "Include?", choices = c("TRUE","FALSE"))),
+							column(width = 5, selectInput("Modif_mode", "Choose ionization mode:", choices = c("positive", "negative")))	
+							
+						),
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(
+							column(width = 5,textInput("Modif_place", "Place:", value = "Rhine")),		
+							column(width = 5,dateInput("Modif_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
+							column(width = 5,textInput("Modif_time", "Time:(HH:MM:SS)", value = "12:00:00")),							
+							column(width = 5,textInput("Modif_tag3", "Replicate group", value = "FALSE"))	
+						),
+						HTML('<hr noshade="noshade" />'),
+						actionButton("Modif_export","Export")
+						
+####### Baustelle						
+						
+						
+					
+					),
 					bsCollapsePanel("Import files from another project", 		
 						tags$h5("Select project folder to import files from:"),
 						textInput("import_pro_dir", "", value = "C:\\...\\old_project_name"),
@@ -495,7 +525,17 @@
 					tags$h6("Reset project with peak picking:"),
 					bsButton("reset_2","Reset",style="danger")
 				)
-			)			
+			),
+			# IMPORT PARAMETERS FROM ANOTHER PROJECT ###########################
+            tabPanel("Import",			
+				tags$h5("Import all parameter settings from another project, excluding blind file selection."),
+						textInput("import_pro_dir_paras", "", value = "C:\\...\\other_project_name"),
+						bsPopover("import_pro_dir_paras", 
+							title = "Insert full path, including the project folder, but excluding the logfile.emp.",
+							content = "Using your OS explorer, you may navigate into your project folder and copy/paste the full path.", 
+							placement = "right", trigger = "hover"),
+						actionButton("Import_project_para","Import")		
+			)
           )
         ),
         ########################################################################
@@ -642,8 +682,6 @@
 					imageOutput("peakhist_pic", height="auto"),
 					imageOutput("peakmzRT_pic", height="auto")
                 ),
-				
-				
 				tabPanel("Compound screening",
 					tabsetPanel(
 						tabPanel("Positive ionization",
@@ -798,7 +836,7 @@
         tabPanel("About",
 		   tags$h5("Citing enviMass"),
 		   HTML('<p>
-			Loos, M., Ruff, M., Singer, H., 2013. enviMass v3.2 - Software workflow for the monitoring of temporal micropollutant dynamics using LC-HRMS data
+			Loos, M., Ruff, M., Singer, H., 2013. enviMass v3.1 - Software workflow for the monitoring of temporal micropollutant dynamics using LC-HRMS data
 			</p> '),
 		   tags$h5("Contact, maintainer:"),
 		   HTML('<p> Martin Loos, Martin.Loos@eawag.ch </p> '),

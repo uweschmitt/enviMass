@@ -8,11 +8,13 @@ if(length(replic)>0){
 	for(i in 1:length(replic)){
 		IDs<-measurements$ID[measurements$tag3==replic[i]]
 		for(j in 1:length(IDs)){
-			load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[j])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
-			keep<-rep(1,length(peaklist[,1]))
-			peaklist[,colnames(peaklist)=="keep"]<-keep
-			save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[j])))
-			rm(peaklist)
+			if(file.exists(file.path(logfile[[1]],"peaklist",as.character(IDs[j])))){
+				load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[j])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
+				keep<-rep(1,length(peaklist[,1]))
+				peaklist[,colnames(peaklist)=="keep"]<-keep
+				save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[j])))
+				rm(peaklist)
+			}
 		}
 	}
 }
