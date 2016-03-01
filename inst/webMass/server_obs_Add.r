@@ -432,7 +432,24 @@ observe({
 			updateCheckboxGroupInput(session,inputId="files_neg_select_subtract", label="", choices=IDs_neg, selected = select_neg)
 		}
 		rm(measurements3)
-		############################################################################
+		#############################################################################
+		# delete results ############################################################
+		if(file.exists(file.path(logfile$project_folder,"peaklist",as.character(isolate(input$Measdel_ID))))){
+			file.remove(file.path(logfile[[1]],"files",paste(as.character(isolate(input$Measdel_ID)),".mzXML",sep="")))
+		}
+		if( file.exists( file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",isolate(input$Measdel_ID),".png",sep="") ) ) ){
+			file.remove(file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",isolate(input$Measdel_ID),".png",sep="") ))
+		}	
+		if( file.exists( file.path(logfile[[1]],"pics",paste("peakhist_",isolate(input$Measdel_ID),sep="")) ) ){
+			file.remove( file.path(logfile[[1]],"pics",paste("peakhist_",isolate(input$Measdel_ID),sep=""))  )
+		}		
+		if( file.exists( file.path(logfile[[1]],"pics",paste("recal_",isolate(input$Measdel_ID),sep="")) ) ){
+			file.remove( file.path(logfile[[1]],"pics",paste("recal_",isolate(input$Measdel_ID),sep="")) )
+		}		
+		if( file.exists(file.path(logfile[[1]],"pics",paste("peakmzRT_",isolate(input$Measdel_ID),sep="")) ) ){
+			file.remove(file.path(logfile[[1]],"pics",paste("peakmzRT_",isolate(input$Measdel_ID),sep="")) )
+		}			
+		#############################################################################
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
         #############################################################################			
         output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"));

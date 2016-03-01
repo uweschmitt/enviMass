@@ -172,9 +172,10 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
   if(!length(filed)){say<-"No measurements available!"}
   measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
   if(!all(!duplicated(measurements[,1]))){say<-"Duplicated measurements IDs. Revise!"}
-  measurements<-measurements[,1]
-  measurements<-paste(measurements,".mzXML",sep="")
-  if(any(match(measurements,filed,nomatch=0)==0)){say<-paste("Missing mzXML file - file corrupted? Compare project mzML folder for consistency!",sep="")}
+  if(any(is.na(as.numeric(measurements[,1])))){say<-"Non-numeric measurements IDs. Revise!"}  
+  measurements_ID<-measurements[,1]
+  measurements_ID<-paste(measurements_ID,".mzXML",sep="")
+  if(any(match(measurements_ID,filed,nomatch=0)==0)){say<-paste("Missing mzXML file - file corrupted? Compare project mzML folder for consistency!",sep="")}
   ##############################################################################
   # progress bar? ##############################################################
   if(interactive() && !.Platform$OS.type == "windows" && .Platform$GUI == "Rgui" && logfile[[5]][21]=="TRUE"){

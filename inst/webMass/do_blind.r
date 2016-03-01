@@ -1,5 +1,3 @@
-
-
 measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 IDs<-list.files(file.path(logfile[[1]],"peaklist"))
 filetype<-(measurements[,3])
@@ -125,7 +123,8 @@ if( (logfile$parameters[[86]]=="TRUE") & any(logfile$Positive_subtraction_files!
 				round(sum(peaklist[,colnames(peaklist)=="keep_2"]==0)/length(peaklist[,1])*100,digits=1),
 				" % of ",
 				length(peaklist[,1]),
-				" peaks blind filtered (selective). "
+				" peaks blind filtered (selective, files ",
+				as.character(IDs[i])," vs. ",as.character(subID), "). "
 			,sep=""))
 			rm(peaklist,sam_peaklist);
 		}

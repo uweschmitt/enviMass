@@ -4,29 +4,60 @@
 observe({
     input$sel_meas
     if(isolate(input$sel_meas)!="none"){
-    pics<-list.files(file.path(logfile[[1]],"pics"))
-	# recalibration ##########################################################
-    if(
-        any(pics==paste("recal_",isolate(input$sel_meas),sep="")) & (logfile$workflow[2]=="yes")
-    ){
-        expr1<-list(src=file.path(logfile[[1]],"pics",paste("recal_",isolate(input$sel_meas),sep="")))
-        output$recal_pic<-renderImage(expr1, deleteFile = FALSE)
-	}
-    ##########################################################################
-    # peak picking ###########################################################
-    if(
-        any(pics==paste("peakhist_",isolate(input$sel_meas),sep=""))
-    ){
-        expr2<-list(src=file.path(logfile[[1]],"pics",paste("peakhist_",isolate(input$sel_meas),sep="")))
-        output$peakhist_pic<-renderImage(expr2, deleteFile = FALSE)
-    }
-    if(
-        any(pics==paste("peakmzRT_",isolate(input$sel_meas),sep=""))
-    ){
-        expr3<-list(src=file.path(logfile[[1]],"pics",paste("peakmzRT_",isolate(input$sel_meas),sep="")))
-        output$peakmzRT_pic<-renderImage(expr3, deleteFile = FALSE)
-    }
-    ##########################################################################
+		##########################################################################	
+		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		output$file_proc_name<-renderText(measurements[measurements[,1]==as.character(isolate(input$sel_meas)),2])
+		output$file_proc_type<-renderText(measurements[measurements[,1]==as.character(isolate(input$sel_meas)),3])
+		output$file_proc_mode<-renderText(measurements[measurements[,1]==as.character(isolate(input$sel_meas)),4])		
+		# peaklist info ##########################################################
+		if(file.exists(file.path(logfile$project_folder,"peaklist",as.character(isolate(input$sel_meas))))){
+			load(file=file.path(logfile$project_folder,"peaklist",as.character(isolate(input$sel_meas))),envir=as.environment(".GlobalEnv"),verbose=FALSE);			
+			output$file_peak_number<-renderText(as.character(length(peaklist[,1])));	
+			blind_rem<-round(
+				(sum(peaklist[,colnames(peaklist)=="keep_2"]==0))/length(peaklist[,1])*100
+			,digits=3)
+			output$file_blind_rem<-renderText(as.character(blind_rem));
+			repl_rem<-round(
+				(sum(peaklist[,colnames(peaklist)=="keep"]==0))/length(peaklist[,1])*100
+			,digits=3)
+			output$file_repl_rem<-renderText(as.character(repl_rem));
+			#rm(peaklist,envir=as.environment(".GlobalEnv")) # wtf?
+		}else{
+			cat("\n no peaklist for processing view found")
+		}
+		##########################################################################		
+		pics<-list.files(file.path(logfile[[1]],"pics"))
+		# recalibration ##########################################################
+		if(
+			any(pics==paste("recal_",isolate(input$sel_meas),sep="")) & (logfile$workflow[2]=="yes")
+		){
+			expr1<-list(src=file.path(logfile[[1]],"pics",paste("recal_",isolate(input$sel_meas),sep="")))
+			output$recal_pic<-renderImage(expr1, deleteFile = FALSE)
+		}
+		##########################################################################
+		# peak picking ###########################################################
+		if(
+			any(pics==paste("peakhist_",isolate(input$sel_meas),sep=""))
+		){
+			expr2<-list(src=file.path(logfile[[1]],"pics",paste("peakhist_",isolate(input$sel_meas),sep="")))
+			output$peakhist_pic<-renderImage(expr2, deleteFile = FALSE)
+		}
+		if(
+			any(pics==paste("peakmzRT_",isolate(input$sel_meas),sep=""))
+		){
+			expr3<-list(src=file.path(logfile[[1]],"pics",paste("peakmzRT_",isolate(input$sel_meas),sep="")))
+			output$peakmzRT_pic<-renderImage(expr3, deleteFile = FALSE)
+		}
+		##########################################################################
+		# LOD  ###################################################################
+		if( file.exists( file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",isolate(input$sel_meas),".png",sep="") ) ) ){
+			expr_LOD<-list( src=file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",isolate(input$sel_meas),".png",sep="")) )
+			output$LOD_pic<-renderImage(expr_LOD, deleteFile = FALSE)	
+		}else{
+			cat("\n LOD pic file not found")
+		}
+		##########################################################################
+		output$dowhat<-renderText("Processing per file viewed.");	
     }
 })
 ##############################################################################
@@ -117,7 +148,7 @@ observe({
 ##############################################################################
 
 ##############################################################################
-# update results for changes ion mode selection ##############################
+# update results for changes in ion mode selection ###########################
 ##############################################################################
 maincalc3<-reactive({
 	input$Ion_mode
@@ -143,8 +174,10 @@ maincalc3<-reactive({
 		expr4p<-list(src=file.path(logfile[[1]],"pics","boxprofile_pos"))
 		output$boxprofile<-renderImage(expr4p, deleteFile = FALSE)		
 		isolate(init$b<<-(init$b+1))
+		if(any(objects()=="profileList")){stop("illegal profpeaks2 found, #1");}
+		if(any(objects()=="profpeaks")){stop("illegal profpeaks found, #1");}
 		return("Select ionization (switch to negative):\n")
-		}
+	}
 	if( (isolate(init$a)=="TRUE") &  (isolate(input$Ion_mode)=="negative") ){
 		exprprofnorm_neg<-list(src=file.path(logfile[[1]],"pics","profnorm_neg"))
 		output$profnorm<-renderImage(exprprofnorm_neg, deleteFile = FALSE)
@@ -167,6 +200,8 @@ maincalc3<-reactive({
 		expr4n<-list(src=file.path(logfile[[1]],"pics","boxprofile_neg"))
 		output$boxprofile<-renderImage(expr4n, deleteFile = FALSE)	
 		isolate(init$b<<-(init$b+1))
+		if(any(objects()=="profileList")){stop("illegal profpeaks2 found, #2");}
+		if(any(objects()=="profpeaks")){stop("illegal profpeaks found, #2");}
 		return("Select ionization (switch to positive):\n")	
 	}
 })
@@ -188,7 +223,8 @@ maincalc6<-reactive({
 	input$filterProf_notblind
 	input$filterProf_sort
 	input$filterProf_count
-    if( (isolate(init$a)=="TRUE") & 
+    if( 
+		(isolate(init$a)=="TRUE") & 
 		(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks")) & 
 		!is.na(isolate(input$filterProf_minmass)) & 
 		!is.na(isolate(input$filterProf_maxmass)) & 
@@ -197,7 +233,9 @@ maincalc6<-reactive({
 	){
 		cat("\n profilepeaks filtered and sorted")		
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks2")){rm(profpeaks2,envir=as.environment(".GlobalEnv"))}
-		if(any(objects()=="profpeaks2")){rm(profpeaks2)}
+		if(any(objects()=="profileList")){stop("illegal profpeaks2 found, #3");}
+		if(any(objects()=="profpeaks")){stop("illegal profpeaks found, #3");}
+		if(any(objects()=="profpeaks2")){stop("illegal profpeaks2 found, #3");}
 		assign("profpeaks2",profpeaks,envir=as.environment(".GlobalEnv"));
 		if( length(profpeaks2)>13 ){profpeaks2<<-profpeaks2[profpeaks2[,1]>=isolate(input$filterProf_minmass),,drop = FALSE]}else{ if( length(profpeaks2)==13 ){ profpeaks2<<-profpeaks2[profpeaks2[1]>=isolate(input$filterProf_minmass),drop = FALSE] }}
 		if( length(profpeaks2)>13 ){profpeaks2<<-profpeaks2[profpeaks2[,1]<=isolate(input$filterProf_maxmass),,drop = FALSE]}else{ if( length(profpeaks2)==13 ){  profpeaks2<<-profpeaks2[profpeaks2[1]<=isolate(input$filterProf_maxmass),drop = FALSE] }}
@@ -212,7 +250,7 @@ maincalc6<-reactive({
 				profpeaks2<<-profpeaks2[(profpeaks2[,6]==1)]
 			}
 		}
-		if(length(profpeaks2)>13){
+		if( length(profpeaks2)>13 ){
 			if(isolate(input$filterProf_notblind)=="yes"){
 				profpeaks2<<-profpeaks2[profpeaks2[,5]==0,,drop = FALSE] # not in blind, = profileList[[7]][k,8]
 			}
@@ -221,7 +259,7 @@ maincalc6<-reactive({
 				profpeaks2<<-profpeaks2[(profpeaks2[,5]==0)]
 			}		
 		}
-		if(length(profpeaks2)>13){
+		if( length(profpeaks2)>13 ){
 			if(isolate(input$filterProf_sort)=="ID"){
 				profpeaks2<<-profpeaks2[order(profpeaks2[,10],decreasing=FALSE),]
 			}
@@ -368,9 +406,9 @@ maincalc6<-reactive({
 					profpeaks2[,11]<<-as.integer(profpeaks2[,11])
 					profpeaks2[,12]<<-format(profpeaks2[,12],scientific=TRUE,digits=2)
 					profpeaks2[,13]<<-format(profpeaks2[,13],scientific=TRUE,digits=2)
-					profpeaks2<<-profpeaks2[,c(10:13,1:9)]
-					names(profpeaks2)<<-c("profile ID","number of peaks","global trend intensity","current trend intensity","mean m/z", "mean intensity", "mean RT", "maximum Intensity", "in blind?", "above blind?", "m/z variance", "minimum RT", "maximum RT")
-					output$allproftable<-renderTable(profpeaks2)
+					profpeaks3<<-profpeaks2[,c(10:13,1:9)]
+					names(profpeaks3)<<-c("profile ID","number of peaks","global trend intensity","current trend intensity","mean m/z", "mean intensity", "mean RT", "maximum Intensity", "in blind?", "above blind?", "m/z variance", "minimum RT", "maximum RT")
+					output$allproftable<-renderTable(profpeaks3)
 					updateNumericInput(session,"profID",value = 0);
 					updateNumericInput(session,"profentry",value = 0);
 					return(as.character(atit1));
@@ -405,12 +443,12 @@ maincalc6<-reactive({
 				plot.new()
 				plot.window(xlim=c(0,1),ylim=c(0,1))
 				text(0.5,0.5,labels="0 profiles for these filter settings",cex=1.8,col="red")
-			dev.off();
-			expr6<-list(src=file.path(logfile[[1]],"pics","profilehisto.png"));
+			dev.off()
+			expr6<-list(src=file.path(logfile[[1]],"pics","profilehisto.png"))
 			output$profilehisto<-renderImage(expr6, deleteFile = FALSE);
 			output$allproftable<-renderText("No profiles left")
-			updateNumericInput(session,"profID",value = 0);
-			updateNumericInput(session,"profentry",value = 0);
+			updateNumericInput(session,"profID",value = 0)
+			updateNumericInput(session,"profentry",value = 0)
 			return("0")
 		}
 	}else{
@@ -422,19 +460,23 @@ maincalc6<-reactive({
 			output$atprof4<-renderText({"0"})
 			output$atprof5<-renderText({"0"})	
 			output$allproftable<-renderText("No profiles available")
-			path=file.path(logfile[[1]],"pics","profilehisto.png");
-			png(filename = path, bg = "white", width = 1100);
+			path=file.path(logfile[[1]],"pics","profilehisto.png")
+			png(filename = path, bg = "white", width = 1100)
 				plot.new()
 				plot.window(xlim=c(0,1),ylim=c(0,1))
 				text(0.5,0.5,labels="0 profiles for these filter settings",cex=1.8,col="red")
-			dev.off();
-			expr6<-list(src=file.path(logfile[[1]],"pics","profilehisto.png"));
-			output$profilehisto<-renderImage(expr6, deleteFile = FALSE);
-			updateNumericInput(session,"profID",value = 0);
-			updateNumericInput(session,"profentry",value = 0);
+			dev.off()
+			expr6<-list(src=file.path(logfile[[1]],"pics","profilehisto.png"))
+			output$profilehisto<-renderImage(expr6, deleteFile = FALSE)
+			updateNumericInput(session,"profID",value = 0)
+			updateNumericInput(session,"profentry",value = 0)
 			return("0")
 		}
 	}
+	if(any(objects()=="profileList")){stop("illegal profpeaks2 found, #4");}
+	if(any(objects()=="profpeaks")){stop("illegal profpeaks found, #4");}
+	if(any(objects()=="profpeaks2")){stop("illegal profpeaks2 found, #4");}
+	if(any(objects()=="profpeaks3")){stop("illegal profpeaks3 found, #4");}
 })	
 output$atprof1<-renderText(paste(maincalc6()))
 output$peak_number<-renderText(paste(maincalc6())) 
@@ -453,7 +495,12 @@ observe({
 		any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks") 	& 
 		any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks2")
 	){
+		if(any(objects()=="profileList")){stop("illegal profpeaks2 found, #5");}
+		if(any(objects()=="profpeaks")){stop("illegal profpeaks found, #5");}
+		if(any(objects()=="profpeaks2")){stop("illegal profpeaks2 found, #5");}
+		if(any(objects()=="profpeaks3")){stop("illegal profpeaks3 found, #5");}
 		if(any(profileList[[7]][,4]==as.numeric(isolate(input$profID)))){
+			cat("\n plotting profile with ID ");cat(as.numeric(isolate(input$profID)));
 			if(logfile$parameters[[36]]=="yes"){
 				blindsubtract<-TRUE
 			}else{
@@ -570,8 +617,8 @@ observe({
 			(isolate(input$profentry)>0) & 
 			(isolate(input$profentry)<=length(profpeaks2[,1])) 
 		){ 
-				if(any(profileList[[7]][,4]==as.numeric(profpeaks2[isolate(input$profentry),1]))){
-					updateNumericInput(session,"profID",value = as.numeric(as.character(profpeaks2[isolate(input$profentry),1])))				
+				if( any( profileList[[7]][,4]==as.numeric(profpeaks2[isolate(input$profentry),10]) ) ){
+					updateNumericInput(session,"profID",value = as.numeric(as.character(profpeaks2[isolate(input$profentry),10])))				
 				}
 		}else{
 			path=file.path(logfile[[1]],"pics","timeprofile");

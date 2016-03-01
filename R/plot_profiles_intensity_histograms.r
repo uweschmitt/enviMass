@@ -56,7 +56,7 @@ plot_profiles_intensity_histograms <- function(mean_intensities, max_intensities
     if(aaa>0){
         if (aa != 0) {
             hist(log10(mean_intensities), breaks=100, xlab="log10 Intensities", border="darkgrey",
-                 col=NULL, ylim=c(0, aaa), main="Intensities distributions of profiles")
+                 col=NULL, ylim=c(0, aaa), main="Intensity distributions of profiles")
         }
         if (bb != 0) {
             hist(log10(max_intensities), breaks=100, add=TRUE, border="darkgreen", col=NULL)

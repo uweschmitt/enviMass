@@ -23,8 +23,8 @@
 						helpText("To add a new file, set the below specifications accordingly and select it."),
 						HTML('<hr noshade="noshade" />'),												
 						fluidRow(
-							column(width = 5, textInput("Measadd_ID", "Numeric ID:", value = "123")),
-							column(width = 5, radioButtons("Measadd_ID_autom", "...or assign ID automatically?", c("yes"="yes","no"="no")))							
+							column(width = 5, numericInput("Measadd_ID", "Numeric ID:", value = "123")),
+							column(width = 5, radioButtons("Measadd_ID_autom", "...or assign ID automatically (highly recommended)?", c("yes"="yes","no"="no")))							
 						),
 						HTML('<hr noshade="noshade" />'),
 						fluidRow(
@@ -57,8 +57,6 @@
 						textInput("Measdel_ID", "ID:", value = "123"),
 						actionButton("Measdel","Remove")		
 					),				
-####### Baustelle
-					
 					bsCollapsePanel("Modify a file specification", 
 						fluidRow(
 							column(width = 4, helpText("Load settings of a file into below mask by its ID, modify and then export the new settings into the main table. Modifications make a full recalculation default.")),
@@ -81,11 +79,6 @@
 						),
 						HTML('<hr noshade="noshade" />'),
 						actionButton("Modif_export","Export")
-						
-####### Baustelle						
-						
-						
-					
 					),
 					bsCollapsePanel("Import files from another project", 		
 						tags$h5("Select project folder to import files from:"),
@@ -543,6 +536,7 @@
         ########################################################################
         tabPanel("Results", 	
 			tabsetPanel( 
+				######################################################################################################################
 				tabPanel("Profiles",
 					div(style = widget_style5,
 						textOutput("had_ion"),	
@@ -551,6 +545,8 @@
 					HTML('<hr noshade="noshade" />'),  
 					#navbarPage("", 
 					tabsetPanel( 
+
+### Baustelle						
 						tabPanel("Summary",										
 								tags$h5("Filter profile list:"),
 								div(style = widget_style3,numericInput("filterProf_minmass", "Minimum m/z:", 0)),
@@ -560,12 +556,22 @@
 								div(style = widget_style3,radioButtons("filterProf_meanblind", "Use mean above blind?", c("no"="no","yes"="yes"))),
 								bsPopover("filterProf_meanblind", 
 									title = "Replicates, not time series ...",
-									content = "Get profiles with mean sample intensity x times above mean blank intensities (set Sort profile list by: maximum or mean intensity; x = to be set in blind settings panel). Useful if your files are replicates and not a time sequences.", 
+									content = "Get profiles with mean sample intensity x times above mean blank intensities (set Sort profile list by: maximum or mean intensity; x = to be set in blind settings panel). Useful if all your sample files are replicates and not a time sequences.", 
 									placement = "top", trigger = "hover"),
 								div(style = widget_style3,radioButtons("filterProf_notblind", "Not in blind?", c("no"="no","yes"="yes"))),
 								div(style = widget_style3,selectInput("filterProf_sort", "Sort profile list by:", 
 									choices = c("ID","mean m/z","mean RT","maximum intensity","mean intensity","global trend intensity","current trend intensity"), selected="current trend intensity")),
 								div(style = widget_style3,numericInput("filterProf_count", "Restrict list size:", 500)),
+								conditionalPanel( # IS filter				
+										condition = "input.screen_IS == 'yes'",
+										tags$h5("IS compounds filter:"),										
+										HTML('<hr noshade="noshade" />')
+								),
+								conditionalPanel( # target filter				
+										condition = "input.screen_target == 'yes'",	
+										tags$h5("Target compounds filter:"),	
+										HTML('<hr noshade="noshade" />')
+								),															
 								HTML('<hr noshade="noshade" />'),
 								bsCollapse(multiple = FALSE, open = "col2", id = "collapse2",
 									bsCollapsePanel("Profile statistics", 
@@ -589,9 +595,9 @@
 										title = "Export above filtered profiles",
 										content = "Time-sorted peak intensities of profiles and their mean mass & RT are exported as profiles.txt to the export folder of this project. WARNING: restrict list size to avoid lengthy exports!", 
 										placement = "right", trigger = "hover"))				
-										
+### Baustelle	
 						),
-						tabPanel("Newest trends",
+						tabPanel("Latest trends",
 								tags$h5("Comparison of current vs. global trends by profile ID"),
 								imageOutput("boxprofile", height="auto"),
 								HTML(
@@ -649,6 +655,7 @@
 						#id="navbar_prof",inverse=FALSE,collapsible=TRUE,fluid=TRUE
 					)
 				),
+				######################################################################################################################
 				tabPanel("Quality control",
 					tabsetPanel(
 						tabPanel("Positive ionization ",
@@ -656,7 +663,7 @@
 							imageOutput("plotQCa_pos", height="auto"),
 							tags$h5("Outliers:"),
 							imageOutput("plotQCb_pos", height="auto"),
-							tags$h5("Intensity distribution:"),                    
+							tags$h5("Intensity distribution for median intensity normalization:"),                    
 							imageOutput("pic_int_distr_pos", width = "100%", height = "250px")
 						),
 						tabPanel("Negative ionization ",
@@ -664,11 +671,12 @@
 							imageOutput("plotQCa_neg", height="auto"),
 							tags$h5("Outliers:"),
 							imageOutput("plotQCb_neg", height="auto"),
-							tags$h5("Intensity distribution:"),                    
+							tags$h5("Intensity distribution for median intensity normalization:"),                    
 							imageOutput("pic_int_distr_neg", width = "100%", height = "250px")
 						)
 					)	
 				),
+				######################################################################################################################
                 tabPanel("EIC & Peaks",
 					div(style = widget_style3,selectInput("sel_meas_ID", "Select file ID:", choices = c("none"), "none")),
 					div(style = widget_style3,numericInput("sel_peak_ID", "Select peak ID:", 0)),
@@ -678,10 +686,29 @@
                 ),
                 tabPanel("Processing",            
 					selectInput("sel_meas", "Select file ID:", choices = c("none"), "none"),
+					HTML('<hr noshade="noshade" />'),
+					fluidRow(										
+						column(4,tags$h5("File name:"),textOutput('file_proc_name') ),
+						column(4,tags$h5("File type: "),textOutput('file_proc_type')),										
+						column(4,tags$h5("Ionization mode: "),textOutput('file_proc_mode'))										
+					),									
+					HTML('<hr noshade="noshade" />'),
+					fluidRow(										
+						column(4,tags$h5("Number of peaks: "),textOutput('file_peak_number') ),
+						column(4,tags$h5("% of peaks removed by blind subtraction: "),textOutput('file_blind_rem')),										
+						column(4,tags$h5("% of peaks removed by replicate filter: "),textOutput('file_repl_rem'))										
+					),					
+					HTML('<hr noshade="noshade" />'),
 					imageOutput("recal_pic", height="auto"),
+					HTML('<hr noshade="noshade" />'),
 					imageOutput("peakhist_pic", height="auto"),
-					imageOutput("peakmzRT_pic", height="auto")
-                ),
+					HTML('<hr noshade="noshade" />'),
+					imageOutput("peakmzRT_pic", height="auto"),
+					HTML('<hr noshade="noshade" />'),
+					imageOutput("LOD_pic", height="auto"),
+					HTML('<hr noshade="noshade" />')
+				),
+				######################################################################################################################
 				tabPanel("Compound screening",
 					tabsetPanel(
 						tabPanel("Positive ionization",
@@ -748,8 +775,6 @@
 								)
 							)	
 						),
-						
-### Baustelle
 						tabPanel("Negative ionization",
 							fluidRow(
 								column(4, selectInput(inputId="Neg_compound_select",label="",choices=c("Target compounds","Internal standards"), 
@@ -814,14 +839,8 @@
 								)
 							)	
 						)					
-### Baustelle			
-
-			
-						
 					)	
 				)
-
-				
             )
         ),
         ########################################################################

@@ -12,8 +12,6 @@
 #' 
 #' @export
 
-
-
 profiletopeak<-function(profileList,progbar){
 
     ############################################################################

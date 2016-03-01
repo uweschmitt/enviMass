@@ -8,11 +8,17 @@ output$force_workflow <- networkD3:::renderForceNetwork({
 		target<-c()
 		val<-c()
 		for(i in 1:length(depends[,1])){
-			for(j in 1:length(depends[1,])){
-				if(depends[i,j]==1 & i!=j){
+			if( logfile$workflow[names(logfile$workflow)==rownames(depends)[i]]=="yes" ){	
+				for(j in 1:length(depends[1,])){
+				
+					if(depends[i,j]==1 & i!=j & 
+					logfile$workflow[names(logfile$workflow)==colnames(depends)[j]]=="yes"
+					){
 						src<-c(src,(i-1))
 						target<-c(target,(j-1))
 						val<-c(val,length(depends[,1])-sum(depends[j,]))
+					}
+					
 				}
 			}
 		}
@@ -47,6 +53,7 @@ output$force_workflow <- networkD3:::renderForceNetwork({
 					Source = "source", Target = "target",
 					NodeID = "name", Group = "group", 
 					zoom=TRUE, opacity = 0.8)
+					
 					
 	}
 	
