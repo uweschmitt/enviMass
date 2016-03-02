@@ -307,6 +307,11 @@ if(logfile[[10]]<3.101){
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 	}
+	if(!any(names(logfile$parameters)=="prof_select")){
+		logfile$parameters[[90]]<<-"FALSE"; names(logfile$parameters)[90]<<-"prof_select"
+		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
+	}	
 	################################################################################################
 	# updating columns in targets compound table ###################################################
 	targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
@@ -319,6 +324,15 @@ if(logfile[[10]]<3.101){
 		targets<-targets[,!(names(targets)=="intensity_warn_1")]
 		targets<-targets[,!(names(targets)=="intensity_warn_2")]		
 	}
+	if(any(names(targets)=="RT.tolerance")){	# remove typo
+		names(targets)[names(targets)=="RT.tolerance"]<-"RT_tolerance"
+	}	
+	if(any(names(targets)=="intercept")){	# remove obsolete column
+		targets<-targets[,names(targets)!="intercept"]
+	}		
+	if(any(names(targets)=="slope")){	# remove obsolete column
+		targets<-targets[,names(targets)!="slope"]
+	}		
 	write.table(targets,file=file.path(logfile[[1]],"dataframes","targets.txt"),row.names=FALSE,sep="\t",quote=FALSE)
 	rm(targets)
 	################################################################################################
@@ -346,6 +360,14 @@ if(logfile[[10]]<3.101){
 		names(logfile)[14]<<-"Negative_subtraction_files"
 	}
 	################################################################################################	
+	# modify measurements table ####################################################################
+	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+	if( any(names(measurements)=="feat.") ){
+		names(measurements)[names(measurements)=="feat."]<-"profiled";
+		measurements[,names(measurements)=="profiled"]<-"TRUE";
+		write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);      
+	}
+	################################################################################################	
 	logfile[[10]]<<-3.101
 	names(logfile)[10]<<-"version"
 	################################################################################################		
@@ -354,3 +376,23 @@ if(logfile[[10]]<3.101){
 }
 
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_updates.r!")}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

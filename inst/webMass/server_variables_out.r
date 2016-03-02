@@ -78,13 +78,14 @@ observe({
 			enviMass:::workflow_set(down="replicates",check_node=TRUE)		
 		}
 		# profiling ############################################################
-        at1<-c(logfile$parameters[c(38,39,40,41)],logfile$parameters$upto_file);
+        at1<-c(logfile$parameters[c(38,39,40,41,90)],logfile$parameters$upto_file);
 		logfile$parameters[[38]]<<-as.character(isolate(input$prof_sets))
 		logfile$parameters$upto_file<<-as.character(isolate(input$upto_file))
         logfile$parameters[[39]]<<-as.character(isolate(input$prof_dmz))
         logfile$parameters[[40]]<<-as.character(isolate(input$prof_ppm))
         logfile$parameters[[41]]<<-as.character(isolate(input$prof_drt))
-		at2<-c(logfile$parameters[c(38,39,40,41)],logfile$parameters$upto_file);
+        logfile$parameters[[90]]<<-as.character(isolate(input$prof_select))		
+		at2<-c(logfile$parameters[c(38,39,40,41,90)],logfile$parameters$upto_file);
 		if(any(is.na(match(at2,at1)))){ 
 			enviMass:::workflow_set(down="profiling",check_node=TRUE)		
 		}

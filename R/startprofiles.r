@@ -10,6 +10,7 @@
 #' @param progbar Logical. Should a progress bar be shown? Only for Windows.
 #' @param ion_mode Character string, either "positive" or "negative".
 #' @param until Integer, ID of file. All peaks of files up to the date of this file will be included.
+#' @param selective Logical. Should only peaklist with measurements$profiled==TRUE be inluded?
 #'
 #' @return profile list
 #' 
@@ -23,7 +24,8 @@ startprofiles<-function(
 	sets=FALSE,
 	progbar=FALSE,
 	ion_mode="positive",
-	until=FALSE
+	until=FALSE,
+	selective=FALSE
 ){
 
     ############################################################################
@@ -101,6 +103,11 @@ startprofiles<-function(
 					  progi=0;}
 	for(i in 1:leng){ 
 		if(any(sampleID==as.numeric(measurements[i,1]))){
+			if(selective==TRUE){
+				if(measurements[i,names(measurements)=="profiled"]=="FALSE"){
+					next;
+				}
+			}
 			if(progbar==TRUE){
 				progi=progi+1;
 				setWinProgressBar(prog, progi, title = "Retrieve matrix length", label = NULL)
@@ -126,6 +133,11 @@ startprofiles<-function(
 					  progi=0;}
     for(i in 1:leng){
 		if(any(sampleID==as.numeric(measurements[i,1]))){
+			if(selective==TRUE){
+				if(measurements[i,names(measurements)=="profiled"]=="FALSE"){
+					next;
+				}
+			}
 			if(progbar==TRUE){
 				progi=progi+1;
 				setWinProgressBar(prog, i, title = "Read peaklists", label = NULL);

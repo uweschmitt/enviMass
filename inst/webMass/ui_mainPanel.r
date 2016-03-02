@@ -42,6 +42,10 @@
 							column(width = 5,textInput("Measadd_tag3", "Replicate group", value = "FALSE"))	
 						),
 						HTML('<hr noshade="noshade" />'),
+						fluidRow(
+							column(width = 5, selectInput("Measadd_profiled", "Use for profiling?", choices = c("TRUE","FALSE"), selected = TRUE))
+						),						
+						HTML('<hr noshade="noshade" />'),
 						div(style = widget_style,
 							fileInput("Measadd_path", "Select centroided .mzXML file:", multiple = FALSE, accept = c(".mzXML",".raw")),
 							bsPopover("Measadd_path", 
@@ -77,6 +81,10 @@
 							column(width = 5,textInput("Modif_time", "Time:(HH:MM:SS)", value = "12:00:00")),							
 							column(width = 5,textInput("Modif_tag3", "Replicate group", value = "FALSE"))	
 						),
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(
+							column(width = 5, selectInput("Modif_profiled","Use for profiling?",choices = c("TRUE","FALSE"),selected="TRUE"))
+						),	
 						HTML('<hr noshade="noshade" />'),
 						actionButton("Modif_export","Export")
 					),
@@ -228,7 +236,7 @@
 				dark blue; disabled ones in light blue; interactive and zoomable. When modifying workflow steps, parameters or inputs, enviMass 
 				dynamically adjusts and minimizes all required recalculations via their relevant dependencies. These recalculations will ultimately be 
 				enforced when pressing the left-sided Calculate button."),
-			networkD3:::forceNetworkOutput("force_workflow", width = 1500, height = 400),
+				networkD3:::forceNetworkOutput("force_workflow", width = 1500, height = 400),
 				# block 1 ######################################################
 				HTML('<hr noshade="noshade" />'),
 				HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> File upload </font></p> '),
@@ -296,6 +304,18 @@
 							tags$p(align="justify","Uses the LOD thresholds estimated in the above step. If the LOD interpolation is not run, a fixed intensity threshold as specified in the
 							Settings/Screening tabs is used.")
 						)
+					),	
+					#HTML('<hr noshade="noshade" />'),
+					#fluidRow(
+					#	column(width = 3, 
+					#		radioButtons("subtr_IS", "Subtract internal standards?", c("yes"="yes","no"="no"))
+					#	),
+					#	column(width = 3, 
+					#		radioButtons("subtr_target", "Subtract targets/suspects?", c("yes"="yes","no"="no"))
+					#	),						
+					#	column(width = 6, offset = 0.3,
+					#		tags$p(align="justify","Run a profile recalculation omitting compound peaks belonging to matches >= the cutoff score defined in the Settings/Screening Tab.")
+					#	)
 					),	
 				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> Quantification </font></p> '),
 					radioButtons("quantif", "Include? ", c("yes"="yes","no"="no")),					
@@ -476,7 +496,9 @@
 				sliderInput("prof_sets", "Maximum number of newest samples to be processed", min = 50, max = 3000, value = 100, step= 1),
 				numericInput("prof_dmz", "Peak deviation within profiles: m/z tolerance ...", 3),                
                 selectInput("prof_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),
-                numericInput("prof_drt", "Peak deviation within profiles: RT tolerance [s]", 60)            
+                numericInput("prof_drt", "Peak deviation within profiles: RT tolerance [s]", 60),     
+				HTML('<hr noshade="noshade" />'),				
+				selectInput("prof_select", "Omit files with table entry prof?=FALSE from profiling?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), selected="FALSE")			
 			),
             # TREND ############################################################
             tabPanel("Trends",

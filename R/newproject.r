@@ -49,7 +49,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
   measurements<-data.frame(c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),
     c("-"),c("FALSE"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"));
   names(measurements)<-c("ID","Name","Type","Mode","Place","Date","Time","include","copied?","picked?",
-  "checked?","recal?","align?","norm?","feat?","comp?","IS_screen?","tar_screen?","tag1","tag2","tag3")
+  "checked?","recal?","align?","norm?","profiled","comp?","IS_screen?","tar_screen?","tag1","tag2","tag3")
   write.csv(measurements,file=file.path(pro_dir,pro_name,"dataframes","measurements"),row.names=FALSE)
   ##############################################################################
   # create & save a logfile ####################################################
@@ -144,6 +144,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters[[39]]<-"3";			names(logfile$parameters)[39]<-"prof_dmz"
 		logfile$parameters[[40]]<-"TRUE";		names(logfile$parameters)[40]<-"prof_ppm"
 		logfile$parameters[[41]]<-"60";			names(logfile$parameters)[41]<-"prof_drt"
+		logfile$parameters[[90]]<-"FALSE";		names(logfile$parameters)[90]<-"prof_select"
 		# IS screening #########################################################
 		logfile$parameters[[42]]<-"30"; 		names(logfile$parameters)[42]<-"IS_drt1"	# RT tolerance of peaks in sample relative to their expected RT [s]
 		logfile$parameters[[43]]<-"10"; 		names(logfile$parameters)[43]<-"IS_drt2"	# RT tolerance of peaks within an isotope pattern [s]

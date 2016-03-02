@@ -226,7 +226,8 @@ addmeasu<-reactive({
 							as.character(isolate(input$Measadd_date)),
 							as.character(isolate(input$Measadd_time)),
 							as.character(isolate(input$Measadd_incl)),
-							"TRUE","FALSE","FALSE","FALSE","FALSE","FALSE","FALSE",
+							"TRUE","FALSE","FALSE","FALSE","FALSE","FALSE",
+							as.character(isolate(input$Measadd_profiled)),
 							"FALSE","FALSE","FALSE","FALSE","FALSE","FALSE"
 						);		  
 						measurements3<-rbind(measurements2,measurements1);
@@ -281,7 +282,8 @@ addmeasu<-reactive({
 						as.character(isolate(input$Measadd_date)),
 						as.character(isolate(input$Measadd_time)),
 						as.character(isolate(input$Measadd_incl)),
-							"TRUE","FALSE","FALSE","FALSE","FALSE","FALSE","FALSE",
+							"TRUE","FALSE","FALSE","FALSE","FALSE","FALSE",
+							as.character(isolate(input$Measadd_profiled)),
 							"FALSE","FALSE","FALSE","FALSE","FALSE","FALSE"
 					)
 					measurements3<-rbind(measurements2,measurements1);
@@ -373,7 +375,7 @@ observe({
 		if(length(measurements1[measurements1[,1]!=as.character(isolate(input$Measdel_ID)),1])==0){
 			measurements1<-data.frame(c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("FALSE"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"));
 			names(measurements1)<-c("ID","Name","Type","Mode","Place","Date","Time","include","copied?","picked?",
-			"checked?","recal?","align?","norm?","feat?","comp?","IS_screen?","tar_screen?","tag1","tag2","tag3")
+			"checked?","recal?","align?","norm?","profiled?","comp?","IS_screen?","tar_screen?","tag1","tag2","tag3")
 			adjustit<-"FALSE"
         }else{
 		    measurements1<-measurements1[measurements1[,1]!=as.character(isolate(input$Measdel_ID)),]
@@ -599,6 +601,7 @@ observe({
 			updateDateInput(session, "Modif_date", value = as.character(measurements3[measurements3[,1]==atID,6]))
 			updateTextInput(session, "Modif_time",value = as.character(measurements3[measurements3[,1]==atID,7]))		
 			updateTextInput(session, "Modif_tag3",value = as.character(measurements3[measurements3[,1]==atID,21]))
+			updateSelectInput(session, "Modif_profiled", selected = as.character(measurements3[measurements3[,1]==atID,15]))	
 			output$dowhat<-renderText("Specifications loaded into mask.");
 			cat("\n specifications loaded into mask")
 			rm(measurements3)
@@ -619,7 +622,8 @@ observe({
 		measurements3[measurements3[,1]==atID,6]<-as.character(isolate(input$Modif_date))
 		measurements3[measurements3[,1]==atID,]<-enviMass:::convDate(measurements3[measurements3[,1]==atID,]);
 		measurements3[measurements3[,1]==atID,7]<-as.character(isolate(input$Modif_time))		
-		measurements3[measurements3[,1]==atID,21]<-as.character(isolate(input$Modif_tag3))		
+		measurements3[measurements3[,1]==atID,21]<-as.character(isolate(input$Modif_tag3))	
+		measurements3[measurements3[,1]==atID,15]<-as.character(isolate(input$Modif_profiled))	
 		enviMass:::workflow_set(down="peakpicking",check_node=TRUE,single_file=TRUE)
 		write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 		output$dowhat<-renderText("Specifications saved to file table.");

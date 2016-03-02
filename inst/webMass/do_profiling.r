@@ -27,7 +27,7 @@
 							progbar=logfile$parameters$progressBar,
 							plotit=FALSE
 						)
-		profileList_pos<-in_blind(profileList_pos)
+		profileList_pos<-enviMass:::in_blind(profileList_pos)
 		profileList_pos<<-profileList_pos
 		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"));
 		profpeaks_pos<-enviMass:::profiletopeak(profileList_pos,progbar=logfile$parameters[21])		
@@ -62,7 +62,7 @@
 							progbar=logfile$parameters$progressBar,
 							plotit=FALSE
 						)
-		profileList_neg<-in_blind(profileList_neg)
+		profileList_neg<-enviMass:::in_blind(profileList_neg)
 		profileList_neg<<-profileList_neg
 		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"));
 		profpeaks_neg<-enviMass:::profiletopeak(profileList_neg,progbar=logfile$parameters[21])

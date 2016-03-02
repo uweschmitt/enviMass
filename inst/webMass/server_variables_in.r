@@ -36,6 +36,7 @@ updateTextInput(session, "upto_file","Up to file with ID:",value = as.character(
 updateNumericInput(session, "prof_dmz", "Peak-to-peak deviation within profiles: m/z tolerance ...", value = as.numeric(logfile$parameters[[39]]))                
 updateSelectInput(session, "prof_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), selected= as.character(logfile$parameters[[40]]))
 updateNumericInput(session, "prof_drt", "RT tolerance [s]", value = as.numeric(logfile$parameters[[41]]))                
+updateSelectInput(session, "prof_select", "Omit files with table entry prof?=FALSE from profiling?",choices = c("TRUE"="TRUE","FALSE"="FALSE"),selected= as.character(logfile$parameters[[90]]))
 # TREND ########################################################################
 updateTextInput(session, "trend_lags","Time lags of trends [days], comma-separated:",value = as.character(logfile$parameters[[34]]))
 updateNumericInput(session, "trend_thres", "Trend vs. mean+variance intensity threshold:", value = as.numeric(logfile$parameters[[35]]))   

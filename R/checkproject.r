@@ -52,6 +52,12 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 	if(length(intstand_check$Formula[intstand_check$Formula!="-"])==0){
 		cat("No internal standards available \n") 
 	}else{
+		if(
+			!all(names(intstand_check)==c("ID","Name","Formula","RT","RT_tolerance","main_adduct","ion_mode","Use_for_recalibration","Use_for_screening",    
+			"restrict_adduct","Remark","tag1","tag2","tag3","from","to","Lower_intensity_bound","Upper_intensity_bound"))
+		){
+			say<-paste("Incorrect or missing columns in internal standard compound table - compare to tables in a new project for correct entries.")
+		}
 		if(any(grepl(",",intstand_check[,names(intstand_check)=="Lower_intensity_bound"],fixed=TRUE))){
 			say<-"Correct IS table: use .-separator, no commas for bounds."
 		}
@@ -89,6 +95,12 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 	if(length(targets_check$Formula[targets_check$Formula!="-"])==0){
 		  cat("No internal targets available \n")    
 	}else{
+		if(
+			!all(names(targets_check)==c("ID","Name","Formula","RT","RT_tolerance","ID_internal_standard","main_adduct","ion_mode","Use_for_recalibration",
+				"Use_for_screening","restrict_adduct","Remark","tag1","tag2","tag3","from","to","warn_1","warn_2"))
+		){
+			say<-paste("Incorrect or missing columns in target compound table - compare to tables from a new project for correct entries.")
+		}
 		if(any(grepl(",",targets_check[,names(targets_check)=="warn_1"],fixed=TRUE))){
 			say<-"Correct targets table: use .-separator, no commas for warn_1."
 		}
@@ -115,7 +127,7 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 			wrongadduct<-wrongadduct[1]
 			say<-paste("target column 7: wrong adduct",wrongadduct)
 		}
-		if(any(is.na(as.numeric(targets_check[,4])))){say<-"IS column 4 not numeric"}
+		if(any(is.na(as.numeric(targets_check[,4])))){say<-"targets column 4 not numeric"}
 		if(any(is.na(as.numeric(targets_check[targets_check[,5]!="FALSE",5])))){say<-"target compound table column 5 not numeric"}
 		if(any(!charmatch(targets_check[,9],c("TRUE","FALSE"),nomatch=FALSE))){say<-"target compound table column 9 not logical"}
 		if(any(!charmatch(targets_check[,10],c("TRUE","FALSE"),nomatch=FALSE))){say<-"target compound table column 10 not logical"}
