@@ -150,6 +150,8 @@ updateRadioButtons(session, "LOD_interpol", label = "Include?", choices =  c("ye
 updateRadioButtons(session, "quantif", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="quantification"]) )
 updateRadioButtons(session, "screen_IS", label = "Screen internal standards?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="IS_screen"]) )
 updateRadioButtons(session, "screen_target", label = "Screen targets/suspects?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="target_screen"]) )
+updateRadioButtons(session, "subtr_IS", label = "Subtract internal standards?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="IS_subtr"]) )
+updateRadioButtons(session, "subtr_target", label = "Subtract internal targets?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="target_subtr"]) )
 ################################################################################
 ################################################################################
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_variabels_in.r!")}

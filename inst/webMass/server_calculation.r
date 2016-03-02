@@ -30,13 +30,14 @@ maincalc<-reactive({
 					if(must[j,i]==1){
 						if(logfile$workflow[names(logfile$workflow)==(colnames(must)[i])]=="yes"){
 							if(logfile$workflow[names(logfile$workflow)==(rownames(must)[j])]!="yes"){
-								#cat("\n",colnames(must)[i]," depends on ",rownames(must)[j])
-								logfile$workflow[names(logfile$workflow)==(rownames(must)[j])]<-"yes"
+								cat("\n",colnames(must)[i]," depends on ",rownames(must)[j])
+								logfile$workflow[names(logfile$workflow)==(rownames(must)[j])]<<-"yes"
 							}
 						}
 					}
 				}
 			}
+			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 			####################################################################
 			closeAlert(session, alertId="a3")
 			logfile$summary[1,2]<<-c(TRUE);
@@ -158,26 +159,37 @@ maincalc<-reactive({
 				"quantification","quantification","quantification","Quantification",
 				path_do="do_quantification.R",path_undo="dont_quantification.R",session,output,input
 			)  	
-		}		
+		}
+        ########################################################################
+        # IS peak subtraction ##################################################
+        if(do_flow==16){
+			enviMass:::workflow_node(
+				"IS_subtr","IS_subtr","IS_subtr","IS peak subtraction",
+				path_do="do_IS_subtr.R",path_undo="dont_IS_subtr.R",session,output,input
+			)  	
+        }
+        ########################################################################
+        # target peak subtraction ##############################################
+        if(do_flow==17){
+			enviMass:::workflow_node(
+				"target_subtr","target_subtr","target_subtr","Target peak subtraction",
+				path_do="do_target_subtr.R",path_undo="dont_target_subtr.R",session,output,input
+			)  	
+        }		
         ########################################################################
         # trend / blind ########################################################
-        if(do_flow==16){
+        if(do_flow==18){
 			enviMass:::workflow_node(
 				"trendblind","trendblind","trendblind","Trend detection and blind subtraction",
 				path_do="do_trendblind.R",path_undo="dont_trendblind.R",session,output,input
 			)  	
         }
         ########################################################################
-        # 
-        if(do_flow==17){
-##	
-        }
-        ########################################################################
 		
 		
         ########################################################################
         # make function reiterate ##############################################
-        if(do_flow==18){
+        if(do_flow==19){
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="profileList_pos")){rm(profileList_pos)}
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
@@ -202,10 +214,10 @@ maincalc<-reactive({
 			}
         }
         do_flow<<-(do_flow+1);
-		if(do_flow==19){
+		if(do_flow==20){
 			output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
 		}
-        if(do_flow<20){
+        if(do_flow<21){
 			invalidateLater(500, session=NULL)
 			cat("Calculating...");
 			return("Calculating...")

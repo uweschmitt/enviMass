@@ -262,6 +262,20 @@ observe({
 		if(at1!=at2){
 			enviMass:::workflow_set(down="quantification",check_node=FALSE)		
 		}		
+		# IS subtraction #########################################################
+		at1<-logfile$workflow[names(logfile$workflow)=="IS_subtr"];
+		logfile$workflow[names(logfile$workflow)=="IS_subtr"]<<-as.character(isolate(input$subtr_IS));
+		at2<-logfile$workflow[names(logfile$workflow)=="IS_subtr"];
+		if(at1!=at2){
+			enviMass:::workflow_set(down="IS_subtr",check_node=FALSE)		
+		}				
+		# target subtraction #####################################################			
+		at1<-logfile$workflow[names(logfile$workflow)=="target_subtr"];
+		logfile$workflow[names(logfile$workflow)=="target_subtr"]<<-as.character(isolate(input$subtr_target));
+		at2<-logfile$workflow[names(logfile$workflow)=="target_subtr"];
+		if(at1!=at2){
+			enviMass:::workflow_set(down="target_subtr",check_node=FALSE)		
+		}	
 		##########################################################################	
 
 		##########################################################################

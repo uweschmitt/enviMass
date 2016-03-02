@@ -305,18 +305,6 @@
 							Settings/Screening tabs is used.")
 						)
 					),	
-					#HTML('<hr noshade="noshade" />'),
-					#fluidRow(
-					#	column(width = 3, 
-					#		radioButtons("subtr_IS", "Subtract internal standards?", c("yes"="yes","no"="no"))
-					#	),
-					#	column(width = 3, 
-					#		radioButtons("subtr_target", "Subtract targets/suspects?", c("yes"="yes","no"="no"))
-					#	),						
-					#	column(width = 6, offset = 0.3,
-					#		tags$p(align="justify","Run a profile recalculation omitting compound peaks belonging to matches >= the cutoff score defined in the Settings/Screening Tab.")
-					#	)
-					#),	
 				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> Quantification </font></p> '),
 					radioButtons("quantif", "Include? ", c("yes"="yes","no"="no")),					
 				HTML('<hr noshade="noshade" />'),
@@ -331,6 +319,18 @@
 							this approach differs from the less reliable Median intensity normalization above, which can be skipped in this case (see blue steps).")
 						)
 					),					
+				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Compound subtraction </font></p> '),
+					fluidRow(
+						column(width = 3, 
+							radioButtons("subtr_IS", "Subtract internal standards?", c("yes"="yes","no"="no"))
+						),
+						column(width = 3, 
+							radioButtons("subtr_target", "Subtract targets/suspects?", c("yes"="yes","no"="no"))
+						),						
+						column(width = 6, offset = 0.3,
+							tags$p(align="justify","Run a profile recalculation omitting compound peaks belonging to matches >= the cutoff score defined in the Settings/Screening Tab.")
+						)
+					),	
 				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Trend detection </font></p> '),
 					fluidRow(
 						column(width = 2, radioButtons("trenddetect", "Include? ", c("yes"="yes","no"="no")) ),
