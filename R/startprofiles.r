@@ -124,7 +124,7 @@ startprofiles<-function(
 		}
 	}
 	peaks<-matrix(nrow=(at),ncol=8,0)
-    colnames(peaks)<-c("m/z","intensity","RT","peakIDs","componentIDs","sampleIDs","partitionIDs","profileIDs")
+    colnames(peaks)<-c("m/z","intensity","RT","peakIDs","links","sampleIDs","partitionIDs","profileIDs")
     if(progbar==TRUE){close(prog);}
 	da1<-c(1)
 	############################################################################

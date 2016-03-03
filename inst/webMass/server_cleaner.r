@@ -10,6 +10,7 @@
 	if(exists("EICit",envir=as.environment(".GlobalEnv"))){rm(EICit,envir=as.environment(".GlobalEnv"))}
 	if(exists("summa",envir=as.environment(".GlobalEnv"))){rm(summa,envir=as.environment(".GlobalEnv"))}
 	if(exists("do_flow",envir=as.environment(".GlobalEnv"))){rm(do_flow,envir=as.environment(".GlobalEnv"))}
+	if(exists("peaklist",envir=as.environment(".GlobalEnv"))){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="EIC_ID")){rm(EIC_ID,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList")){rm(profileList,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
@@ -17,6 +18,10 @@
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks")){rm(profpeaks,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks_neg")){rm(profpeaks_neg,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks_pos")){rm(profpeaks_pos,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="links_peaks_pos")){rm(links_peaks_pos,envir=as.environment(".GlobalEnv"))}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="links_peaks_neg")){rm(links_peaks_neg,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="links_profiles_pos")){rm(links_profiles_pos,envir=as.environment(".GlobalEnv"))}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="links_profiles_neg")){rm(links_profiles_neg,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="targets")){rm(targets,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="IS")){rm(IS,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="intmass_pos_IS")){rm(intmass_pos_IS,envir=as.environment(".GlobalEnv"))}

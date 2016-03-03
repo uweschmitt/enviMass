@@ -31,9 +31,13 @@
 		profileList_pos<<-profileList_pos
 		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"));
 		profpeaks_pos<-enviMass:::profiletopeak(profileList_pos,progbar=logfile$parameters[21])		
-		profpeaks_pos<-profpeaks_pos[order(profpeaks_pos[,13],decreasing=TRUE),]
+		profpeaks_pos<-profpeaks_pos[order(profpeaks_pos[,13],decreasing=TRUE),];
 		profpeaks_pos<<-profpeaks_pos;
 		save(profpeaks_pos,file=file.path(as.character(logfile[[1]]),"results","profpeaks_pos"));
+		links_peaks_pos<-list();
+		save(links_peaks_pos,file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"));	
+		links_profiles_pos<-list();
+		save(links_profiles_pos,file=file.path(as.character(logfile[[1]]),"results","links_profiles_pos"));			
 	}
 	if(any(measurements[,4]=="negative")){
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
@@ -69,5 +73,9 @@
 		profpeaks_neg<-profpeaks_neg[order(profpeaks_neg[,13],decreasing=TRUE),]
 		profpeaks_neg<<-profpeaks_neg;
 		save(profpeaks_neg,file=file.path(as.character(logfile[[1]]),"results","profpeaks_neg"));
+		links_peaks_neg<-list();
+		save(links_peaks_neg,file=file.path(as.character(logfile[[1]]),"results","links_peaks_neg"));
+		links_profiles_neg<-list();
+		save(links_profiles_neg,file=file.path(as.character(logfile[[1]]),"results","links_profiles_neg"));			
 	}
 

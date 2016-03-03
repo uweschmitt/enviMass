@@ -11,6 +11,18 @@ if(file.exists(file=file.path(as.character(logfile[[1]]),"results","profileList_
 if(file.exists(file=file.path(as.character(logfile[[1]]),"results","profileList_neg"))){
 	file.remove(file=file.path(as.character(logfile[[1]]),"results","profileList_neg"))
 }  
+if(file.exists(file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"))){
+	file.remove(file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"))
+}
+if(file.exists(file=file.path(as.character(logfile[[1]]),"results","links_peaks_neg"))){
+	file.remove(file=file.path(as.character(logfile[[1]]),"results","links_peaks_neg"))
+}
+if(file.exists(file=file.path(as.character(logfile[[1]]),"results","links_profiles _pos"))){
+	file.remove(file=file.path(as.character(logfile[[1]]),"results","links_profiles_pos"))
+}
+if(file.exists(file=file.path(as.character(logfile[[1]]),"results","links_profiles_neg"))){
+	file.remove(file=file.path(as.character(logfile[[1]]),"results","links_profiles_neg"))
+}
 ##########
 if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks2")){
 	rm(profpeaks2,envir=as.environment(".GlobalEnv"))

@@ -251,8 +251,8 @@ if(TRUE){
 	depend[,colnames(depend)=="blinds"]<-			c(0,			0,	0,		0,		0,		1,			1,			0,			0,			1,			1,				0,		1,				0,		1,			1,			1)
 	depend[,colnames(depend)=="replicates"]<-		c(0,			0,	0,		0,		0,		1,			1,			0,			0,			1,			1,				1,		1,				0,		1,			1,			1)
 	depend[,colnames(depend)=="profiling"]<-		c(0,			0,	0,		0,		0,		0,			1,			0,			0,			1,			1,				0,		1,				0,		1,			0,			0)
-	depend[,colnames(depend)=="IS_screen"]<-		c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		1,				0,		1,			1,			0)
-	depend[,colnames(depend)=="target_screen"]<-	c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		1,				0,		1,			0,			1)
+	depend[,colnames(depend)=="IS_screen"]<-		c(0,			0,	0,		0,		0,		1,			0,			0,			0,			0,			0,				0,		1,				0,		1,			1,			0)
+	depend[,colnames(depend)=="target_screen"]<-	c(0,			0,	0,		0,		0,		1,			0,			0,			0,			0,			0,				0,		1,				0,		1,			0,			1)
 	depend[,colnames(depend)=="IS_normaliz"]<-		c(0,			0,	0,		0,		0,		0,			1,			0,			0,			0,			0,				0,		0,				0,		1,			0,			0)
 	depend[,colnames(depend)=="trendblind"]<-		c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,				0,		0,			0,			0)
 	depend[,colnames(depend)=="LOD"]<-				c(0,			0,	0,		0,		0,		0,			0,			0,			0,			1,			1,				0,		1,				0,		1,			0,			0)
@@ -319,6 +319,12 @@ if(logfile[[10]]<3.101){
 		intstand<-cbind(intstand,rep(0,length(intstand[,1])),rep(Inf,length(intstand[,1])))
 		names(intstand)<-c(names_1,"Lower_intensity_bound","Upper_intensity_bound")
 	}	
+	if(any(names(intstand)=="Use_for_screening")){
+		names(intstand)[names(intstand)=="Use_for_screening"]<-"use_for_screening"
+	}	
+	if(any(names(intstand)=="Use_for_recalibration")){
+		names(intstand)[names(intstand)=="Use_for_recalibration"]<-"use_for_recalibration"
+	}		
 	write.table(intstand,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)
 	rm(intstand)
 	################################################################################################
@@ -344,6 +350,12 @@ if(logfile[[10]]<3.101){
 		targets<-cbind(targets,rep("FALSE",length(targets[,1])),rep("FALSE",length(targets[,1])))
 		names(targets)<-c(names_1,"warn_1","warn_2")
 	}
+	if(any(names(targets)=="Use_for_screening")){
+		names(targets)[names(targets)=="Use_for_screening"]<-"use_for_screening"
+	}	
+	if(any(names(targets)=="Use_for_recalibration")){
+		names(targets)[names(targets)=="Use_for_recalibration"]<-"use_for_recalibration"
+	}		
 	if(any(names(targets)=="intensity_warn_1")){	# remove misnomer
 		targets<-targets[,!(names(targets)=="intensity_warn_1")]
 		targets<-targets[,!(names(targets)=="intensity_warn_2")]		

@@ -12,6 +12,8 @@
 
 	########################################################################################################
 	# load available LOD smoothing spline models ###########################################################
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="LOD_splined")){rm(LOD_splined,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="LOD_splined")){rm(LOD_splined)}	
 	if(file.exists(file=file.path(logfile$project_folder,"results","LOD","LOD_splined"))){
 		load(file=file.path(logfile$project_folder,"results","LOD","LOD_splined"));
 		do_LOD<-TRUE
@@ -27,6 +29,8 @@
 	if(any(objects()=="peaklist")){rm(peaklist)}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="profileList_pos")){rm(profileList_pos)}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="links_peaks_pos")){rm(links_peaks_pos,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="links_peaks_pos")){rm(links_peaks_pos)}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_pos_IS")){rm(pattern_pos_IS,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="pattern_pos_IS")){rm(pattern_pos_IS)}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternRT_pos_IS")){rm(patternRT_pos_IS,envir=as.environment(".GlobalEnv"))}
@@ -38,13 +42,15 @@
 		file.exists(file.path(logfile[[1]],"results","pattern_pos_IS"))
 	){
 
-		load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"));	
+		load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"));
+		load(file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"),envir=as.environment(".GlobalEnv"));		
 		load(file=file.path(logfile[[1]],"results","pattern_pos_IS"),envir=as.environment(".GlobalEnv"));
 		pattern<<-pattern_pos_IS;rm(pattern_pos_IS,envir=as.environment(".GlobalEnv"));
 		load(file=file.path(logfile[[1]],"results","patternRT_pos_IS"),envir=as.environment(".GlobalEnv"));
 		pattern_RT<<-patternRT_pos_IS;rm(patternRT_pos_IS,envir=as.environment(".GlobalEnv"));
 		load(file=file.path(logfile[[1]],"results","patternDelRT_pos_IS"),envir=as.environment(".GlobalEnv"));
 		pattern_delRT<<-patternDelRT_pos_IS;rm(patternDelRT_pos_IS,envir=as.environment(".GlobalEnv"));
+		
 		
 		mztol<-as.numeric(logfile$parameters$IS_dmz)				# m/z tolerance ...
 		ppm<-as.logical(as.character(logfile$parameters$IS_ppm))	# ... given in pppm?
@@ -177,6 +183,54 @@
 				compound_table=intstand,
 				cut_score=cut_score
 			)
+			# create links in link_list_pos for peaks in profileList_pos = used for tracing back ###########
+			use_entries<-find_empty(links_peaks_pos)
+			for(i in 1:length(res_IS_pos_screen)){
+				if(length(res_IS_pos_screen[[i]])>0){
+					for(m in 1:length(res_IS_pos_screen[[i]])){
+						if(length(res_IS_pos_screen[[i]][[m]])>0){
+							for(k in 1:length(res_IS_pos_screen[[i]][[m]])){
+								local_score<-0
+								if(!is.na(res_IS_pos_screen[[i]][[m]][[k]]$score_1)){
+									local_score<-(local_score+res_IS_pos_screen[[i]][[m]][[k]]$score_1)
+								}
+								if( (local_score>=1) || (is.na(res_IS_pos_screen[[i]][[m]][[k]]$score_1)) ){
+									if(!is.na(res_IS_pos_screen[[i]][[m]][[k]]$score_2)){
+										local_score<-(local_score+res_IS_pos_screen[[i]][[m]][[k]]$score_2)
+									}
+								}									
+								if(local_score>=cut_score){
+									for(a in 1:length(res_IS_pos_screen[[i]][[m]][[k]]$Peaks[,2]) ){
+										# no entry for this peak in profileList<->links_peaks_pos exists yet
+										if(profileList_pos[[2]][res_IS_pos_screen[[i]][[m]][[k]]$Peaks[a,2],5]==0){ 
+											if(length(use_entries)>0){
+												at_entry<-use_entries
+												use_entries<-use_entries[-1]
+											}else{
+												at_entry<-(length(links_peaks_pos)+1)
+											}
+											links_peaks_pos[[at_entry]]<-list()
+											links_peaks_pos[[at_entry]][[1]]<-list()
+											links_peaks_pos[[at_entry]][[2]]<-list()
+											links_peaks_pos[[at_entry]][[3]]<-list()
+											profileList_pos[[2]][res_IS_pos_screen[[i]][[m]][[k]]$Peaks[a,2],5]<<-at_entry
+											links_peaks_pos[[at_entry]][[1]][[1]]<-names(pattern)[i]
+										# or expand existing entry
+										}else{
+											at_entry<-profileList_pos[[2]][res_IS_pos_screen[[i]][[m]][[k]]$Peaks[a,2],5]
+											at_list<-(length(links_peaks_pos[[at_entry]][[1]])+1)
+											links_peaks_pos[[at_entry]][[1]][[at_list]]<-names(pattern)[i]
+										}
+									}
+								}
+							}
+						}	
+					}
+				}
+			}
+			save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"))
+			save(links_peaks_pos,file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"))
+			################################################################################################
 			save(results_screen_IS_pos,file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos"))
 			rm(measurements,intstand,results_screen_IS_pos);
 		}
@@ -196,6 +250,8 @@
 	if(any(objects()=="peaklist")){rm(peaklist)}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="profileList_neg")){rm(profileList_neg)}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="links_peaks_neg")){rm(links_peaks_neg,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="links_peaks_neg")){rm(links_peaks_neg)}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_neg_IS")){rm(pattern_neg_IS,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="pattern_neg_IS")){rm(pattern_neg_IS)}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternRT_neg_IS")){rm(patternRT_neg_IS,envir=as.environment(".GlobalEnv"))}
@@ -209,6 +265,7 @@
 	){
 
 		load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"));	
+		load(file=file.path(as.character(logfile[[1]]),"results","links_peaks_neg"),envir=as.environment(".GlobalEnv"));
 		load(file=file.path(logfile[[1]],"results","pattern_neg_IS"),envir=as.environment(".GlobalEnv"));
 		pattern<<-pattern_neg_IS;rm(pattern_neg_IS,envir=as.environment(".GlobalEnv"));
 		load(file=file.path(logfile[[1]],"results","patternRT_neg_IS"),envir=as.environment(".GlobalEnv"));
@@ -346,6 +403,54 @@
 				compound_table=intstand,
 				cut_score=cut_score
 			)
+			# create links in link_list_pos for peaks in profileList_pos = used for tracing back ###########
+			use_entries<-find_empty(links_peaks_neg)
+			for(i in 1:length(res_IS_neg_screen)){
+				if(length(res_IS_neg_screen[[i]])>0){
+					for(m in 1:length(res_IS_neg_screen[[i]])){
+						if(length(res_IS_neg_screen[[i]][[m]])>0){
+							for(k in 1:length(res_IS_neg_screen[[i]][[m]])){
+								local_score<-0
+								if(!is.na(res_IS_neg_screen[[i]][[m]][[k]]$score_1)){
+									local_score<-(local_score+res_IS_neg_screen[[i]][[m]][[k]]$score_1)
+								}
+								if( (local_score>=1) || (is.na(res_IS_neg_screen[[i]][[m]][[k]]$score_1)) ){
+									if(!is.na(res_IS_neg_screen[[i]][[m]][[k]]$score_2)){
+										local_score<-(local_score+res_IS_neg_screen[[i]][[m]][[k]]$score_2)
+									}
+								}									
+								if(local_score>=cut_score){
+									for(a in 1:length(res_IS_neg_screen[[i]][[m]][[k]]$Peaks[,2]) ){
+										# no entry for this peak in profileList<->links_peaks_pos exists yet
+										if(profileList_neg[[2]][res_IS_neg_screen[[i]][[m]][[k]]$Peaks[a,2],5]==0){ 
+											if(length(use_entries)>0){
+												at_entry<-use_entries
+												use_entries<-use_entries[-1]
+											}else{
+												at_entry<-(length(links_peaks_neg)+1)
+											}
+											links_peaks_neg[[at_entry]]<-list()
+											links_peaks_neg[[at_entry]][[1]]<-list()
+											links_peaks_neg[[at_entry]][[2]]<-list()
+											links_peaks_neg[[at_entry]][[3]]<-list()
+											profileList_neg[[2]][res_IS_neg_screen[[i]][[m]][[k]]$Peaks[a,2],5]<<-at_entry
+											links_peaks_neg[[at_entry]][[1]][[1]]<-names(pattern)[i]
+										# or expand existing entry
+										}else{
+											at_entry<-profileList_neg[[2]][res_IS_neg_screen[[i]][[m]][[k]]$Peaks[a,2],5]
+											at_list<-(length(links_peaks_neg[[at_entry]][[1]])+1)
+											links_peaks_neg[[at_entry]][[1]][[at_list]]<-names(pattern)[i]
+										}
+									}
+								}
+							}
+						}	
+					}
+				}
+			}
+			save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"))
+			save(links_peaks_neg,file=file.path(as.character(logfile[[1]]),"results","links_peaks_neg"))
+			################################################################################################
 			save(results_screen_IS_neg,file=file.path(logfile$project_folder,"results","screening","results_screen_IS_neg"))
 			rm(measurements,intstand,results_screen_IS_neg);
 		}
