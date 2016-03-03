@@ -13,7 +13,7 @@ observe({
 		found_table<-FALSE
 		if( isolate(input$Pos_compound_select=="Target compounds") ){
 			cat("\n Looking at positive targets_selec")
-			if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos")) ){
+			if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos")) ){			
 				load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))
 				screen_dev_pos<-results_screen_target_pos[[3]] # contains sample vs. blank intensity ratios
 				rat_sam_blank_pos<-results_screen_target_pos[[1]][,10,drop=FALSE]
@@ -22,18 +22,24 @@ observe({
 				}else{
 					results_screen_pos<-results_screen_target_pos[[2]]
 				}
-				table_screening<-DT::datatable(results_screen_pos, escape = FALSE,selection = 'single') %>% 
+				table_screening_pos<-DT::datatable(results_screen_pos, escape = FALSE,selection = 'single') %>% 
 					formatStyle('Max. sample score',background = styleColorBar(c(0,1), 'lightgreen'),backgroundPosition = 'right')
-				output$Table_screening_pos <- DT::renderDataTable({table_screening},server = TRUE)
+				output$Table_screening_pos <- DT::renderDataTable({table_screening_pos},server = TRUE)
 				rm(results_screen_target_pos)
 				found_table<-TRUE
 				load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"));	
 				load(file=file.path(logfile[[1]],"results","pattern_pos_target"),envir=as.environment(".GlobalEnv"));
-				pattern<-pattern_pos_target;rm(pattern_pos_target,envir=as.environment(".GlobalEnv"));
+				pattern_pos<-pattern_pos_target;rm(pattern_pos_target,envir=as.environment(".GlobalEnv"));
+				patt_pos_ID<-rep("",length(pattern_pos))
+				patt_pos_add<-rep("",length(pattern_pos))
+				for(i in 1:length(pattern_pos)){
+					patt_pos_ID[i]<-strsplit(names(pattern_pos[i]),"_",fixed=TRUE)[[1]][1]
+					patt_pos_add[i]<-strsplit(names(pattern_pos[i]),"_",fixed=TRUE)[[1]][2]
+				}
 				load(file=file.path(logfile[[1]],"results","patternRT_pos_target"),envir=as.environment(".GlobalEnv"));
-				pattern_RT<-patternRT_pos_target;rm(patternRT_pos_target,envir=as.environment(".GlobalEnv"));
+				pattern_RT_pos<-patternRT_pos_target;rm(patternRT_pos_target,envir=as.environment(".GlobalEnv"));
 				load(file=file.path(logfile[[1]],"results","patternDelRT_pos_target"),envir=as.environment(".GlobalEnv"));
-				pattern_delRT<-patternDelRT_pos_target;rm(patternDelRT_pos_target,envir=as.environment(".GlobalEnv"));
+				pattern_delRT_pos<-patternDelRT_pos_target;rm(patternDelRT_pos_target,envir=as.environment(".GlobalEnv"));
 				load(file=file.path(logfile$project_folder,"results","screening","res_target_pos_screen"))
 				res_pos_screen<-res_target_pos_screen;rm(res_target_pos_screen);
 				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -50,7 +56,7 @@ observe({
 		}
 		if( isolate(input$Pos_compound_select=="Internal standards") ){
 			cat("\n Looking at positive standards_selec")
-			if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos")) ){
+			if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos")) ){			
 				load(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos"))
 				screen_dev_pos<-results_screen_IS_pos[[3]] # contains sample vs. blank intensity ratios		
 				rat_sam_blank_pos<-results_screen_IS_pos[[1]][,10,drop=FALSE]				
@@ -59,18 +65,24 @@ observe({
 				}else{
 					results_screen_pos<-results_screen_IS_pos[[2]]
 				}
-				table_screening<-DT::datatable(results_screen_pos, escape = FALSE,selection = 'single') %>% 
+				table_screening_pos<-DT::datatable(results_screen_pos, escape = FALSE,selection = 'single') %>% 
 					formatStyle('Max. sample score',background = styleColorBar(c(0,1), 'lightgreen'),backgroundPosition = 'right')
-				output$Table_screening_pos <- DT::renderDataTable({table_screening},server = TRUE)
+				output$Table_screening_pos <- DT::renderDataTable({table_screening_pos},server = TRUE)
 				rm(results_screen_IS_pos)	
 				found_table<-TRUE
 				load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"));	
 				load(file=file.path(logfile[[1]],"results","pattern_pos_IS"),envir=as.environment(".GlobalEnv"));
-				pattern<-pattern_pos_IS;rm(pattern_pos_IS,envir=as.environment(".GlobalEnv"));
+				pattern_pos<-pattern_pos_IS;rm(pattern_pos_IS,envir=as.environment(".GlobalEnv"));
+				patt_pos_ID<-rep("",length(pattern_pos))
+				patt_pos_add<-rep("",length(pattern_pos))
+				for(i in 1:length(pattern_pos)){
+					patt_pos_ID[i]<-strsplit(names(pattern_pos[i]),"_",fixed=TRUE)[[1]][1]
+					patt_pos_add[i]<-strsplit(names(pattern_pos[i]),"_",fixed=TRUE)[[1]][2]
+				}
 				load(file=file.path(logfile[[1]],"results","patternRT_pos_IS"),envir=as.environment(".GlobalEnv"));
-				pattern_RT<-patternRT_pos_IS;rm(patternRT_pos_IS,envir=as.environment(".GlobalEnv"));
+				pattern_RT_pos<-patternRT_pos_IS;rm(patternRT_pos_IS,envir=as.environment(".GlobalEnv"));
 				load(file=file.path(logfile[[1]],"results","patternDelRT_pos_IS"),envir=as.environment(".GlobalEnv"));
-				pattern_delRT<-patternDelRT_pos_IS;rm(patternDelRT_pos_IS,envir=as.environment(".GlobalEnv"));
+				pattern_delRT_pos<-patternDelRT_pos_IS;rm(patternDelRT_pos_IS,envir=as.environment(".GlobalEnv"));
 				load(file=file.path(logfile$project_folder,"results","screening","res_IS_pos_screen"))
 				res_pos_screen<-res_IS_pos_screen;rm(res_IS_pos_screen);
 				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -100,9 +112,11 @@ observe({
 			output$plot_pattern_pos <- renderPlot({
 				s<-input$Table_screening_pos_row_last_clicked
 				if (length(s) & isolate(input$screen_pos_summarize=="yes")) {	
-					use_comp<-(	grepl(paste(results_screen_pos[s,1],"_",sep=""),names(pattern),fixed=TRUE)&
-								grepl(paste("_",results_screen_pos[s,3],"_",sep=""),names(pattern),fixed=TRUE))
-					pattern_sel<-pattern[use_comp][[1]]
+					use_comp<-(
+						(patt_pos_ID==as.character(results_screen_pos[s,1])) & (patt_pos_add==as.character(results_screen_pos[s,3]))
+					)
+					if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1")}															
+					pattern_sel<-pattern_pos[use_comp][[1]]
 					res_pos_screen_sel<-res_pos_screen[use_comp][[1]]
 					int_tol<-as.numeric(logfile$parameters$IS_inttol)
 					ylim_up<-(int_tol+100+(int_tol*0.1))
@@ -133,8 +147,10 @@ observe({
 			output$Table_screening_selected_pos<-DT::renderDataTable({
 				s<-input$Table_screening_pos_row_last_clicked
 				if (length(s) & isolate(input$screen_pos_summarize=="yes")) {
-					use_comp<-(	grepl(paste(results_screen_pos[s,1],"_",sep=""),names(pattern),fixed=TRUE)&
-								grepl(paste("_",results_screen_pos[s,3],"_",sep=""),names(pattern),fixed=TRUE) )
+					use_comp<-(
+						(patt_pos_ID==as.character(results_screen_pos[s,1])) & (patt_pos_add==as.character(results_screen_pos[s,3]))
+					)
+					if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1")}	
 					res_pos_screen_sel<-res_pos_screen[use_comp][[1]]
 					which_where<-c();which_peaks<-c();sample_type<-c();score_1<-c();score_2<-c();delppm<-c();delRT<-c();inte<-c();
 					with_peaks<-c();#with_file<-c();with_s<-c();
@@ -174,7 +190,6 @@ observe({
 					DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No compound selected or adducts collapsed")
 				}
 			},server = TRUE)
-
 			# initialize intensity range for selected internal standard
 			observe({ 
 				s<-input$Table_screening_pos_row_last_clicked
@@ -199,15 +214,16 @@ observe({
 				input$selec_pos_x
 				input$selec_pos_y
 				if (length(s) & isolate(input$screen_pos_summarize=="yes")) {			
-					use_comp<-(	grepl(paste(results_screen_pos[s,1],"_",sep=""),names(pattern),fixed=TRUE)&
-								grepl(paste("_",results_screen_pos[s,3],"_",sep=""),names(pattern),fixed=TRUE))
-					pattern_sel<-pattern[use_comp][[1]]
+					use_comp<-(
+						(patt_pos_ID==as.character(results_screen_pos[s,1])) & (patt_pos_add==as.character(results_screen_pos[s,3]))
+					)
+					if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1")}	
+					pattern_sel<-pattern_pos[use_comp][[1]]
 					res_pos_screen_sel<-res_pos_screen[use_comp][[1]]
 					cut_score<-as.numeric(logfile$parameters$IS_w1)	
 					IDs<-as.numeric(measurements[,1])
 					# extract relevant data for the compound - adduct ##########################
 					if(length(res_pos_screen_sel)>0){
-					
 						mass<-c();inte<-c();RT<-c();cutit<-c();atdate<-c();attime<-c();placed<-c();typed<-c();
 						for(i in 1:length(res_pos_screen_sel)){
 							if(length(res_pos_screen_sel[[i]])>0){
@@ -357,7 +373,7 @@ observe({
 		} # if(found_table)
 	} # if init$a
 })  
-
+##############################################################################
 
 ##############################################################################
 # NEGATIVE IONIZATION ########################################################
@@ -378,18 +394,24 @@ observe({
 				}else{
 					results_screen_neg<-results_screen_target_neg[[2]]
 				}
-				table_screening<-DT::datatable(results_screen_neg, escape = FALSE,selection = 'single') %>% 
+				table_screening_neg<-DT::datatable(results_screen_neg, escape = FALSE,selection = 'single') %>% 
 					formatStyle('Max. sample score',background = styleColorBar(c(0,1), 'lightgreen'),backgroundPosition = 'right')
-				output$Table_screening_neg <- DT::renderDataTable({table_screening},server = TRUE)
+				output$Table_screening_neg <- DT::renderDataTable({table_screening_neg},server = TRUE)
 				rm(results_screen_target_neg)
 				found_table<-TRUE
 				load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"));	
 				load(file=file.path(logfile[[1]],"results","pattern_neg_target"),envir=as.environment(".GlobalEnv"));
-				pattern<-pattern_neg_target;rm(pattern_neg_target,envir=as.environment(".GlobalEnv"));
+				pattern_neg<-pattern_neg_target;rm(pattern_neg_target,envir=as.environment(".GlobalEnv"));
+				patt_neg_ID<-rep("",length(pattern_neg))
+				patt_neg_add<-rep("",length(pattern_neg))
+				for(i in 1:length(pattern_neg)){
+					patt_neg_ID[i]<-strsplit(names(pattern_neg[i]),"_",fixed=TRUE)[[1]][1]
+					patt_neg_add[i]<-strsplit(names(pattern_neg[i]),"_",fixed=TRUE)[[1]][2]
+				}
 				load(file=file.path(logfile[[1]],"results","patternRT_neg_target"),envir=as.environment(".GlobalEnv"));
-				pattern_RT<-patternRT_neg_target;rm(patternRT_neg_target,envir=as.environment(".GlobalEnv"));
+				pattern_RT_neg<-patternRT_neg_target;rm(patternRT_neg_target,envir=as.environment(".GlobalEnv"));
 				load(file=file.path(logfile[[1]],"results","patternDelRT_neg_target"),envir=as.environment(".GlobalEnv"));
-				pattern_delRT<-patternDelRT_neg_target;rm(patternDelRT_neg_target,envir=as.environment(".GlobalEnv"));
+				pattern_delRT_neg<-patternDelRT_neg_target;rm(patternDelRT_neg_target,envir=as.environment(".GlobalEnv"));
 				load(file=file.path(logfile$project_folder,"results","screening","res_target_neg_screen"))
 				res_neg_screen<-res_target_neg_screen;rm(res_target_neg_screen);
 				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -415,18 +437,24 @@ observe({
 				}else{
 					results_screen_neg<-results_screen_IS_neg[[2]]
 				}
-				table_screening<-DT::datatable(results_screen_neg, escape = FALSE,selection = 'single') %>% 
+				table_screening_neg<-DT::datatable(results_screen_neg, escape = FALSE,selection = 'single') %>% 
 					formatStyle('Max. sample score',background = styleColorBar(c(0,1), 'lightgreen'),backgroundPosition = 'right')
-				output$Table_screening_neg <- DT::renderDataTable({table_screening},server = TRUE)
+				output$Table_screening_neg <- DT::renderDataTable({table_screening_neg},server = TRUE)
 				rm(results_screen_IS_neg)	
 				found_table<-TRUE
 				load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"));	
 				load(file=file.path(logfile[[1]],"results","pattern_neg_IS"),envir=as.environment(".GlobalEnv"));
-				pattern<-pattern_neg_IS;rm(pattern_neg_IS,envir=as.environment(".GlobalEnv"));
+				pattern_neg<-pattern_neg_IS;rm(pattern_neg_IS,envir=as.environment(".GlobalEnv"));
+				patt_neg_ID<-rep("",length(pattern_neg))
+				patt_neg_add<-rep("",length(pattern_neg))
+				for(i in 1:length(pattern_neg)){
+					patt_neg_ID[i]<-strsplit(names(pattern_neg[i]),"_",fixed=TRUE)[[1]][1]
+					patt_neg_add[i]<-strsplit(names(pattern_neg[i]),"_",fixed=TRUE)[[1]][2]
+				}
 				load(file=file.path(logfile[[1]],"results","patternRT_neg_IS"),envir=as.environment(".GlobalEnv"));
-				pattern_RT<-patternRT_neg_IS;rm(patternRT_neg_IS,envir=as.environment(".GlobalEnv"));
+				pattern_RT_neg<-patternRT_neg_IS;rm(patternRT_neg_IS,envir=as.environment(".GlobalEnv"));
 				load(file=file.path(logfile[[1]],"results","patternDelRT_neg_IS"),envir=as.environment(".GlobalEnv"));
-				pattern_delRT<-patternDelRT_neg_IS;rm(patternDelRT_neg_IS,envir=as.environment(".GlobalEnv"));
+				pattern_delRT_neg<-patternDelRT_neg_IS;rm(patternDelRT_neg_IS,envir=as.environment(".GlobalEnv"));
 				load(file=file.path(logfile$project_folder,"results","screening","res_IS_neg_screen"))
 				res_neg_screen<-res_IS_neg_screen;rm(res_IS_neg_screen);
 				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -456,9 +484,11 @@ observe({
 			output$plot_pattern_neg <- renderPlot({
 				s<-input$Table_screening_neg_row_last_clicked
 				if (length(s) & isolate(input$screen_neg_summarize=="yes")) {	
-					use_comp<-(	grepl(paste(results_screen_neg[s,1],"_",sep=""),names(pattern),fixed=TRUE)&
-								grepl(paste("_",results_screen_neg[s,3],"_",sep=""),names(pattern),fixed=TRUE))
-					pattern_sel<-pattern[use_comp][[1]]
+					use_comp<-(
+						(patt_neg_ID==as.character(results_screen_neg[s,1])) & (patt_neg_add==as.character(results_screen_neg[s,3]))
+					)
+					if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1")}	
+					pattern_sel<-pattern_neg[use_comp][[1]]
 					res_neg_screen_sel<-res_neg_screen[use_comp][[1]]
 					int_tol<-as.numeric(logfile$parameters$IS_inttol)
 					ylim_up<-(int_tol+100+(int_tol*0.1))
@@ -489,8 +519,10 @@ observe({
 			output$Table_screening_selected_neg<-DT::renderDataTable({
 				s<-input$Table_screening_neg_row_last_clicked
 				if(length(s) & isolate(input$screen_neg_summarize=="yes")){
-					use_comp<-(	grepl(paste(results_screen_neg[s,1],"_",sep=""),names(pattern),fixed=TRUE)&
-								grepl(paste("_",results_screen_neg[s,3],"_",sep=""),names(pattern),fixed=TRUE) )							
+					use_comp<-(
+						(patt_neg_ID==as.character(results_screen_neg[s,1])) & (patt_neg_add==as.character(results_screen_neg[s,3]))
+					)
+					if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1")}							
 					res_neg_screen_sel<-res_neg_screen[use_comp][[1]]
 					which_where<-c();which_peaks<-c();sample_type<-c();score_1<-c();score_2<-c();delppm<-c();delRT<-c();inte<-c();
 					with_peaks<-c();#with_file<-c();with_s<-c();
@@ -555,15 +587,16 @@ observe({
 				input$selec_neg_x
 				input$selec_neg_y
 				if (length(s) & isolate(input$screen_neg_summarize=="yes")) {			
-					use_comp<-(	grepl(paste(results_screen_neg[s,1],"_",sep=""),names(pattern),fixed=TRUE)&
-								grepl(paste("_",results_screen_neg[s,3],"_",sep=""),names(pattern),fixed=TRUE))
-					pattern_sel<-pattern[use_comp][[1]]
+					use_comp<-(
+						(patt_neg_ID==as.character(results_screen_neg[s,1])) & (patt_neg_add==as.character(results_screen_neg[s,3]))
+					)
+					if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1")}	
+					pattern_sel<-pattern_neg[use_comp][[1]]
 					res_neg_screen_sel<-res_neg_screen[use_comp][[1]]
 					cut_score<-as.numeric(logfile$parameters$IS_w1)	
 					IDs<-as.numeric(measurements[,1])
 					# extract relevant data for the compound - adduct ##########################
 					if(length(res_neg_screen_sel)>0){
-					
 						mass<-c();inte<-c();RT<-c();cutit<-c();atdate<-c();attime<-c();placed<-c();typed<-c();
 						for(i in 1:length(res_neg_screen_sel)){
 							if(length(res_neg_screen_sel[[i]])>0){
@@ -713,8 +746,7 @@ observe({
 		} # if(found_table)
 	} # if init$a
 })  
-
-
+##############################################################################
 
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_obs_screening.r!")}
 

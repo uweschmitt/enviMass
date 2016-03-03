@@ -328,6 +328,7 @@ maincalc2<-reactive({
 			#updateCheckboxGroupInput(session, "isos", "Select relevant isotopes:", choices = as.character(isotopos),selected=c("13C","34S","81Br","37Cl"))               		
 			########################################################################  
 			# screening results - show only target results by default ##############
+if(FALSE){
 			if( isolate(input$Pos_compound_select=="Target compounds") ){
 				cat("Looking at positive targets_startup \n")
 				if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos")) ){
@@ -379,6 +380,7 @@ maincalc2<-reactive({
 					},server = TRUE)		
 				}
 			}
+}
 			###########################################################################	
 			cat(objects())
 			if(any(ls()=="logfile")){stop("\n illegal logfile detected #3b in server_startup.r!")}

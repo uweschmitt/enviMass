@@ -23,7 +23,6 @@
 	########################################################################################################	
 	########################################################################################################
 	# IS screening on positive ionization ##################################################################
-	cut_score<-.75	# used during result filtering
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="peaklist")){rm(peaklist)}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
