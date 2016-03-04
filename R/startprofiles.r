@@ -30,10 +30,11 @@ startprofiles<-function(
 
     ############################################################################
     # check inputs #############################################################
-    if(frac!=FALSE){if((frac<0)||(frac>=1)){stop("invalid frac argument. FALSE or 0<frac<=1")}}
-	if((sets!=FALSE) & (!is.numeric(sets))){stop("sets must be FALSE or numeric; aborted.")}
+    if(frac!=FALSE){if((frac<0)||(frac>=1)){stop("\n invalid frac argument. FALSE or 0<frac<=1")}}
+	if((sets!=FALSE) & (!is.numeric(sets))){stop("\n sets must be FALSE or numeric; aborted.")}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="peaklist")){rm(peaklist)}
+	if(!is.logical(selective) & (selective!="FALSE" & selective!="TRUE")){stop("\n Argument selective must be logical")}
     ############################################################################
     # set up raw format ########################################################
     profiles<-list(0)
@@ -53,6 +54,9 @@ startprofiles<-function(
     # read in data #############################################################
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
     measurements<-measurements[measurements[,8]=="TRUE",]
+	if(selective){
+		measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
+	}
 	measurements<-measurements[measurements[,4]==ion_mode,]
     dated<-measurements[,6]
     timed<-measurements[,7]
@@ -103,7 +107,7 @@ startprofiles<-function(
 					  progi=0;}
 	for(i in 1:leng){ 
 		if(any(sampleID==as.numeric(measurements[i,1]))){
-			if(selective==TRUE){
+			if(selective=="TRUE"){
 				if(measurements[i,names(measurements)=="profiled"]=="FALSE"){
 					next;
 				}

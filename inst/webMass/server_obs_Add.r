@@ -601,6 +601,7 @@ observe({
 			updateDateInput(session, "Modif_date", value = as.character(measurements3[measurements3[,1]==atID,6]))
 			updateTextInput(session, "Modif_time",value = as.character(measurements3[measurements3[,1]==atID,7]))		
 			updateTextInput(session, "Modif_tag3",value = as.character(measurements3[measurements3[,1]==atID,21]))
+			updateSelectInput(session, "Modif_include", selected = as.character(measurements3[measurements3[,1]==atID,8]))
 			updateSelectInput(session, "Modif_profiled", selected = as.character(measurements3[measurements3[,1]==atID,15]))	
 			output$dowhat<-renderText("Specifications loaded into mask.");
 			cat("\n specifications loaded into mask")
@@ -609,7 +610,6 @@ observe({
 			updateTextInput(session, "Modif_name",value = "INVALID ID")		
 			updateTextInput(session, "Modif_place",value = "INVALID ID")
 			updateTextInput(session, "Modif_tag3",value = "INVALID ID")			
-			
 		}
 	}
 })  
@@ -629,8 +629,11 @@ observe({
 			measurements3[measurements3[,1]==atID,]<-enviMass:::convDate(measurements3[measurements3[,1]==atID,]);
 			measurements3[measurements3[,1]==atID,7]<-as.character(isolate(input$Modif_time))		
 			measurements3[measurements3[,1]==atID,21]<-as.character(isolate(input$Modif_tag3))	
+			measurements3[measurements3[,1]==atID,8]<-as.character(isolate(input$Modif_include))				
 			measurements3[measurements3[,1]==atID,15]<-as.character(isolate(input$Modif_profiled))	
-			enviMass:::workflow_set(down="peakpicking",check_node=TRUE,single_file=TRUE)
+			if(measurements3[measurements3[,1]==atID,8]){ # included?
+				enviMass:::workflow_set(down="peakpicking",check_node=TRUE,single_file=TRUE)
+			}
 			write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 			output$dowhat<-renderText("Specifications saved to file table.");
 			cat("\n specifications exported from mask to file table")
@@ -678,6 +681,9 @@ observe({
 				updateCheckboxGroupInput(session,inputId="files_neg_select_subtract", label="", choices=IDs_neg, selected = select_neg)
 			}
 			rm(measurements3)
+			######################################################################
+			# Adjust workflow ####################################################	
+			enviMass:::workflow_set(down="peakpicking",check_node=TRUE,single_file=TRUE)	
 			######################################################################
 			output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
 			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));

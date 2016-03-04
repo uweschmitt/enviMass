@@ -83,6 +83,7 @@
 						),
 						HTML('<hr noshade="noshade" />'),
 						fluidRow(
+							column(width = 5, selectInput("Modif_include","Include in workflow?",choices = c("TRUE","FALSE"),selected="TRUE")),
 							column(width = 5, selectInput("Modif_profiled","Use for profiling?",choices = c("TRUE","FALSE"),selected="TRUE"))
 						),	
 						HTML('<hr noshade="noshade" />'),
@@ -498,7 +499,7 @@
                 selectInput("prof_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),
                 numericInput("prof_drt", "Peak deviation within profiles: RT tolerance [s]", 60),     
 				HTML('<hr noshade="noshade" />'),				
-				selectInput("prof_select", "Omit files with table entry prof?=FALSE from profiling?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), selected="FALSE")			
+				selectInput("prof_select", "Omit files with table entry profiled=FALSE from profiling?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), selected="FALSE")			
 			),
             # TREND ############################################################
             tabPanel("Trends",

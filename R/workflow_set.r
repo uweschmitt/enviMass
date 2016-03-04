@@ -5,7 +5,7 @@
 #' @description Reset downstream workflow functionalities
 #'
 #' @param down Name of node (logfile$Tasks_to_redo) to be altered
-#' @param added Name of node (logfile$Tasks_to_redo) to be added
+#' @param added Name of node (logfile$Tasks_to_redo) to be added - additionally
 #' @param except Name of node (logfile$Tasks_to_redo) to be excluded - dangerous
 #' @param single_file File-wise handler
 #' @param check_node Only evaluate whether the concerned node is enabled in workflow?

@@ -177,6 +177,12 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 		if(min(lags)>(((max(atPOSIX)-min(atPOSIX))/(24*60*60))+1)){say<-"Trend lags longer than time span of the measurements ... abort"}
 	  }
 	  rm(lags); ##############################################################################
+	  if(
+		(logfile$workflow[names(logfile$workflow)=="profiling"]=="yes")&
+		(!any(measurements[,names(measurements)=="profiled"]=="TRUE"))
+	  ){
+			say<-"Workflow option profiling enabled, but no file included for profiling."
+	  }
   }
   # data sets ok? ##############################################################
   filed<-list.files(file.path(logfile[[1]],"files"))

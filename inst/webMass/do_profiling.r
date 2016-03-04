@@ -9,7 +9,8 @@
 							sets=as.numeric(logfile$parameters$prof_maxfiles),
 							progbar=logfile$parameters$progressBar,
 							ion_mode="positive",
-							until=logfile$parameters$upto_file
+							until=logfile$parameters$upto_file,
+							selective=logfile$parameters[[90]]
 						)
 		profileList_pos<-agglomer(
 							profileList_pos,
@@ -48,7 +49,8 @@
 							sets=as.numeric(logfile$parameters$prof_maxfiles),
 							progbar=logfile$parameters$progressBar,
 							ion_mode="negative",
-							until=logfile$parameters$upto_file
+							until=logfile$parameters$upto_file,
+							selective=logfile$parameters[[90]]
 						)
 		profileList_neg<-agglomer(
 							profileList_neg,
