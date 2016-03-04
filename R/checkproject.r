@@ -17,7 +17,6 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
   if(skipcheck){
 	return(say);
   }
-
   if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in check_project.r!")}
   ###############################################################################
   # wrong upstream "must" executions? ###########################################

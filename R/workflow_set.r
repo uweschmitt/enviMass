@@ -225,8 +225,27 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 		if(!check_node){
 			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="quantification"]<<-TRUE;		
 		}		
+	}	
+	########################################################################################	
+	if(any(work_stream=="IS_subtr")){
+		if(logfile$workflow[names(logfile$workflow)=="IS_subtr"]=="yes"){
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="IS_subtr"]<<-TRUE;
+		}	
+		if(!check_node){
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="IS_subtr"]<<-TRUE;		
+		}		
 	}		
 	########################################################################################	
+	if(any(work_stream=="target_subtr")){
+		if(logfile$workflow[names(logfile$workflow)=="target_subtr"]=="yes"){
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="target_subtr"]<<-TRUE;
+		}	
+		if(!check_node){
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="target_subtr"]<<-TRUE;		
+		}		
+	}		
+	########################################################################################		
+
 	
 	########################################################################################
 	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
