@@ -35,7 +35,7 @@
 		profpeaks_pos<-profpeaks_pos[order(profpeaks_pos[,13],decreasing=TRUE),];
 		profpeaks_pos<<-profpeaks_pos;
 		save(profpeaks_pos,file=file.path(as.character(logfile[[1]]),"results","profpeaks_pos"));
-		links_peaks_pos<-list();
+		links_peaks_pos<-list(); # each entry with 3 lists itself: targets, IS, other components
 		save(links_peaks_pos,file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"));	
 		links_profiles_pos<-list();
 		save(links_profiles_pos,file=file.path(as.character(logfile[[1]]),"results","links_profiles_pos"));			
