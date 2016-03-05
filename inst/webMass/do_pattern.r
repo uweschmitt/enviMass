@@ -1,5 +1,6 @@
 
             measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+			measurements<-measurements[measurements[,8]=="TRUE",]
             ######################################################################
 			# on IS ##############################################################
  			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");

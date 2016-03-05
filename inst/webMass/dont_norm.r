@@ -10,6 +10,9 @@ use_int<-"max_int"
 			for(i in 1:leng){
 				if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 				if(any(objects()=="peaklist")){rm(peaklist)}
+				if(!file.exists(file.path(logfile[[1]],"peaklist",as.character(measurements[i,1])))){
+					next;
+				}
 				load(file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,1])),envir=as.environment(".GlobalEnv"));
 				if(use_int=="max_int"){
 					peaklist[,13]<-peaklist[,3];

@@ -174,6 +174,7 @@
 		# iterator m is directly equal to the sample ID ####################################################
 		if( length(IS_pos_screen_listed)>0 ){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+			measurements<-measurements[measurements[,8]=="TRUE",]
 			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
 			results_screen_IS_pos<-enviMass:::get_screening_results(
 				screened_listed=res_IS_pos_screen,
@@ -394,6 +395,7 @@
 		# iterator m is directly equal to the sample ID ####################################################
 		if(length(IS_neg_screen_listed)>0){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+			measurements<-measurements[measurements[,8]=="TRUE",]
 			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
 			results_screen_IS_neg<-enviMass:::get_screening_results(
 				screened_listed=res_IS_neg_screen,

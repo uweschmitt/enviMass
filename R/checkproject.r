@@ -164,6 +164,10 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 	  lags<-as.numeric(strsplit(as.character(logfile[[5]][34]),",")[[1]])
 	  if(any(is.na(lags))){say<-"Invalid trend lags - have you used comma separated numerics?"}
 	  measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+	  if(!any(measurements[,8]=="TRUE")){
+		say<-"No file included into workflow?!"
+		return(say)
+	  }
 	  measurements<-measurements[measurements[,8]=="TRUE",]
 	  dated<-measurements[,6]
 	  timed<-measurements[,7]

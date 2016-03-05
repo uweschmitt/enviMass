@@ -24,7 +24,7 @@ path=file.path(logfile[[1]],"pics","plotQCb_neg")
 				expr2n<-list(src=path)
 				output$plotQCb_neg<-renderImage(expr2n, deleteFile = FALSE)
 measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-measurements[,11]<-"skip";
+measurements[measurements[,8]=="TRUE",11]<-"skip";
 write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);          
 measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 

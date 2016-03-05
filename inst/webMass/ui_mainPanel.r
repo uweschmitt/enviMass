@@ -87,7 +87,7 @@
 							column(width = 5, selectInput("Modif_profiled","Use for profiling?",choices = c("TRUE","FALSE"),selected="TRUE"))
 						),	
 						HTML('<hr noshade="noshade" />'),
-						actionButton("Modif_export","Export")
+						actionButton("Modif_export","Save")
 					),
 					bsCollapsePanel("Import files from another project", 		
 						tags$h5("Select project folder to import files from:"),
@@ -282,7 +282,7 @@
 						column(width = 2, radioButtons("profiled", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
 							tags$p(align="justify","An intensity descent assorts peaks into profiles. Uses a fixed retention time tolerance window and
-							an adaptive mass tolerance window.")
+							an adaptive mass tolerance window. Only peaks of files marked for profiling are used (column profiled in the files table / File Tab).")
 						)
 					),					
 				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> LOD interpolation </font></p>'),
@@ -303,7 +303,7 @@
 						),						
 						column(width = 6, offset = 0.3,
 							tags$p(align="justify","Uses the LOD thresholds estimated in the above step. If the LOD interpolation is not run, a fixed intensity threshold as specified in the
-							Settings/Screening tabs is used.")
+							Settings/Screening tabs is used. Only peaks of files marked for profiling are used (column profiled in the files table / File Tab).")
 						)
 					),	
 				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> Quantification </font></p> '),
@@ -446,7 +446,7 @@
 					div(style = widget_style2,
 						tags$h5("Intensity"),
 						sliderInput("screen_IS_dInt", "Intensity tolerance %", min = 0, max = 100, value = 30, step= .2),
-						numericInput("screen_IS_Intcut", "Lower intensity threhold", 5E4)                
+						numericInput("screen_IS_Intcut", "Lower intensity threshold (if LOD interpolation disabled)", 5E4)                
 					),
 					div(style = widget_style2,
 						tags$h5("Scoring"),
@@ -512,9 +512,9 @@
             tabPanel("Blind",
 				tags$h5("Blind subtraction:"),
 				numericInput("blind_fold", "Intensity threshold ratio sample/blind <", 100),
-				numericInput("blind_dmz", "Peak mass deviation among measurements (+/-) ...", 3), 
+				numericInput("blind_dmz", "Mass uncertainty (+/-) ...", 3), 
                 selectInput("blind_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),				
-                numericInput("blind_drt", "Peak deviation within profiles: RT tolerance [s]", 60),       
+                numericInput("blind_drt", "RT tolerance  [s]", 60),       
 				HTML('<hr noshade="noshade" />'),
 				tags$h5("Positive ionization mode"),
 				checkboxInput("subtract_pos_bydate", "Subtract with the next blank/blind file preceding a sample by its date & time?", FALSE),				

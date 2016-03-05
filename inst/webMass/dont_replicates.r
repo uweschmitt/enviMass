@@ -14,6 +14,8 @@ if(length(replic)>0){
 				peaklist[,colnames(peaklist)=="keep"]<-keep
 				save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[j])))
 				rm(peaklist)
+			}else{
+				cat("Missing peaklist detected in done_replicates. Debug!?")
 			}
 		}
 	}
