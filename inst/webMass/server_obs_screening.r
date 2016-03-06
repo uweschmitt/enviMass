@@ -13,7 +13,10 @@ observe({
 		found_table<-FALSE
 		if( isolate(input$Pos_compound_select=="Target compounds") ){
 			cat("\n Looking at positive targets_selec")
-			if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos")) ){			
+			if( 
+				(file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))) #&
+				#(logfile$workflow[names(logfile$workflow)=="target_subtr"]!="yes")
+			){			
 				load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))
 				screen_dev_pos<-results_screen_target_pos[[3]] # contains sample vs. blank intensity ratios
 				rat_sam_blank_pos<-results_screen_target_pos[[1]][,10,drop=FALSE]
@@ -27,7 +30,7 @@ observe({
 				output$Table_screening_pos <- DT::renderDataTable({table_screening_pos},server = TRUE)
 				rm(results_screen_target_pos)
 				found_table<-TRUE
-				load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"));	
+				load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"),envir=as.environment(".GlobalEnv"));	
 				load(file=file.path(logfile[[1]],"results","pattern_pos_target"),envir=as.environment(".GlobalEnv"));
 				pattern_pos<-pattern_pos_target;rm(pattern_pos_target,envir=as.environment(".GlobalEnv"));
 				patt_pos_ID<-rep("",length(pattern_pos))
@@ -56,7 +59,10 @@ observe({
 		}
 		if( isolate(input$Pos_compound_select=="Internal standards") ){
 			cat("\n Looking at positive standards_selec")
-			if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos")) ){			
+			if( 
+				(file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos"))) #&
+				#(logfile$workflow[names(logfile$workflow)=="IS_subtr"]!="yes")
+			){			
 				load(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos"))
 				screen_dev_pos<-results_screen_IS_pos[[3]] # contains sample vs. blank intensity ratios		
 				rat_sam_blank_pos<-results_screen_IS_pos[[1]][,10,drop=FALSE]				
@@ -70,7 +76,7 @@ observe({
 				output$Table_screening_pos <- DT::renderDataTable({table_screening_pos},server = TRUE)
 				rm(results_screen_IS_pos)	
 				found_table<-TRUE
-				load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"));	
+				load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"),envir=as.environment(".GlobalEnv"));	
 				load(file=file.path(logfile[[1]],"results","pattern_pos_IS"),envir=as.environment(".GlobalEnv"));
 				pattern_pos<-pattern_pos_IS;rm(pattern_pos_IS,envir=as.environment(".GlobalEnv"));
 				patt_pos_ID<-rep("",length(pattern_pos))
@@ -333,7 +339,6 @@ observe({
 					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(.5,.5,labels="No compound selected or adducts collapsed",col="red",cex=1.6)
 				}
 			},width = "auto", height = "auto")
-
 			output$plot_pattern_distrib_pos <- renderPlot({
 				if(length(screen_dev_pos)>0){
 					use_x<-input$Summ_pos_x
@@ -385,7 +390,10 @@ observe({
 		found_table<-FALSE
 		if( isolate(input$Neg_compound_select=="Target compounds") ){
 			cat("\n Looking at negative targets_selec")
-			if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg")) ){
+			if( 				
+				(file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg"))) #&
+				#(logfile$workflow[names(logfile$workflow)=="target_subtr"]!="yes")
+			){
 				load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg"))
 				screen_dev_neg<-results_screen_target_neg[[3]] # contains sample vs. blank intensity ratios
 				rat_sam_blank_neg<-results_screen_target_neg[[1]][,10,drop=FALSE]
@@ -399,7 +407,7 @@ observe({
 				output$Table_screening_neg <- DT::renderDataTable({table_screening_neg},server = TRUE)
 				rm(results_screen_target_neg)
 				found_table<-TRUE
-				load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"));	
+				load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy"),envir=as.environment(".GlobalEnv"));	
 				load(file=file.path(logfile[[1]],"results","pattern_neg_target"),envir=as.environment(".GlobalEnv"));
 				pattern_neg<-pattern_neg_target;rm(pattern_neg_target,envir=as.environment(".GlobalEnv"));
 				patt_neg_ID<-rep("",length(pattern_neg))
@@ -428,7 +436,10 @@ observe({
 		}
 		if( isolate(input$Neg_compound_select=="Internal standards") ){
 			cat("\n Looking at negative standards_selec")
-			if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_neg")) ){
+			if(
+				(file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_neg"))) #&
+				#(logfile$workflow[names(logfile$workflow)=="IS_subtr"]!="yes")			
+			){
 				load(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_neg"))
 				screen_dev_neg<-results_screen_IS_neg[[3]] # contains sample vs. blank intensity ratios		
 				rat_sam_blank_neg<-results_screen_IS_neg[[1]][,10,drop=FALSE]				
@@ -442,7 +453,7 @@ observe({
 				output$Table_screening_neg <- DT::renderDataTable({table_screening_neg},server = TRUE)
 				rm(results_screen_IS_neg)	
 				found_table<-TRUE
-				load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"));	
+				load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy"),envir=as.environment(".GlobalEnv"));	
 				load(file=file.path(logfile[[1]],"results","pattern_neg_IS"),envir=as.environment(".GlobalEnv"));
 				pattern_neg<-pattern_neg_IS;rm(pattern_neg_IS,envir=as.environment(".GlobalEnv"));
 				patt_neg_ID<-rep("",length(pattern_neg))

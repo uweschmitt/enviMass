@@ -258,11 +258,14 @@
 					radioButtons("intnorm", "Include?", c("yes"="yes","no"="no")),
 				#HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> RT alignment </font></p> '),
 				#radioButtons("RTalign", "Include?", c("yes"="yes","no"="no")),  
-				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Blank / blind subtraction filter </font></p> '),				
+				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Blank / blind peak detection </font></p> '),				
 					fluidRow(
-						column(width = 2, radioButtons("blind_filter", "Include? ", c("yes"="yes","no"="no")) ),
-						column(width = 10, offset = 0.3,
-							tags$p(align="justify","Removes sample peaks which are also present in blind/blank files. Check Settings Blind Tab for file selection.")
+						column(width = 2, radioButtons("blind_filter", "Detect?", c("yes"="yes","no"="no")) ),
+						column(width = 2, radioButtons("blind_omit", "Remove?", c("yes"="yes","no"="no")) ),
+						column(width = 8, offset = 0.3,
+							tags$p(align="justify","Detects sample peaks which are also present in blind/blank files. Check Settings Blind Tab for file selection. 
+							Optionally, affected peaks can early be removed before downstream processing. Recommended for e.g. effect on compound screening - otherwise
+							later removal (cp. red steps) recommended.")
 						)
 					),				
 				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Replicate filter </font></p> '),				
@@ -330,6 +333,15 @@
 						),						
 						column(width = 6, offset = 0.3,
 							tags$p(align="justify","Run a profile recalculation omitting compound peaks belonging to matches >= the cutoff score defined in the Settings/Screening Tab.")
+						)
+					),	
+				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Blind peak subtraction </font></p> '),
+					fluidRow(
+						column(width = 2, 
+							radioButtons("subtr_blind", "Subtract?", c("yes"="yes","no"="no"))
+						),	
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","Subtract peaks from profiles which have also been detected in blind/blank samples (cp. blind detection in blue steps)?")
 						)
 					),	
 				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Trend detection </font></p> '),

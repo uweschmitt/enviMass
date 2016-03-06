@@ -44,10 +44,11 @@ output$force_workflow <- networkD3:::renderForceNetwork({
 		MisNodes[MisNodes[,1]=="target_screen",1]<-"Target screening"
 		MisNodes[MisNodes[,1]=="IS_normaliz",1]<-"Internal standard intensity normalization"
 		MisNodes[MisNodes[,1]=="norm",1]<-"Median intensity normalization"
-		MisNodes[MisNodes[,1]=="blinds",1]<-"Blind subtraction"		
+		MisNodes[MisNodes[,1]=="blinds",1]<-"Blind subtraction 1"		
 		MisNodes[MisNodes[,1]=="quantification",1]<-"Quantification"				
 		MisNodes[MisNodes[,1]=="IS_subtr",1]<-"IS subtraction"	
 		MisNodes[MisNodes[,1]=="target_subtr",1]<-"target subtraction"	
+		MisNodes[MisNodes[,1]=="blind_subtr",1]<-"Blind subtraction"
 		
 		networkD3:::forceNetwork(Links = MisLinks, Nodes = MisNodes,
 					Source = "source", Target = "target",

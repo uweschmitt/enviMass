@@ -99,7 +99,7 @@ observe({
 			enviMass:::workflow_set(down="trendblind",check_node=TRUE)
 		}		
 		# blind subtraction ####################################################		
-		at1<-logfile$parameters[c(37,82,83,84,85,86,87,88)]
+		at1<-logfile$parameters[c(37,82,83,84,85,86,87,88,89)]
 		logfile$parameters[[37]]<<-as.character(isolate(input$blind_fold))
 		logfile$parameters[[82]]<<-as.character(isolate(input$blind_dmz))
 		logfile$parameters[[83]]<<-as.character(isolate(input$blind_ppm))
@@ -108,7 +108,8 @@ observe({
 		logfile$parameters[[86]]<<-as.character(isolate(input$subtract_pos_byfile))		
 		logfile$parameters[[87]]<<-as.character(isolate(input$subtract_neg_bydate))			
 		logfile$parameters[[88]]<<-as.character(isolate(input$subtract_neg_byfile))	
-		at2<-logfile$parameters[c(37,82,83,84,85,86,87,88)]
+		logfile$parameters[[89]]<<-as.character(isolate(input$blind_omit))
+		at2<-logfile$parameters[c(37,82,83,84,85,86,87,88,89)]
 		if(any(is.na(match(at2,at1)))){ # both steps take partly the same parameters! 
 			enviMass:::workflow_set(down="blinds",check_node=TRUE)
 		}		
@@ -275,6 +276,13 @@ observe({
 		at2<-logfile$workflow[names(logfile$workflow)=="target_subtr"];
 		if(at1!=at2){
 			enviMass:::workflow_set(down="target_subtr",check_node=FALSE)		
+		}	
+		# blind subtraction ######################################################			
+		at1<-logfile$workflow[names(logfile$workflow)=="blind_subtr"];
+		logfile$workflow[names(logfile$workflow)=="blind_subtr"]<<-as.character(isolate(input$subtr_blind));
+		at2<-logfile$workflow[names(logfile$workflow)=="blind_subtr"];
+		if(at1!=at2){
+			enviMass:::workflow_set(down="blind_subtr",check_node=FALSE)		
 		}	
 		##########################################################################	
 

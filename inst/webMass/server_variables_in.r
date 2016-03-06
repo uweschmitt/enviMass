@@ -50,6 +50,7 @@ updateCheckboxInput(session,"subtract_pos_bydate", label =  "Subtract with the n
 updateCheckboxInput(session,"subtract_pos_byfile", label = "Additional non-sample files to subtract each sample file with (i.e. not preceding by date only), choose file ID:", value=as.logical(logfile$parameters[[86]]))							
 updateCheckboxInput(session,"subtract_neg_bydate", label = "Subtract with the next blank/blind file preceding a sample by its date & time?", value=as.logical(logfile$parameters[[87]]))
 updateCheckboxInput(session,"subtract_neg_byfile",label =  "Additional non-sample files to subtract each sample file with (i.e. not preceding by date only), choose file ID:", value=as.logical(logfile$parameters[[88]]))				
+updateRadioButtons(session, "blind_omit", label = "Remove affected peaks?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$parameters[[89]]) )
 # IS SCREENING #########################################################
 updateNumericInput(session, "screen_IS_delRT", "RT tolerance of peaks in sample relative to their expected RT [s]", value = as.numeric(logfile$parameters[42]))   
 updateNumericInput(session, "screen_IS_dRTwithin", "RT tolerance of peaks within an isotope pattern [s]", value = as.numeric(logfile$parameters[43])) 
@@ -152,6 +153,7 @@ updateRadioButtons(session, "screen_IS", label = "Screen internal standards?", c
 updateRadioButtons(session, "screen_target", label = "Screen targets/suspects?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="target_screen"]) )
 updateRadioButtons(session, "subtr_IS", label = "Subtract internal standards?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="IS_subtr"]) )
 updateRadioButtons(session, "subtr_target", label = "Subtract internal targets?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="target_subtr"]) )
+updateRadioButtons(session, "subtr_blind", label = "Subtract?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="blind_subtr"]) )
 ################################################################################
 ################################################################################
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_variabels_in.r!")}

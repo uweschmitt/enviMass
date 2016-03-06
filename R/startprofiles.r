@@ -117,7 +117,11 @@ startprofiles<-function(
 				setWinProgressBar(prog, progi, title = "Retrieve matrix length", label = NULL)
 			}
 			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,1])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
-			peaklist<<-peaklist[( (peaklist[,colnames(peaklist)=="keep"]==1) & (peaklist[,colnames(peaklist)=="keep_2"]==1) ),,drop=FALSE]
+			if(logfile$parameters$blind_omit=="yes"){
+				peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep_2"]==1),,drop=FALSE]
+			}
+			peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep"]==1),,drop=FALSE]
+			
 			if(length(peaklist[,1])==0){next}
 			if(frac!=FALSE){
 				at<-c(at+(floor(length(peaklist[,1])*frac)))
@@ -127,8 +131,8 @@ startprofiles<-function(
 			rm(peaklist,envir=as.environment(".GlobalEnv"))
 		}
 	}
-	peaks<-matrix(nrow=(at),ncol=8,0)
-    colnames(peaks)<-c("m/z","intensity","RT","peakIDs","links","sampleIDs","partitionIDs","profileIDs")
+	peaks<-matrix(nrow=(at),ncol=9,0)
+    colnames(peaks)<-c("m/z","intensity","RT","peakIDs","links","sampleIDs","partitionIDs","profileIDs","in_blind")
     if(progbar==TRUE){close(prog);}
 	da1<-c(1)
 	############################################################################
@@ -148,7 +152,10 @@ startprofiles<-function(
 			}
 			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,1])),
 				verbose=FALSE,envir=as.environment(".GlobalEnv"));
-			peaklist<<-peaklist[( (peaklist[,colnames(peaklist)=="keep"]==1) & (peaklist[,colnames(peaklist)=="keep_2"]==1) ),,drop=FALSE]
+			if(logfile$parameters$blind_omit=="yes"){
+				peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep_2"]==1),,drop=FALSE]
+			}
+			peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep"]==1),,drop=FALSE]
 			if(length(peaklist[,1])==0){next}		
 			if(frac!=FALSE){
 				peaklist<<-peaklist[order(peaklist[,2],decreasing=TRUE),];
@@ -160,12 +167,12 @@ startprofiles<-function(
 			if( logfile$workflow[2]=="yes" ){ # use recalibrated data ....
 				peaks[da1:da2,]<-as.matrix(cbind( peaklist[1:that,c(12,13,14,10)],
 								rep(0,that),rep(as.numeric(measurements[i,1]),that),
-								rep(0,that),rep(0,that))
+								rep(0,that),rep(0,that),peaklist[1:that,colnames(peaklist)=="keep_2"])
 				);
 			}else{ # ... or not?
 				peaks[da1:da2,]<-as.matrix(cbind( peaklist[1:that,c(1,4,5,10)],
 								rep(0,that),rep(as.numeric(measurements[i,1]),that),
-								rep(0,that),rep(0,that))
+								rep(0,that),rep(0,that),peaklist[1:that,colnames(peaklist)=="keep_2"])
 				);			
 			}
 			da1<-c(da2+1);

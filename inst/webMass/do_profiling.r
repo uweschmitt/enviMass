@@ -32,6 +32,7 @@
 		profileList_pos<-enviMass:::in_blind(profileList_pos)
 		profileList_pos<<-profileList_pos
 		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"));
+		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy")); # used for screening - does not include modifications of downstream compound subtraction		
 		profpeaks_pos<-enviMass:::profiletopeak(profileList_pos,progbar=logfile$parameters[21])		
 		profpeaks_pos<-profpeaks_pos[order(profpeaks_pos[,13],decreasing=TRUE),];
 		profpeaks_pos<<-profpeaks_pos;
@@ -39,7 +40,7 @@
 		links_peaks_pos<-list(); # each entry with 3 lists itself: targets, IS, other components
 		save(links_peaks_pos,file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"));	
 		links_profiles_pos<-list();
-		save(links_profiles_pos,file=file.path(as.character(logfile[[1]]),"results","links_profiles_pos"));			
+		save(links_profiles_pos,file=file.path(as.character(logfile[[1]]),"results","links_profiles_pos"));				
 	}
 	if(any(measurements[,4]=="negative")){
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
@@ -72,6 +73,7 @@
 		profileList_neg<-enviMass:::in_blind(profileList_neg)
 		profileList_neg<<-profileList_neg
 		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"));
+		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy")); # used for screening - does not include modifications of downstream compound subtraction			
 		profpeaks_neg<-enviMass:::profiletopeak(profileList_neg,progbar=logfile$parameters[21])
 		profpeaks_neg<-profpeaks_neg[order(profpeaks_neg[,13],decreasing=TRUE),]
 		profpeaks_neg<<-profpeaks_neg;

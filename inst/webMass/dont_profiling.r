@@ -10,7 +10,13 @@ if(file.exists(file=file.path(as.character(logfile[[1]]),"results","profileList_
 }  
 if(file.exists(file=file.path(as.character(logfile[[1]]),"results","profileList_neg"))){
 	file.remove(file=file.path(as.character(logfile[[1]]),"results","profileList_neg"))
+} 
+if(file.exists(file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"))){
+	file.remove(file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"))
 }  
+if(file.exists(file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy"))){
+	file.remove(file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy"))
+}   
 if(file.exists(file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"))){
 	file.remove(file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"))
 }

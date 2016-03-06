@@ -11,7 +11,7 @@
 
 summary_html<-function(in_logfile_summary){
 	
-	use_summary<-in_logfile_summary[c(1,2,3,4,5,16,11,7,8,14,12,13,9,17,18,10,15),]
+	use_summary<-in_logfile_summary[c(1,2,3,4,5,16,11,7,8,14,12,13,9,17,18,19,10,15),]
 	use_summary[,1]<-as.character(use_summary[,1])
 	use_summary[,2]<-as.character(use_summary[,2])			
 	mat<-matrix(ncol=2,nrow=length(use_summary[,1]),"")
@@ -35,13 +35,13 @@ summary_html<-function(in_logfile_summary){
 	use_summary[use_summary[,1]=="trendblind",1]<-"Trend detection"	
 	use_summary[use_summary[,1]=="LOD",1]<-"LOD interpolation"
 	use_summary[use_summary[,1]=="quantification",1]<-"Quantification"
-	use_summary[use_summary[,1]=="blinds",1]<-"Blind filter"	
+	use_summary[use_summary[,1]=="blinds",1]<-"Blind subtraction #1"	
 	use_summary[use_summary[,1]=="replicates",1]<-"Replicate filter"	
 	use_summary[use_summary[,1]=="IS_screen",1]<-"IS screening"
 	use_summary[use_summary[,1]=="target_screen",1]<-"Target screening"
 	use_summary[use_summary[,1]=="IS_subtr",1]<-"IS subtraction"
 	use_summary[use_summary[,1]=="target_subtr",1]<-"Target subtraction"
-	
+	use_summary[use_summary[,1]=="blind_subtr",1]<-"Blind subtraction #2"
 	for(i in 1:length(mat[,1])){
 		if(i%%2==0){
 			mat[i,1]<-c("background-color: lightgrey")
