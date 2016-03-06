@@ -245,6 +245,15 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 		}		
 	}		
 	########################################################################################		
+	if(any(work_stream=="blind_subtr")){
+		if(logfile$workflow[names(logfile$workflow)=="blind_subtr"]=="yes"){
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="blind_subtr"]<<-TRUE;
+		}	
+		if(!check_node){
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="blind_subtr"]<<-TRUE;		
+		}		
+	}		
+	########################################################################################		
 
 	
 	########################################################################################

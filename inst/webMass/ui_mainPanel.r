@@ -730,7 +730,7 @@
 					HTML('<hr noshade="noshade" />'),
 					fluidRow(										
 						column(4,tags$h5("Number of peaks: "),textOutput('file_peak_number') ),
-						column(4,tags$h5("% of peaks removed by blind subtraction: "),textOutput('file_blind_rem')),										
+						column(4,tags$h5("% of peaks affected by blind filter: "),textOutput('file_blind_rem')),										
 						column(4,tags$h5("% of peaks removed by replicate filter: "),textOutput('file_repl_rem'))										
 					),					
 					HTML('<hr noshade="noshade" />'),

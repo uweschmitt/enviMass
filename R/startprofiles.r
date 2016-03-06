@@ -121,7 +121,6 @@ startprofiles<-function(
 				peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep_2"]==1),,drop=FALSE]
 			}
 			peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep"]==1),,drop=FALSE]
-			
 			if(length(peaklist[,1])==0){next}
 			if(frac!=FALSE){
 				at<-c(at+(floor(length(peaklist[,1])*frac)))

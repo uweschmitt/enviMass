@@ -33,7 +33,7 @@ for(i in 1:length(IDs)){
 			rm(peaklist)
 		}
 	}else{
-		cat("\n Orphaned peaklist detected. Consider a debug!?")
+		cat("\n Orphaned peaklist detected - from an older workflow run?")
 	}
 }
 }

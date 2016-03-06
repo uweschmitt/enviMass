@@ -38,7 +38,7 @@ observe({
 		logfile$parameters$peak_weight<<-as.character(isolate(input$peak_weight))
 		logfile$parameters$peak_maxint_log10<<-as.character(isolate(input$peak_maxint))
 		at2<-logfile$parameters[c(1,2,3,4,5,6,7,8,9,10,11,12,13,14)]
-		if(any(is.na(match(at2,at1)))){ 
+		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="peakpicking",check_node=TRUE)
 		}
         # progbar? #############################################################
@@ -64,7 +64,7 @@ observe({
         logfile$parameters[[32]]<<-as.character(isolate(input$recal_ppm))
         logfile$parameters[[33]]<<-as.character(isolate(input$recal_drt))
 		at2<-logfile$parameters[c(30,31,32,33)];
-		if(any(is.na(match(at2,at1)))){ 
+		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="recal",check_node=TRUE)
 		}
 		# replicates ###########################################################
@@ -74,7 +74,7 @@ observe({
 		#logfile$parameters[[17]]<<-as.character(isolate(input$replicate_recalib))
 		logfile$parameters[[18]]<<-as.character(isolate(input$replicate_delRT))		
 		at2<-logfile$parameters[c(15,16,17,18)];
-		if(any(is.na(match(at2,at1)))){ 
+		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="replicates",check_node=TRUE)		
 		}
 		# profiling ############################################################
@@ -86,7 +86,7 @@ observe({
         logfile$parameters[[41]]<<-as.character(isolate(input$prof_drt))
         logfile$parameters[[90]]<<-as.character(isolate(input$prof_select))		
 		at2<-c(logfile$parameters[c(38,39,40,41,90)],logfile$parameters$upto_file);
-		if(any(is.na(match(at2,at1)))){ 
+		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="profiling",check_node=TRUE)		
 		}
 		# trend detection ######################################################
@@ -95,7 +95,7 @@ observe({
 		logfile$parameters[[34]]<<-as.character(isolate(input$trend_lags))
 		logfile$parameters[[35]]<<-as.character(isolate(input$trend_thres))
 		at2<-logfile$parameters[c(29,34,35)]
-		if(any(is.na(match(at2,at1)))){ 
+		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="trendblind",check_node=TRUE)
 		}		
 		# blind subtraction ####################################################		
@@ -110,23 +110,23 @@ observe({
 		logfile$parameters[[88]]<<-as.character(isolate(input$subtract_neg_byfile))	
 		logfile$parameters[[89]]<<-as.character(isolate(input$blind_omit))
 		at2<-logfile$parameters[c(37,82,83,84,85,86,87,88,89)]
-		if(any(is.na(match(at2,at1)))){ # both steps take partly the same parameters! 
+		if(!enviMass:::comp_list(at1,at2)){ # both steps take partly the same parameters! 
 			enviMass:::workflow_set(down="blinds",check_node=TRUE)
 		}		
-		if(any(is.na(match(at2,at1)))){ 
+		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="trendblind",check_node=TRUE)
 		}				
 		# subtraction files
 		at1<-logfile$Positive_subtraction_files
 		logfile$Positive_subtraction_files<<-c(isolate(input$files_pos_select_subtract),"FALSE")
 		at2<-logfile$Positive_subtraction_files
-		if(any(is.na(match(at2,at1)))){ # both steps take partly the same parameters! 
+		if(!enviMass:::comp_list(at1,at2)){ # both steps take partly the same parameters! 
 			enviMass:::workflow_set(down="blinds",check_node=TRUE)
 		}	
 		at1<-logfile$Negative_subtraction_files
 		logfile$Negative_subtraction_files<<-c(isolate(input$files_neg_select_subtract),"FALSE")
 		at2<-logfile$Negative_subtraction_files
-		if(any(is.na(match(at2,at1)))){ # both steps take partly the same parameters! 
+		if(!enviMass:::comp_list(at1,at2)){ # both steps take partly the same parameters! 
 			enviMass:::workflow_set(down="blinds",check_node=TRUE)
 		}	
 		########################################################################  
@@ -141,7 +141,7 @@ observe({
 		logfile$parameters[[48]]<<-as.character(isolate(input$screen_IS_Intcut))
 		logfile$parameters[[49]]<<-as.character(isolate(input$screen_IS_w1))	
 		at2<-logfile$parameters[c(42:51)]
-		if(any(is.na(match(at2,at1)))){ 
+		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="IS_screen",check_node=TRUE)
 		}
 		# target screening #####################################################
@@ -154,7 +154,7 @@ observe({
 		logfile$parameters[[61]]<<-as.character(isolate(input$screen_target_Intcut))
 		logfile$parameters[[62]]<<-as.character(isolate(input$screen_target_w1))		
 		at2<-logfile$parameters[c(55:64)]
-		if(any(is.na(match(at2,at1)))){ 
+		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="target_screen",check_node=TRUE)
 		}
 		# IS-Normalization #####################################################
@@ -169,7 +169,7 @@ observe({
 		logfile$parameters[[77]]<<-as.character(isolate(input$profnorm_use_nonblank_samplecount))	
 		logfile$parameters[[78]]<<-as.character(isolate(input$profnorm_threshold))
 		at2<-logfile$parameters[c(70:78)]
-		if(any(is.na(match(at2,at1)))){ 
+		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="IS_normaliz",check_node=TRUE)		
 		}	
 		########################################################################   

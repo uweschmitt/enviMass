@@ -12,7 +12,7 @@ if(length(IDs)>0){
 				rm(peaklist)
 			}
 		}else{
-			cat("\n Orphaned peaklist detected. Consider a debug!")
+			cat("\n Orphaned peaklist detected - from an older workflow run?")
 		}
 	}
 }
