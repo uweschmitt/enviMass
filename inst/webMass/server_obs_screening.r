@@ -19,6 +19,7 @@ observe({
 			){			
 				load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))
 				screen_dev_pos<-results_screen_target_pos[[3]] # contains sample vs. blank intensity ratios
+				screen_dev_pos[,2]<-log10(screen_dev_pos[,2])
 				rat_sam_blank_pos<-results_screen_target_pos[[1]][,10,drop=FALSE]
 				if( isolate(input$screen_pos_summarize=="yes") ){
 					results_screen_pos<-results_screen_target_pos[[1]]
@@ -65,6 +66,7 @@ observe({
 			){			
 				load(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos"))
 				screen_dev_pos<-results_screen_IS_pos[[3]] # contains sample vs. blank intensity ratios		
+				screen_dev_pos[,2]<-log10(screen_dev_pos[,2])
 				rat_sam_blank_pos<-results_screen_IS_pos[[1]][,10,drop=FALSE]				
 				if( isolate(input$screen_pos_summarize=="yes") ){
 					results_screen_pos<-results_screen_IS_pos[[1]]
@@ -202,7 +204,6 @@ observe({
 				if (length(s) & isolate(input$screen_pos_summarize=="yes") & isolate(input$Pos_compound_select=="Internal standards")) {
 					updateNumericInput(session, "screen_int_pos_low", "Lower bound", value = 5,step=0.1)   
 					updateNumericInput(session, "screen_int_pos_up", "Upper bound", value = 6,step=0.1) 
-					
 				}	
 			})
 			# export intensity range for selected internal standard
@@ -343,21 +344,33 @@ observe({
 				if(length(screen_dev_pos)>0){
 					use_x<-input$Summ_pos_x
 					use_y<-input$Summ_pos_y
-					par(mar=c(4,4,.5,.5))
-					plot(
-						screen_dev_pos[,colnames(screen_dev_pos)==use_x],
-						screen_dev_pos[,colnames(screen_dev_pos)==use_y],
-						pch=19,cex=.3,xlab=use_x,ylab=use_y,col="lightgrey"
-					)
-					points(
-						screen_dev_pos[screen_dev_pos[,6]==1,colnames(screen_dev_pos)==use_x],
-						screen_dev_pos[screen_dev_pos[,6]==1,colnames(screen_dev_pos)==use_y],
-						pch=19,cex=.4,xlab=use_x,ylab=use_y,col="black"
-					)					
-					if(use_x=="m/z deviation [ppm]" | use_x=="RT deviation"){abline(v=0,col="red")}
-					if(use_y=="m/z deviation [ppm]" | use_y=="RT deviation"){abline(h=0,col="red")}
-					plot.window(xlim=c(0,1),ylim=c(0,1))
-					legend(0.9,1,title="Cutoff score",legend=c("below","above"),fill=c("lightgrey","black"),border=c("lightgrey","black"))
+					if(use_x!=use_y){
+						par(mar=c(4,4,.5,.5))
+						plot(
+							screen_dev_pos[,colnames(screen_dev_pos)==use_x],
+							screen_dev_pos[,colnames(screen_dev_pos)==use_y],
+							pch=19,cex=.3,xlab=use_x,ylab=use_y,col="lightgrey"
+						)
+						points(
+							screen_dev_pos[screen_dev_pos[,6]==1,colnames(screen_dev_pos)==use_x],
+							screen_dev_pos[screen_dev_pos[,6]==1,colnames(screen_dev_pos)==use_y],
+							pch=19,cex=.4,xlab=use_x,ylab=use_y,col="black"
+						)					
+						if(use_x=="m/z deviation [ppm]" | use_x=="RT deviation"){abline(v=0,col="red")}
+						if(use_y=="m/z deviation [ppm]" | use_y=="RT deviation"){abline(h=0,col="red")}
+						plot.window(xlim=c(0,1),ylim=c(0,1))
+						legend(0.9,1,title="Cutoff score",legend=c("below","above"),fill=c("lightgrey","black"),border=c("lightgrey","black"))
+					}else{
+						par(mar=c(4,4,.5,.5))
+						plot.new()
+						plot.window(xlim=c(min(screen_dev_pos[,colnames(screen_dev_pos)==use_x]),max(screen_dev_pos[,colnames(screen_dev_pos)==use_x])),ylim=c(0,3.3))
+						boxplot(screen_dev_pos[screen_dev_pos[,6]==1,colnames(screen_dev_pos)==use_x],
+						horizontal=TRUE,xlab=use_x,width=1.3,at=2,add=TRUE)				
+						boxplot(screen_dev_pos[screen_dev_pos[,6]==0,colnames(screen_dev_pos)==use_x],
+						horizontal=TRUE,xlab=use_x,width=1.3,at=1,add=TRUE,col="grey")			
+						plot.window(xlim=c(0,1),ylim=c(0,1))
+						legend(0.8,1,title="Cutoff score",legend=c("above","below"),fill=c("white","lightgrey","black"),border=c("black","lightgrey"))
+					}
 				}
 			})			
 			output$plot_aboveBlank_pos <- renderPlot({
@@ -396,6 +409,7 @@ observe({
 			){
 				load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg"))
 				screen_dev_neg<-results_screen_target_neg[[3]] # contains sample vs. blank intensity ratios
+				screen_dev_neg[,2]<-log10(screen_dev_neg[,2])
 				rat_sam_blank_neg<-results_screen_target_neg[[1]][,10,drop=FALSE]
 				if( isolate(input$screen_neg_summarize=="yes") ){
 					results_screen_neg<-results_screen_target_neg[[1]]
@@ -442,6 +456,7 @@ observe({
 			){
 				load(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_neg"))
 				screen_dev_neg<-results_screen_IS_neg[[3]] # contains sample vs. blank intensity ratios		
+				screen_dev_neg[,2]<-log10(screen_dev_neg[,2])
 				rat_sam_blank_neg<-results_screen_IS_neg[[1]][,10,drop=FALSE]				
 				if( isolate(input$screen_neg_summarize=="yes") ){
 					results_screen_neg<-results_screen_IS_neg[[1]]
@@ -580,7 +595,7 @@ observe({
 				if (length(s) & isolate(input$screen_neg_summarize=="yes") & isolate(input$Neg_compound_select=="Internal standards")) {
 					updateNumericInput(session, "screen_int_neg_low", "Lower bound", value = 5,step=0.1)   
 					updateNumericInput(session, "screen_int_neg_up", "Upper bound", value = 6,step=0.1) 
-					
+# BAUSTELLE					
 				}	
 			})
 			# export intensity range for selected internal standard
@@ -722,21 +737,33 @@ observe({
 				if(length(screen_dev_neg)>0){
 					use_x<-input$Summ_neg_x
 					use_y<-input$Summ_neg_y
-					par(mar=c(4,4,.5,.5))
-					plot(
-						screen_dev_neg[,colnames(screen_dev_neg)==use_x],
-						screen_dev_neg[,colnames(screen_dev_neg)==use_y],
-						pch=19,cex=.3,xlab=use_x,ylab=use_y,col="lightgrey"
-					)
-					points(
-						screen_dev_neg[screen_dev_neg[,6]==1,colnames(screen_dev_neg)==use_x],
-						screen_dev_neg[screen_dev_neg[,6]==1,colnames(screen_dev_neg)==use_y],
-						pch=19,cex=.4,xlab=use_x,ylab=use_y,col="black"
-					)					
-					if(use_x=="m/z deviation [ppm]" | use_x=="RT deviation"){abline(v=0,col="red")}
-					if(use_y=="m/z deviation [ppm]" | use_y=="RT deviation"){abline(h=0,col="red")}
-					plot.window(xlim=c(0,1),ylim=c(0,1))
-					legend(0.9,1,title="Cutoff score",legend=c("below","above"),fill=c("lightgrey","black"),border=c("lightgrey","black"))
+					if(use_x!=use_y){
+						par(mar=c(4,4,.5,.5))
+						plot(
+							screen_dev_neg[,colnames(screen_dev_neg)==use_x],
+							screen_dev_neg[,colnames(screen_dev_neg)==use_y],
+							pch=19,cex=.3,xlab=use_x,ylab=use_y,col="lightgrey"
+						)
+						points(
+							screen_dev_neg[screen_dev_neg[,6]==1,colnames(screen_dev_neg)==use_x],
+							screen_dev_neg[screen_dev_neg[,6]==1,colnames(screen_dev_neg)==use_y],
+							pch=19,cex=.4,xlab=use_x,ylab=use_y,col="black"
+						)					
+						if(use_x=="m/z deviation [ppm]" | use_x=="RT deviation"){abline(v=0,col="red")}
+						if(use_y=="m/z deviation [ppm]" | use_y=="RT deviation"){abline(h=0,col="red")}
+						plot.window(xlim=c(0,1),ylim=c(0,1))
+						legend(0.9,1,title="Cutoff score",legend=c("below","above"),fill=c("lightgrey","black"),border=c("lightgrey","black"))
+					}else{
+						par(mar=c(4,4,.5,.5))
+						plot.new()
+						plot.window(xlim=c(min(screen_dev_neg[,colnames(screen_dev_neg)==use_x]),max(screen_dev_neg[,colnames(screen_dev_neg)==use_x])),ylim=c(0,3.3))
+						boxplot(screen_dev_neg[screen_dev_neg[,6]==1,colnames(screen_dev_neg)==use_x],
+						horizontal=TRUE,xlab=use_x,width=1.3,at=2,add=TRUE)				
+						boxplot(screen_dev_neg[screen_dev_neg[,6]==0,colnames(screen_dev_neg)==use_x],
+						horizontal=TRUE,xlab=use_x,width=1.3,at=1,add=TRUE,col="grey")			
+						plot.window(xlim=c(0,1),ylim=c(0,1))
+						legend(0.8,1,title="Cutoff score",legend=c("above","below"),fill=c("white","lightgrey","black"),border=c("black","lightgrey"))
+					}
 				}
 			})			
 			output$plot_aboveBlank_neg <- renderPlot({
