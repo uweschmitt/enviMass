@@ -173,6 +173,36 @@
 					),
 					bsCollapsePanel("Import compound list", 					
 						fileInput("ISlist_path", "Select IS.txt file, e.g. from dataframes folder of another project", multiple = FALSE, accept = c(".txt"))
+					),
+					bsCollapsePanel("Modify in external editor", 					
+						HTML('
+							<p><font>
+								The below compound table can be assembled and modified in external text editors or Excel and then imported via the above import step.
+								To do so, use file IS.txt from the dataframe folder of a new enviMass project as a template.
+							</font></p>
+							<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> 
+								Any such modifications must strictly adhere to the following rules to avoid frustration:
+							</font></p> 
+							<ol>
+								<li>Headers: strictly use file IS.txt generated in a new enviMass project (dataframes folder) as a template. No empty spaces in header names permitted (e.g. ion_mode NOT ion mode).</li>
+								<li>Input format: text file (.txt), tab delimited.</li>
+								<li>Compound names: no special signs permitted. Use big and small letters, numbers, underscores, hyphen, brackets and empty spaces - and absolutely nothing else.</li>
+								<li>No empty columns. If you are not sure what to fill in, use what is given  in the template IS.txt file.</li>
+								<li>Absolutely NO duplicated IDs.</li>
+								<li>Do not delete columns; their number, order and content must be fixed.</li>
+								<li>No uncompleted entries per compounds.</li>
+								<li>Numeric entries with decimal points: dot-separated.</li>								
+							</ol>
+							<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> 
+								Help for some column contents:
+							</font></p> 
+							<ol>
+								<li>ID: numeric or charactes or both. Unique, absolutely NO duplicates permitted.</li>
+								<li>RT_tolerance: FALSE or a compound-specific retention time tolerance. Overwrites the one set as standard value in tab Settings/Screening/IS.</li>
+								<li>main_adduct: FALSE or name of a special adduct to be used for this compound entry. Valid adduct names can be found in tab Settings/Adduct.</li>								
+								<li>restrict_adduct: TRUE or FALSE. Only use the main_adduct (if specified) for this compound and ignore the ones specified in tab Settings/Adduct?</li>
+							</ol>
+						')		
 					)
 				),
                 HTML('<hr noshade="noshade" />'),
@@ -228,8 +258,39 @@
 					),
 					bsCollapsePanel("Import compound list", 					
 						fileInput("targetlist_path", "Select targets.txt file, e.g. from dataframes folder of another project", multiple = FALSE, accept = c(".txt"))
+					),
+					bsCollapsePanel("Modify in external editor", 					
+						HTML('
+							<p><font>
+								The below compound table can be assembled and modified in external text editors or Excel and then imported via the above import step.
+								To do so, use file targets.txt from the dataframe folder of a new enviMass project as a template.
+							</font></p>
+							<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> 
+								Any such modifications must strictly adhere to the following rules to avoid frustration:
+							</font></p> 
+							<ol>
+								<li>Headers: strictly use file targets.txt generated in a new enviMass project (dataframes folder) as a template. No empty spaces in header names permitted (e.g. ion_mode NOT ion mode).</li>
+								<li>Input format: text file (.txt), tab delimited.</li>
+								<li>Compound names: no special signs permitted. Use big and small letters, numbers, underscores, hyphen, brackets and empty spaces - and absolutely nothing else.</li>
+								<li>No empty columns. If you are not sure what to fill in, use what is given  in the template targets.txt file.</li>
+								<li>Absolutely NO duplicated IDs.</li>
+								<li>Do not delete columns; their number, order and content must be fixed.</li>
+								<li>No uncompleted entries per compounds.</li>
+								<li>Numeric entries with decimal points: dot-separated.</li>								
+							</ol>
+							<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> 
+								Help for some column contents:
+							</font></p> 
+							<ol>
+								<li>ID: numeric or charactes or both. Unique, absolutely NO duplicates permitted.</li>
+								<li>RT_tolerance: FALSE or a compound-specific retention time tolerance. Overwrites the one set as standard value in tab Settings/Screening/targets.</li>
+								<li>ID_internal_standard: unique ID of a internal standard compound to be used for quantification. Set to FALSE otherwise.</li>
+								<li>main_adduct: FALSE or name of a special adduct to be used for this compound entry. Valid adduct names can be found in tab Settings/Adduct.</li>								
+								<li>restrict_adduct: TRUE or FALSE. Only use the main_adduct (if specified) for this compound and ignore the ones specified in tab Settings/Adduct?</li>
+							</ol>
+						')		
 					)
-				),  
+				),
 				HTML('<hr noshade="noshade" />'),  
                 DT::dataTableOutput("targets")
             )

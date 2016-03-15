@@ -64,21 +64,29 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 		if(any(grepl(",",intstand_check[,names(intstand_check)=="Upper_intensity_bound"],fixed=TRUE))){
 			say<-"Correct IS table: use .-separator, no commas for bounds."
 		}
-		if(any(intstand_check[,names(intstand_check)=="ion_mode"]=="positive")){
-			if(any(duplicated(intstand_check[intstand_check[,names(intstand_check)=="ion_mode"]=="positive",1]))){
-				those<-intstand_check[duplicated(intstand_check[intstand_check[,names(intstand_check)=="ion_mode"]=="positive",1]),1]
-				those<-as.character(those)
-				those<-paste(those,collapse=",")
-				say<-paste("Duplicated IS IDs found (positive ion_mode):",those,". Please correct!")
-			}  
-		}
-		if(any(intstand_check[,names(intstand_check)=="ion_mode"]=="negative")){
-			if(any(duplicated(intstand_check[intstand_check[,names(intstand_check)=="ion_mode"]=="negative",1]))){
-				those<-intstand_check[duplicated(intstand_check[intstand_check[,names(intstand_check)=="ion_mode"]=="negative",1]),1]
-				those<-as.character(those)
-				those<-paste(those,collapse=",")
-				say<-paste("Duplicated IS IDs found (negative ion_mode):",those,". Please correct!")
-			}  
+		if(any(duplicated(intstand_check[,1]))){
+			those<-intstand_check[duplicated(intstand_check[,1]),1]
+			those<-as.character(those)
+			those<-paste(those,collapse=",")
+			say<-paste("Duplicated IS IDs found:",those,". Please correct!")
+		}  
+		if(FALSE){ # ID check per positive OR negative - not run
+			if(any(intstand_check[,names(intstand_check)=="ion_mode"]=="positive")){
+				if(any(duplicated(intstand_check[intstand_check[,names(intstand_check)=="ion_mode"]=="positive",1]))){
+					those<-intstand_check[duplicated(intstand_check[intstand_check[,names(intstand_check)=="ion_mode"]=="positive",1]),1]
+					those<-as.character(those)
+					those<-paste(those,collapse=",")
+					say<-paste("Duplicated IS IDs found (positive ion_mode):",those,". Please correct!")
+				}  
+			}
+			if(any(intstand_check[,names(intstand_check)=="ion_mode"]=="negative")){
+				if(any(duplicated(intstand_check[intstand_check[,names(intstand_check)=="ion_mode"]=="negative",1]))){
+					those<-intstand_check[duplicated(intstand_check[intstand_check[,names(intstand_check)=="ion_mode"]=="negative",1]),1]
+					those<-as.character(those)
+					those<-paste(those,collapse=",")
+					say<-paste("Duplicated IS IDs found (negative ion_mode):",those,". Please correct!")
+				}  
+			}
 		}
 		checked<-enviPat::check_chemform(isotopes, intstand_check[,3])
 		if(any(checked[,1])){
@@ -122,7 +130,12 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 		if(any(grepl(",",targets_check[,names(targets_check)=="warn_2"],fixed=TRUE))){
 			say<-"Correct targets table: use .-separator, no commas for warn_2."
 		}		
-		if(any(duplicated(targets_check[,1]))){say<-"Duplicated target IDs found ... abort."}  
+		if(any(duplicated(targets_check[,1]))){
+			those<-targets_check[duplicated(targets_check[,1]),1]
+			those<-as.character(those)
+			those<-paste(those,collapse=",")
+			say<-paste("Duplicated target IDs found:",those,". Please correct!")		
+		}  
 		checked<-enviPat::check_chemform(isotopes, targets_check[,3])
 		if(any(checked[,1])){
 			print(targets_check[checked[,1]==TRUE,1])
