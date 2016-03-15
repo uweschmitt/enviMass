@@ -703,8 +703,7 @@ impfolder<-reactive({
 		getfiles<<-list.files(path=file_in)
 		if(length(getfiles)>0){
 			cat("\nStarting upload ...");
-			many<-0;
-			at_date<<-as.character(isolate(input$Measadd_date))
+			many<-0;					
 			for(i in 1:length(getfiles)){
 				filepath<-file.path(file_in,getfiles[i])
 				file_ending<-filetype(getfiles[i],check=TRUE)
@@ -715,7 +714,15 @@ impfolder<-reactive({
 					file_ending<-filetype(getfiles[i],check=FALSE)
 					measurements1<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 					nameit<-names(measurements1);
-					measurements1<-measurements1[measurements1[,1]!="-",]		
+					measurements1<-measurements1[measurements1[,1]!="-",,drop=FALSE]		
+					# define minimum available date
+					if(length(measurements1[,1])==0){
+						at_date<<-as.character(isolate(input$Measadd_date))
+					}else{
+						all_dates<-measurements1[,6]
+						at_date<-minDate(all_dates,get_min=FALSE)
+						at_date<<-incrDate(Date=at_date,increment=1);#cat(paste("\n",at_date))	
+					}
 					newID<-as.character(getID(as.numeric(measurements1[,1])))
 					if(file_ending==".mzXML"){			
 						file.copy(
@@ -826,7 +833,6 @@ impfolder<-reactive({
 							return(".RAW-file: path to PW MSConvert.exe invalid. Please correct in tabs Settings/General!")
 						}	
 					}
-					at_date<-incrDate(Date=at_date,increment=1);#cat(paste("\n",at_date))
 				}
 			}
 			if(many>0){
