@@ -283,7 +283,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	logfile[[13]]<-"FALSE"
 	names(logfile)[13]<-"Positive_subtraction_files"
 	logfile[[14]]<-"FALSE"
-	names(logfile)[14]<-"Positive_subtraction_files"
+	names(logfile)[14]<-"Negative_subtraction_files"
     # measurement data.frame ###################################################
 	save(logfile,file=file.path(pro_dir,pro_name,"logfile.emp"));  
 	rm(logfile)

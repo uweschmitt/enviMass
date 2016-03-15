@@ -89,6 +89,14 @@
 						HTML('<hr noshade="noshade" />'),
 						actionButton("Modif_export","Save")
 					),
+					bsCollapsePanel("Batch upload from folder", 	
+						tags$h5("Read in batches of files (.mzXML) from a folder; file specifications will be guessed and can later be modified above. 
+						File dates are set in the sequence of files provided in the folder."),	
+						textInput("import_file_folder", "Folder path:", value = "C:\\...\\folder"),
+						actionButton("Import_file_folder","Import"),
+						HTML('<hr noshade="noshade" />'),
+						textOutput("had_import_folder")						
+					),
 					bsCollapsePanel("Import files from another project", 		
 						tags$h5("Select project folder to import files from:"),
 						textInput("import_pro_dir", "", value = "C:\\...\\old_project_name"),
@@ -101,7 +109,9 @@
 							title = "File duplicate handling",
 							content = "A file with the same type, time, date, ionization and place as one which already exists will not be imported.", 
 							placement = "right", trigger = "hover"),
-						actionButton("Import_project","Import")		
+						actionButton("Import_project","Import"),		
+						HTML('<hr noshade="noshade" />'),
+						textOutput("had_import_project")	
 					)					
 				),	
 			HTML('<hr noshade="noshade" />'),

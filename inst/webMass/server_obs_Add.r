@@ -466,7 +466,7 @@ observe({
 ##############################################################################
 
 # IMPORT MEASUREMENTS ########################################################
-observe({
+impproj<-reactive({
     input$Import_project
     if(input$Import_project){
 		cat("\n Importing project files ...")
@@ -571,6 +571,7 @@ observe({
 			}
 			rm(measurements3)
 			#########################################################################
+			logfile$summary[1,2]<<-"TRUE"
 			output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
 			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 			#########################################################################			
@@ -583,6 +584,7 @@ observe({
 	}
 	if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_Add.r!")}
 })
+output$had_import_project<-renderText(paste(impproj()))  
 ##############################################################################
 
 # MODIFY MEASUREMENTS ########################################################  
@@ -692,7 +694,166 @@ observe({
 	}
 })  
 ##############################################################################  
-  
+
+# IMPORT FOLDER ##############################################################   
+impfolder<-reactive({
+	input$Import_file_folder
+	if(isolate(input$Import_file_folder)){
+		file_in<<-as.character(isolate(input$import_file_folder))
+		getfiles<<-list.files(path=file_in)
+		if(length(getfiles)>0){
+			cat("\nStarting upload ...");
+			many<-0;
+			at_date<<-as.character(isolate(input$Measadd_date))
+			for(i in 1:length(getfiles)){
+				filepath<-file.path(file_in,getfiles[i])
+				file_ending<-filetype(getfiles[i],check=TRUE)
+				if(
+					file.exists(filepath) & file_ending # in case of modifications meanwhile
+				){
+					cat(paste("\n   processing file # ",i,sep=""));
+					file_ending<-filetype(getfiles[i],check=FALSE)
+					measurements1<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+					nameit<-names(measurements1);
+					measurements1<-measurements1[measurements1[,1]!="-",]		
+					newID<-as.character(getID(as.numeric(measurements1[,1])))
+					if(file_ending==".mzXML"){			
+						file.copy(
+							from=filepath,
+							to=file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")),
+							overwrite=TRUE)	
+						if( file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep=""))) ){ # copy completed?			
+							mz1<-readMzXmlData:::readMzXmlFile(
+								mzXmlFile=file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")),
+								removeMetaData = FALSE,verbose = FALSE)
+							ioniz<-mz1[[1]]$metaData$polarity											
+							with_mode<-"unknown"
+							if(ioniz=="+"){
+								with_mode<-"positive"
+							}
+							if(ioniz=="-"){
+								with_mode<-"negative"
+							}							
+							measurements2<-c(
+								newID,
+								getfiles[i], # name
+								"sample",
+								with_mode,
+								"FALSE", # place
+								at_date, # incremented in order of upload
+								as.character("12:00:00"),
+								"TRUE", # to be included?
+								"TRUE","FALSE","FALSE","FALSE","FALSE","FALSE",
+								"TRUE", # to be profiled?
+								"FALSE","FALSE","FALSE","FALSE","FALSE","FALSE"
+							)
+							measurements3<-rbind(measurements2,measurements1);
+							names(measurements3)<-nameit;
+							measurements3<-enviMass:::convDate(measurements3);
+							write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+							rm(measurements1,measurements2,measurements3);
+							#############################################################################			
+							output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"));
+							save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
+							output$dowhat<-renderText("Files copied");
+							cat(" - file copied")
+							#############################################################################
+							many<-(many+1)
+						}else{
+							output$dowhat<-renderText("File corrupted? - copying from folder failed!");
+							cat("File corrupted? - copying from folder failed!")
+							return("File corrupted? - copying from folder failed!")					
+						}
+					}else{ # ... then its a .raw file		
+						if( file.exists(file.path(logfile$PW)) ){
+							file.copy(
+								from=filepath,
+								to=file.path(logfile[[1]],"files",paste(newID,".raw",sep="")),
+								overwrite=TRUE)			
+							PWfile(
+								infile=file.path(logfile[[1]],"files",paste(newID,".raw",sep="")),
+								file.path(logfile[[1]],"files"),
+								as.character(isolate(input$PWpath)),
+								notintern=FALSE,
+								use_format="mzXML");     				  
+							file.remove(file.path(logfile[[1]],"files",paste(newID,".raw",sep="")))
+			
+							if( file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep=""))) ){ # copy completed and conversion ok?			
+								mz1<-readMzXmlData:::readMzXmlFile(
+									mzXmlFile=file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")),
+									removeMetaData = FALSE,verbose = FALSE)
+								ioniz<-mz1[[1]]$metaData$polarity											
+								with_mode<-"unknown"
+								if(ioniz=="+"){
+									with_mode<-"positive"
+								}
+								if(ioniz=="-"){
+									with_mode<-"negative"
+								}							
+								measurements2<-c(
+									newID,
+									getfiles[i], # name
+									"sample",
+									with_mode,
+									"FALSE", # place
+									at_date, # incremented in order of upload
+									as.character("12:00:00"),
+									"TRUE", # to be included?
+									"TRUE","FALSE","FALSE","FALSE","FALSE","FALSE",
+									"TRUE", # to be profiled?
+									"FALSE","FALSE","FALSE","FALSE","FALSE","FALSE"
+								)
+								measurements3<-rbind(measurements2,measurements1);
+								names(measurements3)<-nameit;
+								measurements3<-enviMass:::convDate(measurements3);
+								write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+								rm(measurements1,measurements2,measurements3);
+								#############################################################################			
+								output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"));
+								save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
+								output$dowhat<-renderText("Files copied");
+								cat(" - file copied")
+								#############################################################################
+								many<-(many+1)
+							}else{
+								output$dowhat<-renderText("File corrupted? - copying from folder failed!");
+								cat("File corrupted? - copying from folder failed!")
+								return("File corrupted? - copying from folder failed!")					
+							}
+						}else{
+							output$dowhat<-renderText(".RAW-file: path to PW MSConvert.exe invalid. Please correct in tabs Settings/General!");
+							cat(".RAW-file: path to PW MSConvert.exe invalid. Please correct in tabs Settings/General!")
+							return(".RAW-file: path to PW MSConvert.exe invalid. Please correct in tabs Settings/General!")
+						}	
+					}
+					at_date<-incrDate(Date=at_date,increment=1);#cat(paste("\n",at_date))
+				}
+			}
+			if(many>0){
+				enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE) 
+				logfile$summary[1,2]<<-"TRUE"
+				output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
+				save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+				output$dowhat<-renderText(paste(many,"files imported"))
+				cat(paste("\n",many,"files imported"))
+				return(paste(many,"files imported"))
+			}else{
+				cat("\nNo files imported")
+				return(paste("No files imported"))			
+			}
+			############################ BAUSTELLE	
+			# Default: files all imported as "sample" - no update of blind subtraction files thus implemented
+			############################ BAUSTELLE	
+		}else{
+			cat("\nNothing to import: no files or wrong folder.")
+			return("Nothing to import: no files or wrong folder.")
+		}
+	}
+	if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_obs_Add.r!")}
+}) #ok
+output$had_import_folder<-renderText(paste(impfolder()))
+##############################################################################  
+ 
 ############################################################################## 
 # Import parameters ##########################################################  
 observe({

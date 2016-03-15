@@ -4,7 +4,7 @@ conditionalPanel(
 		div(style = widget_style4,	  
 			tags$h4("Welcome to enviMass version 3.1"),
 			tags$h5("The new workflow for processing high-resolution LC-MS data and temporal trend detection"),
-			imageOutput("peakrot", width="40%",height="40%")
+			imageOutput("peakrot", width="10%",height="10%")
 		),
         HTML(
 			'<p>

@@ -115,24 +115,23 @@ observe({
 		}		
 		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="trendblind",check_node=TRUE)
-		}				
+		}		
 		# subtraction files
 		at1<-logfile$Positive_subtraction_files
 		logfile$Positive_subtraction_files<<-c(isolate(input$files_pos_select_subtract),"FALSE")
 		at2<-logfile$Positive_subtraction_files
-		if(!enviMass:::comp_list(at1,at2)){ # both steps take partly the same parameters! 
+		if(!enviMass:::comp_list(at1,at2,as_pairs=FALSE)){ # both steps take partly the same parameters! 
 			enviMass:::workflow_set(down="blinds",check_node=TRUE)
 		}	
 		at1<-logfile$Negative_subtraction_files
 		logfile$Negative_subtraction_files<<-c(isolate(input$files_neg_select_subtract),"FALSE")
 		at2<-logfile$Negative_subtraction_files
-		if(!enviMass:::comp_list(at1,at2)){ # both steps take partly the same parameters! 
+		if(!enviMass:::comp_list(at1,at2,as_pairs=FALSE)){ # both steps take partly the same parameters! 
 			enviMass:::workflow_set(down="blinds",check_node=TRUE)
-		}	
-		########################################################################  
-	
+		}		
+		########################################################################  		
 		# IS screening #########################################################
-		at1<-logfile$parameters[c(42:51)]
+		at1<-logfile$parameters[c(42,43,45:49)]
 		logfile$parameters[[42]]<<-as.character(isolate(input$screen_IS_delRT))
 		logfile$parameters[[43]]<<-as.character(isolate(input$screen_IS_dRTwithin))
 		logfile$parameters[[45]]<<-as.character(isolate(input$screen_IS_dmz))
@@ -140,12 +139,12 @@ observe({
 		logfile$parameters[[47]]<<-as.character(isolate(input$screen_IS_dInt))
 		logfile$parameters[[48]]<<-as.character(isolate(input$screen_IS_Intcut))
 		logfile$parameters[[49]]<<-as.character(isolate(input$screen_IS_w1))	
-		at2<-logfile$parameters[c(42:51)]
+		at2<-logfile$parameters[c(42,43,45:49)]
 		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="IS_screen",check_node=TRUE)
-		}
+		}	
 		# target screening #####################################################
-		at1<-logfile$parameters[c(55:64)]
+		at1<-logfile$parameters[c(55,56,58:62)]
 		logfile$parameters[[55]]<<-as.character(isolate(input$screen_target_delRT))
 		logfile$parameters[[56]]<<-as.character(isolate(input$screen_target_dRTwithin))
 		logfile$parameters[[58]]<<-as.character(isolate(input$screen_target_dmz))
@@ -153,7 +152,7 @@ observe({
 		logfile$parameters[[60]]<<-as.character(isolate(input$screen_target_dInt))
 		logfile$parameters[[61]]<<-as.character(isolate(input$screen_target_Intcut))
 		logfile$parameters[[62]]<<-as.character(isolate(input$screen_target_w1))		
-		at2<-logfile$parameters[c(55:64)]
+		at2<-logfile$parameters[c(55,56,58:62)]
 		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="target_screen",check_node=TRUE)
 		}
@@ -173,8 +172,7 @@ observe({
 			enviMass:::workflow_set(down="IS_normaliz",check_node=TRUE)		
 		}	
 		########################################################################   
-		
-		
+cat("\at_5")				
 		##########################################################################
 		# workflow settings ######################################################
 		# qc #####################################################################
@@ -292,7 +290,6 @@ observe({
 		output$dowhat<<-renderText("Project settings modified");
 		##########################################################################
 		if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_variable_out.r!")}
-		
 		
     }
 
