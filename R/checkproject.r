@@ -52,8 +52,9 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 		cat("No internal standards available \n") 
 	}else{
 		if(
-			!all(names(intstand_check)==c("ID","Name","Formula","RT","RT_tolerance","main_adduct","ion_mode","use_for_recalibration",
-			"use_for_screening", "restrict_adduct","Remark","tag1","tag2","tag3","from","to","Lower_intensity_bound","Upper_intensity_bound"))
+			!all(names(intstand_check)==c("ID","Name","Formula","RT","RT_tolerance","main_adduct","ion_mode",
+			"use_for_recalibration","use_for_screening", "restrict_adduct","Remark","tag1","tag2","tag3",
+			"from","to","Lower_intensity_bound","Upper_intensity_bound"))
 		){
 			say<-paste("Incorrect or missing columns in internal standard compound table - compare to tables in a new project for correct entries.")
 		}
