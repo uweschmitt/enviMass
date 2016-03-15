@@ -377,7 +377,8 @@
 						),						
 						column(width = 6, offset = 0.3,
 							tags$p(align="justify","Uses the LOD thresholds estimated in the above step. If the LOD interpolation is not run, a fixed intensity threshold as specified in the
-							Settings/Screening tabs is used. Only peaks of files marked for profiling are used (column profiled in the files table / File Tab).")
+							Settings/Screening tabs is used. All peaks of files marked for inclusion and profiling are used (column profiled in the files table / File Tab) - unless peaks are
+							removed explicitly in the early blind detection (see blue workflow steps).")
 						)
 					),	
 				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> Quantification </font></p> '),
@@ -403,7 +404,8 @@
 							radioButtons("subtr_target", "Subtract targets/suspects?", c("yes"="yes","no"="no"))
 						),						
 						column(width = 6, offset = 0.3,
-							tags$p(align="justify","Run a profile recalculation omitting compound peaks belonging to matches >= the cutoff score defined in the Settings/Screening Tab.")
+							tags$p(align="justify","Run a profile recalculation omitting compound peaks belonging to matches >= the cutoff score defined in the Settings/Screening Tab.
+							The original compound screening results remain visible, but affected peaks will not be part of the final profiles.")
 						)
 					),	
 				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Blind peak subtraction </font></p> '),
@@ -412,7 +414,7 @@
 							radioButtons("subtr_blind", "Subtract?", c("yes"="yes","no"="no"))
 						),	
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","Subtract peaks from profiles which have also been detected in blind/blank samples (cp. blind detection in blue steps)?")
+							tags$p(align="justify","Subtract peaks from profiles which have also been detected in blind/blank samples but not removed yet (cp. blind detection of blue steps)?")
 						)
 					),	
 				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Trend detection </font></p> '),

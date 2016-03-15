@@ -720,8 +720,8 @@ impfolder<-reactive({
 						at_date<<-as.character(isolate(input$Measadd_date))
 					}else{
 						all_dates<-measurements1[,6]
-						at_date<-minDate(all_dates,get_min=FALSE)
-						at_date<<-incrDate(Date=at_date,increment=1);#cat(paste("\n",at_date))	
+						at_date<-enviMass:::minDate(all_dates,get_min=FALSE)
+						at_date<<-enviMass:::incrDate(Date=at_date,increment=1);#cat(paste("\n",at_date))	
 					}
 					newID<-as.character(getID(as.numeric(measurements1[,1])))
 					if(file_ending==".mzXML"){			
