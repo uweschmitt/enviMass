@@ -1,7 +1,7 @@
 measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 measurements<-measurements[measurements[,8]=="TRUE",]
 IDs<-list.files(file.path(logfile[[1]],"peaklist"))
-filetype<-(measurements[,3])
+filetypus<-(measurements[,3])
 ionmode<-(measurements[,4])
 atdate<-(measurements[,6])
 attime<-(measurements[,7])
@@ -25,7 +25,7 @@ if(FALSE){ # debug parameters
 if(length(IDs)>0){
 for(i in 1:length(IDs)){
 	if(any(measurements[,1]==IDs[i])){
-		if(filetype[measurements[,1]==IDs[i]]=="sample"){
+		if(filetypus[measurements[,1]==IDs[i]]=="sample"){
 			load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
 			keep_2<-rep(1,length(peaklist[,1])) # 1 == TRUE
 			peaklist[,colnames(peaklist)=="keep_2"]<-keep_2
@@ -45,11 +45,11 @@ if((logfile$parameters[[85]]=="TRUE") || (logfile$parameters[[87]]=="TRUE")){
 	for(i in 2:length(ord)){ # can skip first file
 		if((logfile$parameters[[85]]=="FALSE") & (ionmode[ord[i]]=="positive")){next}
 		if((logfile$parameters[[87]]=="FALSE") & (ionmode[ord[i]]=="negative")){next}	
-		if(filetype[ord[i]]=="sample"){
+		if(filetypus[ord[i]]=="sample"){
 			sam_ID<-sampleID[ord[i]]
 			found_blank<-FALSE
 			for(j in (i-1):1){ # backward
-				if((filetype[ord[j]]=="blank") & (ionmode[ord[i]]==ionmode[ord[j]])){
+				if((filetypus[ord[j]]=="blank") & (ionmode[ord[i]]==ionmode[ord[j]])){
 					blank_ID<-sampleID[ord[j]]
 					found_blank<-TRUE
 					break;
@@ -101,7 +101,7 @@ if( (logfile$parameters[[86]]=="TRUE") & any(logfile$Positive_subtraction_files!
 	selec_pos<-selec_pos[selec_pos!="FALSE"]
 	for(i in 1:length(IDs)){
 		if(any(measurements[,1]==IDs[i])){
-			if( filetype[measurements[,1]==IDs[i]]=="sample" &  ionmode[measurements[,1]==IDs[i]]=="positive" ){
+			if( filetypus[measurements[,1]==IDs[i]]=="sample" &  ionmode[measurements[,1]==IDs[i]]=="positive" ){
 				load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),verbose=FALSE);
 				sam_peaklist<-peaklist;rm(peaklist);
 				for(j in 1:length(selec_pos)){
@@ -149,7 +149,7 @@ if( (logfile$parameters[[88]]=="TRUE") & any(logfile$Negative_subtraction_files!
 	selec_neg<-selec_neg[selec_neg!="FALSE"]
 	for(i in 1:length(IDs)){
 		if(any(measurements[,1]==IDs[i])){	
-			if(filetype[measurements[,1]==IDs[i]]=="sample" &  ionmode[measurements[,1]==IDs[i]]=="negative"){
+			if(filetypus[measurements[,1]==IDs[i]]=="sample" &  ionmode[measurements[,1]==IDs[i]]=="negative"){
 				load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),verbose=FALSE);
 				sam_peaklist<-peaklist;rm(peaklist);
 				for(j in 1:length(selec_neg)){

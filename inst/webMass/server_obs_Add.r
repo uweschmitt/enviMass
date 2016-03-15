@@ -706,12 +706,12 @@ impfolder<-reactive({
 			many<-0;					
 			for(i in 1:length(getfiles)){
 				filepath<-file.path(file_in,getfiles[i])
-				file_ending<-filetype(getfiles[i],check=TRUE)
+				file_ending<-enviMass:::filetype(getfiles[i],check=TRUE)
 				if(
 					file.exists(filepath) & file_ending # in case of modifications meanwhile
 				){
 					cat(paste("\n   processing file # ",i,sep=""));
-					file_ending<-filetype(getfiles[i],check=FALSE)
+					file_ending<-enviMass:::filetype(getfiles[i],check=FALSE)
 					measurements1<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 					nameit<-names(measurements1);
 					measurements1<-measurements1[measurements1[,1]!="-",,drop=FALSE]		
