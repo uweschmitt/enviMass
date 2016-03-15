@@ -420,8 +420,10 @@ if(logfile[[10]]<3.101){
 	if( any(names(measurements)=="feat.") ){
 		names(measurements)[names(measurements)=="feat."]<-"profiled";
 		measurements[,names(measurements)=="profiled"]<-"TRUE";
-		write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);      
 	}
+	names(measurements)<-c("ID","Name","Type","Mode","Place","Date","Time","include","copied","picked",
+	"checked","recal","align","norm","profiled","comp","IS_screen","tar_screen","tag1","tag2","tag3")
+	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 	################################################################################################	
 	logfile[[10]]<<-3.101
 	names(logfile)[10]<<-"version"

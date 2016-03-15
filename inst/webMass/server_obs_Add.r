@@ -374,8 +374,8 @@ observe({
 		# anything left? 
 		if(length(measurements1[measurements1[,1]!=as.character(isolate(input$Measdel_ID)),1])==0){
 			measurements1<-data.frame(c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("FALSE"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"));
-			names(measurements1)<-c("ID","Name","Type","Mode","Place","Date","Time","include","copied?","picked?",
-			"checked?","recal?","align?","norm?","profiled?","comp?","IS_screen?","tar_screen?","tag1","tag2","tag3")
+			names(measurements1)<-c("ID","Name","Type","Mode","Place","Date","Time","include","copied","picked",
+			"checked","recal","align","norm","profiled","comp","IS_screen","tar_screen","tag1","tag2","tag3")
 			adjustit<-"FALSE"
         }else{
 		    measurements1<-measurements1[measurements1[,1]!=as.character(isolate(input$Measdel_ID)),]

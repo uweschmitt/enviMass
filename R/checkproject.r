@@ -63,8 +63,23 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 		}
 		if(any(grepl(",",intstand_check[,names(intstand_check)=="Upper_intensity_bound"],fixed=TRUE))){
 			say<-"Correct IS table: use .-separator, no commas for bounds."
-		}		
-		if(any(duplicated(intstand_check[,1]))){say<-"Duplicated IS IDs found ... abort."}  
+		}
+		if(any(intstand_check[,names(intstand_check)=="ion_mode"]=="positive")){
+			if(any(duplicated(intstand_check[intstand_check[,names(intstand_check)=="ion_mode"]=="positive",1]))){
+				those<-intstand_check[duplicated(intstand_check[intstand_check[,names(intstand_check)=="ion_mode"]=="positive",1]),1]
+				those<-as.character(those)
+				those<-paste(those,collapse=",")
+				say<-paste("Duplicated IS IDs found (positive ion_mode):",those,". Please correct!")
+			}  
+		}
+		if(any(intstand_check[,names(intstand_check)=="ion_mode"]=="negative")){
+			if(any(duplicated(intstand_check[intstand_check[,names(intstand_check)=="ion_mode"]=="negative",1]))){
+				those<-intstand_check[duplicated(intstand_check[intstand_check[,names(intstand_check)=="ion_mode"]=="negative",1]),1]
+				those<-as.character(those)
+				those<-paste(those,collapse=",")
+				say<-paste("Duplicated IS IDs found (negative ion_mode):",those,". Please correct!")
+			}  
+		}
 		checked<-enviPat::check_chemform(isotopes, intstand_check[,3])
 		if(any(checked[,1])){
 			print(intstand_check[intstand_check[,1]==TRUE,1])
@@ -161,7 +176,7 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
   ##############################################################################
   # parameters ok? #############################################################
   # (1) on trend time lags #####################################################
-  if(logfile[[2]][[7]]){
+  if(logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="trendblind"]){
 	  lags<-as.numeric(strsplit(as.character(logfile[[5]][34]),",")[[1]])
 	  if(any(is.na(lags))){say<-"Invalid trend lags - have you used comma separated numerics?"}
 	  measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -183,8 +198,8 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 	  }
 	  rm(lags); ##############################################################################
 	  if(
-		(logfile$workflow[names(logfile$workflow)=="profiling"]=="yes")&
-		(!any(measurements[,names(measurements)=="profiled"]=="TRUE"))
+		(logfile$workflow[names(logfile$workflow)=="profiling"]=="yes") &
+		( !any(measurements[,names(measurements)=="profiled"]=="TRUE") )
 	  ){
 			say<-"Workflow option profiling enabled, but no file included for profiling."
 	  }
