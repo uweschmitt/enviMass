@@ -189,7 +189,7 @@
 								<li>Compound names: no special signs permitted. Use big and small letters, numbers, underscores, hyphen, brackets and empty spaces - and absolutely nothing else.</li>
 								<li>No empty columns. If you are not sure what to fill in, use what is given  in the template IS.txt file.</li>
 								<li>Absolutely NO duplicated IDs.</li>
-								<li>Do not delete columns; their number, order and content is fixed.</li>
+								<li>Do not delete columns; their number, order and content types are all fixed.</li>
 								<li>No uncompleted entries per compounds.</li>
 								<li>Numeric entries with decimal points: dot-separated.</li>								
 							</ol>
@@ -197,7 +197,7 @@
 								Help for some column contents:
 							</font></p> 
 							<ol>
-								<li>ID: numeric or charactes or both. Unique, absolutely NO duplicates permitted.</li>
+								<li>ID: numbers and characters permitted; no empty spaces or special characters. Unique, absolutely NO duplicates permitted.</li>
 								<li>RT_tolerance: FALSE or a compound-specific retention time tolerance. Overwrites the one set as standard value in tab Settings/Screening/IS.</li>
 								<li>main_adduct: FALSE or name of a special adduct to be used for this compound entry. Valid adduct names can be found in tab Settings/Adduct.</li>								
 								<li>restrict_adduct: TRUE or FALSE. Only use the main_adduct (if specified) for this compound and ignore the ones specified in tab Settings/Adduct?</li>
@@ -274,7 +274,7 @@
 								<li>Compound names: no special signs permitted. Use big and small letters, numbers, underscores, hyphen, brackets and empty spaces - and absolutely nothing else.</li>
 								<li>No empty columns. If you are not sure what to fill in, use what is given  in the template targets.txt file.</li>
 								<li>Absolutely NO duplicated IDs.</li>
-								<li>Do not delete columns; their number, order and content is fixed.</li>
+								<li>Do not delete columns; their number, order and content types are all fixed.</li>
 								<li>No uncompleted entries per compounds.</li>
 								<li>Numeric entries with decimal points: dot-separated.</li>								
 							</ol>
@@ -282,7 +282,7 @@
 								Help for some column contents:
 							</font></p> 
 							<ol>
-								<li>ID: numeric or charactes or both. Unique, absolutely NO duplicates permitted.</li>
+								<li>ID: numbers and characters permitted; no empty spaces or special characters. Unique, absolutely NO duplicates permitted.</li>
 								<li>RT_tolerance: FALSE or a compound-specific retention time tolerance. Overwrites the one set as standard value in tab Settings/Screening/targets.</li>
 								<li>ID_internal_standard: unique ID of a internal standard compound to be used for quantification. Set to FALSE otherwise.</li>
 								<li>main_adduct: FALSE or name of a special adduct to be used for this compound entry. Valid adduct names can be found in tab Settings/Adduct.</li>								
