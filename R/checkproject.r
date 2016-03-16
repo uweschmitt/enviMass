@@ -189,7 +189,7 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
   ##############################################################################
   # parameters ok? #############################################################
   # (1) on trend time lags #####################################################
-  if(logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="trendblind"]){
+  if(logfile$workflow[names(logfile$workflow)=="trendblind"]=="yes"){
 	  lags<-as.numeric(strsplit(as.character(logfile[[5]][34]),",")[[1]])
 	  if(any(is.na(lags))){say<-"Invalid trend lags - have you used comma separated numerics?"}
 	  measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");

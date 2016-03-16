@@ -189,7 +189,7 @@
 								<li>Compound names: no special signs permitted. Use big and small letters, numbers, underscores, hyphen, brackets and empty spaces - and absolutely nothing else.</li>
 								<li>No empty columns. If you are not sure what to fill in, use what is given  in the template IS.txt file.</li>
 								<li>Absolutely NO duplicated IDs.</li>
-								<li>Do not delete columns; their number, order and content must be fixed.</li>
+								<li>Do not delete columns; their number, order and content is fixed.</li>
 								<li>No uncompleted entries per compounds.</li>
 								<li>Numeric entries with decimal points: dot-separated.</li>								
 							</ol>
@@ -274,7 +274,7 @@
 								<li>Compound names: no special signs permitted. Use big and small letters, numbers, underscores, hyphen, brackets and empty spaces - and absolutely nothing else.</li>
 								<li>No empty columns. If you are not sure what to fill in, use what is given  in the template targets.txt file.</li>
 								<li>Absolutely NO duplicated IDs.</li>
-								<li>Do not delete columns; their number, order and content must be fixed.</li>
+								<li>Do not delete columns; their number, order and content is fixed.</li>
 								<li>No uncompleted entries per compounds.</li>
 								<li>Numeric entries with decimal points: dot-separated.</li>								
 							</ol>
