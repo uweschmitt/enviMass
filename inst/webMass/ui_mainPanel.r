@@ -70,7 +70,6 @@
 						fluidRow(
 							column(width = 5, textInput("Modif_name", "Name:", value = "Sample 1")),
 							column(width = 5, selectInput("Modif_type", "Type:", choices = c("sample", "blank", "doted", "other"))),
-							column(width = 5, selectInput("Modif_incl", "Include?", choices = c("TRUE","FALSE"))),
 							column(width = 5, selectInput("Modif_mode", "Choose ionization mode:", choices = c("positive", "negative")))	
 							
 						),

@@ -596,8 +596,7 @@ observe({
 		atID<-as.character(isolate(input$Modif_ID))
 		if(any(measurements3[,1]==atID)){
 			updateTextInput(session, "Modif_name",value = as.character(measurements3[measurements3[,1]==atID,2]))
-			updateSelectInput(session,"Modif_type","Type:", choices = c("sample", "blank", "doted", "other"), selected = as.character(measurements3[measurements3[,1]==atID,3]))
-			updateSelectInput(session, "Modif_incl", selected = as.character(measurements3[measurements3[,1]==atID,8]))		
+			updateSelectInput(session,"Modif_type","Type:", choices = c("sample", "blank", "doted", "other"), selected = as.character(measurements3[measurements3[,1]==atID,3]))	
 			updateSelectInput(session, "Modif_mode", selected = as.character(measurements3[measurements3[,1]==atID,4]))
 			updateTextInput(session, "Modif_place",value = as.character(measurements3[measurements3[,1]==atID,5]))
 			updateDateInput(session, "Modif_date", value = as.character(measurements3[measurements3[,1]==atID,6]))
@@ -624,7 +623,6 @@ observe({
 		if(any(measurements3[,1]==atID)){	
 			measurements3[measurements3[,1]==atID,2]<-as.character(isolate(input$Modif_name))
 			measurements3[measurements3[,1]==atID,3]<-as.character(isolate(input$Modif_type))
-			measurements3[measurements3[,1]==atID,8]<-as.character(isolate(input$Modif_incl))
 			measurements3[measurements3[,1]==atID,4]<-as.character(isolate(input$Modif_mode))
 			measurements3[measurements3[,1]==atID,5]<-as.character(isolate(input$Modif_place))
 			measurements3[measurements3[,1]==atID,6]<-as.character(isolate(input$Modif_date))
