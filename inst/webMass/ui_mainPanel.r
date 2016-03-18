@@ -93,6 +93,15 @@
 						tags$h5("Read in batches of files (.mzXML) from a folder; file specifications will be guessed and can later be modified above. 
 						File dates are set in the sequence of files provided in the folder."),	
 						textInput("import_file_folder", "Folder path:", value = "C:\\...\\folder"),
+						bsPopover("import_file_folder", 
+							title = "Insert full path, including the project folder, but excluding the logfile.emp.",
+							content = "Using your OS explorer, you may navigate into your project folder and copy/paste the full path.", 
+							placement = "right", trigger = "hover"),
+						checkboxInput("Import_file_folder_overwrite", "Import files with same name?", FALSE),
+						bsPopover("Import_file_folder_overwrite", 
+							title = "File import to existing files",
+							content = "If a file in the folder with the same filename as one already existing in the project is found, should it be imported (new ID assigned)?", 
+							placement = "right", trigger = "hover"),
 						actionButton("Import_file_folder","Import"),
 						HTML('<hr noshade="noshade" />'),
 						textOutput("had_import_folder")						

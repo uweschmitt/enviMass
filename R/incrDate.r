@@ -15,7 +15,7 @@ incrDate<-function(Date,increment){
 	if(!is.numeric(increment)){stop("increment not numeric")}
 	################################################
 	new_Date<-as.POSIXct(Date)
-	new_Date<-(new_Date+(increment*60*60*24))
+	new_Date<-(new_Date+(increment*60*60*26)) # Zeitumstellung in CET-format!!!
 	new_Date<-strsplit(as.character(new_Date)," ")[[1]][1]
 	################################################	
 	return(new_Date);

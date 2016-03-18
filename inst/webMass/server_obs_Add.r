@@ -715,6 +715,13 @@ impfolder<-reactive({
 					measurements1<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 					nameit<-names(measurements1);
 					measurements1<-measurements1[measurements1[,1]!="-",,drop=FALSE]		
+					if(!isolate(input$Import_file_folder_overwrite)){ # skip if file of same name exists in project?
+						if(any(measurements1[,2]==getfiles[i])){
+							cat(" - skipped.");
+							output$dowhat<-renderText("File import - file skipped.");
+							next;
+						}
+					}
 					# define minimum available date
 					if(length(measurements1[,1])==0){
 						at_date<<-as.character(isolate(input$Measadd_date))
