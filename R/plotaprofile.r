@@ -14,6 +14,7 @@
 #' @param add Logical. Plot parameter. Add to current plot?
 #' @param textit Logical. Plot parameter.
 #' @param simple Logical. Plot parameter.
+#' @param supersimple Logical. Plot parameter.
 #' @param colorit Logical. Plot parameter.
 #' @param use_lwd Logical. Plot parameter.
 #'
@@ -35,6 +36,7 @@ plotaprofile<-function(
 	add=FALSE,
 	textit=TRUE,
 	simple=FALSE,
+	supersimple=FALSE,
 	colorit=FALSE,
 	use_lwd=FALSE
 ){
@@ -163,26 +165,34 @@ plotaprofile<-function(
 			plot.new()
 			plot.window(xlim=c(0,10),ylim=c(0,10))
 			if(textit){
-				text(8.5,9.5,labels="Sample intensity",col="darkgreen",pos=4)
-				text(8.5,9,labels="Blank intensity",col="red",pos=4)      
-				text(8.5,8.5,labels=paste("mean m/z = ",round(mean(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),1]),digits=4),sep=""),col="black",pos=4)
-				text(8.5,8,labels=paste("mean RT = ",round(mean(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),3]),digits=1),sep=""),col="black",pos=4)      
-				#text(8.5,7.5,labels=paste("Partit. ID = ",round(unique(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),7]),digits=0),sep=""),col="black",pos=4)      
-				text(8.5,7,labels=paste("Profile ID = ",round(unique(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),8]),digits=0),sep=""),col="black",pos=4)      	
+				text(8,9.5,labels="Sample intensity",col="darkgreen",pos=4)
+				if(!supersimple){
+					text(8,8.5,labels="Blank intensity",col="red",pos=4)      
+					if(!simple){
+						text(8,7.5,labels=paste("mean m/z = ",round(mean(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),1]),digits=4),sep=""),col="black",pos=4)
+						text(8,6.5,labels=paste("mean RT = ",round(mean(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),3]),digits=1),sep=""),col="black",pos=4)      
+						#text(8.5,7.5,labels=paste("Partit. ID = ",round(unique(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),7]),digits=0),sep=""),col="black",pos=4)      
+						text(8,5.5,labels=paste("Profile ID = ",round(unique(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),8]),digits=0),sep=""),col="black",pos=4)      	
+					}
+				}
 			}
 			plot.window(xlim=c(timelimit),ylim=c(0,max(log10(timeset[,4:5]))))
 			axis(1,at=dated2,labels=dated2,col="grey",cex.axis=1) # former at=dated
-			axis(2);
+			ax2<-pretty((that1[that1[,2]!=0,4])) 
+			ax3<-format(ax2,scientific=TRUE)
+			axis(2,at=ax2,labels=ax3);
 			box();
 			title(xlab="Time",ylab="log10(intensity)")
-			if(!simple){
-				abline(h=log10(that2[6,]+(that2[3,]*threshold)),col="red",lty=2)
-				abline(h=log10(that2[6,]),col="darkblue",lty=2)	
-				points(dated[that1[,2]!=0],log10(that1[that1[,2]!=0,4]),type="l",col=colorit,lwd=use_lwd)
-				points(dated[that1[,3]!=0],log10(that1[that1[,3]!=0,5]),type="l",col="red",lwd=2)
-				for(i in 1:length(lags)){
-					points(dated[that1[,2]!=0],log10(that1[that1[,2]!=0,(5+i)]),col="darkgrey",type="l");
-				}
+			if(!supersimple){
+				if(!simple){
+					abline(h=log10(that2[6,]+(that2[3,]*threshold)),col="red",lty=2)
+					abline(h=log10(that2[6,]),col="darkblue",lty=2)	
+					points(dated[that1[,2]!=0],log10(that1[that1[,2]!=0,4]),type="l",col=colorit,lwd=use_lwd)
+					for(i in 1:length(lags)){
+						points(dated[that1[,2]!=0],log10(that1[that1[,2]!=0,(5+i)]),col="darkgrey",type="l");
+					}
+				}	
+				points(dated[that1[,3]!=0],log10(that1[that1[,3]!=0,5]),type="l",col="red",lwd=2)					
 			}	
 			points(dated[that1[,2]!=0],log10(that1[that1[,2]!=0,4]),type="l",col=colorit,lwd=use_lwd)			
 		}else{	
@@ -193,25 +203,33 @@ plotaprofile<-function(
 			plot.new()
 			plot.window(xlim=c(0,10),ylim=c(0,10))
 			if(textit){
-				text(8.5,9.5,labels="Sample intensity",col="darkgreen",pos=4)
-				text(8.5,9,labels="Blind intensity",col="red",pos=4)      
-				text(8.5,8.5,labels=paste("mean m/z = ",round(mean(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),1]),digits=4),sep=""),col="black",pos=4)
-				text(8.5,8,labels=paste("mean RT = ",round(mean(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),3]),digits=1),sep=""),col="black",pos=4)      
-				#text(8.5,7.5,labels=paste("Partit. ID = ",round(unique(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),7]),digits=0),sep=""),col="black",pos=4)      
-				text(8.5,7,labels=paste("Profile ID = ",round(unique(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),8]),digits=0),sep=""),col="black",pos=4)      	
+				text(8,9.5,labels="Sample intensity",col="darkgreen",pos=4)
+				if(!supersimple){
+					text(8,8.5,labels="Blind intensity",col="red",pos=4)      
+					if(!simple){
+						text(8,7.5,labels=paste("mean m/z = ",round(mean(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),1]),digits=4),sep=""),col="black",pos=4)
+						text(8,6.5,labels=paste("mean RT = ",round(mean(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),3]),digits=1),sep=""),col="black",pos=4)      
+						#text(8.5,7.5,labels=paste("Partit. ID = ",round(unique(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),7]),digits=0),sep=""),col="black",pos=4)      
+						text(8,5.5,labels=paste("Profile ID = ",round(unique(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),8]),digits=0),sep=""),col="black",pos=4)      	
+					}
+				}
 			}
 			plot.window(xlim=c(timelimit),ylim=c(0,max((timeset[,4:5]))))
 			axis(1,at=dated2,labels=dated2,col="grey",cex.axis=1) # former at=dated
-			axis(2);
+			ax2<-pretty((that1[that1[,2]!=0,4])) 
+			ax3<-format(ax2,scientific=TRUE)
+			axis(2,at=ax2,labels=ax3);
 			box();
 			title(xlab="Time",ylab="Intensity")
-			if(!simple){
-				abline(h=(that2[6,]+(that2[3,]*threshold)),col="red",lty=2)
-				abline(h=(that2[6,]),col="darkblue",lty=2)	
+			if(!supersimple){
+				if(!simple){
+					abline(h=(that2[6,]+(that2[3,]*threshold)),col="red",lty=2)
+					abline(h=(that2[6,]),col="darkblue",lty=2)	
+					for(i in 1:length(lags)){
+						points(dated[that1[,2]!=0],(that1[that1[,2]!=0,(5+i)]),col="darkgrey",type="l");
+					}			
+				}
 				points(dated[that1[,3]!=0],(that1[that1[,3]!=0,5]),type="l",col="red",lwd=2)
-				for(i in 1:length(lags)){
-					points(dated[that1[,2]!=0],(that1[that1[,2]!=0,(5+i)]),col="darkgrey",type="l");
-				}			
 			}		
 			points(dated[that1[,2]!=0],(that1[that1[,2]!=0,4]),type="l",col=colorit,lwd=use_lwd)
 		}else{	
