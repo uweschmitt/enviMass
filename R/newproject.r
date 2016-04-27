@@ -127,12 +127,14 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters[[15]]<-"3";						names(logfile$parameters)[15]<-"replicate_dmz"
 		logfile$parameters[[16]]<-"TRUE";					names(logfile$parameters)[16]<-"replicate_ppm"		
 		logfile$parameters[[17]]<-"FALSE";					names(logfile$parameters)[17]<-"replicate_recalib"		
-		logfile$parameters[[18]]<-"30";						names(logfile$parameters)[18]<-"replicate_delRT"		
+		logfile$parameters[[18]]<-"30";						names(logfile$parameters)[18]<-"replicate_delRT"	
+		logfile$parameters[[19]]<-"30";						names(logfile$parameters)[19]<-"replicate_IS_dInt"
 		# trend detection ######################################################
 		logfile$parameters[[29]]<-"TRUE";		names(logfile$parameters)[29]<-"notrend"
 		logfile$parameters[[34]]<-"4,7,14"; 	names(logfile$parameters)[34]<-"trend_lags" 
 		logfile$parameters[[35]]<-"3";			names(logfile$parameters)[35]<-"trend_threshold"
 		# blind subtraction ####################################################	
+		logfile$parameters[[36]]<-"yes";		names(logfile$parameters)[36]<-"trend_blind"			
 		logfile$parameters[[37]]<-"100";		names(logfile$parameters)[37]<-"blind_threshold"	
 		logfile$parameters[[82]]<-"3";			names(logfile$parameters)[82]<-"blind_dmz"
 		logfile$parameters[[83]]<-"TRUE";		names(logfile$parameters)[83]<-"blind_ppm"		

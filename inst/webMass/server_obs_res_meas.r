@@ -523,7 +523,7 @@ observe({
 				lags=lagit,
 				threshold=as.numeric(logfile$parameters[[35]])
 				),envir=as.environment(".GlobalEnv")
-			)
+			)	
 			dev.off();
 			expr5<-list(src=file.path(logfile[[1]],"pics","timeprofile"));
 			output$timeprofile<-renderImage(expr5, deleteFile = FALSE);

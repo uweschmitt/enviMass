@@ -513,10 +513,11 @@
 			# REPLICATES #######################################################
             tabPanel("Replicates",
 				tags$h5("Replicate files are defined (i.e., grouped) by the tag3 entry (not FALSE) in the measurements table"),
-				numericInput("replicate_dmz", "m/z tolerance ...", 3),                
+				numericInput("replicate_dmz", "+/- m/z tolerance ...", 3),                
 				selectInput("replicate_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),	
 				#selectInput("replicate_recalib", "... and corrected by recalibration results (if available)", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE"),	
-				numericInput("replicate_delRT", "RT tolerance of a compound peaks across replicate samples [s]", 30)
+				numericInput("replicate_delRT", "RT tolerance window of peaks caused by the same analyte across replicate samples [s]", 30),
+				sliderInput("replicate_IS_dInt", "Intensity tolerance %", min = 0, max = 100, value = 30, step= .2)
 			),	
             # ALLIGNMENT #######################################################
             #tabPanel("Alignment",
@@ -599,6 +600,9 @@
 				tags$h5("Trend detection:"),
 				textInput("trend_lags", "Time lags of trends [days], comma-separated:", value = "4,7,14"),
 				numericInput("trend_thres", "Trend vs. mean+variance intensity threshold:", 3),
+				HTML('<hr noshade="noshade" />'),
+				radioButtons("trend_blind", "Additional blind interpolation and subtraction per profile?", c("yes"="yes","no"="no")),
+				HTML('<hr noshade="noshade" />'),
 				selectInput("notrend", "Do not show global trend - instead, report it as maximum intensity above blind", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE")
             ),
             # BLIND #############################################################

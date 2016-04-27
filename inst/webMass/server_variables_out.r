@@ -68,12 +68,13 @@ observe({
 			enviMass:::workflow_set(down="recal",check_node=TRUE)
 		}
 		# replicates ###########################################################
-		at1<-logfile$parameters[c(15,16,17,18)];
+		at1<-logfile$parameters[c(15,16,17,18,19)];
 		logfile$parameters[[15]]<<-as.character(isolate(input$replicate_dmz))
 		logfile$parameters[[16]]<<-as.character(isolate(input$replicate_ppm))
 		#logfile$parameters[[17]]<<-as.character(isolate(input$replicate_recalib))
-		logfile$parameters[[18]]<<-as.character(isolate(input$replicate_delRT))		
-		at2<-logfile$parameters[c(15,16,17,18)];
+		logfile$parameters[[18]]<<-as.character(isolate(input$replicate_delRT))	
+		logfile$parameters[[19]]<<-as.character(isolate(input$replicate_IS_dInt))	
+		at2<-logfile$parameters[c(15,16,17,18,19)];
 		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="replicates",check_node=TRUE)		
 		}
@@ -90,11 +91,12 @@ observe({
 			enviMass:::workflow_set(down="profiling",check_node=TRUE)		
 		}
 		# trend detection ######################################################
-		at1<-logfile$parameters[c(29,34,35)]
+		at1<-logfile$parameters[c(29,34,35,36)]
 		logfile$parameters[[29]]<<-as.character(isolate(input$notrend))
 		logfile$parameters[[34]]<<-as.character(isolate(input$trend_lags))
 		logfile$parameters[[35]]<<-as.character(isolate(input$trend_thres))
-		at2<-logfile$parameters[c(29,34,35)]
+		logfile$parameters[[36]]<<-as.character(isolate(input$trend_blind))
+		at2<-logfile$parameters[c(29,34,35,36)]
 		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="trendblind",check_node=TRUE)
 		}		

@@ -419,7 +419,7 @@ SEXP correct_intens(
                    continue;
                }
                /* (b) fits to one or several cluster **************************/
-               /* always assign to the intensivest cluster ********************/
+               /* always assign to the most intense cluster *******************/
                if(maxat>0){
                    clus[(9*leng)+(*(ordint+n)-1)]=(at[0]+1);
                    if(ppm3==1){delmz=((dmzdens2**(mass+(*(ordint+n)-1)))/1e6);}else{delmz=dmzdens2;}

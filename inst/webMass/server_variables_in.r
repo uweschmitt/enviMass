@@ -30,6 +30,7 @@ updateNumericInput(session, "replicate_dmz", "m/z tolerance ...", value = as.num
 updateSelectInput(session, "replicate_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"),  selected = as.character(logfile$parameters[[16]]))
 #updateSelectInput(session, "replicate_recalib", "... and corrected by recalibration results (if available)", choices = c("TRUE"="TRUE","FALSE"="FALSE"),  selected = as.character(logfile$parameters[[17]]))
 updateNumericInput(session, "replicate_delRT", "RT tolerance of a compound peaks across replicate samples [s]", value = as.numeric(logfile$parameters[[18]]))   
+updateSliderInput(session, "replicate_IS_dInt",value = as.numeric(logfile$parameters[[19]]))
 # PROFILING ####################################################################
 updateSliderInput(session, "prof_sets",value = as.numeric(logfile$parameters[[38]]))
 updateTextInput(session, "upto_file","Up to file with ID:",value = as.character(logfile$parameters$upto_file)) # too risky!
@@ -38,6 +39,7 @@ updateSelectInput(session, "prof_ppm", "... given in:", choices = c("ppm"="TRUE"
 updateNumericInput(session, "prof_drt", "RT tolerance [s]", value = as.numeric(logfile$parameters[[41]]))                
 updateSelectInput(session, "prof_select", "Omit files with table entry prof?=FALSE from profiling?",choices = c("TRUE"="TRUE","FALSE"="FALSE"),selected= as.character(logfile$parameters[[90]]))
 # TREND ########################################################################
+updateRadioButtons(session, "trend_blind", label = "Additional blind interpolation and subtraction per profile?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$parameters[[36]]) )
 updateTextInput(session, "trend_lags","Time lags of trends [days], comma-separated:",value = as.character(logfile$parameters[[34]]))
 updateNumericInput(session, "trend_thres", "Trend vs. mean+variance intensity threshold:", value = as.numeric(logfile$parameters[[35]]))   
 updateSelectInput(session, "notrend", "Do not show global trend - instead, report it as maximum intensity above blind", choices = c("TRUE"="TRUE","FALSE"="FALSE"), selected= as.character(logfile$parameters[[29]]))

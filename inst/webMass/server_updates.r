@@ -352,15 +352,25 @@ if(logfile[[10]]<3.101){
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 	}
 	if(!any(names(logfile$parameters)=="blind_omit")){
-		logfile$parameters[[89]]<<-"no";		names(logfile$parameters)[89]<<-"blind_omit"	
+		logfile$parameters[[89]]<<-"no"; 		names(logfile$parameters)[89]<<-"blind_omit"	
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 	}		
 	if(!any(names(logfile$parameters)=="prof_select")){
-		logfile$parameters[[90]]<<-"FALSE"; names(logfile$parameters)[90]<<-"prof_select"
+		logfile$parameters[[90]]<<-"FALSE"; 	names(logfile$parameters)[90]<<-"prof_select"
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 	}	
+	if(!any(names(logfile$parameters)=="trend_blind")){	
+		logfile$parameters[[36]]<<-"yes"; 		names(logfile$parameters)[36]<<-"trend_blind"		
+		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	
+	}
+	if(!any(names(logfile$parameters)=="replicate_IS_dInt")){	
+		logfile$parameters[[19]]<<-"30";		names(logfile$parameters)[19]<<-"replicate_IS_dInt"	
+		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	
+	}				
 	################################################################################################
 	# updating columns in targets compound table ###################################################
 	targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
