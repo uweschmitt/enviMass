@@ -252,7 +252,7 @@ SEXP correct_intens(
                              SEXP ppm2,
                              SEXP drtdens,
                              SEXP supress
-                             ){
+                       ){
 
            PROTECT(mz = AS_NUMERIC(mz));
            PROTECT(RT = AS_NUMERIC(RT));
@@ -342,15 +342,15 @@ SEXP correct_intens(
                    clus[(12*leng)+(clustnumb-1)]=*(mass+(*(ordint+n)-1));
                    continue;
                }
-               /* check for other peaks at same RT ****************************/
+               /* check for other peaks in same sample ****************************/
                maxit=maxat;
-               for(i=0;i<leng;i++){ /* find RT-order index */
+               for(i=0;i<leng;i++){ /* find sample-order index */
                    if(*(ordint+n)==*(ordsam+i)){
                        k=i;
                        break;
                    }
                }
-               if(k>0){ /* backward over RT-order */
+               if(k>0){ /* backward over sample-order */
                    for(i=(k-1);i>=0;i--){
                        if(  *(samp+(*(ordsam+k)-1))==*(samp+(*(ordsam+i)-1))  ){
                            if((clus[(9*leng)+(*(ordsam+i)-1)])==0){
@@ -369,7 +369,7 @@ SEXP correct_intens(
                        }
                    }
                }
-               if(k<(leng-1)){ /* forward over RT-order */
+               if(k<(leng-1)){ /* forward over sample-order */
                    for(i=(k+1);i<leng;i++){
                        if(*(samp+(*(ordsam+k)-1))==*(samp+(*(ordsam+i)-1))){
                            if((clus[(9*leng)+(*(ordsam+i)-1)])==0){
