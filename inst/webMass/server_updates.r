@@ -371,6 +371,11 @@ if(logfile[[10]]<3.101){
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	
 	}				
+	if(!any(names(logfile$parameters)=="replicates_prof")){	
+		logfile$parameters[[91]]<<-"yes";		names(logfile$parameters)[91]<<-"replicates_prof"
+		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	
+	}
 	################################################################################################
 	# updating columns in targets compound table ###################################################
 	targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");

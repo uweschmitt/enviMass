@@ -35,16 +35,37 @@ if(
 							ppm=as.logical(as.character(logfile$parameters$prof_ppm)),
 							dret=(as.numeric(logfile$parameters$prof_drt)+10)
 						)
-		profileList_pos<<-partcluster(
-							profileList_pos,
-							dmass=as.numeric(logfile$parameters$prof_dmz),
-							ppm=as.logical(as.character(logfile$parameters$prof_ppm)),
-							dret=as.numeric(logfile$parameters$prof_drt),
-							from=FALSE,
-							to=FALSE,
-							progbar=logfile$parameters$progressBar,
-							plotit=FALSE
-						)
+		if(logfile$parameters[[91]]=="no"){ 				
+			profileList_pos<<-partcluster(
+								profileList=profileList_pos,
+								dmass=as.numeric(logfile$parameters$prof_dmz),
+								ppm=as.logical(as.character(logfile$parameters$prof_ppm)),
+								dret=as.numeric(logfile$parameters$prof_drt),
+								from=FALSE,
+								to=FALSE,
+								progbar=logfile$parameters$progressBar,
+								plotit=FALSE,
+								replicates=FALSE
+							)
+		}else{ # run a profiling in the replicate groups first
+			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+			measurements<-measurements[measurements[,8]=="TRUE",]
+			measurements<-measurements[measurements[,4]=="positive",]
+			replicates<-measurements$tag3
+			IDs<-measurements$ID
+			profileList_pos<<-partcluster(
+								profileList=profileList_pos,
+								dmass=as.numeric(logfile$parameters$prof_dmz),
+								ppm=as.logical(as.character(logfile$parameters$prof_ppm)),
+								dret=as.numeric(logfile$parameters$prof_drt),
+								from=FALSE,
+								to=FALSE,
+								progbar=logfile$parameters$progressBar,
+								plotit=FALSE,
+								replicates=replicates,
+								IDs
+							)
+		}
 		profileList_pos<<-enviMass:::in_blind(profileList_pos)
 		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"));
 		profpeaks_pos<<-enviMass:::profiletopeak(profileList_pos,progbar=logfile$parameters[21])		
@@ -95,16 +116,36 @@ if(
 							ppm=as.logical(as.character(logfile$parameters$prof_ppm)),
 							dret=(as.numeric(logfile$parameters$prof_drt)+10)
 						)
-		profileList_neg<<-partcluster(
-							profileList_neg,
-							dmass=as.numeric(logfile$parameters$prof_dmz),
-							ppm=as.logical(as.character(logfile$parameters$prof_ppm)),
-							dret=as.numeric(logfile$parameters$prof_drt),
-							from=FALSE,
-							to=FALSE,
-							progbar=logfile$parameters$progressBar,
-							plotit=FALSE
-						)
+		if(logfile$parameters[[91]]=="no"){ 				
+			profileList_neg<<-partcluster(
+								profileList_neg,
+								dmass=as.numeric(logfile$parameters$prof_dmz),
+								ppm=as.logical(as.character(logfile$parameters$prof_ppm)),
+								dret=as.numeric(logfile$parameters$prof_drt),
+								from=FALSE,
+								to=FALSE,
+								progbar=logfile$parameters$progressBar,
+								plotit=FALSE
+							)
+		}else{ # run a profiling in the replicate groups first
+			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+			measurements<-measurements[measurements[,8]=="TRUE",]
+			measurements<-measurements[measurements[,4]=="negative",]
+			replicates<-measurements$tag3
+			IDs<-measurements$ID
+			profileList_neg<<-partcluster(
+								profileList=profileList_neg,
+								dmass=as.numeric(logfile$parameters$prof_dmz),
+								ppm=as.logical(as.character(logfile$parameters$prof_ppm)),
+								dret=as.numeric(logfile$parameters$prof_drt),
+								from=FALSE,
+								to=FALSE,
+								progbar=logfile$parameters$progressBar,
+								plotit=FALSE,
+								replicates=replicates,
+								IDs
+							)
+		}
 		profileList_neg<<-enviMass:::in_blind(profileList_neg)
 		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"));
 		profpeaks_neg<<-enviMass:::profiletopeak(profileList_neg,progbar=logfile$parameters[21])		

@@ -38,6 +38,7 @@ updateNumericInput(session, "prof_dmz", "Peak-to-peak deviation within profiles:
 updateSelectInput(session, "prof_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), selected= as.character(logfile$parameters[[40]]))
 updateNumericInput(session, "prof_drt", "RT tolerance [s]", value = as.numeric(logfile$parameters[[41]]))                
 updateSelectInput(session, "prof_select", "Omit files with table entry prof?=FALSE from profiling?",choices = c("TRUE"="TRUE","FALSE"="FALSE"),selected= as.character(logfile$parameters[[90]]))
+updateRadioButtons(session, "replicates_prof", label = "Use in profiling?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$parameters[[91]]) )
 # TREND ########################################################################
 updateRadioButtons(session, "trend_blind", label = "Additional blind interpolation and subtraction per profile?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$parameters[[36]]) )
 updateTextInput(session, "trend_lags","Time lags of trends [days], comma-separated:",value = as.character(logfile$parameters[[34]]))

@@ -151,6 +151,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters[[40]]<-"TRUE";		names(logfile$parameters)[40]<-"prof_ppm"
 		logfile$parameters[[41]]<-"60";			names(logfile$parameters)[41]<-"prof_drt"
 		logfile$parameters[[90]]<-"FALSE";		names(logfile$parameters)[90]<-"prof_select"
+		logfile$parameters[[91]]<-"yes";		names(logfile$parameters)[91]<-"replicates_prof"
 		# IS screening #########################################################
 		logfile$parameters[[42]]<-"30"; 		names(logfile$parameters)[42]<-"IS_drt1"	# RT tolerance of peaks in sample relative to their expected RT [s]
 		logfile$parameters[[43]]<-"10"; 		names(logfile$parameters)[43]<-"IS_drt2"	# RT tolerance of peaks within an isotope pattern [s]

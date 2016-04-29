@@ -349,11 +349,13 @@
 					),				
 				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Replicate filter </font></p> '),				
 					fluidRow(
-						column(width = 2, radioButtons("replicates", "Include? ", c("yes"="yes","no"="no")) ),
-						column(width = 10, offset = 0.3,
+						column(width = 2, radioButtons("replicates", "Include?", c("yes"="yes","no"="no")) ),
+						column(width = 2, radioButtons("replicates_prof", "Use in profiling?", c("yes"="yes","no"="no")) ),
+						column(width = 8, offset = 0.3,
 							tags$p(align="justify","Filters out picked peaks which are not ubiquitously present in a set of measurements, within tolerances specified in the Settings/Replicates tab.
 							Typically, such a set would be composed of replicate measurements. 
-							A set can be defined by a joint string other than FALSE (e.g. replicates_A) in the tag_3 column of the file table, as assembled in the Files tab.")
+							A set can be defined by a joint string other than FALSE (e.g. replicates_A) in the tag_3 column of the file table, as assembled in the Files tab.
+							Optionally, profiles can be extracted in the replicates first, and later merged over all files.")
 						)
 					),
 				HTML('<hr noshade="noshade" />'),
