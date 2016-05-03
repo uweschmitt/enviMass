@@ -20,7 +20,7 @@ if(length(those)>0){
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="peaklist")){rm(peaklist)}
 		load(file.path(logfile$project_folder,"peaklist",those[i]),envir=as.environment(".GlobalEnv"))
-		peaklist<-peaklist[peaklist[,colnames(peaklist)=="keep"]==1,,drop=FALSE]
+		#peaklist<-peaklist[peaklist[,colnames(peaklist)=="keep"]==1,,drop=FALSE]
 		if(length(peaklist[,1])==0){next}
 		# LOD ###################################################################
 		his<-hist(peaklist[,5],breaks=100,plot=FALSE)

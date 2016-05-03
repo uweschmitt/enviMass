@@ -186,7 +186,8 @@
 						HTML('
 							<p><font>
 								The below compound table can be assembled and modified in external text editors or Excel and then imported via the above import step.
-								To do so, use file IS.txt from the dataframe folder of a new enviMass project as a template.
+								To do so, use file IS.txt from the dataframe folder of a new enviMass project as a template. 
+								Mind the character encoding (e.g., ANSI) of .txt files when modifying.
 							</font></p>
 							<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> 
 								Any such modifications must strictly adhere to the following rules to avoid frustration:
@@ -199,7 +200,7 @@
 								<li>Absolutely NO duplicated IDs.</li>
 								<li>Do not delete columns; their number, order and content types are all fixed.</li>
 								<li>No uncompleted entries per compounds.</li>
-								<li>Numeric entries with decimal points: dot-separated.</li>								
+								<li>Numeric entries with decimal points: dot-separated.</li>	
 							</ol>
 							<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> 
 								Help for some column contents:
@@ -272,6 +273,7 @@
 							<p><font>
 								The below compound table can be assembled and modified in external text editors or Excel and then imported via the above import step.
 								To do so, use file targets.txt from the dataframe folder of a new enviMass project as a template.
+								Mind the character encoding (e.g., ANSI) of .txt files when modifying.
 							</font></p>
 							<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> 
 								Any such modifications must strictly adhere to the following rules to avoid frustration:

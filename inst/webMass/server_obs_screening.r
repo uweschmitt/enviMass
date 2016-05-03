@@ -174,7 +174,11 @@ observe({
 									score_2<-c(score_2,round(res_pos_screen_sel[[i]][[j]]$score_2,digits=2));
 									delppm<-c(delppm,paste(as.character(round(res_pos_screen_sel[[i]][[j]][[4]],digits=2)),collapse=", "));
 									#delRT<-c(delRT,paste(as.character(round(res_pos_screen_sel[[i]][[j]][[4]],digits=2)),collapse=", "));
-									with_peaks<-c(with_peaks,paste(as.character(res_pos_screen_sel[[i]][[j]]$Peaks[,2]),collapse=", "));
+									with_peaks<-c(with_peaks,paste(as.character(
+										profileList_pos[[2]][ # insert peak IDs - original $Peaks refer to an entry only!
+											res_pos_screen_sel[[i]][[j]]$Peaks[,2],4
+										]
+									),collapse=", "));
 									delRT<-c(delRT,
 										paste(as.character(round(res_pos_screen_sel[[i]][[j]]$RT,digits=2)),collapse=", ")
 									)
@@ -564,7 +568,11 @@ observe({
 									score_2<-c(score_2,round(res_neg_screen_sel[[i]][[j]]$score_2,digits=2));
 									delppm<-c(delppm,paste(as.character(round(res_neg_screen_sel[[i]][[j]][[4]],digits=2)),collapse=", "));
 									#delRT<-c(delRT,paste(as.character(round(res_neg_screen_sel[[i]][[j]][[4]],digits=2)),collapse=", "));
-									with_peaks<-c(with_peaks,paste(as.character(res_neg_screen_sel[[i]][[j]]$Peaks[,2]),collapse=", "));
+									with_peaks<-c(with_peaks,paste(as.character(
+										profileList_neg[[2]][ # insert peak IDs - original $Peaks refer to an entry only!
+											res_neg_screen_sel[[i]][[j]]$Peaks[,2],4
+										]
+									),collapse=", "));
 									delRT<-c(delRT,
 										paste(as.character(round(res_neg_screen_sel[[i]][[j]]$RT,digits=2)),collapse=", ")
 									)

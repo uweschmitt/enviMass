@@ -240,9 +240,9 @@ maincalc2<-reactive({
 			
 			
 			# (4) Available measurements ###########################################
-			if(logfile$workflow[2]=="yes"){	
+			# if(logfile$workflow[2]=="yes"){	
 				updateSelectInput(session, "sel_meas", label = "Select file by ID:", choices =  c("none",as.character(measurements[,1])), selected = "none")
-			}
+			# }
 			updateSelectInput(session, "sel_meas_ID", label = "Select file by ID:", choices =  c("none",as.character(measurements[,1])), selected = "none")
 			# (5) RT Alignment #####################################################
 						
