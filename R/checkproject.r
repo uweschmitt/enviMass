@@ -220,7 +220,7 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
   # data sets ok? ##############################################################
   filed<-list.files(file.path(logfile[[1]],"files"))
   if(!length(filed)){say<-"No measurements available!"}
-  measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+  measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
   if(!all(!duplicated(measurements[,1]))){say<-"Duplicated measurements IDs. Revise!"}
   if(any(is.na(as.numeric(measurements[,1])))){say<-"Non-numeric measurements IDs. Revise!"}  
   measurements_ID<-measurements[,1]
@@ -232,7 +232,18 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 	say<-"Disable the progress bar in the Settings General Tab; works only under Windows OS"
   }
   ##############################################################################
+  # blind peak subtraction enabled, but no blind files selected? ###############
+  if(
+	(logfile$workflow[names(logfile$workflow)=="blinds"]=="yes") &
+	(logfile$parameters[[85]]==FALSE) &
+	(logfile$parameters[[86]]==FALSE) &
+	(logfile$parameters[[87]]==FALSE) &
+	(logfile$parameters[[88]]==FALSE) 
+  ){
+	say<-"Blind detection enabled but blind settings disabled? Please adjust."
+  }
+  ##############################################################################
   if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in check_project.r!")}
   return(say);
-  
+  ##############################################################################  
 }

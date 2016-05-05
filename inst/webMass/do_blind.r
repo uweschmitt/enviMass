@@ -14,7 +14,7 @@ dmz<-as.numeric(logfile$parameters[[82]])
 dRT<-as.numeric(logfile$parameters[[84]])
 int_ratio<-as.numeric(logfile$parameters[[37]])
 
-if(FALSE){ # debug parameters
+if(FALSE){ # debug parameters - ignore
 	ppm<-TRUE
 	dmz<-3
 	dRT<-30
