@@ -4,15 +4,35 @@
 	ppm<-logfile$parameters[[16]]
 	mz_tol<-as.numeric(logfile$parameters[[15]])
 	rt_tol<-as.numeric(logfile$parameters[[18]])
-	int_tol<-(as.numeric(logfile$parameters[[19]])/100)
+	int_tol<-10^(as.numeric(logfile$parameters[[19]]))
 	with_test<-TRUE # Run a test along!
 	replic<-(measurements$tag3[measurements$tag3!="FALSE"])
 	replic<-replic[duplicated(replic)]
 	replic<-unique(replic)
+	
+
+	# clean old entries #####################################################################################################
+	IDs<-list.files(file.path(logfile[[1]],"peaklist"))
+	if(length(IDs)>0){
+		for(i in 1:length(IDs)){
+			if(any(measurements[,1]==IDs[i])){
+				load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
+				keep<-rep(1,length(peaklist[,1])) # 1 == TRUE
+				peaklist[,colnames(peaklist)=="keep"]<-keep
+				save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])))
+				rm(peaklist)
+			}else{
+				cat("\n Orphaned peaklist detected - from an older workflow run?")
+			}
+		}
+		cat("...cleaned...")
+	}
+
+	# intersect replicates ##################################################################################################
 	if(length(replic)>0){
 		for(i in 1:length(replic)){
 				cat(paste("\n    Replicate intersection",replic[i],":"));
-				IDs<-measurements$ID[measurements$tag3==replic[i]]
+				IDs<-measurements$ID[measurements$tag3==replic[i]]			
 				if(any(duplicated(IDs))){stop("replicates: non-unique IDs found!")} # should not happen anyway
 				# initialize intersection rectangles with first peaklist ################################
 				if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
@@ -28,9 +48,9 @@
 				}
 				low_rt<-(peaklist[,3]-rt_tol)
 				high_rt<-(peaklist[,3]+rt_tol)							
-				low_int<-(peaklist[,2]-(peaklist[,2]*int_tol))
+				low_int<-(peaklist[,2]-int_tol)
 				low_int[low_int<0]<-0
-				high_int<-(peaklist[,2]+(peaklist[,2]*int_tol))				
+				high_int<-(peaklist[,2]+int_tol)				
 				ID<-seq(1,length(peaklist[,1]),1)
 				intersection<-cbind(low_mass,high_mass,low_rt,high_rt,low_int,high_int,ID)
 				# test 
@@ -55,16 +75,16 @@
 					}
 					low_rt<-(peaklist[,3]-rt_tol)
 					high_rt<-(peaklist[,3]+rt_tol)		
-					low_int<-(peaklist[,2]-(peaklist[,2]*int_tol))
+					low_int<-(peaklist[,2]-int_tol)
 					low_int[low_int<0]<-0
-					high_int<-(peaklist[,2]+(peaklist[,2]*int_tol))										
+					high_int<-(peaklist[,2]+int_tol)										
 					query<-cbind(low_mass,high_mass,low_rt,high_rt,low_int,high_int)			
 					if(with_test){
 						query<-rbind(
 							query,	
 							c(20,20,5,15,1E4,1E5),
-							c(.3,.3001,39,41,1E4,1E5),
-							c(900.001,900.002,1400,1430,1E4,1E5))								
+							c(.3,.3001,39,41,1E4,1E5),							
+							c(1000.001,1000.002,1400,1430,1E4,1E5))								
 					}
 					rm(peaklist)
 					# build a boxtree with next peaklist
@@ -118,8 +138,8 @@
 				}
 				if(with_test){					
 					if(!any(intersection[,7]==-2)){stop("intersection test_1 failed")}
-					if(!any(intersection[,7]==-3)){stop("intersection test_1 failed")}
-					if(any(intersection[,7]==-4)){stop("intersection test_1 failed")}					
+					if(!any(intersection[,7]==-3)){stop("intersection test_2 failed")}
+					if(any(intersection[,7]==-4)){stop("intersection test_3 failed. Senseless mass tolerances in use?")}					
 					intersection<-intersection[intersection[,7]>0,]	# remove test cases	
 				}
 				# clean peaklists
@@ -139,3 +159,40 @@
 	}
 
 
+	
+	
+if(FALSE){ # debug - find a certain mass in peaklists
+	check_mass<-279.100784 #
+	check_mass<-253.0348297 # Clothianidin-D3_2962_p
+	i<-2
+	at<-1
+	IDs<-measurements$ID[measurements$tag3==replic[i]]	
+	load(file=file.path(logfile$project_folder,"peaklist",as.character(IDs[at])),verbose=FALSE);
+	peaklist<-peaklist[,c(12,13,14)]
+	low_mass<-(peaklist[,1]-(mz_tol/1E6*peaklist[,1]))
+	high_mass<-(peaklist[,1]+(mz_tol/1E6*peaklist[,1]))
+	peaklist[(low_mass<=check_mass) & (high_mass>=check_mass),]
+}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

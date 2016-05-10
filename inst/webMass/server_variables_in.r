@@ -30,7 +30,7 @@ updateNumericInput(session, "replicate_dmz", "m/z tolerance ...", value = as.num
 updateSelectInput(session, "replicate_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"),  selected = as.character(logfile$parameters[[16]]))
 #updateSelectInput(session, "replicate_recalib", "... and corrected by recalibration results (if available)", choices = c("TRUE"="TRUE","FALSE"="FALSE"),  selected = as.character(logfile$parameters[[17]]))
 updateNumericInput(session, "replicate_delRT", "RT tolerance of a compound peaks across replicate samples [s]", value = as.numeric(logfile$parameters[[18]]))   
-updateSliderInput(session, "replicate_IS_dInt",value = as.numeric(logfile$parameters[[19]]))
+updateNumericInput(session,"replicate_IS_dInt", value = as.numeric(logfile$parameters[[19]]))
 # PROFILING ####################################################################
 updateSliderInput(session, "prof_sets",value = as.numeric(logfile$parameters[[38]]))
 updateTextInput(session, "upto_file","Up to file with ID:",value = as.character(logfile$parameters$upto_file)) # too risky!

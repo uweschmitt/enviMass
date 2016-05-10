@@ -43,7 +43,7 @@
 						),
 						HTML('<hr noshade="noshade" />'),
 						fluidRow(
-							column(width = 5, selectInput("Measadd_profiled", "Use for profiling?", choices = c("TRUE","FALSE"), selected = TRUE))
+							column(width = 5, selectInput("Measadd_profiled", "Use for profiling?", choices = c("TRUE","FALSE"), selected = "TRUE"))
 						),						
 						HTML('<hr noshade="noshade" />'),
 						div(style = widget_style,
@@ -393,11 +393,14 @@
 							removed explicitly in the early blind detection (see blue workflow steps).")
 						)
 					),	
-				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> Quantification </font></p> '),
+				HTML('<hr noshade="noshade" />'),
+				HTML('<h1 align="center"> &#x21e9; </h1> '),  					
+				# block 4 ######################################################					
+				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> Quantification </font></p> '),
 					radioButtons("quantif", "Include? ", c("yes"="yes","no"="no")),					
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),  					
-				# block 4 ######################################################
+				# block 5 ######################################################
 				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Normalization using IS-profiles </font></p> '),
 					fluidRow(
 						column(width = 2, radioButtons("profnorm", "Include? ", c("yes"="yes","no"="no")) ),
@@ -453,8 +456,7 @@
 					#radioButtons("massdef", "Include? ", c("yes"="yes","no"="no")),	
 				#HTML('<hr noshade="noshade" />')
 				################################################################
-
-				
+	
         ),
         ########################################################################
         # PARAMETER SETTINGS ###################################################
@@ -521,7 +523,7 @@
 				selectInput("replicate_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),	
 				#selectInput("replicate_recalib", "... and corrected by recalibration results (if available)", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE"),	
 				numericInput("replicate_delRT", "RT tolerance window of peaks caused by the same analyte across replicate samples [s]", 30),
-				sliderInput("replicate_IS_dInt", "Intensity tolerance %", min = 0, max = 100, value = 30, step= .2)
+				numericInput("replicate_IS_dInt", "Intensity tolerance X (log scale, 1E^X):", 5)
 			),	
             # ALLIGNMENT #######################################################
             #tabPanel("Alignment",
@@ -565,7 +567,7 @@
 					div(style = widget_style2,
 						tags$h5("Intensity"),
 						sliderInput("screen_target_dInt", "Intensity tolerance %", min = 0, max = 100, value = 30, step= .2),
-						numericInput("screen_target_Intcut", "Lower intensity threhold", 5E4)                
+						numericInput("screen_target_Intcut", "Lower intensity threshold", 5E4)                
 					),
 					div(style = widget_style2,
 						tags$h5("Scoring"),

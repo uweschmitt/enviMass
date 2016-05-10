@@ -128,7 +128,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters[[16]]<-"TRUE";					names(logfile$parameters)[16]<-"replicate_ppm"		
 		logfile$parameters[[17]]<-"FALSE";					names(logfile$parameters)[17]<-"replicate_recalib"		
 		logfile$parameters[[18]]<-"30";						names(logfile$parameters)[18]<-"replicate_delRT"	
-		logfile$parameters[[19]]<-"30";						names(logfile$parameters)[19]<-"replicate_IS_dInt"
+		logfile$parameters[[19]]<-"5";						names(logfile$parameters)[19]<-"replicate_IS_dInt"
 		# trend detection ######################################################
 		logfile$parameters[[29]]<-"TRUE";		names(logfile$parameters)[29]<-"notrend"
 		logfile$parameters[[34]]<-"4,7,14"; 	names(logfile$parameters)[34]<-"trend_lags" 
@@ -227,8 +227,8 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	depend[,colnames(depend)=="blinds"]<-			c(0,			0,	0,		0,		0,		1,			1,			0,			0,			1,			1,				0,		1,				0,		1,			1,			1,				1)
 	depend[,colnames(depend)=="replicates"]<-		c(0,			0,	0,		0,		0,		1,			1,			0,			0,			1,			1,				1,		1,				0,		1,			1,			1,				1)
 	depend[,colnames(depend)=="profiling"]<-		c(0,			0,	0,		0,		0,		0,			1,			0,			0,			1,			1,				0,		1,				0,		1,			1,			1,				1)
-	depend[,colnames(depend)=="IS_screen"]<-		c(0,			0,	0,		0,		0,		1,			0,			0,			0,			0,			0,				0,		1,				0,		1,			1,			0,				0)
-	depend[,colnames(depend)=="target_screen"]<-	c(0,			0,	0,		0,		0,		1,			0,			0,			0,			0,			0,				0,		1,				0,		1,			0,			1,				0)
+	depend[,colnames(depend)=="IS_screen"]<-		c(0,			0,	0,		0,		0,		1,			0,			1,			0,			0,			0,				0,		1,				0,		1,			1,			0,				0)
+	depend[,colnames(depend)=="target_screen"]<-	c(0,			0,	0,		0,		0,		1,			0,			1,			0,			0,			0,				0,		1,				0,		1,			0,			1,				0)
 	depend[,colnames(depend)=="IS_normaliz"]<-		c(0,			0,	0,		0,		0,		0,			1,			0,			0,			0,			0,				0,		0,				0,		1,			0,			0,				0)
 	depend[,colnames(depend)=="trendblind"]<-		c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,				0,		0,			0,			0,				0)
 	depend[,colnames(depend)=="LOD"]<-				c(0,			0,	0,		0,		0,		0,			0,			0,			0,			1,			1,				0,		1,				0,		1,			1,			1,				0)

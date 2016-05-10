@@ -263,8 +263,8 @@ if(TRUE){
 	depend[,colnames(depend)=="blinds"]<-			c(0,			0,	0,		0,		0,		1,			1,			0,			0,			1,			1,				0,		1,				0,		1,			1,			1,				1)
 	depend[,colnames(depend)=="replicates"]<-		c(0,			0,	0,		0,		0,		1,			1,			0,			0,			1,			1,				1,		1,				0,		1,			1,			1,				1)
 	depend[,colnames(depend)=="profiling"]<-		c(0,			0,	0,		0,		0,		0,			1,			0,			0,			1,			1,				0,		1,				0,		1,			1,			1,				1)
-	depend[,colnames(depend)=="IS_screen"]<-		c(0,			0,	0,		0,		0,		1,			0,			0,			0,			0,			0,				0,		1,				0,		1,			1,			0,				0)
-	depend[,colnames(depend)=="target_screen"]<-	c(0,			0,	0,		0,		0,		1,			0,			0,			0,			0,			0,				0,		1,				0,		1,			0,			1,				0)
+	depend[,colnames(depend)=="IS_screen"]<-		c(0,			0,	0,		0,		0,		1,			0,			1,			0,			0,			0,				0,		1,				0,		1,			1,			0,				0)
+	depend[,colnames(depend)=="target_screen"]<-	c(0,			0,	0,		0,		0,		1,			0,			1,			0,			0,			0,				0,		1,				0,		1,			0,			1,				0)
 	depend[,colnames(depend)=="IS_normaliz"]<-		c(0,			0,	0,		0,		0,		0,			1,			0,			0,			0,			0,				0,		0,				0,		1,			0,			0,				0)
 	depend[,colnames(depend)=="trendblind"]<-		c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,				0,		0,			0,			0,				0)
 	depend[,colnames(depend)=="LOD"]<-				c(0,			0,	0,		0,		0,		0,			0,			0,			0,			1,			1,				0,		1,				0,		1,			1,			1,				0)
@@ -367,7 +367,7 @@ if(logfile[[10]]<3.101){
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	
 	}
 	if(!any(names(logfile$parameters)=="replicate_IS_dInt")){	
-		logfile$parameters[[19]]<<-"30";		names(logfile$parameters)[19]<<-"replicate_IS_dInt"	
+		logfile$parameters[[19]]<<-"5";		names(logfile$parameters)[19]<<-"replicate_IS_dInt"	
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	
 	}				
