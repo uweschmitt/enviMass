@@ -437,7 +437,7 @@ if(logfile[[10]]<3.101){
 		measurements[,names(measurements)=="profiled"]<-"TRUE";
 	}
 	names(measurements)<-c("ID","Name","Type","Mode","Place","Date","Time","include","copied","picked",
-	"checked","recal","align","norm","profiled","comp","IS_screen","tar_screen","tag1","tag2","tag3")
+	"checked","recal","align","norm","profiled","LOD","IS_screen","tar_screen","tag1","tag2","tag3")
 	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 	################################################################################################	
 	logfile[[10]]<<-3.101

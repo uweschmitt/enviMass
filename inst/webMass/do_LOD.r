@@ -1,15 +1,7 @@
-####################################################################
-# delete old LOD gams & results ####################################
-those<-list.files(file.path(logfile$project_folder,"results","LOD"))
-if(length(those)>0){
-	for(i in 1:length(those)){
-		file.remove(file.path(logfile$project_folder,"results","LOD",those[i]))
-	}
-}
-
 #################################################################################
 # get LOD- & 90percentile-Intensity for picked peaks ############################
 those<-list.files(file.path(logfile$project_folder,"peaklist", fsep = "\\"))
+measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 
 # MAKE this run file-wise
 if(length(those)>0){
@@ -17,6 +9,8 @@ if(length(those)>0){
 	LOD_splined<-list()
 	at<-1;
 	for(i in 1:length(those)){
+		if(!any(measurements[,1]==those[i])){cat("\n orphaned peaklist found.");next;} # not in list of measurements?
+		if(measurements[measurements[,1]==those[i],16]=="TRUE"){next} # already done?
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="peaklist")){rm(peaklist)}
 		load(file.path(logfile$project_folder,"peaklist",those[i]),envir=as.environment(".GlobalEnv"))
@@ -56,9 +50,10 @@ if(length(those)>0){
 				box()
 			dev.off();cat(".")
 		}
+		measurements[measurements[,1]==those[i],16]<-"TRUE";
 	}
 	save(LOD_splined,file=file.path(logfile$project_folder,"results","LOD","LOD_splined"))
-
+	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 }
 #################################################################################
 

@@ -9,9 +9,6 @@
 #' @param except Name of node (logfile$Tasks_to_redo) to be excluded - dangerous
 #' @param single_file File-wise handler
 #' @param check_node Only evaluate whether the concerned node is enabled in workflow?
-#' @param
-#' @param
-#' @param
 #' 
 #' @details enviMass workflow function
 #' 
@@ -104,9 +101,11 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 	if(any(work_stream=="recal")){
 		if(logfile$workflow[names(logfile$workflow)=="recal"]=="yes"){
 			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="recal"]<<-TRUE;			
-			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-			measurements[,12]<-FALSE;
-			write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+			if(!single_file){
+				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+				measurements[,12]<-FALSE;
+				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+			}
 		}
 		if(!check_node){
 			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="recal"]<<-TRUE;			
@@ -212,9 +211,19 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 	if(any(work_stream=="LOD")){
 		if(logfile$workflow[names(logfile$workflow)=="LOD"]=="yes"){
 			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="LOD"]<<-TRUE;
+			if(!single_file){
+				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+				measurements[,16]<-FALSE;
+				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+			}
 		}	
 		if(!check_node){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="LOD"]<<-TRUE;		
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="LOD"]<<-TRUE;	
+			if(!single_file){
+				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+				measurements[,16]<-FALSE;
+				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+			}
 		}		
 	}	
 	########################################################################################

@@ -225,10 +225,13 @@ addmeasu<-reactive({
 							as.character(isolate(input$Measadd_place)),
 							as.character(isolate(input$Measadd_date)),
 							as.character(isolate(input$Measadd_time)),
-							as.character(isolate(input$Measadd_incl)),
-							"TRUE","FALSE","FALSE","FALSE","FALSE","FALSE",
-							as.character(isolate(input$Measadd_profiled)),
-							"FALSE","FALSE","FALSE","FALSE","FALSE","FALSE"
+							as.character(isolate(input$Measadd_incl)), #8
+							"TRUE","FALSE","FALSE","FALSE",
+							as.character(isolate(input$Measadd_tag1)),
+							"FALSE",
+							as.character(isolate(input$Measadd_profiled)),#15
+							"FALSE","FALSE","FALSE","FALSE","FALSE",
+							as.character(isolate(input$Measadd_tag3))
 						);		  
 						measurements3<-rbind(measurements2,measurements1);
 						names(measurements3)<-nameit;
@@ -282,9 +285,12 @@ addmeasu<-reactive({
 						as.character(isolate(input$Measadd_date)),
 						as.character(isolate(input$Measadd_time)),
 						as.character(isolate(input$Measadd_incl)),
-							"TRUE","FALSE","FALSE","FALSE","FALSE","FALSE",
-							as.character(isolate(input$Measadd_profiled)),
-							"FALSE","FALSE","FALSE","FALSE","FALSE","FALSE"
+						"TRUE","FALSE","FALSE","FALSE","FALSE","FALSE",
+						as.character(isolate(input$Measadd_profiled)),
+						"FALSE","FALSE","FALSE",
+						as.character(isolate(input$Measadd_tag1)),	
+						"FALSE",
+						as.character(isolate(input$Measadd_tag3))
 					)
 					measurements3<-rbind(measurements2,measurements1);
 					names(measurements3)<-nameit;
@@ -375,7 +381,7 @@ observe({
 		if(length(measurements1[measurements1[,1]!=as.character(isolate(input$Measdel_ID)),1])==0){
 			measurements1<-data.frame(c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("FALSE"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"));
 			names(measurements1)<-c("ID","Name","Type","Mode","Place","Date","Time","include","copied","picked",
-			"checked","recal","align","norm","profiled","comp","IS_screen","tar_screen","tag1","tag2","tag3")
+			"checked","recal","align","norm","profiled","LOD","IS_screen","tar_screen","tag1","tag2","tag3")
 			adjustit<-"FALSE"
         }else{
 		    measurements1<-measurements1[measurements1[,1]!=as.character(isolate(input$Measdel_ID)),]
@@ -600,7 +606,8 @@ observe({
 			updateSelectInput(session, "Modif_mode", selected = as.character(measurements3[measurements3[,1]==atID,4]))
 			updateTextInput(session, "Modif_place",value = as.character(measurements3[measurements3[,1]==atID,5]))
 			updateDateInput(session, "Modif_date", value = as.character(measurements3[measurements3[,1]==atID,6]))
-			updateTextInput(session, "Modif_time",value = as.character(measurements3[measurements3[,1]==atID,7]))		
+			updateTextInput(session, "Modif_time",value = as.character(measurements3[measurements3[,1]==atID,7]))
+			updateTextInput(session, "Modif_tag1",value = as.character(measurements3[measurements3[,1]==atID,19]))
 			updateTextInput(session, "Modif_tag3",value = as.character(measurements3[measurements3[,1]==atID,21]))
 			updateSelectInput(session, "Modif_include", selected = as.character(measurements3[measurements3[,1]==atID,8]))
 			updateSelectInput(session, "Modif_profiled", selected = as.character(measurements3[measurements3[,1]==atID,15]))	
@@ -627,7 +634,8 @@ observe({
 			measurements3[measurements3[,1]==atID,5]<-as.character(isolate(input$Modif_place))
 			measurements3[measurements3[,1]==atID,6]<-as.character(isolate(input$Modif_date))
 			measurements3[measurements3[,1]==atID,]<-enviMass:::convDate(measurements3[measurements3[,1]==atID,]);
-			measurements3[measurements3[,1]==atID,7]<-as.character(isolate(input$Modif_time))		
+			measurements3[measurements3[,1]==atID,7]<-as.character(isolate(input$Modif_time))	
+			measurements3[measurements3[,1]==atID,19]<-as.character(isolate(input$Modif_tag1))
 			measurements3[measurements3[,1]==atID,21]<-as.character(isolate(input$Modif_tag3))	
 			measurements3[measurements3[,1]==atID,8]<-as.character(isolate(input$Modif_include))				
 			measurements3[measurements3[,1]==atID,15]<-as.character(isolate(input$Modif_profiled))	
