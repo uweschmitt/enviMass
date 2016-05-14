@@ -154,6 +154,9 @@
 								with_model<-which(names(LOD_splined)==paste("LOD_",m,sep=""))
 								if(length(with_model)>0){						
 									use_cutint<-10^(predict(LOD_splined[[with_model]],pattern_RT[i])$y)
+								}else{
+									cat("\n Missing LOD model; using default intensity thershold. Debug?")
+									use_cutint<-cutint;
 								}
 							}else{
 								use_cutint<-cutint
@@ -388,6 +391,9 @@
 								with_model<-which(names(LOD_splined)==paste("LOD_",m,sep=""))
 								if(length(with_model)>0){						
 									use_cutint<-10^(predict(LOD_splined[[with_model]],pattern_RT[i])$y)
+								}else{
+									cat("\n Missing LOD model; using default intensity thershold. Debug?")
+									use_cutint<-cutint;
 								}
 							}else{
 								use_cutint<-cutint
