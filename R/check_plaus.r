@@ -10,7 +10,13 @@
 #' @details enviMass workflow function
 #' 
 
-	check_plaus<-function(cent_peak_combi,pattern_centro,profileList,RT_tol_inside,int_tol){
+	check_plaus<-function(
+		cent_peak_combi,
+		pattern_centro,
+		profileList,
+		RT_tol_inside,
+		int_tol
+	){
 		# if only one row with (centroid,peak) left = all is plausible
 		# - plausibility of this one (centroid,peak) must be given at this stage, can be inherited further!
 		# unique centroids combined?
@@ -30,8 +36,6 @@
 							(pattern_centro[cent_peak_combi[n,1],2]+(pattern_centro[cent_peak_combi[n,1],2]*int_tol/100))/
 							(pattern_centro[cent_peak_combi[m,1],2]-(pattern_centro[cent_peak_combi[m,1],2]*int_tol/100))
 						)
-						
-						
 						if(ratio_int_theo_high<ratio_int){return(FALSE)}
 						ratio_int_theo_low<-(
 							(pattern_centro[cent_peak_combi[n,1],2]-(pattern_centro[cent_peak_combi[n,1],2]*int_tol/100))/
@@ -42,6 +46,12 @@
 				}		
 			}
 		}
+		# get score_1
+		
+		
+		
+		
+		
 		# else all is plausible
 		return(TRUE)
 	}

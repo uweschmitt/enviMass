@@ -143,8 +143,12 @@ if(TRUE){
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 	}
-
-
+	if(!any(names(logfile$parameters)=="screen_IS_cutit")){
+		logfile$parameters[[50]]<<-"FALSE";    	names(logfile$parameters)[50]<<-"screen_IS_cutit" # Cut off match combiantions below matching score?		
+		logfile$parameters[[63]]<<-"FALSE";    	names(logfile$parameters)[63]<<-"screen_target_cutit" # Cut off match combiantions below matching score?			
+		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
+	}
 	# logfile$Tasks_to_redo ##################################################################
 	if(length(logfile[[2]])<18){
 		logfile[[2]]<<-rep("TRUE",18)

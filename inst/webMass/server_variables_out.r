@@ -153,7 +153,7 @@ observe({
 		if(do_debug){cat("\n at_8b")}
 		########################################################################  		
 		# IS screening #########################################################
-		at1<-logfile$parameters[c(42,43,45:49)]
+		at1<-logfile$parameters[c(42,43,45:50)]
 		logfile$parameters[[42]]<<-as.character(isolate(input$screen_IS_delRT))
 		logfile$parameters[[43]]<<-as.character(isolate(input$screen_IS_dRTwithin))
 		logfile$parameters[[45]]<<-as.character(isolate(input$screen_IS_dmz))
@@ -163,14 +163,15 @@ observe({
 		use_value<-as.character(isolate(input$screen_IS_w1))
 		if(is.na(use_value)){stop("\n\nInvalid parameter - dot instead of comma-separated numeric input used?")}
 		logfile$parameters[[49]]<<-as.character(isolate(input$screen_IS_w1))		
-		at2<-logfile$parameters[c(42,43,45:49)]
+		logfile$parameters[[50]]<<-as.character(isolate(input$screen_IS_cutit))		
+		at2<-logfile$parameters[c(42,43,45:50)]
 		if(any(is.na(at2))){stop("\nThere was an issue reading out the new settings - maybe comma / dot separation was not fullfilled?")}		
 		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="IS_screen",check_node=TRUE)
 		}	
 		if(do_debug){cat("\n at_9")}
 		# target screening #####################################################
-		at1<-logfile$parameters[c(55,56,58:62)]
+		at1<-logfile$parameters[c(55,56,58:63)]
 		logfile$parameters[[55]]<<-as.character(isolate(input$screen_target_delRT))
 		logfile$parameters[[56]]<<-as.character(isolate(input$screen_target_dRTwithin))
 		logfile$parameters[[58]]<<-as.character(isolate(input$screen_target_dmz))
@@ -179,8 +180,9 @@ observe({
 		logfile$parameters[[61]]<<-as.character(isolate(input$screen_target_Intcut))
 		use_value<-as.character(isolate(input$screen_target_w1))
 		if(is.na(use_value)){stop("\n\nInvalid parameter - dot instead of comma-separated numeric input used?")}		
-		logfile$parameters[[62]]<<-as.character(isolate(input$screen_target_w1))		
-		at2<-logfile$parameters[c(55,56,58:62)]
+		logfile$parameters[[62]]<<-as.character(isolate(input$screen_target_w1))	
+		logfile$parameters[[63]]<<-as.character(isolate(input$screen_target_cutit))			
+		at2<-logfile$parameters[c(55,56,58:63)]
 		if(any(is.na(at2))){stop("\nThere was an issue reading out the new settings - maybe comma / dot separation was not fullfilled?")}		
 		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="target_screen",check_node=TRUE)

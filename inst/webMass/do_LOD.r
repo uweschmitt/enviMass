@@ -8,6 +8,7 @@ if(length(those)>0){
 
 	LOD_splined<-list()
 	at<-1;
+	cat(" | ")
 	for(i in 1:length(those)){
 		if(!any(measurements[,1]==those[i])){cat("\n orphaned peaklist found.");next;} # not in list of measurements?
 		if(measurements[measurements[,1]==those[i],16]=="TRUE"){next} # already done?

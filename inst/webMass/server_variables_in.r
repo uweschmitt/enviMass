@@ -62,6 +62,7 @@ updateSelectInput(session, "screen_IS_ppm", "... given in:", choices = c("ppm"="
 updateSliderInput(session, "screen_IS_dInt", value = as.numeric(logfile$parameters[[47]])) # Intensity tolerance %
 updateNumericInput(session, "screen_IS_Intcut", "Lower intensity threhold", value = as.numeric(logfile$parameters[48])) 
 updateNumericInput(session, "screen_IS_w1", "Cutoff score [0,1]", value = as.numeric(logfile$parameters[49])) 
+updateSelectInput(session,"screen_IS_cutit", "Exclude matches below cutoff score?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), selected= as.character(logfile$parameters[[50]]))
 # TARGET SCREENING ######################################################
 updateNumericInput(session, "screen_target_delRT", "RT tolerance of peaks in sample relative to their expected RT [s]", value = as.numeric(logfile$parameters[55]))   
 updateNumericInput(session, "screen_target_dRTwithin", "RT tolerance of peaks within an isotope pattern [s]", value = as.numeric(logfile$parameters[56])) 
@@ -70,6 +71,7 @@ updateSelectInput(session, "screen_target_ppm", "... given in:", choices = c("pp
 updateSliderInput(session, "screen_target_dInt", value = as.numeric(logfile$parameters[[60]])) # Intensity tolerance %
 updateNumericInput(session, "screen_target_Intcut", "Lower intensity threhold", value = as.numeric(logfile$parameters[61])) 
 updateNumericInput(session, "screen_target_w1", "Cutoff score [0,1]", value = as.numeric(logfile$parameters[62]))  
+updateSelectInput(session,"screen_target_cutit", "Exclude matches below cutoff score?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), selected= as.character(logfile$parameters[[63]]))
 # IS-based NORMALIZATION ###############################################		
 updateSliderInput(session, "profnorm_cover_files", value = as.numeric(logfile$parameters[[70]])) # Minimum percentage of files covered by each IS profile %
 updateNumericInput(session, "profnorm_cover_isccount", "Minimum number of IS profiles", value = as.numeric(logfile$parameters[71])) 

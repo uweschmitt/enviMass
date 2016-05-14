@@ -835,7 +835,7 @@ observe({
 		logfile$Tasks_to_redo<<-replace(logfile$Tasks_to_redo,-1,TRUE)
 		logfile$Tasks_to_redo<<-replace(logfile$Tasks_to_redo,1,FALSE)
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-		measurements[,c(11,12,13,14)]<-"FALSE"
+		measurements[,c(11,12,13,14,16)]<-"FALSE"
 		write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 		createAlert(session,anchorId = "reset", alertId="reset1", title = NULL, content="Project reset w/o peak picking",style = "warning",append=FALSE,dismiss=TRUE)
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
@@ -849,9 +849,9 @@ observe({
 		logfile$Tasks_to_redo<<-replace(logfile$Tasks_to_redo,,TRUE)
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 		if(TRUE){
-			measurements[,c(10,11,12,13,14)]<-"FALSE"
+			measurements[,c(10,11,12,13,14,16)]<-"FALSE"
 		}else{ # in-script switch: only redo peak-picking for replicate files
-			measurements[measurements[,names(measurements)=="tag3"]!=FALSE,c(10,11,12,13,14)]<-FALSE
+			measurements[measurements[,names(measurements)=="tag3"]!=FALSE,c(10,11,12,13,14,16)]<-FALSE
 		}
 		write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 		rm(measurements)

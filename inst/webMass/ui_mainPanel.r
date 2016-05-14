@@ -397,7 +397,7 @@
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),  					
 				# block 4 ######################################################					
-				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> Quantification </font></p> '),
+				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> Calibration </font></p> '),
 					radioButtons("quantif", "Include? ", c("yes"="yes","no"="no")),					
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),  					
@@ -551,7 +551,8 @@
 					),
 					div(style = widget_style2,
 						tags$h5("Scoring"),
-						numericInput("screen_IS_w1", "Cutoff score [0,1]", 0.8)              
+						numericInput("screen_IS_w1", "Cutoff score [0,1]", 0.8),              
+						selectInput("screen_IS_cutit", "Exclude matches below cutoff score?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE")
 					)
                 ),
                 tabPanel("Targets & Suspects",
@@ -572,7 +573,8 @@
 					),
 					div(style = widget_style2,
 						tags$h5("Scoring"),
-						numericInput("screen_target_w1", "Cutoff score [0,1]", 0.8)           
+						numericInput("screen_target_w1", "Cutoff score [0,1]", 0.8),
+						selectInput("screen_target_cutit", "Exclude matches below cutoff score?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE")
 					)
                 )
               )

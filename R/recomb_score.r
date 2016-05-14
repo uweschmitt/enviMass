@@ -8,7 +8,8 @@
 #' @param LOD
 #' @param RT_tol_inside
 #' @param int_tol
-#' @param score_cut 
+#' @param use_score_cut Logical.
+#' @param score_cut Numeric.
 #' @param plotit
 #' @param verbose
 #' 
@@ -22,7 +23,8 @@ recomb_score<-function(
 		LOD,
 		RT_tol_inside,
 		int_tol,
-		score_cut,
+		use_score_cut,
+		score_cut,		
 		plotit=FALSE,
 		verbose=FALSE
 	){
@@ -71,15 +73,34 @@ recomb_score<-function(
 					pch=19,col="darkgreen",cex=1
 				)
 			}			
-			if( 
-				check_plaus(
-					cent_peak_combi=check_nodes[[k]],
-					pattern_centro=pattern_compound,
-					profileList,
-					RT_tol_inside,
-					int_tol
-				) 
-			){
+			# score intensities ...
+			rescale<-weighted.mean(
+				x=(pattern_compound[check_nodes[[k]][,1],2]/profileList[[2]][check_nodes[[k]][,2],2]),
+				w=( profileList[[2]][check_nodes[[k]][,2],2] / (int_tol/100*profileList[[2]][check_nodes[[k]][,2],2]) )
+			)
+			above_LOD<-((pattern_compound[,2]/rescale)>LOD)
+			# ... measured "above LOD threshold:"
+			if(any(above_LOD)){
+				score1<-(
+					sum(pattern_compound[check_nodes[[k]][,1],2][above_LOD[check_nodes[[k]][,1]]])/sum(pattern_compound[above_LOD,2])
+				)
+				score1<-round(score1,digits=4)
+			}else{
+				score1<-NA
+			}
+			if(use_score_cut=="TRUE"){
+				if( (is.na(score1)) || (score1<=score_cut) ){
+					next;
+				}
+			}
+			get_plaus<-check_plaus( # returns TRUE or FALSE
+				cent_peak_combi=check_nodes[[k]],
+				pattern_centro=pattern_compound,
+				profileList,
+				RT_tol_inside,
+				int_tol
+			) 
+			if( get_plaus ){
 				if(verbose){cat("-TRUE");stop()}
 				contained<-FALSE
 				if(length(results)>0){
@@ -94,21 +115,7 @@ recomb_score<-function(
 					if(verbose){cat("-ok")}
 					results[[at_results]]<-list()
 					results[[at_results]][[1]]<-check_nodes[[k]]
-					# score intensities ...
-					rescale<-weighted.mean(
-						x=(pattern_compound[check_nodes[[k]][,1],2]/profileList[[2]][check_nodes[[k]][,2],2]),
-						w=( profileList[[2]][check_nodes[[k]][,2],2] / (int_tol/100*profileList[[2]][check_nodes[[k]][,2],2]) )
-					)
-					above_LOD<-((pattern_compound[,2]/rescale)>LOD)
-					# ... measured "above LOD threshold:"
-					if(any(above_LOD)){
-						score1<-(
-							sum(pattern_compound[check_nodes[[k]][,1],2][above_LOD[check_nodes[[k]][,1]]])/sum(pattern_compound[above_LOD,2])
-						)
-						score1<-round(score1,digits=4)
-					}else{
-						score1<-NA
-					}
+
 					results[[at_results]][[2]]<-score1
 					# ... measured "below LOD threshold:"
 					if(any(!above_LOD)){

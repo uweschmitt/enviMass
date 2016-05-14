@@ -159,7 +159,8 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters[[46]]<-"TRUE";		names(logfile$parameters)[46]<-"IS_ppm"# ... given in pppm?
 		logfile$parameters[[47]]<-"30";			names(logfile$parameters)[47]<-"IS_inttol"# Intensity tolerance %
 		logfile$parameters[[48]]<-"5E4";		names(logfile$parameters)[48]<-"IS_intcut"	# Lower intensity threhold
-		logfile$parameters[[49]]<-"0.8";    	names(logfile$parameters)[49]<-"IS_w1" # Score weight for mass matching	
+		logfile$parameters[[49]]<-"0.8";    	names(logfile$parameters)[49]<-"IS_w1" # Matching score
+		logfile$parameters[[50]]<-"FALSE";    	names(logfile$parameters)[50]<-"screen_IS_cutit" # Cut off match combiantions below matching score?		
 		# target screening #####################################################
 		logfile$parameters[[55]]<-"30"; 		names(logfile$parameters)[55]<-"tar_drt1"	# RT tolerance of peaks in sample relative to their expected RT [s]
 		logfile$parameters[[56]]<-"10"; 		names(logfile$parameters)[56]<-"tar_drt2"	# RT tolerance of peaks within an isotope pattern [s]
@@ -167,7 +168,8 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters[[59]]<-"TRUE";		names(logfile$parameters)[59]<-"tar_ppm"# ... given in pppm?
 		logfile$parameters[[60]]<-"30";			names(logfile$parameters)[60]<-"tar_inttol"# Intensity tolerance %
 		logfile$parameters[[61]]<-"5E4";		names(logfile$parameters)[61]<-"tar_intcut"	# Lower intensity threhold
-		logfile$parameters[[62]]<-"0.8";    	names(logfile$parameters)[62]<-"tar_w1" # Score weight for mass matching	
+		logfile$parameters[[62]]<-"0.8";    	names(logfile$parameters)[62]<-"tar_w1" # Matching score	
+		logfile$parameters[[63]]<-"FALSE";    	names(logfile$parameters)[63]<-"screen_target_cutit" # Cut off match combiantions below matching score?		
 		# IS-based normalization ###############################################
 		logfile$parameters[[70]]<-"90";		names(logfile$parameters)[70]<-"ISnorm_percfiles"# Minimum percentage of files covered by each IS profile %
 		logfile$parameters[[71]]<-"15";		names(logfile$parameters)[71]<-"ISnorm_numbIS"# Minimum number of IS profiles

@@ -50,13 +50,13 @@
 		pattern_RT<<-patternRT_pos_IS;rm(patternRT_pos_IS,envir=as.environment(".GlobalEnv"));
 		load(file=file.path(logfile[[1]],"results","patternDelRT_pos_IS"),envir=as.environment(".GlobalEnv"));
 		pattern_delRT<<-patternDelRT_pos_IS;rm(patternDelRT_pos_IS,envir=as.environment(".GlobalEnv"));
-		
+
 		
 		mztol<-as.numeric(logfile$parameters$IS_dmz)				# m/z tolerance ...
 		ppm<-as.logical(as.character(logfile$parameters$IS_ppm))	# ... given in pppm?
 		cutint<-as.numeric(logfile$parameters$IS_intcut)			# Lower intensity threhold
 		int_tol<-as.numeric(logfile$parameters$IS_inttol)			# Intensity tolerance %
-		RT_tol_outside<-as.numeric(logfile$parameters$IS_drt1)		# RT tolerance of peaks in sample relative to their expected RT [s]
+		#RT_tol_outside<-as.numeric(logfile$parameters$IS_drt1)		# RT tolerance of peaks in sample relative to their expected RT [s] - incorporated via pattern_delRT during isotopologue pattern generation
 		RT_tol_inside<-as.numeric(logfile$parameters$IS_drt2)		# RT tolerance of peaks within an isotope pattern [s]
 		cut_score<-as.numeric(logfile$parameters$IS_w1)	
 		
@@ -94,6 +94,10 @@
 			RT=centro_RT, 
 			dRT=centro_dRT
 		)	
+		if(FALSE){ # debug - retain results of getit only for a selected compound pattern
+			at<-25
+			getit[centro_ID!=at]<-"FALSE"
+		}
 		for(i in 1:length(getit)){ # transfer to a fist list of compoundadduct x centroids
 			screen_list[[centro_ID[i]]][[centro_number[i]]]<-getit[i]
 		}
@@ -105,14 +109,14 @@
 				for(j in 1:length(screen_list[[i]])){ # over its centroids = j
 					if(screen_list[[i]][[j]]!="FALSE"){ 
 						profs<-as.numeric(strsplit(screen_list[[i]][[j]]," / ")[[1]])
-						for(k in 1:length(profs)){ # over their matched profile peaks = k
+						for(k in 1:length(profs)){ # over their matched profile peaks = k		
 							if(profileList_pos[[7]][profs[k],4]!=profs[k]){cat("\n debug me: profile ID mismatch");stop();} # just a check
-							for(m in profileList_pos[[7]][profs[k],1]:profileList_pos[[7]][profs[k],2]){ # over their sample peaks
+							for(m in profileList_pos[[7]][profs[k],1]:profileList_pos[[7]][profs[k],2]){ # over their sample peaks			
 								delmass<-abs(profileList_pos[[2]][m,1]-pattern[[i]][j,1])		
 								if(!ppm){
 									if(delmass>mztol){next}
 								}else{
-									if(delmass*1E6/pattern[[i]][j,1]>mztol){next}
+									if((delmass*1E6/pattern[[i]][j,1])>mztol){next}
 								}
 								if(length(IS_pos_screen_listed[[i]])<profileList_pos[[2]][m,6][[1]] ){
 									IS_pos_screen_listed[[i]][[profileList_pos[[2]][m,6][[1]]]]<-matrix(ncol=2,nrow=0)	# sample level
@@ -153,7 +157,8 @@
 								LOD=use_cutint,
 								RT_tol_inside=RT_tol_inside,
 								int_tol=int_tol,
-								score_cut=FALSE,
+								use_score_cut=FALSE,
+								score_cut=0,
 								plotit=FALSE,
 								verbose=FALSE
 							)
@@ -278,7 +283,7 @@
 		ppm<-as.logical(as.character(logfile$parameters$IS_ppm))	# ... given in pppm?
 		cutint<-as.numeric(logfile$parameters$IS_intcut)			# Lower intensity threhold
 		int_tol<-as.numeric(logfile$parameters$IS_inttol)			# Intensity tolerance %
-		RT_tol_outside<-as.numeric(logfile$parameters$IS_drt1)		# RT tolerance of peaks in sample relative to their expected RT [s]
+		#RT_tol_outside<-as.numeric(logfile$parameters$IS_drt1)		# RT tolerance of peaks in sample relative to their expected RT [s] - incorporated via pattern_delRT during isotopologue pattern generation
 		RT_tol_inside<-as.numeric(logfile$parameters$IS_drt2)		# RT tolerance of peaks within an isotope pattern [s]
 		cut_score<-as.numeric(logfile$parameters$IS_w1)	
 		
