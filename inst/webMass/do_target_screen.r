@@ -70,6 +70,7 @@
 		}
 		centro_mass<-rep(0,count_nonmax)
 		centro_ID<-rep(0,count_nonmax)
+		centro_maxpeak<-rep(FALSE,count_nonmax)	
 		centro_number<-rep(0,count_nonmax)
 		centro_RT<-rep(0,count_nonmax)
 		centro_dRT<-rep(0,count_nonmax)
@@ -79,6 +80,7 @@
 			n<-length(pattern[[i]][,1])
 			centro_mass[at_ID:(at_ID+n-1)]<-pattern[[i]][,1]
 			centro_ID[at_ID:(at_ID+n-1)]<-i
+			centro_maxpeak[at_ID:(at_ID+n-1)]<-(pattern[[i]][,2]==max(pattern[[i]][,2]))
 			centro_number[at_ID:(at_ID+n-1)]<-(1:n)
 			centro_RT[at_ID:(at_ID+n-1)]<-pattern_RT[i]
 			centro_dRT[at_ID:(at_ID+n-1)]<-pattern_delRT[i]
@@ -93,6 +95,9 @@
 			RT=centro_RT, 
 			dRT=centro_dRT
 		)	
+		if(as.character(logfile$parameters$screen_target_maxonly)=="TRUE"){ # only retain max_peak-results?
+			getit[!centro_maxpeak]<-"FALSE"
+		}		
 		for(i in 1:length(getit)){ # transfer to a fist list of compoundadduct x centroids
 			screen_list[[centro_ID[i]]][[centro_number[i]]]<-getit[i]
 		}
@@ -128,6 +133,13 @@
 			}
 		}
 		# decompose ###########################################################################		
+		if(logfile$parameters$screen_target_cutit=="TRUE"){
+			use_score_cut<-TRUE;
+			score_cut<-cut_score
+		}else{
+			use_score_cut<-FALSE;
+			score_cut<-0		
+		}
 		many<-0
 		many_unamb<-0
 		res_target_pos_screen<-list()  # default: no match at all
@@ -153,7 +165,10 @@
 								LOD=use_cutint,
 								RT_tol_inside=RT_tol_inside,
 								int_tol=int_tol,
-								score_cut=FALSE
+								use_score_cut=use_score_cut,
+								score_cut=score_cut,
+								plotit=FALSE,
+								verbose=FALSE
 							)			
 							res_target_pos_screen[[i]][[m]]<-combination_matches
 							if(length(combination_matches)>1){many_unamb<-(many_unamb+1)}
@@ -289,6 +304,7 @@
 		}
 		centro_mass<-rep(0,count_nonmax)
 		centro_ID<-rep(0,count_nonmax)
+		centro_maxpeak<-rep(FALSE,count_nonmax)	
 		centro_number<-rep(0,count_nonmax)
 		centro_RT<-rep(0,count_nonmax)
 		centro_dRT<-rep(0,count_nonmax)
@@ -298,6 +314,7 @@
 			n<-length(pattern[[i]][,1])
 			centro_mass[at_ID:(at_ID+n-1)]<-pattern[[i]][,1]
 			centro_ID[at_ID:(at_ID+n-1)]<-i
+			centro_maxpeak[at_ID:(at_ID+n-1)]<-(pattern[[i]][,2]==max(pattern[[i]][,2]))
 			centro_number[at_ID:(at_ID+n-1)]<-(1:n)
 			centro_RT[at_ID:(at_ID+n-1)]<-pattern_RT[i]
 			centro_dRT[at_ID:(at_ID+n-1)]<-pattern_delRT[i]
@@ -312,6 +329,9 @@
 			RT=centro_RT, 
 			dRT=centro_dRT
 		)	
+		if(as.character(logfile$parameters$screen_target_maxonly)=="TRUE"){ # only retain max_peak-results?
+			getit[!centro_maxpeak]<-"FALSE"
+		}		
 		for(i in 1:length(getit)){ # transfer to a fist list of compoundadduct x centroids
 			screen_list[[centro_ID[i]]][[centro_number[i]]]<-getit[i]
 		}
@@ -347,6 +367,13 @@
 			}
 		}
 		# decompose ###########################################################################		
+		if(logfile$parameters$screen_target_cutit=="TRUE"){
+			use_score_cut<-TRUE;
+			score_cut<-cut_score
+		}else{
+			use_score_cut<-FALSE;
+			score_cut<-0		
+		}
 		many<-0
 		many_unamb<-0
 		res_target_neg_screen<-list()  # default: no match at all
@@ -372,7 +399,10 @@
 								LOD=use_cutint,
 								RT_tol_inside=RT_tol_inside,
 								int_tol=int_tol,
-								score_cut=FALSE
+								use_score_cut=use_score_cut,
+								score_cut=score_cut,
+								plotit=FALSE,
+								verbose=FALSE
 							)
 							res_target_neg_screen[[i]][[m]]<-combination_matches
 							if(length(combination_matches)>1){many_unamb<-(many_unamb+1)}

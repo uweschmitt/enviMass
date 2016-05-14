@@ -551,8 +551,11 @@
 					),
 					div(style = widget_style2,
 						tags$h5("Scoring"),
-						numericInput("screen_IS_w1", "Cutoff score [0,1]", 0.8),              
-						selectInput("screen_IS_cutit", "Exclude matches below cutoff score?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE")
+						numericInput("screen_IS_w1", "Cutoff score [0,1]", 0.8),         
+						HTML('<h1 align="center"> &#x21f3; </h1> '),						
+						selectInput("screen_IS_cutit", "Exclude matches below cutoff score?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE"),
+						HTML('<h1 align="center"> &#x21f3; </h1> '),
+						selectInput("screen_IS_maxonly", "Screen only most intense isotopologue peak?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE")
 					)
                 ),
                 tabPanel("Targets & Suspects",
@@ -574,7 +577,10 @@
 					div(style = widget_style2,
 						tags$h5("Scoring"),
 						numericInput("screen_target_w1", "Cutoff score [0,1]", 0.8),
-						selectInput("screen_target_cutit", "Exclude matches below cutoff score?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE")
+						HTML('<h1 align="center"> &#x21f3; </h1> '),
+						selectInput("screen_target_cutit", "Exclude matches below cutoff score?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE"),
+						HTML('<h1 align="center"> &#x21f3; </h1> '),
+						selectInput("screen_target_maxonly", "Screen only most intense isotopologue peak?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE")					
 					)
                 )
               )

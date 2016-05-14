@@ -380,6 +380,12 @@ if(logfile[[10]]<3.101){
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	
 	}
+	if(!any(names(logfile$parameters)=="screen_IS_maxonly")){	
+		logfile$parameters[[64]]<<-"FALSE";    	names(logfile$parameters)[64]<<-"screen_target_maxonly" # Screen only most intense isotopologue peak?	
+		logfile$parameters[[51]]<<-"FALSE";    	names(logfile$parameters)[51]<<-"screen_IS_maxonly" # Screen only most intense isotopologue peak?		
+		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	
+	}
 	################################################################################################
 	# updating columns in targets compound table ###################################################
 	targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");

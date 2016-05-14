@@ -23,8 +23,8 @@ recomb_score<-function(
 		LOD,
 		RT_tol_inside,
 		int_tol,
-		use_score_cut,
-		score_cut,		
+		use_score_cut=FALSE,
+		score_cut=0,		
 		plotit=FALSE,
 		verbose=FALSE
 	){
