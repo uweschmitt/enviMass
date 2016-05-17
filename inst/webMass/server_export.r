@@ -1,5 +1,5 @@
 ##############################################################################
-# Export peaklist selection ##################################################
+# Export profile list selection ##############################################
 ##############################################################################
 exported_1<-reactive({
     input$expo_profiles
@@ -29,3 +29,62 @@ exported_1<-reactive({
 })	
 output$expo1<-renderText(paste(exported_1()))
 ##############################################################################
+
+##############################################################################
+# Export peaklist selection ##################################################
+##############################################################################
+exported_2<-reactive({
+    input$expo_peaklist
+	peaklistID<-isolate(input$sel_meas)
+	if(
+		(peaklistID!="none")&(file.exists(file.path(logfile[[1]],"peaklist",as.character(peaklistID))))
+	){
+		load(file=file.path(logfile[[1]],"peaklist",as.character(peaklistID)),envir=as.environment(".GlobalEnv"),verbose=FALSE);
+		peaklist<-peaklist[
+			peaklist[,colnames(peaklist)=="keep"]==1
+		,,drop=FALSE]
+		peaklist<-peaklist[
+			peaklist[,colnames(peaklist)=="keep_2"]==1
+		,,drop=FALSE]		
+		peaklist<-peaklist[,c(12,13,14),drop=FALSE]
+		write.csv(
+			peaklist,
+			file=file.path(logfile[[1]],"exports",paste("peaklist",as.character(peaklistID),".csv",sep="")),
+			row.names=FALSE
+		);
+		rm(peaklist)	
+		return("Latest export finished")	
+	}else{
+		return("Latest export failed")
+	}
+})	
+output$expo2<-renderText(paste(exported_2()))
+##############################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -853,7 +853,8 @@
 					imageOutput("EIC2", height="auto"),
 					imageOutput("EIC3", height="auto")
                 ),
-                tabPanel("Processing",            
+				###################################################################################################################### 
+				tabPanel("Processing",            
 					selectInput("sel_meas", "Select file ID:", choices = c("none"), "none"),
 					HTML('<hr noshade="noshade" />'),
 					fluidRow(										
@@ -875,7 +876,15 @@
 					imageOutput("peakmzRT_pic", height="auto"),
 					HTML('<hr noshade="noshade" />'),
 					imageOutput("LOD_pic", height="auto"),
-					HTML('<hr noshade="noshade" />')
+					HTML('<hr noshade="noshade" />'),
+					div(style = widget_style3,
+						bsButton("expo_peaklist","Export peaklist in .csv format",style="info"),
+						textOutput("expo2"),
+						bsPopover("expo_peaklist", 
+							title = "Export peaklist of above selected file",
+							content = "Export as peaklist.csv to the export folder of this project, with three columns of mass, intensity and RT. Peaklists are affected by blind and replicate filters contained in the workflow.", 
+							placement = "right", trigger = "hover")),
+					HTML('<hr noshade="noshade" />')					
 				),
 				######################################################################################################################
 				tabPanel("Compound screening",

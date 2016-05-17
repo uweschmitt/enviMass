@@ -60,7 +60,7 @@ export_profile_list<-function(
     for(k in 1:leng_list){
 		if(progbar==TRUE){ setWinProgressBar(prog, k, title = "Extract intensity differences...", label = NULL) }
         ########################################################################
-		ID<-as.numeric(profpeaks2[k,1])
+		ID<-as.numeric(profpeaks2[k,10])
 		getit<-seq(1,length(profileList[[7]][,4]),1)[profileList[[7]][,4]==ID]
 		if(length(getit)>1){stop("Debug me - different profiles with same IDs found!")}
         # fill timeset #########################################################
