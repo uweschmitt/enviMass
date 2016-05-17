@@ -171,7 +171,7 @@
 								LOD=use_cutint,
 								RT_tol_inside=RT_tol_inside,
 								int_tol=int_tol,
-								use_score_cut=FALSE,
+								use_score_cut=use_score_cut,
 								score_cut=score_cut,
 								plotit=FALSE,
 								verbose=FALSE
