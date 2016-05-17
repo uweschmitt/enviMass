@@ -105,7 +105,7 @@ observe({
 				found_table<-FALSE				
 			}
 		}
-		if(found_table){
+		if(found_table & (isolate(input$Pos_compound_select=="Target compounds")||isolate(input$Pos_compound_select=="Internal standards")) ){
 			# name selected compound & adduct
 			named_compound <- renderText({
 				s<-input$Table_screening_pos_row_last_clicked
@@ -360,8 +360,10 @@ observe({
 							screen_dev_pos[screen_dev_pos[,6]==1,colnames(screen_dev_pos)==use_y],
 							pch=19,cex=.4,xlab=use_x,ylab=use_y,col="black"
 						)					
-						if(use_x=="m/z deviation [ppm]" | use_x=="RT deviation"){abline(v=0,col="red")}
-						if(use_y=="m/z deviation [ppm]" | use_y=="RT deviation"){abline(h=0,col="red")}
+						if(use_x=="m/z deviation [ppm]" | use_x=="RT deviation within"){abline(v=0,col="red")}
+						if(use_y=="m/z deviation [ppm]" | use_y=="RT deviation within"){abline(h=0,col="red")}
+						if(use_y=="Expected RT" | use_y=="Measured RT"){abline(0,1,col="red")}
+						if(use_y=="Measured RT" | use_y=="Expected RT"){abline(0,1,col="red")}						
 						plot.window(xlim=c(0,1),ylim=c(0,1))
 						legend(0.9,1,title="Cutoff score",legend=c("below","above"),fill=c("lightgrey","black"),border=c("lightgrey","black"))
 					}else{
@@ -393,6 +395,84 @@ observe({
 			},width = "auto", height = 250)
 			
 		} # if(found_table)
+		if( isolate(input$Pos_compound_select=="File-wise counts") ){
+			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+			measurements<-measurements[
+ 				(measurements[,8]=="TRUE") & # included?
+				(measurements[,4]=="positive") &
+				(measurements[,15]=="TRUE") # profiled?
+			,]		
+			if(length(measurements[,1])>0 ){
+				IDs<-as.numeric(measurements[,1])
+				count_file_compound_pos<-measurements[,c(1,2,3)]
+				count_file_compound_pos<-cbind(
+					count_file_compound_pos,
+					rep(0,length(count_file_compound_pos[,1])),
+					rep(0,length(count_file_compound_pos[,1]))				
+				)
+				names(count_file_compound_pos)<-c("ID","Name","type","IS counts","Target counts")
+				if(file.exists(file=file.path(logfile$project_folder,"results","screening","res_IS_pos_screen"))){ 
+					load(file=file.path(logfile$project_folder,"results","screening","res_IS_pos_screen"))
+					cut_score<-as.numeric(logfile$parameters$IS_w1)	
+					if(length(res_IS_pos_screen)>0){
+						if(isolate(input$screen_pos_summarize=="yes")){
+							for(i in 1:length(res_IS_pos_screen)){ # per compound_adduct
+								if(length(res_IS_pos_screen[[i]])>0){ 
+									for(j in 1:length(res_IS_pos_screen[[i]])){ # per file
+										if(length(res_IS_pos_screen[[i]][[j]])>0){ # per matches
+											for(k in 1:length(res_IS_pos_screen[[i]][[j]])){ 				
+												if(!is.na(res_IS_pos_screen[[i]][[j]][[k]]$score_1)){
+													if(res_IS_pos_screen[[i]][[j]][[k]]$score_1>=cut_score){
+														count_file_compound_pos[IDs==j,4]<-(
+															count_file_compound_pos[IDs==j,4]+1
+														);
+														break;
+													}
+												}	
+											}
+										}
+									}
+								}
+							}
+						}	
+					}			
+					rm(res_IS_pos_screen)
+				}
+				if(file.exists(file=file.path(logfile$project_folder,"results","screening","res_targets_pos_screen"))){ 
+					load(file=file.path(logfile$project_folder,"results","screening","res_targets_pos_screen"))
+					cut_score<-as.numeric(logfile$parameters$IS_w1)	
+					if(length(res_targets_pos_screen)>0){
+						if(isolate(input$screen_pos_summarize=="yes")){
+							for(i in 1:length(res_targets_pos_screen)){ # per compound_adduct
+								if(length(res_targets_pos_screen[[i]])>0){ 
+									for(j in 1:length(res_targets_pos_screen[[i]])){ # per file
+										if(length(res_targets_pos_screen[[i]][[j]])>0){ # per matches
+											for(k in 1:length(res_targets_pos_screen[[i]][[j]])){ 				
+												if(!is.na(res_targets_pos_screen[[i]][[j]][[k]]$score_1)){
+													if(res_targets_pos_screen[[i]][[j]][[k]]$score_1>=cut_score){
+														count_file_compound_pos[IDs==j,5]<-(
+															count_file_compound_pos[IDs==j,5]+1
+														);
+														break;
+													}
+												}	
+											}
+										}
+									}
+								}
+							}
+						}	
+					}			
+					rm(res_targets_pos_screen)
+				}			
+				output$count_file_compound_pos <- DT::renderDataTable({count_file_compound_pos},server = TRUE)				
+			}else{
+				output$count_file_compound_pos <- DT::renderDataTable({
+					DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No files available")
+				},server = TRUE)	
+			}
+			rm(measurements);
+		}
 	} # if init$a
 })  
 ##############################################################################
@@ -499,7 +579,7 @@ observe({
 				found_table<-FALSE				
 			}
 		}
-		if(found_table){
+		if(found_table & (isolate(input$Neg_compound_select=="Target compounds")||isolate(input$Neg_compound_select=="Internal standards")) ){
 			# name selected compound & adduct
 			named_compound <- renderText({
 				s<-input$Table_screening_neg_row_last_clicked
@@ -757,8 +837,8 @@ observe({
 							screen_dev_neg[screen_dev_neg[,6]==1,colnames(screen_dev_neg)==use_y],
 							pch=19,cex=.4,xlab=use_x,ylab=use_y,col="black"
 						)					
-						if(use_x=="m/z deviation [ppm]" | use_x=="RT deviation"){abline(v=0,col="red")}
-						if(use_y=="m/z deviation [ppm]" | use_y=="RT deviation"){abline(h=0,col="red")}
+						if(use_x=="m/z deviation [ppm]" | use_x=="RT deviation within"){abline(v=0,col="red")}
+						if(use_y=="m/z deviation [ppm]" | use_y=="RT deviation within"){abline(h=0,col="red")}
 						plot.window(xlim=c(0,1),ylim=c(0,1))
 						legend(0.9,1,title="Cutoff score",legend=c("below","above"),fill=c("lightgrey","black"),border=c("lightgrey","black"))
 					}else{
@@ -790,6 +870,84 @@ observe({
 			},width = "auto", height = 250)
 			
 		} # if(found_table)
+		if( isolate(input$Neg_compound_select=="File-wise counts") ){
+			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+			measurements<-measurements[
+ 				(measurements[,8]=="TRUE") & # included?
+				(measurements[,4]=="negative") &
+				(measurements[,15]=="TRUE") # profiled?
+			,]		
+			if(length(measurements[,1])>0 ){
+				IDs<-as.numeric(measurements[,1])
+				count_file_compound_neg<-measurements[,c(1,2,3)]
+				count_file_compound_neg<-cbind(
+					count_file_compound_neg,
+					rep(0,length(count_file_compound_neg[,1])),
+					rep(0,length(count_file_compound_neg[,1]))				
+				)
+				names(count_file_compound_pneg)<-c("ID","Name","type","IS counts","Target counts")
+				if(file.exists(file=file.path(logfile$project_folder,"results","screening","res_IS_neg_screen"))){ 
+					load(file=file.path(logfile$project_folder,"results","screening","res_IS_neg_screen"))
+					cut_score<-as.numeric(logfile$parameters$IS_w1)	
+					if(length(res_IS_neg_screen)>0){
+						if(isolate(input$screen_neg_summarize=="yes")){
+							for(i in 1:length(res_IS_neg_screen)){ # per compound_adduct
+								if(length(res_IS_neg_screen[[i]])>0){ 
+									for(j in 1:length(res_IS_neg_screen[[i]])){ # per file
+										if(length(res_IS_neg_screen[[i]][[j]])>0){ # per matches
+											for(k in 1:length(res_IS_neg_screen[[i]][[j]])){ 				
+												if(!is.na(res_IS_neg_screen[[i]][[j]][[k]]$score_1)){
+													if(res_IS_neg_screen[[i]][[j]][[k]]$score_1>=cut_score){
+														count_file_compound_neg[IDs==j,4]<-(
+															count_file_compound_neg[IDs==j,4]+1
+														);
+														break;
+													}
+												}	
+											}
+										}
+									}
+								}
+							}
+						}	
+					}			
+					rm(res_IS_neg_screen)
+				}
+				if(file.exists(file=file.path(logfile$project_folder,"results","screening","res_targets_neg_screen"))){ 
+					load(file=file.path(logfile$project_folder,"results","screening","res_targets_neg_screen"))
+					cut_score<-as.numeric(logfile$parameters$IS_w1)	
+					if(length(res_targets_neg_screen)>0){
+						if(isolate(input$screen_neg_summarize=="yes")){
+							for(i in 1:length(res_targets_neg_screen)){ # per compound_adduct
+								if(length(res_targets_neg_screen[[i]])>0){ 
+									for(j in 1:length(res_targets_neg_screen[[i]])){ # per file
+										if(length(res_targets_neg_screen[[i]][[j]])>0){ # per matches
+											for(k in 1:length(res_targets_neg_screen[[i]][[j]])){ 				
+												if(!is.na(res_targets_neg_screen[[i]][[j]][[k]]$score_1)){
+													if(res_targets_neg_screen[[i]][[j]][[k]]$score_1>=cut_score){
+														count_file_compound_neg[IDs==j,5]<-(
+															count_file_compound_neg[IDs==j,5]+1
+														);
+														break;
+													}
+												}	
+											}
+										}
+									}
+								}
+							}
+						}	
+					}			
+					rm(res_targets_neg_screen)
+				}			
+				output$count_file_compound_neg <- DT::renderDataTable({count_file_compound_neg},server = TRUE)				
+			}else{
+				output$count_file_compound_neg <- DT::renderDataTable({
+					DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No files available")
+				},server = TRUE)	
+			}
+			rm(measurements);
+		}
 	} # if init$a
 })  
 ##############################################################################

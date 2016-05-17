@@ -4,6 +4,7 @@
 #'
 #' @param screened_listed
 #' @param pattern
+#' @param at_RT
 #' @param measurements_table
 #' @param compound_table
 #' @param cut_score
@@ -14,6 +15,7 @@
 	get_screening_results<-function(
 		screened_listed,
 		pattern,
+		at_RT,
 		profileList,
 		measurements_table,
 		compound_table,
@@ -33,8 +35,8 @@
 		adducted<-rep("")	
 		at_len<-1		
 		max_len<-10000
-		at_matrix<-matrix(nrow=10000,ncol=7,0)
-		colnames(at_matrix)<-c("m/z","log Intensity","RT","m/z deviation [ppm]","RT deviation","above_cutscore","Time sequence")
+		at_matrix<-matrix(nrow=10000,ncol=8,0)
+		colnames(at_matrix)<-c("m/z","log Intensity","Measured RT","m/z deviation [ppm]","RT deviation within","above_cutscore","Time sequence","Expected RT")
 		for(i in 1:length(screened_listed)){
 			IDed[i]<-strsplit(names(pattern)[i],"_")[[1]][1]
 			named[i]<-compound_table[compound_table[,1]==strsplit(names(pattern)[i],"_")[[1]][1],2]
@@ -97,7 +99,7 @@
 								if((at_len+local_len)>max_len){
 									at_matrix<-rbind(
 										at_matrix, 
-										matrix(nrow=10000,ncol=7,0)
+										matrix(nrow=10000,ncol=8,0)
 									)
 									max_len<-(max_len+1000)
 								}
@@ -113,6 +115,7 @@
 									as.numeric(as.Date(measurements_table[IDs==m,6]))+
 									as.numeric(as.difftime(measurements_table[IDs==m,7])/24)
 								)
+								at_matrix[at_len:(at_len+local_len-1),8]<-at_RT[i]
 								at_len<-(at_len+local_len)
 							}
 						}

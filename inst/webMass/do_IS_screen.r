@@ -198,6 +198,7 @@
 			results_screen_IS_pos<-enviMass:::get_screening_results(
 				screened_listed=res_IS_pos_screen,
 				pattern=pattern,
+				at_RT=pattern_RT,
 				profileList=profileList_pos,
 				measurements_table=measurements,
 				compound_table=intstand,
@@ -437,6 +438,7 @@
 			results_screen_IS_neg<-enviMass:::get_screening_results(
 				screened_listed=res_IS_neg_screen,
 				pattern=pattern,
+				at_RT=pattern_RT,
 				profileList=profileList_neg,
 				measurements_table=measurements,
 				compound_table=intstand,
