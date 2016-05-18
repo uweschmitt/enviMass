@@ -37,6 +37,14 @@
 	if(any(objects()=="patternRT_pos_IS")){rm(patternRT_pos_IS)}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternDelRT_pos_IS")){rm(patternDelRT_pos_IS,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="patternDelRT_pos_IS")){rm(patternDelRT_pos_IS)}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern")){rm(pattern,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="pattern")){rm(pattern)}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_RT")){rm(pattern_RT,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="pattern_RT")){rm(pattern_RT)}		
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_delRT")){rm(pattern_delRT,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="pattern_delRT")){rm(pattern_delRT)}		
+	
+	
 	if(
 		file.exists(file.path(as.character(logfile[[1]]),"results","profileList_pos")) &
 		file.exists(file.path(logfile[[1]],"results","pattern_pos_IS"))
@@ -95,7 +103,7 @@
 			RT=centro_RT, 
 			dRT=centro_dRT
 		)	
-		if(as.character(logfile$parameters$screen_IS_maxonly)=="TRUE"){ # only retain max_peak-results?
+		if( as.character(logfile$parameters$screen_IS_maxonly)=="TRUE" ){ # only retain max_peak-results?
 			getit[!centro_maxpeak]<-"FALSE"
 		}
 		if(FALSE){ # debug - retain results of getit only for a selected compound pattern
@@ -137,7 +145,7 @@
 			}
 		}
 		# decompose ###########################################################################		
-		if(logfile$parameters$screen_IS_cutit=="TRUE"){
+		if( logfile$parameters$screen_IS_cutit=="TRUE" ){
 			use_score_cut<-TRUE;
 			score_cut<-cut_score
 		}else{
@@ -194,6 +202,9 @@
 		if( length(IS_pos_screen_listed)>0 ){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements<-measurements[measurements[,8]=="TRUE",]
+			if(logfile$parameters$prof_select=="TRUE"){
+				measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
+			}
 			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
 			results_screen_IS_pos<-enviMass:::get_screening_results(
 				screened_listed=res_IS_pos_screen,
@@ -279,6 +290,12 @@
 	if(any(objects()=="patternRT_neg_IS")){rm(patternRT_neg_IS)}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternDelRT_neg_IS")){rm(patternDelRT_neg_IS,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="patternDelRT_neg_IS")){rm(patternDelRT_neg_IS)}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern")){rm(pattern,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="pattern")){rm(pattern)}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_RT")){rm(pattern_RT,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="pattern_RT")){rm(pattern_RT)}		
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_delRT")){rm(pattern_delRT,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="pattern_delRT")){rm(pattern_delRT)}		
 	
 	if(
 		file.exists(file.path(as.character(logfile[[1]]),"results","profileList_neg")) &
@@ -434,6 +451,9 @@
 		if(length(IS_neg_screen_listed)>0){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements<-measurements[measurements[,8]=="TRUE",]
+			if(logfile$parameters$prof_select=="TRUE"){
+				measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
+			}
 			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
 			results_screen_IS_neg<-enviMass:::get_screening_results(
 				screened_listed=res_IS_neg_screen,

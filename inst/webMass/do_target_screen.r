@@ -37,6 +37,13 @@
 	if(any(objects()=="patternRT_pos_target")){rm(patternRT_pos_target)}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternDelRT_pos_target")){rm(patternDelRT_pos_target,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="patternDelRT_pos_target")){rm(patternDelRT_pos_target)}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern")){rm(pattern,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="pattern")){rm(pattern)}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_RT")){rm(pattern_RT,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="pattern_RT")){rm(pattern_RT)}		
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_delRT")){rm(pattern_delRT,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="pattern_delRT")){rm(pattern_delRT)}		
+	
 	if(
 		file.exists(file.path(as.character(logfile[[1]]),"results","profileList_pos")) &
 		file.exists(file.path(logfile[[1]],"results","pattern_pos_target"))
@@ -190,6 +197,9 @@
 		if(length(target_pos_screen_listed)>0){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements<-measurements[measurements[,8]=="TRUE",]
+			if(logfile$parameters$prof_select=="TRUE"){
+				measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
+			}
 			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
 			results_screen_target_pos<-enviMass:::get_screening_results(
 				screened_listed=res_target_pos_screen,
@@ -274,6 +284,12 @@
 	if(any(objects()=="patternRT_neg_target")){rm(patternRT_neg_target)}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternDelRT_neg_target")){rm(patternDelRT_neg_target,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="patternDelRT_neg_target")){rm(patternDelRT_neg_target)}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern")){rm(pattern,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="pattern")){rm(pattern)}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_RT")){rm(pattern_RT,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="pattern_RT")){rm(pattern_RT)}		
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_delRT")){rm(pattern_delRT,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="pattern_delRT")){rm(pattern_delRT)}		
 	
 	if(
 		file.exists(file.path(as.character(logfile[[1]]),"results","profileList_neg")) &
@@ -429,6 +445,9 @@
 		if(length(target_neg_screen_listed)>0){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements<-measurements[measurements[,8]=="TRUE",]
+			if(logfile$parameters$prof_select=="TRUE"){
+				measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
+			}
 			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
 			results_screen_target_neg<-enviMass:::get_screening_results(
 				screened_listed=res_target_neg_screen,

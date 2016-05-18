@@ -54,7 +54,7 @@ startprofiles<-function(
     # read in data #############################################################
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
     measurements<-measurements[measurements[,8]=="TRUE",]
-	if(selective){
+	if(selective=="TRUE"){
 		measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
 	}
 	measurements<-measurements[measurements[,4]==ion_mode,]

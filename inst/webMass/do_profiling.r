@@ -4,6 +4,8 @@
 	if(any(measurements[,4]=="positive")){
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="peaklist")){rm(peaklist)}
+		if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
+		if(any(objects()=="profileList_pos")){rm(profileList_pos)}		
 		profileList_pos<-startprofiles(
 							logfile,
 							frac=FALSE,
@@ -11,7 +13,7 @@
 							progbar=logfile$parameters$progressBar,
 							ion_mode="positive",
 							until=logfile$parameters$upto_file,
-							selective=logfile$parameters[[90]]
+							selective=logfile$parameters$prof_select
 						)
 		profileList_pos<-agglomer(
 							profileList_pos,
@@ -66,6 +68,8 @@
 	if(any(measurements[,4]=="negative")){
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="peaklist")){rm(peaklist)}
+		if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
+		if(any(objects()=="profileList_neg")){rm(profileList_neg)}		
 		profileList_neg<-startprofiles(
 							logfile,
 							frac=FALSE,

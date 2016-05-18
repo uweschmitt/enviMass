@@ -89,9 +89,12 @@ recomb_score<-function(
 				score1<-NA
 			}
 			if(use_score_cut=="TRUE"){
-				if( (is.na(score1)) || (score1<=score_cut) ){
+				if(is.na(score1)){
 					next;
 				}
+				if(score1<=score_cut){
+					next;
+				}				
 			}
 			get_plaus<-check_plaus( # returns TRUE or FALSE
 				cent_peak_combi=check_nodes[[k]],

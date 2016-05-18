@@ -43,7 +43,7 @@
 						),
 						HTML('<hr noshade="noshade" />'),
 						fluidRow(
-							column(width = 5, selectInput("Measadd_profiled", "Use for profiling?", choices = c("TRUE","FALSE"), selected = "TRUE"))
+							column(width = 5, selectInput("Measadd_profiled", "Use for profiling (if Settings/Profiling/Omit adjusted to do so)?", choices = c("TRUE","FALSE"), selected = "TRUE"))
 						),						
 						HTML('<hr noshade="noshade" />'),
 						div(style = widget_style,
@@ -84,7 +84,7 @@
 						HTML('<hr noshade="noshade" />'),
 						fluidRow(
 							column(width = 5, selectInput("Modif_include","Include in workflow?",choices = c("TRUE","FALSE"),selected="TRUE")),
-							column(width = 5, selectInput("Modif_profiled","Use for profiling?",choices = c("TRUE","FALSE"),selected="TRUE"))
+							column(width = 5, selectInput("Modif_profiled","Use for profiling (if Settings/Profiling/Omit adjusted to do so)?",choices = c("TRUE","FALSE"),selected="TRUE"))
 						),	
 						HTML('<hr noshade="noshade" />'),
 						actionButton("Modif_export","Save")
@@ -705,154 +705,6 @@
         ########################################################################
         tabPanel("Results", 	
 			tabsetPanel( 
-				######################################################################################################################
-				tabPanel("Profiles",
-					div(style = widget_style5,
-						textOutput("had_ion"),	
-						selectInput("Ion_mode", label=NULL, c("positive","negative"), selected = ("positive"), multiple = FALSE)
-					),
-					HTML('<hr noshade="noshade" />'),  
-					#navbarPage("", 
-					tabsetPanel( 
-
-### Baustelle						
-						tabPanel("Summary",										
-								tags$h5("Filter profile list:"),
-								div(style = widget_style3,numericInput("filterProf_minmass", "Minimum m/z:", 0)),
-								div(style = widget_style3,numericInput("filterProf_maxmass", "Maximum m/z:", 3000)),
-								div(style = widget_style3,numericInput("filterProf_minrt", "Minimum RT [s]:", 0)),
-								div(style = widget_style3,numericInput("filterProf_maxrt", "Maximum RT [s]:", 100000)),			
-								div(style = widget_style3,radioButtons("filterProf_meanblind", "Use mean above blind?", c("no"="no","yes"="yes"))),
-								bsPopover("filterProf_meanblind", 
-									title = "Replicates, not time series ...",
-									content = "Get profiles with mean sample intensity x times above mean blank intensities (set Sort profile list by: maximum or mean intensity; x = to be set in blind settings panel). Useful if all your sample files are replicates and not a time sequences.", 
-									placement = "top", trigger = "hover"),
-								div(style = widget_style3,radioButtons("filterProf_notblind", "Not in blind?", c("no"="no","yes"="yes"))),
-								div(style = widget_style3,selectInput("filterProf_sort", "Sort profile list by:", 
-									choices = c("ID","mean m/z","mean RT","maximum intensity","mean intensity","global trend intensity","current trend intensity"), selected="current trend intensity")),
-								div(style = widget_style3,numericInput("filterProf_count", "Restrict list size:", 500)),
-								conditionalPanel( # IS filter				
-										condition = "input.screen_IS == 'yes'",
-										tags$h5("IS compounds filter:"),										
-										HTML('<hr noshade="noshade" />')
-								),
-								conditionalPanel( # target filter				
-										condition = "input.screen_target == 'yes'",	
-										tags$h5("Target compounds filter:"),	
-										HTML('<hr noshade="noshade" />')
-								),															
-								HTML('<hr noshade="noshade" />'),
-								bsCollapse(multiple = FALSE, open = "col2", id = "collapse2",
-									bsCollapsePanel("Profile statistics", 
-										div(style = widget_style3,tags$h6("Number of peaks:"), textOutput("atprof1")),
-										div(style = widget_style3,tags$h6("Number of profiles:"), textOutput("atprof2")),
-										div(style = widget_style3,tags$h6("...containing blind peaks:"), textOutput("atprof3")),
-										div(style = widget_style3,tags$h6("...with a past trend:"), textOutput("atprof4")),
-										div(style = widget_style3,tags$h6("...with a current trend:"), textOutput("atprof5")),
-										value="test4"),							
-									bsCollapsePanel("Intensity histogram", 
-										imageOutput("profilehisto", height="auto"),
-										value="test5"),
-									bsCollapsePanel("Profile list", 		
-										tableOutput("allproftable"),
-										value="test5")
-								),
-								div(style = widget_style3,
-									bsButton("expo_profiles","Export filtered profile list",style="info"),
-									textOutput("expo1"),
-									bsPopover("expo_profiles", 
-										title = "Export above filtered profiles",
-										content = "Time-sorted peak intensities of profiles and their mean mass & RT are exported as profiles.txt to the export folder of this project. WARNING: restrict list size to avoid lengthy exports!", 
-										placement = "right", trigger = "hover"))				
-### Baustelle	
-						),
-						tabPanel("Latest trends",
-								tags$h5("Comparison of current vs. global trends by profile ID"),
-								imageOutput("boxprofile", height="auto"),
-								HTML(
-									'<p>
-									</br></br>
-									The above boxplot (grey) shows the intensity distributions of all trends of concern, listing the IDs, mean masses (m/z) and mean retention time (RT)
-									of the profiles with the most intense trends on the right.
-									Colored points are used to elucidate the current trend intensities from the latest input file. Note that a file is only included if 
-									surviving the quality check (QC). The red dots signify profiles with intensities in the outlier range of the global (past and latest) trend intensities; 
-									green dots symbolize those below. 
-									</br></br>
-									For more information on the individual profiles, navigate to the Single Profile tab and use the profile ID to extract further profile information.
-									</p>'
-								)
-						),
-						tabPanel("Single Profile",
-								tags$h5("Extraction of individual profiles"),					
-								HTML('<p> Enter the ID of a profile to extract relevant information. Profile IDs are listed both in the Summary tab and the Newest trends tab. 
-								Alternatively, sort and filter the profile list in the Summary tab and choose an entry number to show a listed profile. </p>'),							
-								div(style = widget_style3,numericInput("profID", "profile ID:", 0)),
-								div(style = widget_style3,numericInput("profentry", "Entry # in (filtered, sorted) profile list:", 0)),
-								div(style = widget_style3,radioButtons("prof_log", "Logarithmic intensity?", c("no"="no","yes"="yes"))),
-								div(style = widget_style3,textOutput("peak_number")),
-								imageOutput("timeprofile", height="auto"),
-								bsCollapse(multiple = FALSE, open = "col1", id = "collapse1",
-									bsCollapsePanel("Profile EICs & Peak viewer", 
-										div(style = widget_style3,numericInput("profpeakID", "Peak entry #:", min=0, 0)),
-										bsPopover("profpeakID", title = "View extracted chromatograms & peaks of the selected profile (sample files only).",
-											content = "Select peaks in the order listed in the profile peak table, i.e. from latest to oldest file.", placement = "right", trigger = "hover"),
-										div(style = widget_style3,textOutput("prof_peak_text")),
-										HTML('<hr noshade="noshade" />'),
-										imageOutput("profile_position", height="auto"),
-										imageOutput("profile_EIC", height="auto"),
-										value="test1"),
-									bsCollapsePanel("Profile mass estimation",
-										div(style = widget_style3,
-											bsButton("dens_mass","Get mass estimates",style="success"),
-											numericInput("boot_size", "Size of bootstrap sample:",min=10, 200),
-											radioButtons("use_weight", "Weight by intensity?", c("no"="no","yes"="yes"))
-										),
-										tags$h5("m/z estimate (dark blue):"),
-										textOutput("prof_mass"),
-										imageOutput("massdens", height="auto"),
-										imageOutput("massint", height="auto"),
-										value="test3"),
-									bsCollapsePanel("Profile peak table", 
-										DT::dataTableOutput("oneproftable"),
-										value="test2")
-								)
-						),
-						tabPanel("Normalization",            
-								imageOutput("profnorm", height="auto"),
-								imageOutput("profcount", height="auto")
-						)#,
-						#id="navbar_prof",inverse=FALSE,collapsible=TRUE,fluid=TRUE
-					)
-				),
-				######################################################################################################################
-				tabPanel("Quality control",
-					tabsetPanel(
-						tabPanel("Positive ionization ",
-							tags$h5("Quantile distribution of peak intensities:"),           
-							imageOutput("plotQCa_pos", height="auto"),
-							tags$h5("Outliers:"),
-							imageOutput("plotQCb_pos", height="auto"),
-							tags$h5("Intensity distribution for median intensity normalization:"),                    
-							imageOutput("pic_int_distr_pos", width = "100%", height = "250px")
-						),
-						tabPanel("Negative ionization ",
-							tags$h5("Quantile distribution of peak intensities:"),           
-							imageOutput("plotQCa_neg", height="auto"),
-							tags$h5("Outliers:"),
-							imageOutput("plotQCb_neg", height="auto"),
-							tags$h5("Intensity distribution for median intensity normalization:"),                    
-							imageOutput("pic_int_distr_neg", width = "100%", height = "250px")
-						)
-					)	
-				),
-				######################################################################################################################
-                tabPanel("EIC & Peaks",
-					div(style = widget_style3,selectInput("sel_meas_ID", "Select file ID:", choices = c("none"), "none")),
-					div(style = widget_style3,numericInput("sel_peak_ID", "Select peak ID:", 0)),
-					imageOutput("EIC1", height="auto"),
-					imageOutput("EIC2", height="auto"),
-					imageOutput("EIC3", height="auto")
-                ),
 				###################################################################################################################### 
 				tabPanel("Processing",            
 					selectInput("sel_meas", "Select file ID:", choices = c("none"), "none"),
@@ -886,6 +738,35 @@
 							placement = "right", trigger = "hover")),
 					HTML('<hr noshade="noshade" />')					
 				),
+				######################################################################################################################
+				tabPanel("Quality control",
+					tabsetPanel(
+						tabPanel("Positive ionization ",
+							tags$h5("Quantile distribution of peak intensities:"),           
+							imageOutput("plotQCa_pos", height="auto"),
+							tags$h5("Outliers:"),
+							imageOutput("plotQCb_pos", height="auto"),
+							tags$h5("Intensity distribution for median intensity normalization:"),                    
+							imageOutput("pic_int_distr_pos", width = "100%", height = "250px")
+						),
+						tabPanel("Negative ionization ",
+							tags$h5("Quantile distribution of peak intensities:"),           
+							imageOutput("plotQCa_neg", height="auto"),
+							tags$h5("Outliers:"),
+							imageOutput("plotQCb_neg", height="auto"),
+							tags$h5("Intensity distribution for median intensity normalization:"),                    
+							imageOutput("pic_int_distr_neg", width = "100%", height = "250px")
+						)
+					)	
+				),
+				######################################################################################################################
+                tabPanel("EIC & Peaks",
+					div(style = widget_style3,selectInput("sel_meas_ID", "Select file ID:", choices = c("none"), "none")),
+					div(style = widget_style3,numericInput("sel_peak_ID", "Select peak ID:", 0)),
+					imageOutput("EIC1", height="auto"),
+					imageOutput("EIC2", height="auto"),
+					imageOutput("EIC3", height="auto")
+                ),
 				######################################################################################################################
 				tabPanel("Compound screening",
 					tabsetPanel(
@@ -1044,8 +925,127 @@
 							)						
 						)
 					)	
-				)
-            )
+				),
+				######################################################################################################################
+				tabPanel("Profiles",
+					div(style = widget_style5,
+						textOutput("had_ion"),	
+						selectInput("Ion_mode", label=NULL, c("positive","negative"), selected = ("positive"), multiple = FALSE)
+					),
+					HTML('<hr noshade="noshade" />'),  
+					#navbarPage("", 
+					tabsetPanel( 
+
+### Baustelle						
+						tabPanel("Summary",										
+								tags$h5("Filter profile list:"),
+								div(style = widget_style3,numericInput("filterProf_minmass", "Minimum m/z:", 0)),
+								div(style = widget_style3,numericInput("filterProf_maxmass", "Maximum m/z:", 3000)),
+								div(style = widget_style3,numericInput("filterProf_minrt", "Minimum RT [s]:", 0)),
+								div(style = widget_style3,numericInput("filterProf_maxrt", "Maximum RT [s]:", 100000)),			
+								div(style = widget_style3,radioButtons("filterProf_meanblind", "Use mean above blind?", c("no"="no","yes"="yes"))),
+								bsPopover("filterProf_meanblind", 
+									title = "Replicates, not time series ...",
+									content = "Get profiles with mean sample intensity x times above mean blank intensities (set Sort profile list by: maximum or mean intensity; x = to be set in blind settings panel). Useful if all your sample files are replicates and not a time sequences.", 
+									placement = "top", trigger = "hover"),
+								div(style = widget_style3,radioButtons("filterProf_notblind", "Not in blind?", c("no"="no","yes"="yes"))),
+								div(style = widget_style3,selectInput("filterProf_sort", "Sort profile list by:", 
+									choices = c("ID","mean m/z","mean RT","maximum intensity","mean intensity","global trend intensity","current trend intensity"), selected="current trend intensity")),
+								div(style = widget_style3,numericInput("filterProf_count", "Restrict list size:", 500)),
+								conditionalPanel( # IS filter				
+										condition = "input.screen_IS == 'yes'",
+										tags$h5("IS compounds filter:"),										
+										HTML('<hr noshade="noshade" />')
+								),
+								conditionalPanel( # target filter				
+										condition = "input.screen_target == 'yes'",	
+										tags$h5("Target compounds filter:"),	
+										HTML('<hr noshade="noshade" />')
+								),															
+								HTML('<hr noshade="noshade" />'),
+								bsCollapse(multiple = FALSE, open = "col2", id = "collapse2",
+									bsCollapsePanel("Profile statistics", 
+										div(style = widget_style3,tags$h6("Number of peaks:"), textOutput("atprof1")),
+										div(style = widget_style3,tags$h6("Number of profiles:"), textOutput("atprof2")),
+										div(style = widget_style3,tags$h6("...containing blind peaks:"), textOutput("atprof3")),
+										div(style = widget_style3,tags$h6("...with a past trend:"), textOutput("atprof4")),
+										div(style = widget_style3,tags$h6("...with a current trend:"), textOutput("atprof5")),
+										value="test4"),							
+									bsCollapsePanel("Intensity histogram", 
+										imageOutput("profilehisto", height="auto"),
+										value="test5"),
+									bsCollapsePanel("Profile list", 		
+										tableOutput("allproftable"),
+										value="test5")
+								),
+								div(style = widget_style3,
+									bsButton("expo_profiles","Export filtered profile list",style="info"),
+									textOutput("expo1"),
+									bsPopover("expo_profiles", 
+										title = "Export above filtered profiles",
+										content = "Time-sorted peak intensities of profiles and their mean mass & RT are exported as profiles.txt to the export folder of this project. WARNING: restrict list size to avoid lengthy exports!", 
+										placement = "right", trigger = "hover"))				
+### Baustelle	
+						),
+						tabPanel("Latest trends",
+								tags$h5("Comparison of current vs. global trends by profile ID"),
+								imageOutput("boxprofile", height="auto"),
+								HTML(
+									'<p>
+									</br></br>
+									The above boxplot (grey) shows the intensity distributions of all trends of concern, listing the IDs, mean masses (m/z) and mean retention time (RT)
+									of the profiles with the most intense trends on the right.
+									Colored points are used to elucidate the current trend intensities from the latest input file. Note that a file is only included if 
+									surviving the quality check (QC). The red dots signify profiles with intensities in the outlier range of the global (past and latest) trend intensities; 
+									green dots symbolize those below. 
+									</br></br>
+									For more information on the individual profiles, navigate to the Single Profile tab and use the profile ID to extract further profile information.
+									</p>'
+								)
+						),
+						tabPanel("Single Profile",
+								tags$h5("Extraction of individual profiles"),					
+								HTML('<p> Enter the ID of a profile to extract relevant information. Profile IDs are listed both in the Summary tab and the Newest trends tab. 
+								Alternatively, sort and filter the profile list in the Summary tab and choose an entry number to show a listed profile. </p>'),							
+								div(style = widget_style3,numericInput("profID", "profile ID:", 0)),
+								div(style = widget_style3,numericInput("profentry", "Entry # in (filtered, sorted) profile list:", 0)),
+								div(style = widget_style3,radioButtons("prof_log", "Logarithmic intensity?", c("no"="no","yes"="yes"))),
+								div(style = widget_style3,textOutput("peak_number")),
+								imageOutput("timeprofile", height="auto"),
+								bsCollapse(multiple = FALSE, open = "col1", id = "collapse1",
+									bsCollapsePanel("Profile EICs & Peak viewer", 
+										div(style = widget_style3,numericInput("profpeakID", "Peak entry #:", min=0, 0)),
+										bsPopover("profpeakID", title = "View extracted chromatograms & peaks of the selected profile (sample files only).",
+											content = "Select peaks in the order listed in the profile peak table, i.e. from latest to oldest file.", placement = "right", trigger = "hover"),
+										div(style = widget_style3,textOutput("prof_peak_text")),
+										HTML('<hr noshade="noshade" />'),
+										imageOutput("profile_position", height="auto"),
+										imageOutput("profile_EIC", height="auto"),
+										value="test1"),
+									bsCollapsePanel("Profile mass estimation",
+										div(style = widget_style3,
+											bsButton("dens_mass","Get mass estimates",style="success"),
+											numericInput("boot_size", "Size of bootstrap sample:",min=10, 200),
+											radioButtons("use_weight", "Weight by intensity?", c("no"="no","yes"="yes"))
+										),
+										tags$h5("m/z estimate (dark blue):"),
+										textOutput("prof_mass"),
+										imageOutput("massdens", height="auto"),
+										imageOutput("massint", height="auto"),
+										value="test3"),
+									bsCollapsePanel("Profile peak table", 
+										DT::dataTableOutput("oneproftable"),
+										value="test2")
+								)
+						),
+						tabPanel("Normalization",            
+								imageOutput("profnorm", height="auto"),
+								imageOutput("profcount", height="auto")
+						)#,
+						#id="navbar_prof",inverse=FALSE,collapsible=TRUE,fluid=TRUE
+					)
+				)		
+            )				
         ),
         ########################################################################
         # HELP #################################################################
