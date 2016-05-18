@@ -626,7 +626,7 @@
 				numericInput("blind_fold", "Intensity threshold ratio sample/blind <", 100),
 				numericInput("blind_dmz", "Mass uncertainty (+/-) ...", 3), 
                 selectInput("blind_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),				
-                numericInput("blind_drt", "RT tolerance  [s]", 60),       
+                numericInput("blind_drt", "RT tolerance [s]:", 60),       
 				HTML('<hr noshade="noshade" />'),
 				tags$h5("Positive ionization mode"),
 				checkboxInput("subtract_pos_bydate", "Subtract with the next blank/blind file preceding a sample by its date & time?", FALSE),				

@@ -339,14 +339,15 @@ maincalc2<-reactive({
 					}else{
 						results_screen<-results_screen_target_pos[[2]]
 					}
-					table_screening<-DT::datatable(results_screen, escape = FALSE,selection = 'single',rownames=FALSE) %>% 
-						formatStyle(
-								'Max. sample score',
-								background = styleColorBar(c(0,1), 'lightgreen'),
-								backgroundPosition = 'left'
-							)			
-					output$Table_screening_pos <- DT::renderDataTable({table_screening},server = TRUE)			
-					rm(results_screen_target_pos,table_screening)	
+					output$Table_screening_pos <- DT::renderDataTable({
+						DT::datatable(results_screen, escape = FALSE,selection = 'single',rownames=FALSE) %>% 
+							formatStyle(
+									'Max. sample score',
+									background = styleColorBar(c(0,1), 'lightgreen'),
+									backgroundPosition = 'left'
+								)					
+					},server = TRUE)			
+					rm(results_screen_target_pos)	
 				}else{	
 					output$Table_screening_pos <- DT::renderDataTable({
 						DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No target screening results available")
@@ -364,14 +365,14 @@ maincalc2<-reactive({
 					}else{
 						results_screen<-results_screen_target_neg[[2]]
 					}
-					table_screening<-DT::datatable(results_screen, escape = FALSE,selection = 'single',rownames=FALSE) %>% 
+					output$Table_screening_neg <- DT::renderDataTable({
+						DT::datatable(results_screen, escape = FALSE,selection = 'single',rownames=FALSE) %>% 
 							formatStyle(
 								'Max. sample score',
 								background = styleColorBar(c(0,1), 'lightgreen'),
 								backgroundPosition = 'left'
-							)
-					
-					output$Table_screening_neg <- DT::renderDataTable({table_screening},server = TRUE)
+							)					
+					},server = TRUE)
 					rm(results_screen_target_neg,table_screening)	
 				}else{	
 					output$Table_screening_neg <- DT::renderDataTable({

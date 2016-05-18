@@ -45,10 +45,10 @@ updateTextInput(session, "trend_lags","Time lags of trends [days], comma-separat
 updateNumericInput(session, "trend_thres", "Trend vs. mean+variance intensity threshold:", value = as.numeric(logfile$parameters[[35]]))   
 updateSelectInput(session, "notrend", "Do not show global trend - instead, report it as maximum intensity above blind", choices = c("TRUE"="TRUE","FALSE"="FALSE"), selected= as.character(logfile$parameters[[29]]))
 # BLIND ########################################################################
-updateNumericInput(session, "blind_fold", "...if intensity ratio sample/blind <", value = as.numeric(logfile$parameters[[37]]))   
-updateNumericInput(session, "blind_dmz", "Peak mass deviation among measurements (+/-) ...", value = as.numeric(logfile$parameters[[82]]))  
+updateNumericInput(session, "blind_fold", "Intensity threshold ratio sample/blind <", value = as.numeric(logfile$parameters[[37]]))   
+updateNumericInput(session, "blind_dmz", "Mass uncertainty (+/-) ...", value = as.numeric(logfile$parameters[[82]]))  
 updateSelectInput(session, "blind_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), selected= as.character(logfile$parameters[[83]]))
-updateNumericInput(session, "blind_drt", "Peak deviation within profiles: RT tolerance [s]", value = as.numeric(logfile$parameters[[84]]))  
+updateNumericInput(session, "blind_drt", "RT tolerance [s]:", value = as.numeric(logfile$parameters[[84]]))  
 updateCheckboxInput(session,"subtract_pos_bydate", label =  "Subtract with the next blank/blind file preceding a sample by its date & time?", value=as.logical(logfile$parameters[[85]]))
 updateCheckboxInput(session,"subtract_pos_byfile", label = "Additional non-sample files to subtract each sample file with (i.e. not preceding by date only), choose file ID:", value=as.logical(logfile$parameters[[86]]))							
 updateCheckboxInput(session,"subtract_neg_bydate", label = "Subtract with the next blank/blind file preceding a sample by its date & time?", value=as.logical(logfile$parameters[[87]]))
