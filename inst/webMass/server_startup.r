@@ -164,7 +164,10 @@ maincalc2<-reactive({
 		source("server_cleaner.R", local=TRUE);	  
 		##########################################################################
 		cat("observed openit")
-		file_in<-as.character(parseFilePaths(getVolumes()(),isolate(input$pro_dir3))[1,4])
+		file_in<-NA
+		try({
+			file_in<-as.character(parseFilePaths(getVolumes()(),isolate(input$pro_dir3))[1,4])
+		})
 		if(is.na(file_in)){ # take string input, format properly
 			#cat("\n is NA! \n");cat(file_in);
 			file_in<-as.character(isolate(input$pro_dir2))
@@ -177,6 +180,8 @@ maincalc2<-reactive({
 			file_in<-file_in[-length(file_in)]
 			file_in<-paste0(file_in,collapse=.Platform$file.sep)
 		}
+		
+		
 		if(file.exists(file.path(file_in,"logfile.emp"))){
 			load(file.path(file_in,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 			#######################################################################			
