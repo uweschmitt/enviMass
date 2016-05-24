@@ -284,7 +284,7 @@ SEXP correct_intens(
            int do_group = INTEGER_VALUE(run_pregroup);
            double drtdens2 = NUMERIC_VALUE(drtdens);
            int leng = LENGTH(RT);
-           int m,n,i,k,z,w,clustnumb,maxat=0,maxit=0,at_peak=0,found_group,in_group;
+           int m,n,i,k=0,z,w,clustnumb,maxat=0,maxit=0,at_peak=0,found_group,in_group;
            double delmz;
            SEXP clusters;
            PROTECT(clusters = allocMatrix(REALSXP, leng, 13));
@@ -743,7 +743,7 @@ SEXP correct_intens(
            ordsam = INTEGER_POINTER(orderedsam);
            int supr = INTEGER_VALUE(supress);
            int leng = LENGTH(RT_lower);
-           int m,n,i,k,clustnumb,maxat=0,maxit=0;
+           int m,n,i,k=0,clustnumb,maxat=0,maxit=0;
 
            SEXP clusters;
            PROTECT(clusters = allocMatrix(REALSXP, leng, 9));
