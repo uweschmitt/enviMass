@@ -117,9 +117,9 @@ NULL
 	packageStartupMessage("\n \n Welcome to enviMass version 3.1 \n Run webMass() to start the enviMass browser UI \n\n");
 	# add menus for enviMass & enviPick 
 	if(interactive() && .Platform$OS.type == "windows" && .Platform$GUI == "Rgui" ){
-		winMenuAdd("enviX");
-		#winMenuAddItem("enviX", "enviPick", "webpick()");	
-		winMenuAddItem("enviX", "enviMass", "webMass()");	
+		winMenuAdd("enviMass");
+		winMenuAddItem("enviMass", "enviMass", "webMass()");
+		#winMenuAddItem("enviMass", "enviPick", "webpick()");		
 	}
 	# copy the enviMass manual to shiny`s localhost folder
 	file.copy(	

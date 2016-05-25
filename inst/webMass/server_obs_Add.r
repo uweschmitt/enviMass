@@ -155,7 +155,7 @@ observe({
 			rm(targets)
 			#############################################################################
 			# adjust task/workflow settings #############################################
-			workflow_set(logfile,down="pattern")	
+			enviMass:::workflow_set(logfile,down="pattern")	
 			#############################################################################			
 			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));   
  			output$targets<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));
