@@ -2,6 +2,7 @@
     input$Calc
     if(input$Calc){
       do_flow<<-1
+	  time_start<<-Sys.time()
     }
 })
 
@@ -233,7 +234,10 @@ maincalc<-reactive({
 			output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
 			isolate(init$b<-(init$b+1))
 			if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_calculation.r!")}
-			cat("Calculations completed \n")
+			cat("Calculations completed, with a \n")
+			time_diff<-(Sys.time()-time_start)
+			print(time_diff)
+			cat("\n")
 			return("Calculations completed \n")
 		}
         ########################################################################

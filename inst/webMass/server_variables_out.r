@@ -168,7 +168,8 @@ observe({
 		at2<-logfile$parameters[c(42,43,45:51)]
 		if(any(is.na(at2))){stop("\nThere was an issue reading out the new settings - maybe comma / dot separation was not fullfilled?")}		
 		if(!enviMass:::comp_list(at1,at2)){ 
-			enviMass:::workflow_set(down="IS_screen",check_node=TRUE)
+			enviMass:::workflow_set(down="IS_screen",check_node=TRUE) 
+			enviMass:::workflow_set(down="pattern",check_node=TRUE) # because delRT is set during pattern calculation
 		}	
 		if(do_debug){cat("\n at_9")}
 		# target screening #####################################################
@@ -188,6 +189,7 @@ observe({
 		if(any(is.na(at2))){stop("\nThere was an issue reading out the new settings - maybe comma / dot separation was not fullfilled?")}		
 		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="target_screen",check_node=TRUE)
+			enviMass:::workflow_set(down="pattern",check_node=TRUE) # because delRT is set during pattern calculation
 		}
 		if(do_debug){cat("\n at_10")}
 		# IS-Normalization #####################################################
