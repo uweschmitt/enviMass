@@ -46,12 +46,6 @@
 				}		
 			}
 		}
-		# get score_1
-		
-		
-		
-		
-		
 		# else all is plausible
 		return(TRUE)
 	}

@@ -103,7 +103,7 @@ recomb_score<-function(
 				RT_tol_inside,
 				int_tol
 			) 
-			if( get_plaus ){
+			if(get_plaus){
 				if(verbose){cat("-TRUE");stop()}
 				contained<-FALSE
 				if(length(results)>0){
@@ -118,7 +118,6 @@ recomb_score<-function(
 					if(verbose){cat("-ok")}
 					results[[at_results]]<-list()
 					results[[at_results]][[1]]<-check_nodes[[k]]
-
 					results[[at_results]][[2]]<-score1
 					# ... measured "below LOD threshold:"
 					if(any(!above_LOD)){
