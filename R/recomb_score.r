@@ -122,7 +122,8 @@ recomb_score<-function(
 					# ... measured "below LOD threshold:"
 					if(any(!above_LOD)){
 						score2<-(
-							sum(pattern_compound[check_nodes[[k]][,1],2][!above_LOD[check_nodes[[k]][,1]]]) / sum(pattern_compound[!above_LOD,2])
+							#sum(pattern_compound[check_nodes[[k]][,1],2][!above_LOD[check_nodes[[k]][,1]]]) / sum(pattern_compound[!above_LOD,2])
+							sum(pattern_compound[check_nodes[[k]][,1],2][!above_LOD[check_nodes[[k]][,1]]]) / sum(pattern_compound[,2])
 						)
 					}else{
 						score2<-NA
