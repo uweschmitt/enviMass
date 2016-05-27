@@ -227,7 +227,7 @@ maincalc<-reactive({
 			output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
 		}
         if(do_flow<22){
-			invalidateLater(500, session=NULL)
+			invalidateLater(1, session=NULL)
 			cat("Calculating...");
 			return("Calculating...")
 		}else{		

@@ -400,7 +400,18 @@
 				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> Calibration </font></p> '),
 					radioButtons("quantif", "Include? ", c("yes"="yes","no"="no")),					
 				HTML('<hr noshade="noshade" />'),
-				HTML('<h1 align="center"> &#x21e9; </h1> '),  					
+				HTML('<h1 align="center"> &#x21e9; </h1> '),  		
+				# block X ######################################################					
+				HTML('<p style="background-color:white"; align="center"> <font color="#FFFFFF"> Isotopologue grouping </font></p> '),
+					radioButtons("isotopol", "Include? ", c("yes"="yes","no"="no")),	
+				HTML('<hr noshade="noshade" />'),
+				HTML('<p style="background-color:white"; align="center"> <font color="#FFFFFF"> Adduct grouping </font></p> '),
+					radioButtons("adducts", "Include? ", c("yes"="yes","no"="no")),	
+				HTML('<hr noshade="noshade" />'),				
+				HTML('<p style="background-color:white"; align="center"> <font color="#FFFFFF"> Homologue series detection </font></p> '),
+					radioButtons("homol", "Include? ", c("yes"="yes","no"="no")),	
+				HTML('<hr noshade="noshade" />'),					
+				HTML('<h1 align="center"> &#x21e9; </h1> '),  				
 				# block 5 ######################################################
 				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Normalization using IS-profiles </font></p> '),
 					fluidRow(
