@@ -35,8 +35,8 @@
 		adducted<-rep("")	
 		at_len<-1		
 		max_len<-10000
-		at_matrix<-matrix(nrow=10000,ncol=8,0)
-		colnames(at_matrix)<-c("m/z","log Intensity","Measured RT","m/z deviation [ppm]","RT deviation within","above_cutscore","Time sequence","Expected RT")
+		at_matrix<-matrix(nrow=10000,ncol=9,0)
+		colnames(at_matrix)<-c("m/z","log Intensity","Measured RT","m/z deviation [ppm]","RT deviation within","above_cutscore","Time sequence","Expected RT","File ID")
 		for(i in 1:length(screened_listed)){
 			IDed[i]<-strsplit(names(pattern)[i],"_")[[1]][1]
 			named[i]<-compound_table[compound_table[,1]==strsplit(names(pattern)[i],"_")[[1]][1],2]
@@ -99,7 +99,7 @@
 								if((at_len+local_len)>max_len){
 									at_matrix<-rbind(
 										at_matrix, 
-										matrix(nrow=10000,ncol=8,0)
+										matrix(nrow=10000,ncol=9,0)
 									)
 									max_len<-(max_len+1000)
 								}
@@ -116,6 +116,7 @@
 									as.numeric(as.difftime(measurements_table[IDs==m,7])/24)
 								)
 								at_matrix[at_len:(at_len+local_len-1),8]<-at_RT[i]
+								at_matrix[at_len:(at_len+local_len-1),9]<-m;
 								at_len<-(at_len+local_len)
 							}
 						}
