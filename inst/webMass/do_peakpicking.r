@@ -12,7 +12,8 @@
 					file.path(logfile[[1]],"files",paste(as.character(measurements[i,1]),".mzXML",sep="")),
 					MSlevel=logfile$parameters[1],  # MSlevel
 					progbar=logfile$parameters[21], # progbar
-					minRT=FALSE,maxRT=FALSE,minmz=FALSE,maxmz=FALSE
+					minRT=FALSE,maxRT=FALSE,minmz=FALSE,maxmz=FALSE,
+					ion_mode=measurements[i,4]
 				);  				
 				cat(" data read -");
 				MSlist<-enviPick::mzagglom(
