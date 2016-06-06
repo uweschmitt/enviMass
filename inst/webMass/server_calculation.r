@@ -90,7 +90,7 @@ maincalc<-reactive({
           output$dowhat<<-renderText("Alignment skipped ... wait");
         }
         ########################################################################
-		# Replicates ###########################################################
+		# Blind peaks ##########################################################
         if(do_flow==7){
 			enviMass:::workflow_node(
 				"blinds","blinds","blinds","Blind peak detection",
@@ -114,7 +114,7 @@ maincalc<-reactive({
 			)  
         }
         ########################################################################
-        # profiling ############################################################
+        # Profiling ############################################################
         if(do_flow==10){
 			enviMass:::workflow_node(
 				"profiling","profiling","profiling","Profile extraction",

@@ -397,7 +397,7 @@
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),  					
 				# block 4 ######################################################					
-				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> Calibration </font></p> '),
+				HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Calibration </font></p> '),
 					radioButtons("quantif", "Include? ", c("yes"="yes","no"="no")),					
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),  		
