@@ -38,8 +38,8 @@
 							column(width = 5,textInput("Measadd_place", "Place:", value = "Rhine")),		
 							column(width = 5,dateInput("Measadd_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
 							column(width = 5,textInput("Measadd_time", "Time:(HH:MM:SS)", value = "12:00:00")),							
-							column(width = 5,textInput("Measadd_tag3", "Replicate group", value = "FALSE")),
-							column(width = 5,textInput("Measadd_tag1", "Concentration (for calibration files; no units)", value = "FALSE"))							
+							column(width = 5,textInput("Measadd_tag3", "Replicate group (tag3)", value = "FALSE")),
+							column(width = 5,textInput("Measadd_tag1", "Concentration (for calibration files; no units; tag1)", value = "FALSE"))							
 						),
 						HTML('<hr noshade="noshade" />'),
 						fluidRow(
@@ -71,15 +71,14 @@
 							column(width = 5, textInput("Modif_name", "Name:", value = "Sample 1")),
 							column(width = 5, selectInput("Modif_type", "Type:", choices = c("sample", "blank", "calibration", "doted", "other"))),
 							column(width = 5, selectInput("Modif_mode", "Choose ionization mode:", choices = c("positive", "negative")))	
-							
 						),
 						HTML('<hr noshade="noshade" />'),
 						fluidRow(
 							column(width = 5,textInput("Modif_place", "Place:", value = "Rhine")),		
 							column(width = 5,dateInput("Modif_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
 							column(width = 5,textInput("Modif_time", "Time:(HH:MM:SS)", value = "12:00:00")),							
-							column(width = 5,textInput("Modif_tag3", "Replicate group", value = "FALSE")),
-							column(width = 5,textInput("Modif_tag1", "Concentration (for calibration files; no units)", value = "FALSE"))							
+							column(width = 5,textInput("Modif_tag3", "Replicate group (tag3)", value = "FALSE")),
+							column(width = 5,textInput("Modif_tag1", "Concentration (for calibration files; no units; tag1)", value = "FALSE"))							
 						),
 						HTML('<hr noshade="noshade" />'),
 						fluidRow(
@@ -398,17 +397,27 @@
 				HTML('<h1 align="center"> &#x21e9; </h1> '),  					
 				# block 4 ######################################################					
 				HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Calibration </font></p> '),
-					radioButtons("quantif", "Include? ", c("yes"="yes","no"="no")),					
+					fluidRow(
+						column(width = 2, radioButtons("quantif", "Include? ", c("yes"="yes","no"="no")) ),
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","This step extracts calibrations sets of target and internal standard compound peaks, using
+							the provided calibration files. The sets can be used in the Calibration tab to establish specific calibration curves
+							for quantification. If selected, the extracted calibration peaks will incorporate the above mass recalibration and LOD interpolation.")
+						)
+					),		
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),  		
 				# block X ######################################################					
 				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> Isotopologue grouping </font></p> '),
+					helpText("Under construction"),
 					#radioButtons("isotopol", "Include? ", c("yes"="yes","no"="no")),	
 				HTML('<hr noshade="noshade" />'),
 				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> Adduct grouping </font></p> '),
+					helpText("Under construction"),
 					#radioButtons("adducts", "Include? ", c("yes"="yes","no"="no")),	
 				HTML('<hr noshade="noshade" />'),				
 				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> Homologue series detection </font></p> '),
+					helpText("Under construction"),
 					#radioButtons("homol", "Include? ", c("yes"="yes","no"="no")),	
 				HTML('<hr noshade="noshade" />'),					
 				HTML('<h1 align="center"> &#x21e9; </h1> '),  				

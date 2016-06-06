@@ -217,6 +217,11 @@ addmeasu<-reactive({
 					file.remove(file.path(logfile[[1]],"files",paste(as.character(newID),".raw",sep="")))
 					file.remove(isolate(input$Measadd_path[[4]]));
 					if(  file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep=""))) || file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")))  ){
+						if(isolate(input$Measadd_type)=="calibration"){ # default for calibration files: no profiling!
+							use_profiling<-"FALSE"
+						}else{
+							use_profiling<-as.character(isolate(input$Measadd_profiled))
+						}
 						measurements2<-c(
 							as.character(newID),
 							as.character(isolate(input$Measadd_name)),
@@ -225,14 +230,14 @@ addmeasu<-reactive({
 							as.character(isolate(input$Measadd_place)),
 							as.character(isolate(input$Measadd_date)),
 							as.character(isolate(input$Measadd_time)),
-							as.character(isolate(input$Measadd_incl)), #8
-							"TRUE","FALSE","FALSE","FALSE",
-							as.character(isolate(input$Measadd_tag1)),
+							as.character(isolate(input$Measadd_incl)),
+							"TRUE","FALSE","FALSE","FALSE","FALSE","FALSE",
+							use_profiling,
+							"FALSE","FALSE","FALSE",
+							as.character(isolate(input$Measadd_tag1)),	
 							"FALSE",
-							as.character(isolate(input$Measadd_profiled)),#15
-							"FALSE","FALSE","FALSE","FALSE","FALSE",
 							as.character(isolate(input$Measadd_tag3))
-						);		  
+						)
 						measurements3<-rbind(measurements2,measurements1);
 						names(measurements3)<-nameit;
 						measurements3<-enviMass:::convDate(measurements3);
@@ -276,6 +281,11 @@ addmeasu<-reactive({
 					overwrite=TRUE);
 				file.remove(isolate(input$Measadd_path[[4]]));
 				if( (file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")))) || (file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep=""))))){
+					if(isolate(input$Measadd_type)=="calibration"){ # default for calibration files: no profiling!
+						use_profiling<-"FALSE"
+					}else{
+						use_profiling<-as.character(isolate(input$Measadd_profiled))
+					}
 					measurements2<-c(
 						as.character(newID),
 						as.character(isolate(input$Measadd_name)),
@@ -286,7 +296,7 @@ addmeasu<-reactive({
 						as.character(isolate(input$Measadd_time)),
 						as.character(isolate(input$Measadd_incl)),
 						"TRUE","FALSE","FALSE","FALSE","FALSE","FALSE",
-						as.character(isolate(input$Measadd_profiled)),
+						use_profiling,
 						"FALSE","FALSE","FALSE",
 						as.character(isolate(input$Measadd_tag1)),	
 						"FALSE",
@@ -602,7 +612,7 @@ observe({
 		atID<-as.character(isolate(input$Modif_ID))
 		if(any(measurements3[,1]==atID)){
 			updateTextInput(session, "Modif_name",value = as.character(measurements3[measurements3[,1]==atID,2]))
-			updateSelectInput(session,"Modif_type","Type:", choices = c("sample", "blank", "doted", "other"), selected = as.character(measurements3[measurements3[,1]==atID,3]))	
+			updateSelectInput(session,"Modif_type","Type:", choices = c("sample", "blank", "calibration", "doted", "other"), selected = as.character(measurements3[measurements3[,1]==atID,3]))	
 			updateSelectInput(session, "Modif_mode", selected = as.character(measurements3[measurements3[,1]==atID,4]))
 			updateTextInput(session, "Modif_place",value = as.character(measurements3[measurements3[,1]==atID,5]))
 			updateDateInput(session, "Modif_date", value = as.character(measurements3[measurements3[,1]==atID,6]))
@@ -627,7 +637,12 @@ observe({
 	if(isolate(input$Modif_export)){
 		measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 		atID<-as.character(isolate(input$Modif_ID))
-		if(any(measurements3[,1]==atID)){	
+		if(any(measurements3[,1]==atID)){
+			if(isolate(input$Modif_type)=="calibration"){ # default for calibration files: no profiling!
+				use_profiling<-"FALSE"
+			}else{
+				use_profiling<-as.character(isolate(input$Modif_profiled))
+			}
 			measurements3[measurements3[,1]==atID,2]<-as.character(isolate(input$Modif_name))
 			measurements3[measurements3[,1]==atID,3]<-as.character(isolate(input$Modif_type))
 			measurements3[measurements3[,1]==atID,4]<-as.character(isolate(input$Modif_mode))
@@ -638,7 +653,7 @@ observe({
 			measurements3[measurements3[,1]==atID,19]<-as.character(isolate(input$Modif_tag1))
 			measurements3[measurements3[,1]==atID,21]<-as.character(isolate(input$Modif_tag3))	
 			measurements3[measurements3[,1]==atID,8]<-as.character(isolate(input$Modif_include))				
-			measurements3[measurements3[,1]==atID,15]<-as.character(isolate(input$Modif_profiled))	
+			measurements3[measurements3[,1]==atID,15]<-use_profiling	
 			if(measurements3[measurements3[,1]==atID,8]){ # included?
 				enviMass:::workflow_set(down="peakpicking",check_node=TRUE,single_file=TRUE)
 			}

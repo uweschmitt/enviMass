@@ -5,12 +5,13 @@
 #' @description \code{startprofiles} initializes a list object containing all peaks from the files in an enviMass project, associated metadata and placeholder.
 #'
 #' @param logfile logfile object of an enviMass project.
-#' @param frac Numerical, \code{0<frac=<1}. Fraction of files to use; oldest are ommited.
+#' @param frac Numerical, \code{0<frac=<1}. Fraction of files to use; oldest are omitted.
 #' @param sets Integer. Number of latest files to include.
 #' @param progbar Logical. Should a progress bar be shown? Only for Windows.
 #' @param ion_mode Character string, either "positive" or "negative".
 #' @param until Integer, ID of file. All peaks of files up to the date of this file will be included.
 #' @param selective Logical. Should only peaklist with measurements$profiled==TRUE be inluded?
+#' @param types. File types to include in profiling, e.g., "sample", "blind" or "calibration".
 #'
 #' @return profile list
 #' 
@@ -25,7 +26,8 @@ startprofiles<-function(
 	progbar=FALSE,
 	ion_mode="positive",
 	until=FALSE,
-	selective=FALSE
+	selective=FALSE,
+	types=FALSE
 ){
 
     ############################################################################
@@ -112,6 +114,11 @@ startprofiles<-function(
 					next;
 				}
 			}
+			if(types[1]!="FALSE"){
+				if(is.na(match(measurements[i,names(measurements)=="Type"],types))){
+					next;
+				}
+			}
 			if(progbar==TRUE){
 				progi=progi+1;
 				setWinProgressBar(prog, progi, title = "Retrieve matrix length", label = NULL)
@@ -142,6 +149,11 @@ startprofiles<-function(
 		if(any(sampleID==as.numeric(measurements[i,1]))){
 			if(selective==TRUE){
 				if(measurements[i,names(measurements)=="profiled"]=="FALSE"){
+					next;
+				}
+			}
+			if(types[1]!="FALSE"){
+				if(is.na(match(measurements[i,names(measurements)=="Type"],types))){
 					next;
 				}
 			}

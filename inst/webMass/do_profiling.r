@@ -13,7 +13,8 @@
 							progbar=logfile$parameters$progressBar,
 							ion_mode="positive",
 							until=logfile$parameters$upto_file,
-							selective=logfile$parameters$prof_select
+							selective=logfile$parameters$prof_select,
+							types=c("sample","blank")
 						)
 		profileList_pos<-agglomer(
 							profileList_pos,
@@ -77,7 +78,8 @@
 							progbar=logfile$parameters$progressBar,
 							ion_mode="negative",
 							until=logfile$parameters$upto_file,
-							selective=logfile$parameters[[90]]
+							selective=logfile$parameters[[90]],
+							types=c("sample","blank")
 						)
 		profileList_neg<-agglomer(
 							profileList_neg,
