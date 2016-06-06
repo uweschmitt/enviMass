@@ -34,6 +34,7 @@
 				border: solid;
 				border-width: 4px;
 				font-size:1.6em;
+				z-index:30;
 				color: green'>
 				<p> Calculation in progress ... please wait</p>
 				<div id='logobusy1' class='shiny-image-output'></div>	
@@ -54,6 +55,7 @@
 				border: solid;
 				border-width: 4px;
 				font-size:1.6em;
+				z-index:30;
 				color: grey'>
 				<p> Loading project ... please wait</p>
 				<div id='logobusy2' class='shiny-image-output'></div>	

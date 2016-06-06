@@ -162,7 +162,7 @@
 								if(length(with_model)>0){						
 									use_cutint<-10^(predict(LOD_splined[[with_model]],pattern_RT[i])$y)
 								}else{
-									cat("\n Missing LOD model; using default intensity thershold. Debug?")
+									cat("\n Missing LOD model; using default intensity threshold. Debug?")
 									use_cutint<-cutint;
 								}
 							}else{
@@ -409,7 +409,7 @@
 								if(length(with_model)>0){						
 									use_cutint<-10^(predict(LOD_splined[[with_model]],pattern_RT[i])$y)
 								}else{
-									cat("\n Missing LOD model; using default intensity thershold. Debug?")
+									cat("\n Missing LOD model; using default intensity threshold. Debug?")
 									use_cutint<-cutint;
 								}
 							}else{
