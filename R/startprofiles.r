@@ -127,7 +127,7 @@ startprofiles<-function(
 			if(logfile$parameters$blind_omit=="yes"){
 				peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep_2"]==1),,drop=FALSE]
 			}
-			peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep"]==1),,drop=FALSE]
+			peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep"]==1),,drop=FALSE] # replicates
 			if(length(peaklist[,1])==0){next}
 			if(frac!=FALSE){
 				at<-c(at+(floor(length(peaklist[,1])*frac)))
@@ -166,7 +166,7 @@ startprofiles<-function(
 			if(logfile$parameters$blind_omit=="yes"){
 				peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep_2"]==1),,drop=FALSE]
 			}
-			peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep"]==1),,drop=FALSE]
+			peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep"]==1),,drop=FALSE] # replicates
 			if(length(peaklist[,1])==0){next}		
 			if(frac!=FALSE){
 				peaklist<<-peaklist[order(peaklist[,2],decreasing=TRUE),];

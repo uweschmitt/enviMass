@@ -27,7 +27,7 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 		stop(paste("workflow_set: unknown down argument",down))
 	}
 	if(length(down)>1){
-		stop("workflow_set: which down?")
+		stop("workflow_set: from which node down? Please specify only one node.")
 	}
 	########################################################################################
 	# leave funtion if check_node=TRUE (=parameters changed) but node not run ##############

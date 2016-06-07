@@ -170,6 +170,7 @@ observe({
 		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="IS_screen",check_node=TRUE) 
 			enviMass:::workflow_set(down="pattern",check_node=TRUE) # because delRT is set during pattern calculation
+			enviMass:::workflow_set(down="quantification",check_node=TRUE) 
 		}	
 		if(do_debug){cat("\n at_9")}
 		# target screening #####################################################
@@ -190,6 +191,7 @@ observe({
 		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="target_screen",check_node=TRUE)
 			enviMass:::workflow_set(down="pattern",check_node=TRUE) # because delRT is set during pattern calculation
+			enviMass:::workflow_set(down="quantification",check_node=TRUE) 
 		}
 		if(do_debug){cat("\n at_10")}
 		# IS-Normalization #####################################################

@@ -295,12 +295,21 @@ maincalc2<-reactive({
 					assign("profileList",profileList_pos,envir=as.environment(".GlobalEnv"));
 				}
 			}	
+			if(file.exists(file.path(logfile$project_folder,"quantification","profileList_pos_cal"))){
+				load(file=file.path(as.character(logfile$project_folder),"quantification","profileList_pos_cal"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
+			}	
 			if(file.exists(file.path(logfile$project_folder,"results","profileList_neg"))){
 				if(isolate(input$Ion_mode)=="negative"){
 					load(file=file.path(as.character(logfile$project_folder),"results","profileList_neg"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
 					assign("profileList",profileList_neg,envir=as.environment(".GlobalEnv"));
 				}
 			}	
+			if(file.exists(file.path(logfile$project_folder,"quantification","profileList_neg_cal"))){
+				load(file=file.path(as.character(logfile$project_folder),"quantification","profileList_neg_cal"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
+			}	
+			
+			
+			
 			if(file.exists(file.path(logfile$project_folder,"results","profpeaks_pos"))){
 				if(isolate(input$Ion_mode)=="positive"){
 					load(file=file.path(as.character(logfile$project_folder),"results","profpeaks_pos"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
@@ -332,60 +341,6 @@ maincalc2<-reactive({
 			}
 			#updateCheckboxGroupInput(session, "isos", "Select relevant isotopes:", choices = as.character(isotopos),selected=c("13C","34S","81Br","37Cl"))               		
 			########################################################################  
-			# screening results - show only target results by default ##############
-			if( isolate(input$Pos_compound_select=="Target compounds") ){
-				cat("Looking at positive targets_startup \n")
-				if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos")) ){
-					load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))
-					screen_dev_pos<-results_screen_target_pos[[3]]
-					rat_sam_blank_pos<-results_screen_target_pos[[1]][,10,drop=FALSE]
-					if( isolate(input$screen_pos_summarize=="yes") ){
-						results_screen<-results_screen_target_pos[[1]]
-					}else{
-						results_screen<-results_screen_target_pos[[2]]
-					}
-					output$Table_screening_pos <- DT::renderDataTable({
-						DT::datatable(results_screen, escape = FALSE,selection = 'single',rownames=FALSE) %>% 
-							formatStyle(
-									'Max. sample score',
-									background = styleColorBar(c(0,1), 'lightgreen'),
-									backgroundPosition = 'left'
-								)					
-					},server = TRUE)			
-					rm(results_screen_target_pos)	
-				}else{	
-					output$Table_screening_pos <- DT::renderDataTable({
-						DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No target screening results available")
-					},server = TRUE)		
-				}
-			}
-			if( isolate(input$Pos_compound_select=="Target compounds") ){
-				cat("Looking at negative targets_startup \n")
-				if( file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg")) ){
-					load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg"))
-					screen_dev_neg<-results_screen_target_neg[[3]]
-					rat_sam_blank_neg<-results_screen_target_neg[[1]][,10,drop=FALSE]
-					if( isolate(input$screen_neg_summarize=="yes") ){
-						results_screen<-results_screen_target_neg[[1]]
-					}else{
-						results_screen<-results_screen_target_neg[[2]]
-					}
-					output$Table_screening_neg <- DT::renderDataTable({
-						DT::datatable(results_screen, escape = FALSE,selection = 'single',rownames=FALSE) %>% 
-							formatStyle(
-								'Max. sample score',
-								background = styleColorBar(c(0,1), 'lightgreen'),
-								backgroundPosition = 'left'
-							)					
-					},server = TRUE)
-					rm(results_screen_target_neg,table_screening)	
-				}else{	
-					output$Table_screening_neg <- DT::renderDataTable({
-						DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No target screening results available")
-					},server = TRUE)		
-				}
-			}
-			###########################################################################	
 			cat(objects())
 			if(any(ls()=="logfile")){stop("\n illegal logfile detected #3b in server_startup.r!")}
 			source("server_variables_in.R", local=TRUE)

@@ -1,6 +1,6 @@
 
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-	measurements<-measurements[measurements[,8]=="TRUE",]
+	measurements<-measurements[measurements[,8]=="TRUE",,drop=FALSE]
 	if(any(measurements[,4]=="positive")){
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="peaklist")){rm(peaklist)}

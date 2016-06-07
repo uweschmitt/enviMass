@@ -8,17 +8,30 @@ if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_scre
 observe({ 
 	input$Pos_compound_select  
 	input$screen_pos_summarize
+	input$Pos_type_select
 	init$b
 	if(isolate(init$a)=="TRUE"){
 		found_table<-FALSE
 		if( isolate(input$Pos_compound_select=="Target compounds") ){
 			cat("\n Looking at positive targets_selec")
 			if( 
-				(file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))) #&
-				#(logfile$workflow[names(logfile$workflow)=="target_subtr"]!="yes")
+				(
+					(file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))) &
+					(isolate(input$Pos_type_select)=="Sample/blind files")
+				)||(
+					(file.exists(file=file.path(logfile$project_folder,"quantification","results_screen_target_pos_cal"))) &
+					(isolate(input$Pos_type_select)=="Calibration files")				
+				)
 			){			
-				load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))
-				screen_dev_pos<-results_screen_target_pos[[3]] # contains sample vs. blank intensity ratios
+
+				if(isolate(input$Pos_type_select)=="Sample/blind files"){
+					load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))
+				}
+				if(isolate(input$Pos_type_select)=="Calibration files"){
+					load(file=file.path(logfile$project_folder,"quantification","results_screen_target_pos_cal"))
+					results_screen_target_pos<-results_screen_target_pos_cal # contains sample vs. blank intensity ratios
+				}
+				screen_dev_pos<-results_screen_target_pos[[3]] 
 				screen_dev_pos[,2]<-log10(screen_dev_pos[,2])
 				rat_sam_blank_pos<-results_screen_target_pos[[1]][,10,drop=FALSE]
 				if( isolate(input$screen_pos_summarize=="yes") ){
@@ -44,8 +57,14 @@ observe({
 				pattern_RT_pos<-patternRT_pos_target;rm(patternRT_pos_target,envir=as.environment(".GlobalEnv"));
 				load(file=file.path(logfile[[1]],"results","patternDelRT_pos_target"),envir=as.environment(".GlobalEnv"));
 				pattern_delRT_pos<-patternDelRT_pos_target;rm(patternDelRT_pos_target,envir=as.environment(".GlobalEnv"));
-				load(file=file.path(logfile$project_folder,"results","screening","res_target_pos_screen"))
-				res_pos_screen<-res_target_pos_screen;rm(res_target_pos_screen);
+				if(isolate(input$Pos_type_select)=="Sample/blind files"){
+					load(file=file.path(logfile$project_folder,"results","screening","res_target_pos_screen"))
+					res_pos_screen<-res_target_pos_screen;rm(res_target_pos_screen);
+				}
+				if(isolate(input$Pos_type_select)=="Calibration files"){
+					load(file=file.path(logfile$project_folder,"quantification","res_target_pos_screen_cal"))
+					res_pos_screen<-res_target_pos_screen_cal;rm(res_target_pos_screen_cal);				
+				}
 				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 				compound_table<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");	
 				# For IS without Conz.:
@@ -59,13 +78,25 @@ observe({
 			}
 		}
 		if( isolate(input$Pos_compound_select=="Internal standards") ){
-			cat("\n Looking at positive standards_selec")
+			cat("\n Looking at positive standards_selec")		
 			if( 
-				(file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos"))) #&
-				#(logfile$workflow[names(logfile$workflow)=="IS_subtr"]!="yes")
+				(
+					(file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos"))) &
+					(isolate(input$Pos_type_select)=="Sample/blind files")
+				)||(
+					(file.exists(file=file.path(logfile$project_folder,"quantification","results_screen_IS_pos_cal"))) &
+					(isolate(input$Pos_type_select)=="Calibration files")				
+				)
 			){			
-				load(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos"))
-				screen_dev_pos<-results_screen_IS_pos[[3]] # contains sample vs. blank intensity ratios		
+			
+				if(isolate(input$Pos_type_select)=="Sample/blind files"){
+					load(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos"))
+				}
+				if(isolate(input$Pos_type_select)=="Calibration files"){
+					load(file=file.path(logfile$project_folder,"quantification","results_screen_IS_pos_cal"))
+					results_screen_IS_pos<-results_screen_IS_pos_cal;rm(results_screen_IS_pos_cal) # contains sample vs. blank intensity ratios
+				}
+				screen_dev_pos<-results_screen_IS_pos[[3]]  # contains sample vs. blank intensity ratios		
 				screen_dev_pos[,2]<-log10(screen_dev_pos[,2])
 				rat_sam_blank_pos<-results_screen_IS_pos[[1]][,10,drop=FALSE]				
 				if( isolate(input$screen_pos_summarize=="yes") ){
@@ -91,8 +122,15 @@ observe({
 				pattern_RT_pos<-patternRT_pos_IS;rm(patternRT_pos_IS,envir=as.environment(".GlobalEnv"));
 				load(file=file.path(logfile[[1]],"results","patternDelRT_pos_IS"),envir=as.environment(".GlobalEnv"));
 				pattern_delRT_pos<-patternDelRT_pos_IS;rm(patternDelRT_pos_IS,envir=as.environment(".GlobalEnv"));
-				load(file=file.path(logfile$project_folder,"results","screening","res_IS_pos_screen"))
-				res_pos_screen<-res_IS_pos_screen;rm(res_IS_pos_screen);
+				load(file=file.path(logfile$project_folder,"results","screening","res_IS_pos_screen"))				
+				if(isolate(input$Pos_type_select)=="Sample/blind files"){
+					load(file=file.path(logfile$project_folder,"results","screening","res_IS_pos_screen"))
+					res_pos_screen<-res_IS_pos_screen;rm(res_IS_pos_screen);
+				}
+				if(isolate(input$Pos_type_select)=="Calibration files"){
+					load(file=file.path(logfile$project_folder,"quantification","res_IS_pos_screen_cal"))
+					res_pos_screen<-res_IS_pos_screen_cal;rm(res_IS_pos_screen_cal);				
+				}			
 				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 				compound_table<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
 				# For IS without Conz.:
@@ -109,11 +147,13 @@ observe({
 			# name selected compound & adduct
 			named_compound <- renderText({
 				s<-input$Table_screening_pos_row_last_clicked
-				if (length(s)) {	paste(results_screen_pos[s,2],results_screen_pos[s,3],
-				compound_table[compound_table[,1]==results_screen_pos[s,1],3]
-				,sep=", ")	}
+				if (length(s)) {	
+					paste(results_screen_pos[s,2],results_screen_pos[s,3],
+					compound_table[compound_table[,1]==results_screen_pos[s,1],3]
+					,sep=", ")	
+				}
 			})
-			output$screening_details_comp_pos <-named_compound
+			output$screening_details_comp_pos<-named_compound
 			output$screening_details_comp_pos2<-named_compound
 			output$screening_details_comp_pos3<-named_compound
 			# plot pattern & matches
@@ -126,7 +166,12 @@ observe({
 					if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1")}															
 					pattern_sel<-pattern_pos[use_comp][[1]]
 					res_pos_screen_sel<-res_pos_screen[use_comp][[1]]
-					int_tol<-as.numeric(logfile$parameters$IS_inttol)
+					if(isolate(input$Pos_compound_select=="Internal standards")){
+						int_tol<-as.numeric(logfile$parameters$IS_inttol)
+					}
+					if(isolate(input$Pos_compound_select=="Target compounds")){
+						int_tol<-as.numeric(logfile$parameters$tar_inttol)
+					}
 					ylim_up<-(int_tol+100+(int_tol*0.1))
 					plot(pattern_sel[,1],pattern_sel[,2],type="h",lwd=3,col="red",xlab="m/z",ylab="Rescaled intensity",ylim=c(0,ylim_up))
 					if(length(res_pos_screen_sel)>0){
@@ -134,8 +179,14 @@ observe({
 							if(length(res_pos_screen_sel[[i]])>0){
 								for(j in 1:length(res_pos_screen_sel[[i]])){
 									found_matches<-res_pos_screen_sel[[i]][[j]]$Peaks
-									x<-profileList_pos[[2]][found_matches[,2],1]
-									y<-(profileList_pos[[2]][found_matches[,2],2]*res_pos_screen_sel[[i]][[j]][[6]])
+									if(isolate(input$Pos_type_select)=="Sample/blind files"){
+										x<-profileList_pos[[2]][found_matches[,2],1]
+										y<-(profileList_pos[[2]][found_matches[,2],2]*res_pos_screen_sel[[i]][[j]][[6]])
+									}
+									if(isolate(input$Pos_type_select)=="Calibration files"){
+										x<-profileList_pos_cal[[2]][found_matches[,2],1]
+										y<-(profileList_pos_cal[[2]][found_matches[,2],2]*res_pos_screen_sel[[i]][[j]][[6]])										
+									}
 									y<-y[order(x)]
 									x<-x[order(x)]
 									lines(x=x,y=y,col="grey")										
@@ -215,8 +266,7 @@ observe({
 				input$save_int_pos
 				s<-isolate(input$Table_screening_pos_row_last_clicked)
 				if (isolate(input$save_int_pos) & length(s) & isolate(input$screen_pos_summarize=="yes") & isolate(input$Pos_compound_select=="Internal standards")) {
-				
-				
+# BAUSTELLE				
 				}
 			})
 			output$plot_selec_dist_pos <- renderPlot({
@@ -395,12 +445,15 @@ observe({
 			},width = "auto", height = 250)
 			
 		} # if(found_table)
-		if( isolate(input$Pos_compound_select=="File-wise counts") ){
+		if(isolate(input$Pos_compound_select=="File-wise counts")){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements<-measurements[
  				(measurements[,8]=="TRUE") & # included?
 				(measurements[,4]=="positive") &
-				(measurements[,15]=="TRUE") # profiled?
+				(
+					(measurements[,15]=="TRUE") | # profiled?
+					(measurements[,3]=="calibration")
+				)
 			,]		
 			if(length(measurements[,1])>0 ){
 				IDs<-as.numeric(measurements[,1])
@@ -438,6 +491,33 @@ observe({
 					}			
 					rm(res_IS_pos_screen)
 				}
+				if(file.exists(file=file.path(logfile$project_folder,"quantification","res_IS_pos_screen_cal"))){ 
+					load(file=file.path(logfile$project_folder,"quantification","res_IS_pos_screen_cal"))
+					cut_score<-as.numeric(logfile$parameters$IS_w1)	
+					if(length(res_IS_pos_screen_cal)>0){
+						#if(isolate(input$screen_pos_summarize=="yes")){
+							for(i in 1:length(res_IS_pos_screen_cal)){ # per compound_adduct
+								if(length(res_IS_pos_screen_cal[[i]])>0){ 
+									for(j in 1:length(res_IS_pos_screen_cal[[i]])){ # per file
+										if(length(res_IS_pos_screen_cal[[i]][[j]])>0){ # per matches
+											for(k in 1:length(res_IS_pos_screen_cal[[i]][[j]])){ 				
+												if(!is.na(res_IS_pos_screen_cal[[i]][[j]][[k]]$score_1)){
+													if(res_IS_pos_screen_cal[[i]][[j]][[k]]$score_1>=cut_score){
+														count_file_compound_pos[IDs==j,4]<-(
+															count_file_compound_pos[IDs==j,4]+1
+														);
+														break;
+													}
+												}	
+											}
+										}
+									}
+								}
+							}
+						#}	
+					}			
+					rm(res_IS_pos_screen_cal)
+				}
 				if(file.exists(file=file.path(logfile$project_folder,"results","screening","res_target_pos_screen"))){ 
 					load(file=file.path(logfile$project_folder,"results","screening","res_target_pos_screen"))
 					cut_score<-as.numeric(logfile$parameters$tar_w1)				
@@ -464,6 +544,33 @@ observe({
 						#}	
 					}			
 					rm(res_target_pos_screen)
+				}			
+				if(file.exists(file=file.path(logfile$project_folder,"quantification","res_target_pos_screen_cal"))){ 
+					load(file=file.path(logfile$project_folder,"quantification","res_target_pos_screen_cal"))
+					cut_score<-as.numeric(logfile$parameters$tar_w1)				
+					if(length(res_target_pos_screen_cal)>0){
+						#if(isolate(input$screen_pos_summarize=="yes")){
+							for(i in 1:length(res_target_pos_screen_cal)){ # per compound_adduct
+								if(length(res_target_pos_screen_cal[[i]])>0){ 
+									for(j in 1:length(res_target_pos_screen_cal[[i]])){ # per file
+										if(length(res_target_pos_screen_cal[[i]][[j]])>0){ # per matches
+											for(k in 1:length(res_target_pos_screen_cal[[i]][[j]])){ 				
+												if(!is.na(res_target_pos_screen_cal[[i]][[j]][[k]]$score_1)){
+													if(res_target_pos_screen_cal[[i]][[j]][[k]]$score_1>=cut_score){
+														count_file_compound_pos[IDs==j,5]<-(
+															count_file_compound_pos[IDs==j,5]+1
+														);
+														break;
+													}
+												}	
+											}
+										}
+									}
+								}
+							}
+						#}	
+					}			
+					rm(res_target_pos_screen_cal)
 				}			
 				output$count_file_compound_pos <- DT::renderDataTable({count_file_compound_pos},server = TRUE)				
 			}else{
@@ -600,7 +707,12 @@ observe({
 					if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1")}	
 					pattern_sel<-pattern_neg[use_comp][[1]]
 					res_neg_screen_sel<-res_neg_screen[use_comp][[1]]
-					int_tol<-as.numeric(logfile$parameters$IS_inttol)
+					if(isolate(input$Neg_compound_select=="Internal standards")){
+						int_tol<-as.numeric(logfile$parameters$IS_inttol)
+					}
+					if(isolate(input$Neg_compound_select=="Target compounds")){
+						int_tol<-as.numeric(logfile$parameters$tar_inttol)
+					}
 					ylim_up<-(int_tol+100+(int_tol*0.1))
 					plot(pattern_sel[,1],pattern_sel[,2],type="h",lwd=3,col="red",xlab="m/z",ylab="Rescaled intensity",ylim=c(0,ylim_up))
 					if(length(res_neg_screen_sel)>0){

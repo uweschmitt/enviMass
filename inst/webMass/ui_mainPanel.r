@@ -400,9 +400,10 @@
 					fluidRow(
 						column(width = 2, radioButtons("quantif", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","This step extracts calibrations sets of target and internal standard compound peaks, using
+							tags$p(align="justify","This step extracts calibration sets of target and internal standard compound peaks, using
 							the provided calibration files. The sets can be used in the Calibration tab to establish specific calibration curves
-							for quantification. If selected, the extracted calibration peaks will incorporate the above mass recalibration and LOD interpolation.")
+							for quantification. If selected, the extraction of these calibration peaks will be affected by the above mass recalibration, 
+							replicate intersection, blind subtraction and LOD interpolation steps.")
 						)
 					),		
 				HTML('<hr noshade="noshade" />'),
@@ -792,15 +793,21 @@
 					tabsetPanel(
 						tabPanel("Positive ionization",
 							fluidRow(
-								column(4, selectInput(inputId="Pos_compound_select",label="",choices=c("Target compounds","Internal standards","File-wise counts"), 
-									selected = "Target compounds", multiple = FALSE)),
+								column(3, selectInput(inputId="Pos_compound_select",label="",choices=c("Choose","Target compounds","Internal standards","File-wise counts"), 
+									selected = "Choose", multiple = FALSE)),
 								conditionalPanel(			
 									condition = "input.Pos_compound_select == 'Internal standards' || input.Pos_compound_select == 'Target compounds'",										
-																column(4, selectInput(inputId="screen_pos_summarize", label="", choices = c("Show all adducts"="yes","Collapse adducts"="no"), "yes"))
-								)								
+										column(3, selectInput(inputId="screen_pos_summarize", label="", choices = c("Show all adducts"="yes","Collapse adducts"="no"), "yes")),
+										column(4, selectInput(inputId="Pos_type_select",label="",choices=c("Sample/blind files","Calibration files"), 
+											selected = "Non-calibration files", multiple = FALSE))			
+								)							
 							),
 							conditionalPanel(			
-								condition = "input.Pos_compound_select == 'Internal standards' || input.Pos_compound_select == 'Target compounds'",					
+								condition = "input.Pos_compound_select == 'Internal standards' || input.Pos_compound_select == 'Target compounds'",	
+								
+								conditionalPanel(			
+								condition = "input.screen_pos_summarize == 'yes'",	
+								
 								bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_pos_one",
 									bsCollapsePanel(title="Pattern match for selected compound", #style="info",
 										textOutput('screening_details_comp_pos'),
@@ -834,7 +841,10 @@
 										HTML('<hr noshade="noshade" />'),
 										DT::dataTableOutput('Table_screening_selected_pos')
 									)
-								),					
+								)		
+
+								),
+								
 								HTML('<hr noshade="noshade" />'),
 								tags$p(align="justify","The below sample and blank matches give the number of files with matches above the cutoff score, 
 								with multiple matches per file above this cutoff merged."),

@@ -249,7 +249,12 @@ addmeasu<-reactive({
 						doit<-as.character(isolate(input$Measadd_incl))
 						doit<<-as.character(isolate(input$Measadd_incl))
 						if(doit=="TRUE"){
-							enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
+							if( isolate(input$Measadd_type)!="calibration" ){ # exclude calibration
+								enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE,except="calibration")	
+							}
+							if( isolate(input$Measadd_type)=="calibration" ){ # still, do everything
+								enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
+							}						
 						}
 						#############################################################################			
 						save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
@@ -312,7 +317,12 @@ addmeasu<-reactive({
 					doit<-as.character(isolate(input$Measadd_incl))
 					doit<<-as.character(isolate(input$Measadd_incl))
 					if(doit=="TRUE"){
-						enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
+						if( isolate(input$Measadd_type)!="calibration" ){ # exclude calibration
+							enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE,except="calibration")	
+						}
+						if( isolate(input$Measadd_type)=="calibration" ){ # still, do everything
+							enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
+						}						
 					}
 					#############################################################################			
 					output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"));
@@ -394,6 +404,7 @@ observe({
 			"checked","recal","align","norm","profiled","LOD","IS_screen","tar_screen","tag1","tag2","tag3")
 			adjustit<-"FALSE"
         }else{
+			delete_type<-measurements1[measurements1[,1]==as.character(isolate(input$Measdel_ID)),3]
 		    measurements1<-measurements1[measurements1[,1]!=as.character(isolate(input$Measdel_ID)),]
 			if(any(as.character(measurements1[,8]))=="TRUE"){
 				adjustit<-"TRUE"
@@ -406,7 +417,12 @@ observe({
 		#############################################################################
 		# adjust task/workflow settings #############################################
 		if(adjustit=="TRUE"){
-			enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
+			if(delete_type!="calibration"){ # exclude calibration
+				enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE,except="calibration")	
+			}
+			if(delete_type=="calibration"){ # still, do everything
+				enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)
+			}
 		}	
 		#########################################################################			
 		# subtraction files, positive: ##########################################
@@ -706,7 +722,12 @@ observe({
 			rm(measurements3)
 			######################################################################
 			# Adjust workflow ####################################################	
-			enviMass:::workflow_set(down="peakpicking",check_node=TRUE,single_file=TRUE)	
+			if( isolate(input$Modif_type)!="calibration" ){ # exclude calibration
+				enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE,except="calibration")	
+			}
+			if( isolate(input$Modif_type)=="calibration" ){ # still, do everything
+				enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
+			}							
 			######################################################################
 			output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
 			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));

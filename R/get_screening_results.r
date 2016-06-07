@@ -8,6 +8,7 @@
 #' @param measurements_table
 #' @param compound_table
 #' @param cut_score
+#' @param do_for
 #' 
 #' @details enviMass workflow function
 #' 
@@ -53,7 +54,7 @@
 			if(length(screened_listed[[i]])>0){
 				for(m in 1:length(screened_listed[[i]])){
 					if(length(screened_listed[[i]][[m]])>0){
-						is_sample<-(measurements_table[IDs==m,3]=="sample")					
+						is_sample<-(measurements_table[IDs==m,3]!="blank")	# sample, calibration, doted; but not blank/blind				
 						if(!is_sample){ # could still be doted or blind or ...
 							is_blank<-(measurements_table[IDs==m,3]=="blank")
 						}else{
@@ -185,7 +186,7 @@
 			"Max. blank score",
 			"Max. blank peaks",
 			"Int. ratio sample/blank"
-		)
+		)		
 		##########################################################################################
 		# Table with adducts per compound summarized #############################################		
 		ID_comp<-unique(IDed)
