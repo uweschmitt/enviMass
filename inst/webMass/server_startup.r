@@ -153,9 +153,10 @@ observe({
     }
 	if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_startup.r!")}
 })
-  
+	 
 #  observe({ # didnt work with the busy message, remember?
 maincalc2<-reactive({
+
     input$openit
     if(isolate(input$openit)){
 		#closeAlert(session, alertId="a3")
@@ -292,7 +293,7 @@ maincalc2<-reactive({
 			if(file.exists(file.path(logfile$project_folder,"results","profileList_pos"))){
 				if(isolate(input$Ion_mode)=="positive"){
 					load(file=file.path(as.character(logfile$project_folder),"results","profileList_pos"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
-					assign("profileList",profileList_pos,envir=as.environment(".GlobalEnv"));
+					assign("profileList",profileList_pos,envir=as.environment(".GlobalEnv"));				
 				}
 			}	
 			if(file.exists(file.path(logfile$project_folder,"quantification","profileList_pos_cal"))){
@@ -301,14 +302,13 @@ maincalc2<-reactive({
 			if(file.exists(file.path(logfile$project_folder,"results","profileList_neg"))){
 				if(isolate(input$Ion_mode)=="negative"){
 					load(file=file.path(as.character(logfile$project_folder),"results","profileList_neg"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
-					assign("profileList",profileList_neg,envir=as.environment(".GlobalEnv"));
+					assign("profileList",profileList_neg,envir=as.environment(".GlobalEnv"));				
 				}
 			}	
 			if(file.exists(file.path(logfile$project_folder,"quantification","profileList_neg_cal"))){
 				load(file=file.path(as.character(logfile$project_folder),"quantification","profileList_neg_cal"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
 			}	
-			
-			
+					
 			
 			if(file.exists(file.path(logfile$project_folder,"results","profpeaks_pos"))){
 				if(isolate(input$Ion_mode)=="positive"){

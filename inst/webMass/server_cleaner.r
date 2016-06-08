@@ -14,7 +14,11 @@
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="EIC_ID")){rm(EIC_ID,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList")){rm(profileList,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg_cal")){rm(profileList_neg_cal,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg_copy")){rm(profileList_neg_copy,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos_cal")){rm(profileList_pos_cal,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos_copy")){rm(profileList_pos_copy,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks")){rm(profpeaks,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks_neg")){rm(profpeaks_neg,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks_pos")){rm(profpeaks_pos,envir=as.environment(".GlobalEnv"))}
@@ -28,9 +32,14 @@
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_pos_IS")){rm(pattern_pos_IS,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternDelRT_pos_IS")){rm(patternDelRT_pos_IS,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternRT_pos_IS")){rm(patternRT_pos_IS,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="intmass_neg_IS")){rm(intmass_neg_IS,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_neg_IS")){rm(pattern_neg_IS,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternDelRT_neg_IS")){rm(patternDelRT_neg_IS,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternRT_neg_IS")){rm(patternRT_neg_IS,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="doit")){rm(doit,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="peakTable")){rm(peakTable,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="fileID")){rm(fileID,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="time_start")){rm(time_start,envir=as.environment(".GlobalEnv"))}	
 	###############################################################################
 	
 	###############################################################################

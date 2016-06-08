@@ -35,12 +35,12 @@ newproject<-function(pro_name,pro_dir,IS,targets){
   dir.create(file.path(pro_dir,pro_name,"features"),recursive=TRUE)   # subfolder
   dir.create(file.path(pro_dir,pro_name,"results"),recursive=TRUE)    # subfolder
 	dir.create(file.path(pro_dir,pro_name,"results","screening"),recursive=TRUE)    	# subfolder  
-	dir.create(file.path(pro_dir,pro_name,"results","quantification"),recursive=TRUE)   # subfolder 
 	dir.create(file.path(pro_dir,pro_name,"results","LOD"),recursive=TRUE)    	# subfolder  
 	dir.create(file.path(pro_dir,pro_name,"results","recalibration"),recursive=TRUE)   # subfolder 
   dir.create(file.path(pro_dir,pro_name,"dataframes"),recursive=TRUE) # subfolder
   dir.create(file.path(pro_dir,pro_name,"pics"),recursive=TRUE)       # subfolder
   dir.create(file.path(pro_dir,pro_name,"exports"),recursive=TRUE)    # subfolder
+  dir.create(file.path(pro_dir,pro_name,"quantification"),recursive=TRUE)    # subfolder  
   ##############################################################################
   # write compound tables ######################################################  
   write.table(IS,file=file.path(pro_dir,pro_name,"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)      	  	
@@ -273,12 +273,10 @@ newproject<-function(pro_name,pro_dir,IS,targets){
     logfile[[7]]<-0   
     names(logfile)[7]<-c("adducts_pos")
     logfile[[7]]<-"M+H";
-
     # negative adducts #########################################################
     logfile[[8]]<-0   
     names(logfile)[8]<-c("adducts_neg")
     logfile[[8]]<-"M-H";
-    
     # isotopes #################################################################      
     logfile[[9]]<-0   
     names(logfile)[9]<-c("isotopes")
@@ -291,9 +289,15 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	names(logfile)[13]<-"Positive_subtraction_files"
 	logfile[[14]]<-"FALSE"
 	names(logfile)[14]<-"Negative_subtraction_files"
+	# calibration model ########################################################
+	cal_models_pos<-list(0)
+	save(cal_models_pos,file=file.path(logfile$project_folder,"quantification","cal_models_pos"));	
+	cal_models_neg<-list(0)
+	save(cal_models_neg,file=file.path(logfile$project_folder,"quantification","cal_models_neg"));	
     # measurement data.frame ###################################################
 	save(logfile,file=file.path(pro_dir,pro_name,"logfile.emp"));  
 	rm(logfile)
-  ##############################################################################
-  return(file.path(pro_dir,pro_name,"logfile.emp"));
+	##############################################################################
+	return(file.path(pro_dir,pro_name,"logfile.emp"));
+  
 }

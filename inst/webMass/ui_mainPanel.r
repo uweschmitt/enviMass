@@ -38,13 +38,23 @@
 							column(width = 5,textInput("Measadd_place", "Place:", value = "Rhine")),		
 							column(width = 5,dateInput("Measadd_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
 							column(width = 5,textInput("Measadd_time", "Time:(HH:MM:SS)", value = "12:00:00")),							
-							column(width = 5,textInput("Measadd_tag3", "Replicate group (tag3)", value = "FALSE")),
-							column(width = 5,textInput("Measadd_tag1", "Concentration (for calibration files; no units; tag1)", value = "FALSE"))							
+							column(width = 5,textInput("Measadd_tag3", "Replicate group (tag3)", value = "FALSE"))							
+						),					
+						conditionalPanel(
+							condition = "input.Measadd_type == 'calibration'", 
+							HTML('<hr noshade="noshade" />'),
+							fluidRow(
+								column(width = 5,textInput("Measadd_tag1", "Concentration (no units; tag1)", value = "FALSE")),
+								column(width = 5,textInput("Measadd_tag2", "Calibration group (required; tag2)", value = "Group A"))
+							)
 						),
-						HTML('<hr noshade="noshade" />'),
-						fluidRow(
-							column(width = 5, selectInput("Measadd_profiled", "Use for profiling (if Settings/Profiling/Omit adjusted to do so)?", choices = c("TRUE","FALSE"), selected = "TRUE"))
-						),						
+						conditionalPanel(
+							condition = "input.Measadd_type != 'calibration'",
+							HTML('<hr noshade="noshade" />'),
+							fluidRow(
+								column(width = 5, selectInput("Measadd_profiled", "Use for profiling (if Settings/Profiling/Omit adjusted to do so)?", choices = c("TRUE","FALSE"), selected = "TRUE"))
+							)						
+						),	
 						HTML('<hr noshade="noshade" />'),
 						div(style = widget_style,
 							fileInput("Measadd_path", "Select centroided .mzXML file:", multiple = FALSE, accept = c(".mzXML",".raw")),
@@ -70,6 +80,7 @@
 						fluidRow(
 							column(width = 5, textInput("Modif_name", "Name:", value = "Sample 1")),
 							column(width = 5, selectInput("Modif_type", "Type:", choices = c("sample", "blank", "calibration", "doted", "other"))),
+							column(width = 5, selectInput("Modif_include","Include in workflow?",choices = c("TRUE","FALSE"),selected="TRUE")),
 							column(width = 5, selectInput("Modif_mode", "Choose ionization mode:", choices = c("positive", "negative")))	
 						),
 						HTML('<hr noshade="noshade" />'),
@@ -77,14 +88,23 @@
 							column(width = 5,textInput("Modif_place", "Place:", value = "Rhine")),		
 							column(width = 5,dateInput("Modif_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
 							column(width = 5,textInput("Modif_time", "Time:(HH:MM:SS)", value = "12:00:00")),							
-							column(width = 5,textInput("Modif_tag3", "Replicate group (tag3)", value = "FALSE")),
-							column(width = 5,textInput("Modif_tag1", "Concentration (for calibration files; no units; tag1)", value = "FALSE"))							
+							column(width = 5,textInput("Modif_tag3", "Replicate group (tag3)", value = "FALSE"))				
 						),
-						HTML('<hr noshade="noshade" />'),
-						fluidRow(
-							column(width = 5, selectInput("Modif_include","Include in workflow?",choices = c("TRUE","FALSE"),selected="TRUE")),
-							column(width = 5, selectInput("Modif_profiled","Use for profiling (if Settings/Profiling/Omit adjusted to do so)?",choices = c("TRUE","FALSE"),selected="TRUE"))
-						),	
+						conditionalPanel(
+							condition = "input.Modif_type == 'calibration'", 
+							HTML('<hr noshade="noshade" />'),
+							fluidRow(
+								column(width = 5,textInput("Modif_tag1", "Concentration (no units; tag1)", value = "FALSE")),
+								column(width = 5,textInput("Modif_tag2", "Calibration group (tag2)", value = "FALSE"))
+							)
+						),
+						conditionalPanel(
+							condition = "input.Modif_type != 'calibration'",
+							HTML('<hr noshade="noshade" />'),
+							fluidRow(
+								column(width = 5, selectInput("Modif_profiled","Use for profiling (if Settings/Profiling/Omit adjusted to do so)?",choices = c("TRUE","FALSE"),selected="TRUE"))
+							)	
+						),
 						HTML('<hr noshade="noshade" />'),
 						actionButton("Modif_export","Save")
 					),
@@ -690,36 +710,76 @@
         ########################################################################
         # CALIBRATION ##########################################################
         ########################################################################
-        tabPanel("Calibration", 
-			HTML('<hr noshade="noshade" />'),		
-			selectInput("Ion_mode_Cal", label="Ionization mode", c("positive","negative"), selected = ("positive"), multiple = FALSE),
-			HTML('<hr noshade="noshade" />'),
-			selectInput(inputId="Cal_load",label="Load calibration",choices=c("none"),selected = "none", multiple = FALSE),
-			HTML('<hr noshade="noshade" />'),
-			fluidRow(
-				column(3, selectInput(inputId="Cal_IS_ID",label="Internal standard ID",choices=c("none"),selected = "none", multiple = FALSE)),
-				column(3, selectInput(inputId="Cal_IS_adduct",label="Adduct",choices=c("none"),selected = "none", multiple = FALSE)),
-				column(3, selectInput(inputId="Cal_IS_peak",label="Isotopologue peak #",choices=c("none"),selected = "none", multiple = FALSE))
-			),
-			HTML('<hr noshade="noshade" />'),
-			fluidRow(
-				column(3, selectInput(inputId="Cal_target_ID",label="Target ID",choices=c("none"),selected = "none", multiple = FALSE)),
-				column(3, selectInput(inputId="Cal_target_adduct",label="Adduct",choices=c("none"),selected = "none", multiple = FALSE)),
-				column(3, selectInput(inputId="Cal_target_peak",label="Isotopologue peak #",choices=c("none"),selected = "none", multiple = FALSE))
-			),
-			HTML('<hr noshade="noshade" />'),
-			
-			HTML('<hr noshade="noshade" />'),
-			actionButton("save_Cal","Save calibration"),
-			actionButton("remove_Cal","Remove calibration"),
-			HTML('<hr noshade="noshade" />'),
-			tags$h5("Import calibration files from another project (WARNING - replaces calibration files in current project):"),
-			textInput("import_pro_dir_Cal", "", value = "C:\\...\\other_project_name"),
-			bsPopover("import_pro_dir_Cal", 
-				title = "Insert full path, including the project folder, but excluding the logfile.emp.",
-				content = "Using your OS explorer, you may navigate into your project folder and copy/paste the full path.", 
-				placement = "right", trigger = "hover"),
-			actionButton("Import_project_Cal","Import")		
+        tabPanel("Calibration", 	
+			tabsetPanel( 
+				tabPanel("Create",
+					HTML('<hr noshade="noshade" />'),
+					selectInput("Ion_mode_Cal", label="Ionization mode", c("none","positive","negative"), selected = ("none"), multiple = FALSE),	
+					helpText("Select the ionization mode to load the available calibration file groups into the below selection."),
+					HTML('<hr noshade="noshade" />'),
+					HTML('<h1 align="center"> &#x21e9; </h1> '),
+						
+					conditionalPanel(
+						condition = "input.Ion_mode_Cal != 'none'", 	
+						selectInput(inputId="Cal_file_set",label="Specify calibration file group",choices=c("none"),selected = "none", multiple = FALSE),
+						helpText("Select the calibration file group to continue with the below compound selection."),
+						HTML('<hr noshade="noshade" />'),
+						HTML('<h1 align="center"> &#x21e9; </h1> '),
+						
+						conditionalPanel(
+							condition = "input.Cal_file_set != 'none'", 
+							fluidRow(
+								column(3, selectInput(inputId="Cal_IS_ID",label="Internal standard ID",choices=c("none"),selected = "none", multiple = FALSE)),
+								column(3, selectInput(inputId="Cal_IS_adduct",label="Adduct",choices=c("none"),selected = "none", multiple = FALSE)),
+								column(3, selectInput(inputId="Cal_IS_peak",label="Isotopologue peak #",choices=c("none"),selected = "none", multiple = FALSE))
+							),
+							fluidRow(
+								column(3, selectInput(inputId="Cal_target_ID",label="Target ID",choices=c("none"),selected = "none", multiple = FALSE)),
+								column(3, selectInput(inputId="Cal_target_adduct",label="Adduct",choices=c("none"),selected = "none", multiple = FALSE)),
+								column(3, selectInput(inputId="Cal_target_peak",label="Isotopologue peak #",choices=c("none"),selected = "none", multiple = FALSE))
+							),
+							selectInput(inputId="Cal_load",label="Load a previously established calibration model and all underlying data points",choices=c("none"),selected = "none", multiple = FALSE),
+							helpText("Select compounds or their established calibrations to (resume) work on their individual calibration models below. 
+							The screened compounds can also be viewed in the Results/Compound screening tab."),
+							HTML('<hr noshade="noshade" />'),
+							
+							HTML('<h1 align="center"> &#x21e9; </h1> '),
+							conditionalPanel(
+								condition = "input.Cal_target_ID != 'none' & input.Cal_IS_ID != 'none'", 
+								
+								
+								
+								
+								
+								bsButton("save_Cal","Save this calibration set",style="success"),
+								bsButton("remove_Cal","Remove this calibration set",style="danger")
+							)
+							
+							
+							
+						)
+					
+
+					),
+					
+					conditionalPanel(
+						condition = "input.Cal_target_ID == 'none' & input.Cal_IS_ID == 'none'",			
+						HTML('<h3 align="center"> Complete the above selection to continue</h3> ')
+					)
+				),	
+				tabPanel("Import",
+					
+					HTML('<hr noshade="noshade" />'),
+					helpText("Import calibration files from another project (WARNING - replaces calibration files in current project):"),
+					textInput("import_pro_dir_Cal", "", value = "C:\\...\\other_project_name"),
+					bsPopover("import_pro_dir_Cal", 
+						title = "Insert full path, including the project folder, but excluding the logfile.emp.",
+						content = "Using your OS explorer, you may navigate into your project folder and copy/paste the full path.", 
+						placement = "right", trigger = "hover"),
+					bsButton("Import_project_Cal","Import",style="info")
+					
+				)
+			)
         ),
         ########################################################################
         # RESULTS ##############################################################

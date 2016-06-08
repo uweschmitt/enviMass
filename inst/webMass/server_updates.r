@@ -1,8 +1,9 @@
 # include updates - if older projects are reopened
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_updates.r!")}
 
-#if(logfile[[10]]<3.100){	
-if(TRUE){
+#if(logfile[[10]]<3.100){
+if(logfile[[10]]<3.102){
+#if(TRUE){
 	
 	cat("\n Updating to version 3.1 ...")
 	################################################################################################
@@ -11,9 +12,9 @@ if(TRUE){
 	){
 		dir.create(file.path(logfile$project_folder,"results","screening"),recursive=TRUE)    	# subfolder  
 	}
-	if(!file.exists(file.path(logfile$project_folder,"results","quantification"))
+	if(!file.exists(file.path(logfile$project_folder,"quantification"))
 	){	
-		dir.create(file.path(logfile$project_folder,"results","quantification"),recursive=TRUE)   # subfolder 
+		dir.create(file.path(logfile$project_folder,"quantification"),recursive=TRUE)   # subfolder 
 	}
 	if(!file.exists(file.path(logfile$project_folder,"results","LOD"))
 	){
@@ -455,6 +456,26 @@ if(logfile[[10]]<3.101){
 	################################################################################################		
 	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+}
+
+if(logfile[[10]]<3.102){
+
+	################################################################################################	
+	if(!file.exists(file.path(logfile$project_folder,"quantification","cal_models_pos"))){
+		cal_models_pos<-list(0)
+		save(cal_models_pos,file=file.path(logfile$project_folder,"quantification","cal_models_pos"));	
+	}
+	if(!file.exists(file.path(logfile$project_folder,"quantification","cal_models_neg"))){
+		cal_models_neg<-list(0)
+		save(cal_models_neg,file=file.path(logfile$project_folder,"quantification","cal_models_neg"));	
+	}
+	################################################################################################	
+	logfile[[10]]<<-3.102
+	names(logfile)[10]<<-"version"
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+
 }
 
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_updates.r!")}

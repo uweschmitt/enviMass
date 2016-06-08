@@ -108,10 +108,12 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 			}
 		}
 		if(!check_node){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="recal"]<<-TRUE;			
-			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-			measurements[,12]<-FALSE;
-			write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);		
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="recal"]<<-TRUE;
+			if(!single_file){			
+				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+				measurements[,12]<-FALSE;
+				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);	
+			}
 		}
 	}	
 	########################################################################################
@@ -123,10 +125,12 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 			write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 		}
 		if(!check_node){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="align"]<<-TRUE;			
-			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-			measurements[,13]<-FALSE;
-			write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);		
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="align"]<<-TRUE;
+			if(!single_file){			
+				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+				measurements[,13]<-FALSE;
+				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);	
+			}			
 		}
 	}	
 	########################################################################################
@@ -139,9 +143,11 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 		}
 		if(!check_node){
 			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="norm"]<<-TRUE;			
-			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-			measurements[,14]<-FALSE;
-			write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);		
+			if(!single_file){
+				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+				measurements[,14]<-FALSE;
+				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);	
+			}
 		}
 	}	
 	########################################################################################

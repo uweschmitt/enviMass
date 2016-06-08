@@ -56,7 +56,8 @@
 		profileList_pos<-enviMass:::in_blind(profileList_pos)
 		profileList_pos<<-profileList_pos
 		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"));
-		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy")); # used for screening - does not include modifications of downstream compound subtraction		
+		profileList_pos_copy<-profileList_pos
+		save(profileList_pos_copy,file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy")); # used for screening - does not include modifications of downstream compound subtraction		
 		profpeaks_pos<-enviMass:::profiletopeak(profileList_pos,progbar=logfile$parameters[21])		
 		profpeaks_pos<-profpeaks_pos[order(profpeaks_pos[,13],decreasing=TRUE),];
 		profpeaks_pos<<-profpeaks_pos;
@@ -120,7 +121,8 @@
 		profileList_neg<-enviMass:::in_blind(profileList_neg)
 		profileList_neg<<-profileList_neg
 		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"));
-		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy")); # used for screening - does not include modifications of downstream compound subtraction			
+		profileList_neg_copy<-profileList_neg
+		save(profileList_neg_copy,file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy")); # used for screening - does not include modifications of downstream compound subtraction			
 		profpeaks_neg<-enviMass:::profiletopeak(profileList_neg,progbar=logfile$parameters[21])
 		profpeaks_neg<-profpeaks_neg[order(profpeaks_neg[,13],decreasing=TRUE),]
 		profpeaks_neg<<-profpeaks_neg;

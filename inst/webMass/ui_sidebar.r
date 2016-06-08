@@ -26,6 +26,7 @@ sidebarPanel(
 			content = "The new project folder will be generated automatically, using the project name.", 
 			placement = "right", trigger = "hover"),
 		bsButton("newit","Start",style="success"),
+		HTML('<hr noshade="noshade" />'),
 		# (2) to open an existing project ########################################
 		tags$h4("Open existing project"),
 		helpText("Type path to project folder ..."),

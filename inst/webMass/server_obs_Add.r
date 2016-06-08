@@ -235,7 +235,7 @@ addmeasu<-reactive({
 							use_profiling,
 							"FALSE","FALSE","FALSE",
 							as.character(isolate(input$Measadd_tag1)),	
-							"FALSE",
+							as.character(isolate(input$Measadd_tag2)),
 							as.character(isolate(input$Measadd_tag3))
 						)
 						measurements3<-rbind(measurements2,measurements1);
@@ -304,7 +304,7 @@ addmeasu<-reactive({
 						use_profiling,
 						"FALSE","FALSE","FALSE",
 						as.character(isolate(input$Measadd_tag1)),	
-						"FALSE",
+						as.character(isolate(input$Measadd_tag2)),
 						as.character(isolate(input$Measadd_tag3))
 					)
 					measurements3<-rbind(measurements2,measurements1);
@@ -634,6 +634,7 @@ observe({
 			updateDateInput(session, "Modif_date", value = as.character(measurements3[measurements3[,1]==atID,6]))
 			updateTextInput(session, "Modif_time",value = as.character(measurements3[measurements3[,1]==atID,7]))
 			updateTextInput(session, "Modif_tag1",value = as.character(measurements3[measurements3[,1]==atID,19]))
+			updateTextInput(session, "Modif_tag2",value = as.character(measurements3[measurements3[,1]==atID,20]))
 			updateTextInput(session, "Modif_tag3",value = as.character(measurements3[measurements3[,1]==atID,21]))
 			updateSelectInput(session, "Modif_include", selected = as.character(measurements3[measurements3[,1]==atID,8]))
 			updateSelectInput(session, "Modif_profiled", selected = as.character(measurements3[measurements3[,1]==atID,15]))	
@@ -667,6 +668,7 @@ observe({
 			measurements3[measurements3[,1]==atID,]<-enviMass:::convDate(measurements3[measurements3[,1]==atID,]);
 			measurements3[measurements3[,1]==atID,7]<-as.character(isolate(input$Modif_time))	
 			measurements3[measurements3[,1]==atID,19]<-as.character(isolate(input$Modif_tag1))
+			measurements3[measurements3[,1]==atID,20]<-as.character(isolate(input$Modif_tag2))
 			measurements3[measurements3[,1]==atID,21]<-as.character(isolate(input$Modif_tag3))	
 			measurements3[measurements3[,1]==atID,8]<-as.character(isolate(input$Modif_include))				
 			measurements3[measurements3[,1]==atID,15]<-use_profiling	

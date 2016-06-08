@@ -25,10 +25,10 @@ observe({
 			){			
 
 				if(isolate(input$Pos_type_select)=="Sample/blind files"){
-					load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))
+					load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"),verbose=TRUE)
 				}
 				if(isolate(input$Pos_type_select)=="Calibration files"){
-					load(file=file.path(logfile$project_folder,"quantification","results_screen_target_pos_cal"))
+					load(file=file.path(logfile$project_folder,"quantification","results_screen_target_pos_cal"),verbose=TRUE)
 					results_screen_target_pos<-results_screen_target_pos_cal # contains sample vs. blank intensity ratios
 				}
 				screen_dev_pos<-results_screen_target_pos[[3]] 
@@ -44,8 +44,8 @@ observe({
 				output$Table_screening_pos <- DT::renderDataTable({table_screening_pos},server = TRUE)
 				rm(results_screen_target_pos)
 				found_table<-TRUE
-				load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"),envir=as.environment(".GlobalEnv"));	
-				load(file=file.path(logfile[[1]],"results","pattern_pos_target"),envir=as.environment(".GlobalEnv"));
+				load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"),envir=as.environment(".GlobalEnv"),verbose=TRUE);	
+				load(file=file.path(logfile[[1]],"results","pattern_pos_target"),envir=as.environment(".GlobalEnv"),verbose=TRUE);
 				pattern_pos<-pattern_pos_target;rm(pattern_pos_target,envir=as.environment(".GlobalEnv"));
 				patt_pos_ID<-rep("",length(pattern_pos))
 				patt_pos_add<-rep("",length(pattern_pos))
@@ -53,16 +53,16 @@ observe({
 					patt_pos_ID[i]<-strsplit(names(pattern_pos[i]),"_",fixed=TRUE)[[1]][1]
 					patt_pos_add[i]<-strsplit(names(pattern_pos[i]),"_",fixed=TRUE)[[1]][2]
 				}
-				load(file=file.path(logfile[[1]],"results","patternRT_pos_target"),envir=as.environment(".GlobalEnv"));
+				load(file=file.path(logfile[[1]],"results","patternRT_pos_target"),envir=as.environment(".GlobalEnv"),verbose=TRUE);
 				pattern_RT_pos<-patternRT_pos_target;rm(patternRT_pos_target,envir=as.environment(".GlobalEnv"));
-				load(file=file.path(logfile[[1]],"results","patternDelRT_pos_target"),envir=as.environment(".GlobalEnv"));
+				load(file=file.path(logfile[[1]],"results","patternDelRT_pos_target"),envir=as.environment(".GlobalEnv"),verbose=TRUE);
 				pattern_delRT_pos<-patternDelRT_pos_target;rm(patternDelRT_pos_target,envir=as.environment(".GlobalEnv"));
 				if(isolate(input$Pos_type_select)=="Sample/blind files"){
-					load(file=file.path(logfile$project_folder,"results","screening","res_target_pos_screen"))
+					load(file=file.path(logfile$project_folder,"results","screening","res_target_pos_screen"),verbose=TRUE)
 					res_pos_screen<-res_target_pos_screen;rm(res_target_pos_screen);
 				}
 				if(isolate(input$Pos_type_select)=="Calibration files"){
-					load(file=file.path(logfile$project_folder,"quantification","res_target_pos_screen_cal"))
+					load(file=file.path(logfile$project_folder,"quantification","res_target_pos_screen_cal"),verbose=TRUE)
 					res_pos_screen<-res_target_pos_screen_cal;rm(res_target_pos_screen_cal);				
 				}
 				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -180,8 +180,8 @@ observe({
 								for(j in 1:length(res_pos_screen_sel[[i]])){
 									found_matches<-res_pos_screen_sel[[i]][[j]]$Peaks
 									if(isolate(input$Pos_type_select)=="Sample/blind files"){
-										x<-profileList_pos[[2]][found_matches[,2],1]
-										y<-(profileList_pos[[2]][found_matches[,2],2]*res_pos_screen_sel[[i]][[j]][[6]])
+										x<-profileList_pos_copy[[2]][found_matches[,2],1]
+										y<-(profileList_pos_copy[[2]][found_matches[,2],2]*res_pos_screen_sel[[i]][[j]][[6]])
 									}
 									if(isolate(input$Pos_type_select)=="Calibration files"){
 										x<-profileList_pos_cal[[2]][found_matches[,2],1]
@@ -270,7 +270,7 @@ observe({
 				}
 			})
 			output$plot_selec_dist_pos <- renderPlot({
-				s<-input$Table_screening_pos_row_last_clicked
+				s<-input$Table_screening_pos_row_last_clicked			
 				input$selec_pos_log_rat
 				input$selec_pos_x
 				input$selec_pos_y
