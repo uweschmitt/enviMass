@@ -2,10 +2,10 @@
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_updates.r!")}
 
 #if(logfile[[10]]<3.100){
-if(logfile[[10]]<3.102){
-#if(TRUE){
+#if(logfile[[10]]<3.102){
+if(TRUE){
 	
-	cat("\n Updating to version 3.1 ...")
+	cat("\n Updating to version 3.100 ...")
 	################################################################################################
 	# create missing folder
 	if(!file.exists(file.path(logfile$project_folder,"results","screening"))
@@ -460,6 +460,7 @@ if(logfile[[10]]<3.101){
 
 if(logfile[[10]]<3.102){
 
+	cat("\n Updating to version 3.102 ...")
 	################################################################################################	
 	if(!file.exists(file.path(logfile$project_folder,"quantification","cal_models_pos"))){
 		cal_models_pos<-list(0)

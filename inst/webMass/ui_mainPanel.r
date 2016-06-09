@@ -730,13 +730,15 @@
 							condition = "input.Cal_file_set != 'none'", 
 							fluidRow(
 								column(3, selectInput(inputId="Cal_IS_ID",label="Internal standard ID",choices=c("none"),selected = "none", multiple = FALSE)),
-								column(3, selectInput(inputId="Cal_IS_adduct",label="Adduct",choices=c("none"),selected = "none", multiple = FALSE)),
-								column(3, selectInput(inputId="Cal_IS_peak",label="Isotopologue peak #",choices=c("none"),selected = "none", multiple = FALSE))
+								column(3, selectInput(inputId="Cal_IS_name",label="Name",choices=c("none"),selected = "none", multiple = FALSE)),
+								column(2, selectInput(inputId="Cal_IS_adduct",label="Adduct",choices=c("none"),selected = "none", multiple = FALSE)),
+								column(2, selectInput(inputId="Cal_IS_peak",label="Isotopologue peak #",choices=c("none"),selected = "none", multiple = FALSE))
 							),
 							fluidRow(
 								column(3, selectInput(inputId="Cal_target_ID",label="Target ID",choices=c("none"),selected = "none", multiple = FALSE)),
-								column(3, selectInput(inputId="Cal_target_adduct",label="Adduct",choices=c("none"),selected = "none", multiple = FALSE)),
-								column(3, selectInput(inputId="Cal_target_peak",label="Isotopologue peak #",choices=c("none"),selected = "none", multiple = FALSE))
+								column(3, selectInput(inputId="Cal_target_name",label="Name",choices=c("none"),selected = "none", multiple = FALSE)),								
+								column(2, selectInput(inputId="Cal_target_adduct",label="Adduct",choices=c("none"),selected = "none", multiple = FALSE)),
+								column(2, selectInput(inputId="Cal_target_peak",label="Isotopologue peak #",choices=c("none"),selected = "none", multiple = FALSE))
 							),
 							selectInput(inputId="Cal_load",label="Load a previously established calibration model and all underlying data points",choices=c("none"),selected = "none", multiple = FALSE),
 							helpText("Select compounds or their established calibrations to (resume) work on their individual calibration models below. 
@@ -745,11 +747,14 @@
 							
 							HTML('<h1 align="center"> &#x21e9; </h1> '),
 							conditionalPanel(
-								condition = "input.Cal_target_ID != 'none' & input.Cal_IS_ID != 'none'", 
+								condition = "
+									input.Cal_target_ID != 'none' & input.Cal_target_name != 'none' & input.Cal_target_adduct != 'none' & input.Cal_target_peak != 'none' &
+									input.Cal_IS_ID != 'none' & input.Cal_IS_name != 'none' & input.Cal_IS_adduct != 'none' & input.Cal_IS_peak != 'none' ", 
 								
 								
 								
-								
+								textOutput('IS_in_file'),
+								textOutput('target_in_file'),
 								
 								bsButton("save_Cal","Save this calibration set",style="success"),
 								bsButton("remove_Cal","Remove this calibration set",style="danger")
@@ -763,7 +768,9 @@
 					),
 					
 					conditionalPanel(
-						condition = "input.Cal_target_ID == 'none' & input.Cal_IS_ID == 'none'",			
+						condition = "
+							input.Cal_target_ID == 'none' | input.Cal_target_name == 'none' | input.Cal_target_adduct == 'none' | input.Cal_target_peak == 'none' |
+							input.Cal_IS_ID == 'none' | input.Cal_IS_name == 'none' | input.Cal_IS_adduct == 'none' | input.Cal_IS_peak == 'none' ", 						
 						HTML('<h3 align="center"> Complete the above selection to continue</h3> ')
 					)
 				),	
