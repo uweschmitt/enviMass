@@ -94,18 +94,20 @@
 		  if( (measurements_incl[i,4]=="positive") & (measurements_incl[i,8]=="TRUE") ){  
 			if( length(mz_pos)>0 ){
 				  peak_recal<-recalib(
-						  peaklist=peaklist[,c(1,4,5)],
-						  mz=mz_pos,
-						  tolmz=as.numeric(logfile$parameters[31]),
-						  ppm=as.character(logfile$parameters[32]),
-						  ret=RT_pos,
-						  tolret=as.numeric(logfile$parameters[33]),
-						  what="mass",
-						  one=TRUE,
-						  knot=5,
-						  plotit=TRUE,
-						  path_1=file.path(logfile[[1]],"pics",paste("recal_",as.character(measurements_incl[i,1]),sep="")),
-						  path_2=file.path(logfile[[1]],"results","recalibration",paste("recal_gam_",as.character(measurements_incl[i,1]),sep=""))
+						peaklist=peaklist[,c(1,4,5)],
+						mz=mz_pos,
+						tolmz=as.numeric(logfile$parameters[31]),
+						ppm=as.character(logfile$parameters[32]),
+						ret=RT_pos,
+						tolret=as.numeric(logfile$parameters[33]),
+						what="mass",
+						one=TRUE,
+						knot=5,
+						plotit=TRUE,
+						path_1=file.path(logfile[[1]],"pics",paste("recal_",as.character(measurements_incl[i,1]),sep="")),
+						path_2=file.path(logfile[[1]],"results","recalibration",paste("recal_gam_",as.character(measurements_incl[i,1]),sep="")),
+						plot_ppm=c(2,5,10),
+						max_recal=as.numeric(logfile$parameters[[79]])
 					)
 					if(length(peak_recal)>1){
 					  peaklist[,c(12,13,14)]<-peak_recal
@@ -133,18 +135,20 @@
 		  if( (measurements_incl[i,4]=="negative")  & (measurements_incl[i,8]=="TRUE") ){
 			if(length(mz_neg)>0){
 				peak_recal<-recalib(
-					  peaklist=peaklist[,c(1,4,5)],
-					  mz=mz_neg,
-					  tolmz=as.numeric(logfile$parameters[31]),
-					  ppm=as.character(logfile$parameters[32]),
-					  ret=RT_neg,
-					  tolret=as.numeric(logfile$parameters[33]),
-					  what="mass",
-					  one=TRUE,
-					  knot=5,
-					  plotit=TRUE,
-					  path_1=file.path(logfile[[1]],"pics",paste("recal_",as.character(measurements_incl[i,1]),sep="")),
-					  path_2=file.path(logfile[[1]],"results","recalibration",paste("recal_gam_",as.character(measurements_incl[i,1]),sep=""))
+					peaklist=peaklist[,c(1,4,5)],
+					mz=mz_neg,
+					tolmz=as.numeric(logfile$parameters[31]),
+					ppm=as.character(logfile$parameters[32]),
+					ret=RT_neg,
+					tolret=as.numeric(logfile$parameters[33]),
+					what="mass",
+					one=TRUE,
+					knot=5,
+					plotit=TRUE,
+					path_1=file.path(logfile[[1]],"pics",paste("recal_",as.character(measurements_incl[i,1]),sep="")),
+					path_2=file.path(logfile[[1]],"results","recalibration",paste("recal_gam_",as.character(measurements_incl[i,1]),sep="")),
+					plot_ppm=c(2,5,10),
+					max_recal=as.numeric(logfile$parameters[[79]])					  
 				)
 				if(length(peak_recal)>1){
 				  peaklist[,c(12,13,14)]<-peak_recal

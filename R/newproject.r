@@ -123,6 +123,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters[[31]]<-"3"; 						names(logfile$parameters)[31]<-"recal_dmz" 
 		logfile$parameters[[32]]<-"TRUE"; 					names(logfile$parameters)[32]<-"recal_ppm" 
 		logfile$parameters[[33]]<-"30"; 					names(logfile$parameters)[33]<-"recal_drt" 
+		logfile$parameters[[79]]<-"30";						names(logfile$parameters)[79]<-"recal_maxdmz"
 		# replicate intersection ################################################
 		logfile$parameters[[15]]<-"3";						names(logfile$parameters)[15]<-"replicate_dmz"
 		logfile$parameters[[16]]<-"TRUE";					names(logfile$parameters)[16]<-"replicate_ppm"		

@@ -461,6 +461,12 @@ if(logfile[[10]]<3.101){
 if(logfile[[10]]<3.102){
 
 	cat("\n Updating to version 3.102 ...")
+	################################################################################################
+	if(!any(names(logfile$parameters)=="recal_maxdmz")){	
+		logfile$parameters[[79]]<<-"30";		names(logfile$parameters)[79]<<-"recal_maxdmz"	
+		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	
+	}				
 	################################################################################################	
 	if(!file.exists(file.path(logfile$project_folder,"quantification","cal_models_pos"))){
 		cal_models_pos<-list(0)

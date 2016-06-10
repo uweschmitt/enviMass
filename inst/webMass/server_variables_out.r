@@ -64,12 +64,13 @@ observe({
 		}
 		if(do_debug){cat("\n at_3")}
         # recalibration ######################################################## 
-        at1<-logfile$parameters[c(30,31,32,33)];
+        at1<-logfile$parameters[c(30,31,32,33,79)];
 		logfile$parameters[[30]]<<-as.character(isolate(input$recal_what))
         logfile$parameters[[31]]<<-as.character(isolate(input$recal_dmz))
         logfile$parameters[[32]]<<-as.character(isolate(input$recal_ppm))
         logfile$parameters[[33]]<<-as.character(isolate(input$recal_drt))
-		at2<-logfile$parameters[c(30,31,32,33)];
+        logfile$parameters[[79]]<<-as.character(isolate(input$recal_maxdmz))		
+		at2<-logfile$parameters[c(30,31,32,33,79)];
 		if(any(is.na(at2))){stop("\nThere was an issue reading out the new settings - maybe comma / dot separation was not fullfilled?")}		
 		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="recal",check_node=TRUE)

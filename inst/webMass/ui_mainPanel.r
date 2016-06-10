@@ -553,7 +553,8 @@
               div(
                 style = widget_style3,
                 selectInput("recal_what", "Reference compounds:", c("Internal standards","Target compounds","both"),"Internal standards",multiple=FALSE),                
-                numericInput("recal_dmz", "m/z tolerance ...", 3),                
+                numericInput("recal_dmz", "m/z tolerance ...", 3),            
+                numericInput("recal_maxdmz", "Maximum allowable m/z correction ...", 30),  				
                 selectInput("recal_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),
                 numericInput("recal_drt", "RT tolerance [s]", 30)   
               )

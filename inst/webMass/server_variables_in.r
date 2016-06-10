@@ -25,6 +25,7 @@ updateSelectInput(session, "recal_what", "Reference compounds:", c("Internal sta
 updateNumericInput(session, "recal_dmz", "m/z tolerance ...", value = as.numeric(logfile$parameters[[31]]))                
 updateSelectInput(session, "recal_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), selected= as.character(logfile$parameters[[32]]))
 updateNumericInput(session, "recal_drt", "RT tolerance [s]", value = as.numeric(logfile$parameters[[33]]))   
+updateNumericInput(session, "recal_maxdmz", "Maximum allowable m/z correction ...", value = as.numeric(logfile$parameters[[79]]))                
 # REPLICATE INTERSECTION ########################################################
 updateNumericInput(session, "replicate_dmz", "m/z tolerance ...", value = as.numeric(logfile$parameters[[15]]))   
 updateSelectInput(session, "replicate_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"),  selected = as.character(logfile$parameters[[16]]))
