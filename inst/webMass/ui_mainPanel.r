@@ -930,7 +930,7 @@
 										plotOutput("plot_pattern_distrib_pos"),
 										HTML('<hr noshade="noshade" />'),
 										fluidRow(										
-											column(4,tags$p(align="justify","Ratios of sample vs. blank intensities for screened compounds from the above table.")),
+											column(4,textOutput('count_aboveBlank_pos')),
 											column(4,radioButtons("screen_pos_log_rat", "Log scale?", c("yes"="yes","no"="no"),inline=TRUE))
 										),
 										plotOutput("plot_aboveBlank_pos",height = 250)
@@ -947,16 +947,22 @@
 						),
 						tabPanel("Negative ionization",
 							fluidRow(
-								column(4, selectInput(inputId="Neg_compound_select",label="",choices=c("Target compounds","Internal standards","File-wise counts"), 
-									selected = "Target compounds", multiple = FALSE)),
+								column(3, selectInput(inputId="Neg_compound_select",label="",choices=c("Choose","Target compounds","Internal standards","File-wise counts"), 
+									selected = "Choose", multiple = FALSE)),
 								conditionalPanel(			
-									condition = "input.Neg_compound_select == 'Internal standards' || input.Neg_compound_select == 'Target compounds'",		
-																	column(4, selectInput(inputId="screen_neg_summarize", label="", choices = c("Show all adducts"="yes","Collapse adducts"="no"), "yes"))
-								)
-							),					
+									condition = "input.Neg_compound_select == 'Internal standards' || input.Neg_compound_select == 'Target compounds'",										
+										column(3, selectInput(inputId="screen_neg_summarize", label="", choices = c("Show all adducts"="yes","Collapse adducts"="no"), "yes")),
+										column(4, selectInput(inputId="Neg_type_select",label="",choices=c("Sample/blind files","Calibration files"), 
+											selected = "Non-calibration files", multiple = FALSE))			
+								)							
+							),
 							conditionalPanel(			
 								condition = "input.Neg_compound_select == 'Internal standards' || input.Neg_compound_select == 'Target compounds'",	
-								bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_pos_one",
+								
+								conditionalPanel(			
+								condition = "input.screen_neg_summarize == 'yes'",	
+								
+								bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_neg_one",
 									bsCollapsePanel(title="Pattern match for selected compound", #style="info",
 										textOutput('screening_details_comp_neg'),
 										plotOutput("plot_pattern_neg")
@@ -989,7 +995,10 @@
 										HTML('<hr noshade="noshade" />'),
 										DT::dataTableOutput('Table_screening_selected_neg')
 									)
+								)		
+
 								),
+								
 								HTML('<hr noshade="noshade" />'),
 								tags$p(align="justify","The below sample and blank matches give the number of files with matches above the cutoff score, 
 								with multiple matches per file above this cutoff merged."),
@@ -1001,13 +1010,13 @@
 											column(width = 4, offset = 0.6,
 													tags$p(align="justify","Characteristics of all signal peaks for screened compounds from the above table.")
 											),
-											column(4, selectInput(inputId="Summ_neg_x",label="x axis",choices=c("m/z","RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT","Measured RT"),selected = "m/z", multiple = FALSE)),
-											column(4, selectInput(inputId="Summ_neg_y",label="y axis",choices=c("m/z","RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT","Measured RT"),selected = "RT", multiple = FALSE))									
+											column(4, selectInput(inputId="Summ_neg_x",label="x axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "m/z", multiple = FALSE)),
+											column(4, selectInput(inputId="Summ_neg_y",label="y axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "RT", multiple = FALSE))									
 										),
 										plotOutput("plot_pattern_distrib_neg"),
 										HTML('<hr noshade="noshade" />'),
 										fluidRow(										
-											column(4,tags$p(align="justify","Ratios of sample vs. blank intensities for screened compounds from the above table.")),
+											column(4,textOutput('count_aboveBlank_neg')),
 											column(4,radioButtons("screen_neg_log_rat", "Log scale?", c("yes"="yes","no"="no"),inline=TRUE))
 										),
 										plotOutput("plot_aboveBlank_neg",height = 250)
@@ -1022,6 +1031,7 @@
 								HTML('<hr noshade="noshade" />')
 							)						
 						)
+
 					)	
 				),
 				######################################################################################################################

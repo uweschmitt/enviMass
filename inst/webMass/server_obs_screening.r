@@ -443,7 +443,9 @@ observe({
 					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(.5,.5,labels="No ratios available",col="red",cex=1.6)
 				}
 			},width = "auto", height = 250)
-			
+			output$count_aboveBlank_pos<-renderText({
+				paste("Ratios of sample vs. blank intensities for screened compounds from the above table. This concerns",as.character(sum(rat_sam_blank_neg>0)),"compounds.")
+			})			
 		} # if(found_table)
 		if(isolate(input$Pos_compound_select=="File-wise counts")){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -589,17 +591,30 @@ observe({
 observe({ 
 	input$Neg_compound_select  
 	input$screen_neg_summarize
+	input$Neg_type_select
 	init$b
 	if(isolate(init$a)=="TRUE"){
 		found_table<-FALSE
 		if( isolate(input$Neg_compound_select=="Target compounds") ){
 			cat("\n Looking at negative targets_selec")
-			if( 				
-				(file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg"))) #&
-				#(logfile$workflow[names(logfile$workflow)=="target_subtr"]!="yes")
-			){
-				load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg"))
-				screen_dev_neg<-results_screen_target_neg[[3]] # contains sample vs. blank intensity ratios
+			if( 
+				(
+					(file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg"))) &
+					(isolate(input$Neg_type_select)=="Sample/blind files")
+				)||(
+					(file.exists(file=file.path(logfile$project_folder,"quantification","results_screen_target_neg_cal"))) &
+					(isolate(input$Neg_type_select)=="Calibration files")				
+				)
+			){			
+
+				if(isolate(input$Neg_type_select)=="Sample/blind files"){
+					load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg"),verbose=TRUE)
+				}
+				if(isolate(input$Neg_type_select)=="Calibration files"){
+					load(file=file.path(logfile$project_folder,"quantification","results_screen_target_neg_cal"),verbose=TRUE)
+					results_screen_target_neg<-results_screen_target_neg_cal # contains sample vs. blank intensity ratios
+				}
+				screen_dev_neg<-results_screen_target_neg[[3]] 
 				screen_dev_neg[,2]<-log10(screen_dev_neg[,2])
 				rat_sam_blank_neg<-results_screen_target_neg[[1]][,10,drop=FALSE]
 				if( isolate(input$screen_neg_summarize=="yes") ){
@@ -612,8 +627,8 @@ observe({
 				output$Table_screening_neg <- DT::renderDataTable({table_screening_neg},server = TRUE)
 				rm(results_screen_target_neg)
 				found_table<-TRUE
-				load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy"),envir=as.environment(".GlobalEnv"));	
-				load(file=file.path(logfile[[1]],"results","pattern_neg_target"),envir=as.environment(".GlobalEnv"));
+				load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy"),envir=as.environment(".GlobalEnv"),verbose=TRUE);	
+				load(file=file.path(logfile[[1]],"results","pattern_neg_target"),envir=as.environment(".GlobalEnv"),verbose=TRUE);
 				pattern_neg<-pattern_neg_target;rm(pattern_neg_target,envir=as.environment(".GlobalEnv"));
 				patt_neg_ID<-rep("",length(pattern_neg))
 				patt_neg_add<-rep("",length(pattern_neg))
@@ -621,12 +636,18 @@ observe({
 					patt_neg_ID[i]<-strsplit(names(pattern_neg[i]),"_",fixed=TRUE)[[1]][1]
 					patt_neg_add[i]<-strsplit(names(pattern_neg[i]),"_",fixed=TRUE)[[1]][2]
 				}
-				load(file=file.path(logfile[[1]],"results","patternRT_neg_target"),envir=as.environment(".GlobalEnv"));
+				load(file=file.path(logfile[[1]],"results","patternRT_neg_target"),envir=as.environment(".GlobalEnv"),verbose=TRUE);
 				pattern_RT_neg<-patternRT_neg_target;rm(patternRT_neg_target,envir=as.environment(".GlobalEnv"));
-				load(file=file.path(logfile[[1]],"results","patternDelRT_neg_target"),envir=as.environment(".GlobalEnv"));
+				load(file=file.path(logfile[[1]],"results","patternDelRT_neg_target"),envir=as.environment(".GlobalEnv"),verbose=TRUE);
 				pattern_delRT_neg<-patternDelRT_neg_target;rm(patternDelRT_neg_target,envir=as.environment(".GlobalEnv"));
-				load(file=file.path(logfile$project_folder,"results","screening","res_target_neg_screen"))
-				res_neg_screen<-res_target_neg_screen;rm(res_target_neg_screen);
+				if(isolate(input$Neg_type_select)=="Sample/blind files"){
+					load(file=file.path(logfile$project_folder,"results","screening","res_target_neg_screen"),verbose=TRUE)
+					res_neg_screen<-res_target_neg_screen;rm(res_target_neg_screen);
+				}
+				if(isolate(input$Neg_type_select)=="Calibration files"){
+					load(file=file.path(logfile$project_folder,"quantification","res_target_neg_screen_cal"),verbose=TRUE)
+					res_neg_screen<-res_target_neg_screen_cal;rm(res_target_neg_screen_cal);				
+				}
 				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 				compound_table<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");	
 				# For IS without Conz.:
@@ -640,13 +661,25 @@ observe({
 			}
 		}
 		if( isolate(input$Neg_compound_select=="Internal standards") ){
-			cat("\n Looking at negative standards_selec")
-			if(
-				(file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_neg"))) #&
-				#(logfile$workflow[names(logfile$workflow)=="IS_subtr"]!="yes")			
-			){
-				load(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_neg"))
-				screen_dev_neg<-results_screen_IS_neg[[3]] # contains sample vs. blank intensity ratios		
+			cat("\n Looking at negative standards_selec")		
+			if( 
+				(
+					(file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_neg"))) &
+					(isolate(input$Neg_type_select)=="Sample/blind files")
+				)||(
+					(file.exists(file=file.path(logfile$project_folder,"quantification","results_screen_IS_neg_cal"))) &
+					(isolate(input$Neg_type_select)=="Calibration files")				
+				)
+			){			
+			
+				if(isolate(input$Neg_type_select)=="Sample/blind files"){
+					load(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_neg"))
+				}
+				if(isolate(input$Neg_type_select)=="Calibration files"){
+					load(file=file.path(logfile$project_folder,"quantification","results_screen_IS_neg_cal"))
+					results_screen_IS_neg<-results_screen_IS_neg_cal;rm(results_screen_IS_neg_cal) # contains sample vs. blank intensity ratios
+				}
+				screen_dev_neg<-results_screen_IS_neg[[3]]  # contains sample vs. blank intensity ratios		
 				screen_dev_neg[,2]<-log10(screen_dev_neg[,2])
 				rat_sam_blank_neg<-results_screen_IS_neg[[1]][,10,drop=FALSE]				
 				if( isolate(input$screen_neg_summarize=="yes") ){
@@ -672,8 +705,15 @@ observe({
 				pattern_RT_neg<-patternRT_neg_IS;rm(patternRT_neg_IS,envir=as.environment(".GlobalEnv"));
 				load(file=file.path(logfile[[1]],"results","patternDelRT_neg_IS"),envir=as.environment(".GlobalEnv"));
 				pattern_delRT_neg<-patternDelRT_neg_IS;rm(patternDelRT_neg_IS,envir=as.environment(".GlobalEnv"));
-				load(file=file.path(logfile$project_folder,"results","screening","res_IS_neg_screen"))
-				res_neg_screen<-res_IS_neg_screen;rm(res_IS_neg_screen);
+				load(file=file.path(logfile$project_folder,"results","screening","res_IS_neg_screen"))				
+				if(isolate(input$Neg_type_select)=="Sample/blind files"){
+					load(file=file.path(logfile$project_folder,"results","screening","res_IS_neg_screen"))
+					res_neg_screen<-res_IS_neg_screen;rm(res_IS_neg_screen);
+				}
+				if(isolate(input$Neg_type_select)=="Calibration files"){
+					load(file=file.path(logfile$project_folder,"quantification","res_IS_neg_screen_cal"))
+					res_neg_screen<-res_IS_neg_screen_cal;rm(res_IS_neg_screen_cal);				
+				}			
 				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 				compound_table<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
 				# For IS without Conz.:
@@ -690,11 +730,13 @@ observe({
 			# name selected compound & adduct
 			named_compound <- renderText({
 				s<-input$Table_screening_neg_row_last_clicked
-				if (length(s)) {	paste(results_screen_neg[s,2],results_screen_neg[s,3],
-				compound_table[compound_table[,1]==results_screen_neg[s,1],3]
-				,sep=", ")	}
+				if (length(s)) {	
+					paste(results_screen_neg[s,2],results_screen_neg[s,3],
+					compound_table[compound_table[,1]==results_screen_neg[s,1],3]
+					,sep=", ")	
+				}
 			})
-			output$screening_details_comp_neg <-named_compound
+			output$screening_details_comp_neg<-named_compound
 			output$screening_details_comp_neg2<-named_compound
 			output$screening_details_comp_neg3<-named_compound
 			# plot pattern & matches
@@ -704,7 +746,7 @@ observe({
 					use_comp<-(
 						(patt_neg_ID==as.character(results_screen_neg[s,1])) & (patt_neg_add==as.character(results_screen_neg[s,3]))
 					)
-					if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1")}	
+					if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1")}															
 					pattern_sel<-pattern_neg[use_comp][[1]]
 					res_neg_screen_sel<-res_neg_screen[use_comp][[1]]
 					if(isolate(input$Neg_compound_select=="Internal standards")){
@@ -720,8 +762,14 @@ observe({
 							if(length(res_neg_screen_sel[[i]])>0){
 								for(j in 1:length(res_neg_screen_sel[[i]])){
 									found_matches<-res_neg_screen_sel[[i]][[j]]$Peaks
-									x<-profileList_neg[[2]][found_matches[,2],1]
-									y<-(profileList_neg[[2]][found_matches[,2],2]*res_neg_screen_sel[[i]][[j]][[6]])
+									if(isolate(input$Neg_type_select)=="Sample/blind files"){
+										x<-profileList_neg_copy[[2]][found_matches[,2],1]
+										y<-(profileList_neg_copy[[2]][found_matches[,2],2]*res_neg_screen_sel[[i]][[j]][[6]])
+									}
+									if(isolate(input$Neg_type_select)=="Calibration files"){
+										x<-profileList_neg_cal[[2]][found_matches[,2],1]
+										y<-(profileList_neg_cal[[2]][found_matches[,2],2]*res_neg_screen_sel[[i]][[j]][[6]])										
+									}
 									y<-y[order(x)]
 									x<-x[order(x)]
 									lines(x=x,y=y,col="grey")										
@@ -740,11 +788,11 @@ observe({
 			# make Table over samples
 			output$Table_screening_selected_neg<-DT::renderDataTable({
 				s<-input$Table_screening_neg_row_last_clicked
-				if(length(s) & isolate(input$screen_neg_summarize=="yes")){
+				if (length(s) & isolate(input$screen_neg_summarize=="yes")) {
 					use_comp<-(
 						(patt_neg_ID==as.character(results_screen_neg[s,1])) & (patt_neg_add==as.character(results_screen_neg[s,3]))
 					)
-					if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1")}							
+					if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1")}	
 					res_neg_screen_sel<-res_neg_screen[use_comp][[1]]
 					which_where<-c();which_peaks<-c();sample_type<-c();score_1<-c();score_2<-c();delppm<-c();delRT<-c();inte<-c();
 					with_peaks<-c();#with_file<-c();with_s<-c();
@@ -788,14 +836,12 @@ observe({
 					DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No compound selected or adducts collapsed")
 				}
 			},server = TRUE)
-
 			# initialize intensity range for selected internal standard
 			observe({ 
 				s<-input$Table_screening_neg_row_last_clicked
 				if (length(s) & isolate(input$screen_neg_summarize=="yes") & isolate(input$Neg_compound_select=="Internal standards")) {
 					updateNumericInput(session, "screen_int_neg_low", "Lower bound", value = 5,step=0.1)   
 					updateNumericInput(session, "screen_int_neg_up", "Upper bound", value = 6,step=0.1) 
-# BAUSTELLE					
 				}	
 			})
 			# export intensity range for selected internal standard
@@ -803,12 +849,11 @@ observe({
 				input$save_int_neg
 				s<-isolate(input$Table_screening_neg_row_last_clicked)
 				if (isolate(input$save_int_neg) & length(s) & isolate(input$screen_neg_summarize=="yes") & isolate(input$Neg_compound_select=="Internal standards")) {
-				
-				
+# BAUSTELLE				
 				}
 			})
 			output$plot_selec_dist_neg <- renderPlot({
-				s<-input$Table_screening_neg_row_last_clicked
+				s<-input$Table_screening_neg_row_last_clicked			
 				input$selec_neg_log_rat
 				input$selec_neg_x
 				input$selec_neg_y
@@ -932,7 +977,6 @@ observe({
 					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(.5,.5,labels="No compound selected or adducts collapsed",col="red",cex=1.6)
 				}
 			},width = "auto", height = "auto")
-
 			output$plot_pattern_distrib_neg <- renderPlot({
 				if(length(screen_dev_neg)>0){
 					use_x<-input$Summ_neg_x
@@ -951,6 +995,8 @@ observe({
 						)					
 						if(use_x=="m/z deviation [ppm]" | use_x=="RT deviation within"){abline(v=0,col="red")}
 						if(use_y=="m/z deviation [ppm]" | use_y=="RT deviation within"){abline(h=0,col="red")}
+						if(use_y=="Expected RT" | use_y=="Measured RT"){abline(0,1,col="red")}
+						if(use_y=="Measured RT" | use_y=="Expected RT"){abline(0,1,col="red")}						
 						plot.window(xlim=c(0,1),ylim=c(0,1))
 						legend(0.9,1,title="Cutoff score",legend=c("below","above"),fill=c("lightgrey","black"),border=c("lightgrey","black"))
 					}else{
@@ -980,14 +1026,19 @@ observe({
 					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(.5,.5,labels="No ratios available",col="red",cex=1.6)
 				}
 			},width = "auto", height = 250)
-			
+			output$count_aboveBlank_neg<-renderText({
+				paste("Ratios of sample vs. blank intensities for screened compounds from the above table. This concerns",as.character(sum(rat_sam_blank_neg>0)),"compounds.")
+			})
 		} # if(found_table)
-		if( isolate(input$Neg_compound_select=="File-wise counts") ){
+		if(isolate(input$Neg_compound_select=="File-wise counts")){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements<-measurements[
  				(measurements[,8]=="TRUE") & # included?
 				(measurements[,4]=="negative") &
-				(measurements[,15]=="TRUE") # profiled?
+				(
+					(measurements[,15]=="TRUE") | # profiled?
+					(measurements[,3]=="calibration")
+				)
 			,]		
 			if(length(measurements[,1])>0 ){
 				IDs<-as.numeric(measurements[,1])
@@ -1025,9 +1076,36 @@ observe({
 					}			
 					rm(res_IS_neg_screen)
 				}
+				if(file.exists(file=file.path(logfile$project_folder,"quantification","res_IS_neg_screen_cal"))){ 
+					load(file=file.path(logfile$project_folder,"quantification","res_IS_neg_screen_cal"))
+					cut_score<-as.numeric(logfile$parameters$IS_w1)	
+					if(length(res_IS_neg_screen_cal)>0){
+						#if(isolate(input$screen_neg_summarize=="yes")){
+							for(i in 1:length(res_IS_neg_screen_cal)){ # per compound_adduct
+								if(length(res_IS_neg_screen_cal[[i]])>0){ 
+									for(j in 1:length(res_IS_neg_screen_cal[[i]])){ # per file
+										if(length(res_IS_neg_screen_cal[[i]][[j]])>0){ # per matches
+											for(k in 1:length(res_IS_neg_screen_cal[[i]][[j]])){ 				
+												if(!is.na(res_IS_neg_screen_cal[[i]][[j]][[k]]$score_1)){
+													if(res_IS_neg_screen_cal[[i]][[j]][[k]]$score_1>=cut_score){
+														count_file_compound_neg[IDs==j,4]<-(
+															count_file_compound_neg[IDs==j,4]+1
+														);
+														break;
+													}
+												}	
+											}
+										}
+									}
+								}
+							}
+						#}	
+					}			
+					rm(res_IS_neg_screen_cal)
+				}
 				if(file.exists(file=file.path(logfile$project_folder,"results","screening","res_target_neg_screen"))){ 
 					load(file=file.path(logfile$project_folder,"results","screening","res_target_neg_screen"))
-					cut_score<-as.numeric(logfile$parameters$tar_w1)	
+					cut_score<-as.numeric(logfile$parameters$tar_w1)				
 					if(length(res_target_neg_screen)>0){
 						#if(isolate(input$screen_neg_summarize=="yes")){
 							for(i in 1:length(res_target_neg_screen)){ # per compound_adduct
@@ -1052,6 +1130,33 @@ observe({
 					}			
 					rm(res_target_neg_screen)
 				}			
+				if(file.exists(file=file.path(logfile$project_folder,"quantification","res_target_neg_screen_cal"))){ 
+					load(file=file.path(logfile$project_folder,"quantification","res_target_neg_screen_cal"))
+					cut_score<-as.numeric(logfile$parameters$tar_w1)				
+					if(length(res_target_neg_screen_cal)>0){
+						#if(isolate(input$screen_neg_summarize=="yes")){
+							for(i in 1:length(res_target_neg_screen_cal)){ # per compound_adduct
+								if(length(res_target_neg_screen_cal[[i]])>0){ 
+									for(j in 1:length(res_target_neg_screen_cal[[i]])){ # per file
+										if(length(res_target_neg_screen_cal[[i]][[j]])>0){ # per matches
+											for(k in 1:length(res_target_neg_screen_cal[[i]][[j]])){ 				
+												if(!is.na(res_target_neg_screen_cal[[i]][[j]][[k]]$score_1)){
+													if(res_target_neg_screen_cal[[i]][[j]][[k]]$score_1>=cut_score){
+														count_file_compound_neg[IDs==j,5]<-(
+															count_file_compound_neg[IDs==j,5]+1
+														);
+														break;
+													}
+												}	
+											}
+										}
+									}
+								}
+							}
+						#}	
+					}			
+					rm(res_target_neg_screen_cal)
+				}			
 				output$count_file_compound_neg <- DT::renderDataTable({count_file_compound_neg},server = TRUE)				
 			}else{
 				output$count_file_compound_neg <- DT::renderDataTable({
@@ -1062,6 +1167,7 @@ observe({
 		}
 	} # if init$a
 })  
+
 ##############################################################################
 
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_obs_screening.r!")}

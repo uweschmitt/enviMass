@@ -291,8 +291,8 @@ maincalc2<-reactive({
 				}
 			}
 			if(file.exists(file.path(logfile$project_folder,"results","profileList_pos"))){
-				if(isolate(input$Ion_mode)=="positive"){
 					load(file=file.path(as.character(logfile$project_folder),"results","profileList_pos"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
+				if(isolate(input$Ion_mode)=="positive"){
 					assign("profileList",profileList_pos,envir=as.environment(".GlobalEnv"));				
 				}
 			}	
@@ -300,8 +300,8 @@ maincalc2<-reactive({
 				load(file=file.path(as.character(logfile$project_folder),"quantification","profileList_pos_cal"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
 			}	
 			if(file.exists(file.path(logfile$project_folder,"results","profileList_neg"))){
-				if(isolate(input$Ion_mode)=="negative"){
 					load(file=file.path(as.character(logfile$project_folder),"results","profileList_neg"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
+				if(isolate(input$Ion_mode)=="negative"){
 					assign("profileList",profileList_neg,envir=as.environment(".GlobalEnv"));				
 				}
 			}	
