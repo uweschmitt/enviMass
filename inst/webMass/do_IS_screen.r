@@ -108,10 +108,10 @@
 		for(i in 1:length(getit)){ # transfer to a fist list of compoundadduct x centroids
 			screen_list[[centro_ID[i]]][[centro_number[i]]]<-getit[i]
 		}
-		# resort to a full result list: pattern x (sample- min(index in profileList_pos[[4]])) x (centroids,matches) ( = peak index in profileList_pos)		
+		# resort to a full result list: pattern x sample x (centroids,matches) ( = peak index in profileList_pos)		
 		IS_pos_screen_listed<-list()  # default: no match at all
 # NEW +		
-		min_ID<-(min(as.numeric(profileList_pos[[4]]))-1) # adjust to lowest file ID; otherwise too many empty list entries will be caused
+		set_ID<-seq(1:length(profileList_pos[[4]]))
 # NEW -		
 		for(i in 1:length(screen_list)){ # over compound x adduct = i
 			if(any(is.na(screen_list[[i]]==FALSE))){
@@ -120,7 +120,7 @@
 					if(screen_list[[i]][[j]]!="FALSE"){ 
 						profs<-as.numeric(strsplit(screen_list[[i]][[j]]," / ")[[1]])
 						for(k in 1:length(profs)){ # over their matched profile peaks = k		
-							if(profileList_pos[[7]][profs[k],4]!=profs[k]){cat("\n debug me: profile ID mismatch");stop();} # just a check
+							if(profileList_pos[[7]][profs[k],4]!=profs[k]){cat("\n debug me: profile ID mismatch");stop();} # a check
 							for(m in profileList_pos[[7]][profs[k],1]:profileList_pos[[7]][profs[k],2]){ # over their sample peaks			
 								delmass<-abs(profileList_pos[[2]][m,1]-pattern[[i]][j,1])		
 								if(!ppm){
@@ -128,13 +128,19 @@
 								}else{
 									if((delmass*1E6/pattern[[i]][j,1])>mztol){next}
 								}
-# NEW +									
-								if(length(IS_pos_screen_listed[[i]])<(profileList_pos[[2]][m,6][[1]]-min_ID) ){							
-									IS_pos_screen_listed[[i]][[profileList_pos[[2]][m,6][[1]]-min_ID]]<-matrix(ncol=2,nrow=0)	# sample level
+# NEW +	
+								at_ID<-set_ID[profileList_pos[[4]]==as.character(profileList_pos[[2]][m,6])]								
+								if(length(IS_pos_screen_listed[[i]])<at_ID){							
+									IS_pos_screen_listed[[i]][[at_ID]]<-matrix(ncol=2,nrow=0)	
+								}else{
+									if(length(IS_pos_screen_listed[[i]][[at_ID]])==0){
+										IS_pos_screen_listed[[i]][[at_ID]]<-matrix(ncol=2,nrow=0)	
+									}
 								}
-								IS_pos_screen_listed[[i]][[profileList_pos[[2]][m,6][[1]]-min_ID]]<-rbind(
-									IS_pos_screen_listed[[i]][[profileList_pos[[2]][m,6][[1]]-min_ID]],c(j,m)
-								)
+								IS_pos_screen_listed[[i]][[at_ID]]<-rbind(
+									IS_pos_screen_listed[[i]][[at_ID]],c(j,m)
+								)					
+								colnames(IS_pos_screen_listed[[i]][[at_ID]])<-c(as.character(profileList_pos[[4]][at_ID]),"")
 # NEW -									
 							}							
 						}
@@ -159,11 +165,14 @@
 			for(i in 1:length(IS_pos_screen_listed)){ # i - on compound_adduct
 				if(length(IS_pos_screen_listed[[i]])>0){
 					res_IS_pos_screen[[i]]<-list()
-					for(m in 1:length(IS_pos_screen_listed[[i]])){ # m - sample-minID
+					for(m in 1:length(IS_pos_screen_listed[[i]])){ # m (relates to IDs in profileList_pos[[4]])
+# NEW +						
+						at_ID<-set_ID[profileList_pos[[4]]==as.character(profileList_pos[[2]][m,6])]
+# NEW -						
 						if(length(IS_pos_screen_listed[[i]][[m]])>0){
 							if(do_LOD){
 # NEW +								
-								with_model<-which(names(LOD_splined)==paste("LOD_",as.character(m+min_ID),sep=""))
+								with_model<-which(names(LOD_splined)==paste("LOD_",colnames(IS_pos_screen_listed[[i]][[m]])[1],sep=""))
 # NEW -							
 								if(length(with_model)>0){						
 									use_cutint<-10^(predict(LOD_splined[[with_model]],pattern_RT[i])$y)
@@ -187,8 +196,12 @@
 								plotit=FALSE,
 								verbose=FALSE
 							)
-# NEW -								
-							res_IS_pos_screen[[i]][[m]]<-combination_matches
+							for(k in 1:length(combination_matches)){ # add file ID
+								combination_matches[[k]][[10]]<-colnames(IS_pos_screen_listed[[i]][[m]])[1]
+								names(combination_matches[[1]])[10]<-"file_ID"
+							}
+							res_IS_pos_screen[[i]][[at_ID]]<-combination_matches
+# NEW -	
 							if(length(combination_matches)>1){many_unamb<-(many_unamb+1)}
 							many<-(many+1)
 						}
@@ -302,7 +315,7 @@
 	if(any(objects()=="pattern_RT")){rm(pattern_RT)}		
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_delRT")){rm(pattern_delRT,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="pattern_delRT")){rm(pattern_delRT)}		
-	
+
 	if(
 		file.exists(file.path(as.character(logfile[[1]]),"results","profileList_neg")) &
 		file.exists(file.path(logfile[[1]],"results","pattern_neg_IS"))
@@ -367,10 +380,10 @@
 		for(i in 1:length(getit)){ # transfer to a fist list of compoundadduct x centroids
 			screen_list[[centro_ID[i]]][[centro_number[i]]]<-getit[i]
 		}
-		# resort to a full result list: pattern x (sample- min(index in profileList_neg[[4]])) x (centroids,matches) ( = peak index in profileList_neg)		
+		# resort to a full result list: pattern x sample x (centroids,matches) ( = peak index in profileList_neg)		
 		IS_neg_screen_listed<-list()  # default: no match at all
 # NEW +		
-		min_ID<-(min(as.numeric(profileList_neg[[4]]))-1) # adjust to lowest file ID; otherwise too many empty list entries will be caused
+		set_ID<-seq(1:length(profileList_neg[[4]]))
 # NEW -		
 		for(i in 1:length(screen_list)){ # over compound x adduct = i
 			if(any(is.na(screen_list[[i]]==FALSE))){
@@ -379,7 +392,7 @@
 					if(screen_list[[i]][[j]]!="FALSE"){ 
 						profs<-as.numeric(strsplit(screen_list[[i]][[j]]," / ")[[1]])
 						for(k in 1:length(profs)){ # over their matched profile peaks = k		
-							if(profileList_neg[[7]][profs[k],4]!=profs[k]){cat("\n debug me: profile ID mismatch");stop();} # just a check
+							if(profileList_neg[[7]][profs[k],4]!=profs[k]){cat("\n debug me: profile ID mismatch");stop();} # a check
 							for(m in profileList_neg[[7]][profs[k],1]:profileList_neg[[7]][profs[k],2]){ # over their sample peaks			
 								delmass<-abs(profileList_neg[[2]][m,1]-pattern[[i]][j,1])		
 								if(!ppm){
@@ -387,13 +400,19 @@
 								}else{
 									if((delmass*1E6/pattern[[i]][j,1])>mztol){next}
 								}
-# NEW +									
-								if(length(IS_neg_screen_listed[[i]])<(profileList_neg[[2]][m,6][[1]]-min_ID) ){							
-									IS_neg_screen_listed[[i]][[profileList_neg[[2]][m,6][[1]]-min_ID]]<-matrix(ncol=2,nrow=0)	# sample level
+# NEW +	
+								at_ID<-set_ID[profileList_neg[[4]]==as.character(profileList_neg[[2]][m,6])]								
+								if(length(IS_neg_screen_listed[[i]])<at_ID){							
+									IS_neg_screen_listed[[i]][[at_ID]]<-matrix(ncol=2,nrow=0)	
+								}else{
+									if(length(IS_neg_screen_listed[[i]][[at_ID]])==0){
+										IS_neg_screen_listed[[i]][[at_ID]]<-matrix(ncol=2,nrow=0)	
+									}
 								}
-								IS_neg_screen_listed[[i]][[profileList_neg[[2]][m,6][[1]]-min_ID]]<-rbind(
-									IS_neg_screen_listed[[i]][[profileList_neg[[2]][m,6][[1]]-min_ID]],c(j,m)
-								)
+								IS_neg_screen_listed[[i]][[at_ID]]<-rbind(
+									IS_neg_screen_listed[[i]][[at_ID]],c(j,m)
+								)					
+								colnames(IS_neg_screen_listed[[i]][[at_ID]])<-c(as.character(profileList_neg[[4]][at_ID]),"")
 # NEW -									
 							}							
 						}
@@ -418,12 +437,15 @@
 			for(i in 1:length(IS_neg_screen_listed)){ # i - on compound_adduct
 				if(length(IS_neg_screen_listed[[i]])>0){
 					res_IS_neg_screen[[i]]<-list()
-					for(m in 1:length(IS_neg_screen_listed[[i]])){ # m - sample-minID
+					for(m in 1:length(IS_neg_screen_listed[[i]])){ # m (relates to IDs in profileList_neg[[4]])
+# NEW +						
+						at_ID<-set_ID[profileList_neg[[4]]==as.character(profileList_neg[[2]][m,6])]
+# NEW -						
 						if(length(IS_neg_screen_listed[[i]][[m]])>0){
 							if(do_LOD){
 # NEW +								
-								with_model<-which(names(LOD_splined)==paste("LOD_",as.character(m+min_ID),sep=""))
-# NEW -			
+								with_model<-which(names(LOD_splined)==paste("LOD_",colnames(IS_neg_screen_listed[[i]][[m]])[1],sep=""))
+# NEW -							
 								if(length(with_model)>0){						
 									use_cutint<-10^(predict(LOD_splined[[with_model]],pattern_RT[i])$y)
 								}else{
@@ -446,8 +468,12 @@
 								plotit=FALSE,
 								verbose=FALSE
 							)
-# NEW -								
-							res_IS_neg_screen[[i]][[m]]<-combination_matches
+							for(k in 1:length(combination_matches)){ # add file ID
+								combination_matches[[k]][[10]]<-colnames(IS_neg_screen_listed[[i]][[m]])[1]
+								names(combination_matches[[1]])[10]<-"file_ID"
+							}
+							res_IS_neg_screen[[i]][[at_ID]]<-combination_matches
+# NEW -	
 							if(length(combination_matches)>1){many_unamb<-(many_unamb+1)}
 							many<-(many+1)
 						}
@@ -536,7 +562,6 @@
 		rm(getit,IS_neg_screen_listed,res_IS_neg_screen)
 		rm(pattern,pattern_RT,pattern_delRT,envir=as.environment(".GlobalEnv"))
 		####################################################################################################
-		
 }		
 	########################################################################################################
 	########################################################################################################

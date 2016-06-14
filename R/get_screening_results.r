@@ -39,6 +39,9 @@
 		at_matrix<-matrix(nrow=10000,ncol=9,0)
 		min_ID<-(min(as.numeric(profileList[[4]]))-1) # adjust to lowest file ID; otherwise too many empty list entries will be caused
 		colnames(at_matrix)<-c("m/z","log Intensity","Measured RT","m/z deviation [ppm]","RT deviation within","above_cutscore","Time sequence","Expected RT","File ID")
+# NEW+
+		set_ID<-seq(1:length(measurements_table[,1]))
+# NEW-
 		for(i in 1:length(screened_listed)){
 			IDed[i]<-strsplit(names(pattern)[i],"_")[[1]][1]
 			named[i]<-compound_table[compound_table[,1]==strsplit(names(pattern)[i],"_")[[1]][1],2]
@@ -51,14 +54,19 @@
 			num_peaks_blank<-(0)				
 			centro_sample<-list()
 			centro_blank<-list()
-			for(j in 1:length(pattern[[i]][,1])){centro_sample[[j]]<-numeric(0);centro_blank[[j]]<-numeric(0);}
+			for(j in 1:length(pattern[[i]][,1])){
+				centro_sample[[j]]<-numeric(0);
+				centro_blank[[j]]<-numeric(0);
+			}
 			if(length(screened_listed[[i]])>0){
 				for(m in 1:length(screened_listed[[i]])){
 					if(length(screened_listed[[i]][[m]])>0){
-						m_min<-(m+min_ID)
-						is_sample<-(measurements_table[IDs==m_min,3]!="blank")	# sample, calibration, doted; but not blank/blind				
+# NEW+
+						at_ID<-set_ID[measurements_table[,1]==screened_listed[[i]][[m]][[1]]$file_ID]	
+# NEW-						
+						is_sample<-(measurements_table[at_ID,3]!="blank")	# sample, calibration, doted; but not blank/blind				
 						if(!is_sample){ # could still be doted or blind or ...
-							is_blank<-(measurements_table[IDs==m_min,3]=="blank")
+							is_blank<-(measurements_table[at_ID,3]=="blank")
 						}else{
 							is_blank<-FALSE
 						}
@@ -104,7 +112,7 @@
 										at_matrix, 
 										matrix(nrow=10000,ncol=9,0)
 									)
-									max_len<-(max_len+1000)
+									max_len<-(max_len+10000)
 								}
 								at_matrix[at_len:(at_len+local_len-1),1]<-screened_listed[[i]][[m]][[k]][[7]]
 								at_matrix[at_len:(at_len+local_len-1),2]<-screened_listed[[i]][[m]][[k]][[8]]
@@ -115,11 +123,11 @@
 									at_matrix[at_len:(at_len+local_len-1),6]<-1
 								}		
 								at_matrix[at_len:(at_len+local_len-1),7]<-(
-									as.numeric(as.Date(measurements_table[IDs==m_min,6]))+
-									as.numeric(as.difftime(measurements_table[IDs==m_min,7])/24)
+									as.numeric(as.Date(measurements_table[at_ID,6]))+
+									as.numeric(as.difftime(measurements_table[at_ID,7])/24)
 								)
 								at_matrix[at_len:(at_len+local_len-1),8]<-at_RT[i]
-								at_matrix[at_len:(at_len+local_len-1),9]<-m_min;
+								at_matrix[at_len:(at_len+local_len-1),9]<-with_ID;
 								at_len<-(at_len+local_len)
 							}
 						}
