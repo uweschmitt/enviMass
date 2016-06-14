@@ -39,7 +39,7 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
   if(!file.exists(file.path(logfile[[1]],"features"))){say<-"features directory missing!"}
   if(!file.exists(file.path(logfile[[1]],"results"))){say<-"results directory missing!"}
 	if(!file.exists(file.path(logfile[[1]],"results","screening"))){say<-"results/screening directory missing!"} 
-	if(!file.exists(file.path(logfile[[1]],"results","quantification"))){say<-"results/quantification directory missing!"} 
+	if(!file.exists(file.path(logfile[[1]],"quantification"))){say<-"results/quantification directory missing!"} 
 	if(!file.exists(file.path(logfile[[1]],"results","LOD"))){say<-"results/LOD directory missing!"} 
 	if(!file.exists(file.path(logfile[[1]],"results","recalibration"))){say<-"results/recalibration directory missing!"} 	
   if(!file.exists(file.path(logfile[[1]],"dataframes"))){say<-"dataframes directory missing!"}
@@ -54,7 +54,7 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 		if(
 			!all(names(intstand_check)==c("ID","Name","Formula","RT","RT_tolerance","main_adduct","ion_mode",
 			"use_for_recalibration","use_for_screening", "restrict_adduct","Remark","tag1","tag2","tag3",
-			"from","to","Lower_intensity_bound","Upper_intensity_bound"))
+			"from","to","Lower_intensity_bound","Upper_intensity_bound","Quant_adduct","Quant_peak"))
 		){
 			say<-paste("Incorrect or missing columns in internal standard compound table - compare to tables in a new project for correct entries.")
 		}
@@ -70,7 +70,7 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 			those<-paste(those,collapse=",")
 			say<-paste("Duplicated IS IDs found:",those,". Please correct!")
 		}  
-		if(FALSE){ # ID check per positive OR negative - not run
+		if(TRUE){ # ID check per positive OR negative - not run
 			if(any(intstand_check[,names(intstand_check)=="ion_mode"]=="positive")){
 				if(any(duplicated(intstand_check[intstand_check[,names(intstand_check)=="ion_mode"]=="positive",1]))){
 					those<-intstand_check[duplicated(intstand_check[intstand_check[,names(intstand_check)=="ion_mode"]=="positive",1]),1]
@@ -108,10 +108,10 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 			say<-paste("IS column 6: wrong adduct",wrongadduct)
 		}
 		if(any(is.na(as.numeric(intstand_check[,4])))){say<-"IS column 4 not numeric"}
-		if(any(is.na(as.numeric(intstand_check[intstand_check[,5]!="FALSE",5])))){say<-"IS compound table column 5 not numeric"}
-		if(any(!charmatch(intstand_check[,8],c("TRUE","FALSE"),nomatch=FALSE))){say<-"IS compound table column 8 not logical"}
-		if(any(!charmatch(intstand_check[,9],c("TRUE","FALSE"),nomatch=FALSE))){say<-"IS compound table column 9 not logical"}
-		if(any(!(charmatch(intstand_check[,10],c("TRUE","FALSE"),nomatch=FALSE))) ){say<-"IS compound table column 10 not logical"}
+		if(any(is.na(as.numeric(intstand_check[intstand_check[,5]!="FALSE",5])))){say<-"IS compound table column 5 not numeric or an empty row is present!"}
+		if(any(!charmatch(intstand_check[,8],c("TRUE","FALSE"),nomatch=FALSE))){say<-"IS compound table column 8 not logical or an empty row is present!"}
+		if(any(!charmatch(intstand_check[,9],c("TRUE","FALSE"),nomatch=FALSE))){say<-"IS compound table column 9 not logical or an empty row is present!"}
+		if(any(!(charmatch(intstand_check[,10],c("TRUE","FALSE"),nomatch=FALSE))) ){say<-"IS compound table column 10 not logical or an empty row is present!"}
 		rm(checked,intstand_check)
 	}
 	targets_check<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character",blank.lines.skip=TRUE);
@@ -120,7 +120,7 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 	}else{
 		if(
 			!all(names(targets_check)==c("ID","Name","Formula","RT","RT_tolerance","ID_internal_standard","main_adduct","ion_mode",
-			"use_for_recalibration","use_for_screening","restrict_adduct","Remark","tag1","tag2","tag3","from","to","warn_1","warn_2"))
+			"use_for_recalibration","use_for_screening","restrict_adduct","Remark","tag1","tag2","tag3","from","to","warn_1","warn_2","Quant_adduct","Quant_peak"))
 		){
 			say<-paste("Incorrect or missing columns in target compound table - compare to tables from a new project for correct entries.")
 		}
@@ -156,12 +156,60 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 			say<-paste("target column 7: wrong adduct",wrongadduct)
 		}
 		if(any(is.na(as.numeric(targets_check[,4])))){say<-"targets column 4 not numeric"}
-		if(any(is.na(as.numeric(targets_check[targets_check[,5]!="FALSE",5])))){say<-"target compound table column 5 not numeric"}
-		if(any(!charmatch(targets_check[,9],c("TRUE","FALSE"),nomatch=FALSE))){say<-"target compound table column 9 not logical"}
-		if(any(!charmatch(targets_check[,10],c("TRUE","FALSE"),nomatch=FALSE))){say<-"target compound table column 10 not logical"}
-		if(any(!(charmatch(targets_check[,11],c("TRUE","FALSE"),nomatch=FALSE))) ){say<-"target compound table column 11 not logical"}	
+		if(any(is.na(as.numeric(targets_check[targets_check[,5]!="FALSE",5])))){say<-"target compound table column 5 not numeric or an empty row is present!"}
+		if(any(!charmatch(targets_check[,9],c("TRUE","FALSE"),nomatch=FALSE))){say<-"target compound table column 9 not logical or an empty row is present!"}
+		if(any(!charmatch(targets_check[,10],c("TRUE","FALSE"),nomatch=FALSE))){say<-"target compound table column 10 not logical or an empty row is present!"}
+		if(any(!(charmatch(targets_check[,11],c("TRUE","FALSE"),nomatch=FALSE))) ){say<-"target compound table column 11 not logical or an empty row is present!"}	
 		rm(checked,targets_check)  
 	}   
+	##############################################################################
+	# check compounds for calibration & quantification ###########################
+	if(
+		(logfile$workflow[names(logfile$workflow)=="calibration"])=="yes" ||
+		(logfile$workflow[names(logfile$workflow)=="quantification"])=="yes"	
+	){
+		targets_check<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character",blank.lines.skip=TRUE);
+		intstand_check<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character",blank.lines.skip=TRUE);
+		# check if all relations / adducts are correct
+		for(i in 1:length(targets_check[,1])){
+			if(targets_check[i,6]!="FALSE"){
+				ID_target_missing<-targets_check[i,1];
+				ID_IS_missing<-targets_check[i,6];
+				target_quan_adduct<-targets_check[i,names(targets_check)=="Quant_adduct"]				
+				target_avail_adduct<-targets_check[i,names(targets_check)=="main_adduct"]
+				if(targets_check[i,names(targets_check)=="restrict_adduct"]=="FALSE"){
+					target_avail_adduct<-c(target_avail_adduct,logfile[[7]],logfile[[8]])
+				}
+				if( (!any(target_avail_adduct==target_quan_adduct)) | (target_quan_adduct=="FALSE") ){ # does the target quantification adduct exist?
+					say<-paste(
+					"Adduct used in quantification for target compound with ID ",
+					ID_target_missing," not valid. Either it is set to FALSE and shouldn`t or the required adduct is not included in the adduct selection of this target! Please adjust.",sep="")
+				}
+				found_standard<-TRUE
+				if( !any(intstand_check[,1]==targets_check[i,6]) ){ # does the internal standard exist?		
+					say<-paste(
+					"Quantification/calibration problem: internal standard with ID ",
+					ID_IS_missing," for target compound with ID ",ID_target_missing,
+					" not found. Check compound target table, column ID_internal_standard.",
+					sep="")
+					found_standard<-FALSE
+				}
+				if(found_standard){ # does the standard quantification adduct exist?
+					j<-(intstand_check[,1]==ID_IS_missing)
+					IS_quan_adduct<-intstand_check[j,names(intstand_check)=="Quant_adduct"]				
+					IS_avail_adduct<-intstand_check[j,names(intstand_check)=="main_adduct"]	
+					if(intstand_check[j,names(intstand_check)=="restrict_adduct"]=="FALSE"){
+						IS_avail_adduct<-c(IS_avail_adduct,logfile[[7]],logfile[[8]])
+					}
+					if( (!any(IS_avail_adduct==IS_quan_adduct)) | (IS_quan_adduct=="FALSE") ){ # does the target quantification adduct exist?
+						say<-paste(
+						"Adduct used in quantification for internal standard with ID ",
+						ID_IS_missing," not valid. Either it is set to FALSE and shouldn`t or the required adduct is not included in the adduct selection of this internal standard! Please adjust.",sep="")
+					}
+				}
+			}
+		}	
+	}
   # enough compounds for recalibration available? ##############################
   if(logfile[[6]][2]=="yes"){
     if(logfile[[5]][30]=="Internal standards"){
@@ -194,7 +242,7 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 	  if(any(is.na(lags))){say<-"Invalid trend lags - have you used comma separated numerics?"}
 	  measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 	  if(!any(measurements[,8]=="TRUE")){
-		say<-"No file included into workflow?!"
+		say<-"No file included into workflow; nothing to be calculated."
 		return(say)
 	  }
 	  measurements<-measurements[measurements[,8]=="TRUE",]
@@ -225,7 +273,7 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
   if(any(is.na(as.numeric(measurements[,1])))){say<-"Non-numeric measurements IDs. Revise!"}  
   measurements_ID<-measurements[,1]
   measurements_ID<-paste(measurements_ID,".mzXML",sep="")
-  if(any(match(measurements_ID,filed,nomatch=0)==0)){say<-paste("Missing mzXML file - file corrupted? Compare project mzML folder for consistency!",sep="")}
+  if(any(match(measurements_ID,filed,nomatch=0)==0)){say<-paste("Missing mzXML file - file corrupted? Compare project file folder for consistency!",sep="")}
   ##############################################################################
   # progress bar? ##############################################################
   if(interactive() && !.Platform$OS.type == "windows" && .Platform$GUI == "Rgui" && logfile[[5]][21]=="TRUE"){

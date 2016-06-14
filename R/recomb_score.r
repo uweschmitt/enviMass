@@ -40,9 +40,35 @@ recomb_score<-function(
 	at_results<-1
 	checked<-TRUE
 	check_nodes<-list()
-	check_nodes[[1]]<-cent_peak_mat # initialize with full set
 	check_nodes_index<-list()
-	check_nodes_index[[1]]<-length(cent_peak_mat[,1])
+	# Pre-decompose by RT gaps, especially for suspect screening 
+	if(length(cent_peak_mat[,2])>1){
+		cent_peak_mat<-cent_peak_mat[
+			order(profileList[[2]][cent_peak_mat[,2],3],decreasing=FALSE)
+		,,drop=FALSE]	
+		at_RT<-profileList[[2]][cent_peak_mat[,2],3]
+		in_node<-rep(1,length(cent_peak_mat[,1]))
+		init_node<-1
+	
+		for(i in 2:length(cent_peak_mat[,2])){
+			if((at_RT[i]-at_RT[i-1])>RT_tol_inside){
+				init_node<-(init_node+1)
+				in_node[i]<-init_node
+			}
+		}
+		if(init_node>1){
+			for(i in 1:max(init_node)){
+				check_nodes[[i]]<-cent_peak_mat[in_node==i,,drop=FALSE]
+				check_nodes_index[[i]]<-sum(in_node==i)
+			}
+		}else{
+			check_nodes[[1]]<-cent_peak_mat # initialize with full set
+			check_nodes_index[[1]]<-length(cent_peak_mat[,1])
+		}
+	}else{
+		check_nodes[[1]]<-cent_peak_mat # initialize with full set
+		check_nodes_index[[1]]<-length(cent_peak_mat[,1])
+	}
 	while(checked){
 		if(verbose){cat("\n new round:")}
 		new_nodes<-list()

@@ -189,9 +189,18 @@
 							dateRangeInput("ISadd_date_range", label="", start = NULL, end = NULL,
 								min = NULL, max = NULL, format = "yyyy-mm-dd",
 								startview = "month", weekstart = 0, language = "en",
-								separator = " to "),
-							textInput("Lower_intensity_bound", "Screening: lower intensity bound (.-separated)", value = "0"),						
-							textInput("Upper_intensity_bound", "Screening: upper intensity bound (.-separated)", value = "Inf")
+								separator = " to ")
+						),
+						div(style = widget_style,
+							tags$h4("Quantification settings"),
+							popify(
+								selectInput(inputId="IS_quant_add", label="Adduct for calibration & quantification:", choices= "FALSE", selected = "FALSE", multiple = FALSE),
+									title = "Adduct used for quantification.",
+									content = 	"Selection depends on the ionization mode set above. Ensure this adduct is indeed calculated for this compound (either via the above main adduct or the more general adducts to be set in the Settings/Adducts tab)!", 
+									placement = "right", trigger = "hover"),		
+							numericInput("IS_quant_peak", "Isotopologue peak used for quantification ... (integer, 1=monoisotopic):", 1),
+							textInput("Lower_intensity_bound", "... with a lower intensity bound (.-separated)", value = "0"),						
+							textInput("Upper_intensity_bound", "... with an upper intensity bound (.-separated)", value = "Inf")								
 						)
 					),
 					bsCollapsePanel("Remove internal standard compound", 					
@@ -205,9 +214,10 @@
 					bsCollapsePanel("Modify in external editor", 					
 						HTML('
 							<p><font>
-								The below compound table can be assembled and modified in external text editors or Excel and then imported via the above import step.
+								The below compound table can be assembled and modified in external text editors, OpenOffice Calc or Excel and then imported via the above import step.
 								To do so, use file IS.txt from the dataframe folder of a new enviMass project as a template. 
-								Mind the character encoding (e.g., ANSI) of .txt files when modifying.
+								Mind the character encoding (e.g., ANSI) of .txt files when modifying. 
+								Ensure your imported compound set does not contain empty rows, especially at the table end.
 							</font></p>
 							<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> 
 								Any such modifications must strictly adhere to the following rules to avoid frustration:
@@ -275,9 +285,19 @@
 							dateRangeInput("targetsadd_date_range", label="", start = NULL, end = NULL,
 								min = NULL, max = NULL, format = "yyyy-mm-dd",
 								startview = "month", weekstart = 0, language = "en",
-								separator = " to "),
+								separator = " to ")						
+						),						
+						div(style = widget_style,
+							tags$h4("Quantification settings"),
+							popify(
+								selectInput(inputId="target_quant_add", label="Adduct used for calibration & quantification:", choices= "FALSE", selected = "FALSE", multiple = FALSE),
+									title = "Adduct used for quantification.",
+									content = 	"Selection depends on the ionization mode set above. Ensure this adduct is indeed calculated for this compound (either via the above main adduct or the more general adducts to be set in the Settings/Adducts tab)!", 
+									placement = "right", trigger = "hover"),		
+							numericInput("target_quant_peak", "Isotopologue peak used for calibration & quantification (integer, 1=monoisotopic):", 1),
+							textInput("target_quant_ISID", "ID of internal standard used for calibration & quantification", value = "FALSE"),
 							textInput("warn_1", "First concentration warn level (.-separated)", value = "FALSE"),							
-							textInput("warn_2", "Second concentration warn level (.-separated)", value = "FALSE")						
+							textInput("warn_2", "Second concentration warn level (.-separated)", value = "FALSE")									
 						)
 					),
 					bsCollapsePanel("Remove target compound", 
@@ -294,6 +314,7 @@
 								The below compound table can be assembled and modified in external text editors or Excel and then imported via the above import step.
 								To do so, use file targets.txt from the dataframe folder of a new enviMass project as a template.
 								Mind the character encoding (e.g., ANSI) of .txt files when modifying.
+								Ensure your imported compound set does not contain empty rows, especially at the table end.
 							</font></p>
 							<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> 
 								Any such modifications must strictly adhere to the following rules to avoid frustration:
@@ -418,14 +439,21 @@
 				# block 4 ######################################################					
 				HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Calibration </font></p> '),
 					fluidRow(
+						column(width = 2, radioButtons("calib", "Include? ", c("yes"="yes","no"="no")) ),
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","Under construction")#"This step extracts calibration sets of target and internal standard compound peaks, using
+							#the provided calibration files. The sets can be used in the Calibration tab to establish specific calibration curves
+							#for quantification. If selected, the extraction of these calibration peaks will be affected by the above mass recalibration, 
+							#replicate intersection, blind subtraction and LOD interpolation steps.")
+						)
+					),
+				HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Quantification </font></p> '),
+					fluidRow(
 						column(width = 2, radioButtons("quantif", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","This step extracts calibration sets of target and internal standard compound peaks, using
-							the provided calibration files. The sets can be used in the Calibration tab to establish specific calibration curves
-							for quantification. If selected, the extraction of these calibration peaks will be affected by the above mass recalibration, 
-							replicate intersection, blind subtraction and LOD interpolation steps.")
+							tags$p(align="justify","Under construction")
 						)
-					),		
+					),
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),  		
 				# block X ######################################################					

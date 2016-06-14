@@ -154,8 +154,16 @@ maincalc<-reactive({
 			)  
 		}
 		########################################################################
+		# Calibration ##########################################################
+        if(do_flow==16){
+			enviMass:::workflow_node(
+				"calibration","calibration","calibration","Calibration",
+				path_do="do_calibration.R",path_undo="dont_calibration.R",session,output,input
+			)  	
+		}
+		########################################################################
 		# Quantification #######################################################
-        if(do_flow==15){
+        if(do_flow==17){
 			enviMass:::workflow_node(
 				"quantification","quantification","quantification","Quantification",
 				path_do="do_quantification.R",path_undo="dont_quantification.R",session,output,input
@@ -163,7 +171,7 @@ maincalc<-reactive({
 		}
         ########################################################################
         # IS peak subtraction from profiles  ###################################
-        if(do_flow==16){
+        if(do_flow==18){
 			enviMass:::workflow_node(
 				"IS_subtr","IS_subtr","IS_subtr","IS peak subtraction from profiles ",
 				path_do="do_IS_subtr.R",path_undo="dont_IS_subtr.R",session,output,input
@@ -171,7 +179,7 @@ maincalc<-reactive({
         }
         ########################################################################
         # target peak subtraction from profiles  ###############################
-        if(do_flow==17){
+        if(do_flow==19){
 			enviMass:::workflow_node(
 				"target_subtr","target_subtr","target_subtr","Target peak subtraction from profiles ",
 				path_do="do_target_subtr.R",path_undo="dont_target_subtr.R",session,output,input
@@ -179,7 +187,7 @@ maincalc<-reactive({
         }		
         ########################################################################
         # blind peak subtraction from profiles #################################
-        if(do_flow==18){
+        if(do_flow==20){
 			enviMass:::workflow_node(
 				"blind_subtr","blind_subtr","blind_subtr","Blind peak subtraction from profiles ",
 				path_do="do_blind_subtr.R",path_undo="dont_blind_subtr.R",session,output,input
@@ -187,7 +195,7 @@ maincalc<-reactive({
         }		
         ########################################################################
         # trend / blind ########################################################
-        if(do_flow==19){
+        if(do_flow==21){
 			enviMass:::workflow_node(
 				"trendblind","trendblind","trendblind","Trend detection and blind subtraction",
 				path_do="do_trendblind.R",path_undo="dont_trendblind.R",session,output,input
@@ -198,7 +206,7 @@ maincalc<-reactive({
 		
         ########################################################################
         # make function reiterate ##############################################
-        if(do_flow==20){
+        if(do_flow==22){
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="profileList_pos")){rm(profileList_pos)}
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
@@ -223,10 +231,10 @@ maincalc<-reactive({
 			}
         }
         do_flow<<-(do_flow+1);
-		if(do_flow==21){
+		if(do_flow==23){
 			output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
 		}
-        if(do_flow<22){
+        if(do_flow<24){
 			invalidateLater(1, session=NULL)
 			cat("Calculating...");
 			return("Calculating...")
@@ -243,7 +251,8 @@ maincalc<-reactive({
         ########################################################################
       }else{
         cat("Project inconsistent\n");
-		return("Project inconsistent\n")
+		info(say);
+		return("Project inconsistent\n");
       }
     }
 })

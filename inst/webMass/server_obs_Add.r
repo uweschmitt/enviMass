@@ -7,9 +7,11 @@ observe({ # update selectable adducts by ionization mode
 	input$ISadd_charge
 	if(isolate(input$ISadd_charge)=="positive"){
 		updateSelectInput(session, "ISadd_add", "Main adduct (+):", choices = c("FALSE",as.character(adducts[adducts[,6]=="positive",1])), selected="FALSE")
+		updateSelectInput(session, "IS_quant_add", "Adduct for quantification:", choices = c("FALSE",as.character(adducts[adducts[,6]=="positive",1])), selected="FALSE")
 	}
 	if(isolate(input$ISadd_charge)=="negative"){
 		updateSelectInput(session, "ISadd_add", "Main adduct (-):", choices = c("FALSE",as.character(adducts[adducts[,6]=="negative",1])), selected="FALSE")
+		updateSelectInput(session, "IS_quant_add", "Adduct for calibration & quantification:", choices = c("FALSE",as.character(adducts[adducts[,6]=="negative",1])), selected="FALSE")
 	}  
 })
 observe({
@@ -39,6 +41,8 @@ observe({
 		}
 		IS2[17]<-as.character(isolate(input$Lower_intensity_bound))
 		IS2[18]<-as.character(isolate(input$Upper_intensity_bound))
+		IS2[19]<-as.character(isolate(input$IS_quant_add))
+		IS2[20]<-as.character(isolate(input$IS_quant_peak))		
 		IS<-rbind(IS2,IS1);
 		write.table(IS,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)
 		rm(IS,IS1,IS2);
@@ -98,9 +102,12 @@ observe({ # update selectable adducts by ionization mode
 	input$targetsadd_charge
 	if(isolate(input$targetsadd_charge)=="positive"){
 		updateSelectInput(session, "targetsadd_add", "Main adduct (+):", choices = c("FALSE",as.character(adducts[adducts[,6]=="positive",1])), selected="FALSE")
+		updateSelectInput(session, "target_quant_add", "Adduct used for calibration & quantification:", choices = c("FALSE",as.character(adducts[adducts[,6]=="positive",1])), selected="FALSE")
+
 	}
 	if(isolate(input$targetsadd_charge)=="negative"){
 		updateSelectInput(session, "targetsadd_add", "Main adduct (-):", choices = c("FALSE",as.character(adducts[adducts[,6]=="negative",1])), selected="FALSE")
+		updateSelectInput(session, "target_quant_add", "Adduct used for calibration & quantification:", choices = c("FALSE",as.character(adducts[adducts[,6]=="negative",1])), selected="FALSE")
 	}
 })
 observe({
@@ -115,7 +122,7 @@ observe({
 		if(isolate(input$targetsadd_RTtol_use)){
 			targets2[5]<-as.character(isolate(input$targetsadd_RTtol))
 		}
-		#  targets2[6]<-  .... some IS ID
+		targets2[6]<-as.character(isolate(input$target_quant_peak))  
 		targets2[7]<-as.character(isolate(input$targetsadd_add))
 		targets2[8]<-as.character(isolate(input$targetsadd_charge))
 		targets2[9]<-as.character(isolate(input$targetsadd_use_recal))
@@ -131,6 +138,8 @@ observe({
 		}
 		targets2[18]<-as.character(isolate(input$warn_1)) 
 		targets2[19]<-as.character(isolate(input$warn_2))	
+		targets2[20]<-as.character(isolate(input$target_quant_add)) 
+		targets2[21]<-as.character(isolate(input$target_quant_peak))		
 		targets<-rbind(targets2,targets1);
 		write.table(targets,file=file.path(logfile[[1]],"dataframes","targets.txt"),row.names=FALSE,sep="\t",quote=FALSE)      
 		rm(targets,targets1,targets2);

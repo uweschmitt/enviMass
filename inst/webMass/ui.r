@@ -69,6 +69,7 @@ pageWithSidebar(
   source("ui_sidebar.R", local=TRUE)$value,   
   ##############################################################################
   mainPanel(
+	useShinyjs(),  # Set up shinyjs
     HTML('</font>'),
 	source("ui_busy.R", local=TRUE)$value,  
     HTML('</font>'),
