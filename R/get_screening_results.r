@@ -127,7 +127,9 @@
 									as.numeric(as.difftime(measurements_table[at_ID,7])/24)
 								)
 								at_matrix[at_len:(at_len+local_len-1),8]<-at_RT[i]
-								at_matrix[at_len:(at_len+local_len-1),9]<-with_ID;
+# NEW+								
+								at_matrix[at_len:(at_len+local_len-1),9]<-as.numeric(measurements_table[at_ID,1]);
+# NEW-									
 								at_len<-(at_len+local_len)
 							}
 						}
@@ -243,7 +245,7 @@
 			at_matrix<-at_matrix[1:(at_len-1),]
 			results[[3]]<-at_matrix
 		}else{
-			results_table_3<-numeric(0)
+			results[[3]]<-numeric(0)
 		}	
 		return(results)
 	}

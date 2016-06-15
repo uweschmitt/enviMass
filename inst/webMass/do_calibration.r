@@ -1,4 +1,4 @@
-
+if(FALSE){
 	######################################################################################################################
 	# load available LOD smoothing spline models #########################################################################
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="LOD_splined")){rm(LOD_splined,envir=as.environment(".GlobalEnv"))}
@@ -418,6 +418,6 @@
 	
 	
 	
-	
+}
 
 

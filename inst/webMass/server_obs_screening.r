@@ -214,41 +214,29 @@ observe({
 					which_where<-c();which_peaks<-c();sample_type<-c();score_1<-c();score_2<-c();delppm<-c();delRT<-c();inte<-c();
 					with_peaks<-c();#with_file<-c();with_s<-c();
 					IDs<-as.numeric(measurements[,1]) 
-# NEW +	
-					if(isolate(input$Pos_type_select)=="Sample/blind files"){
-						min_ID<-(min(as.numeric(profileList_pos_copy[[4]]))-1) # adjust to lowest file ID; otherwise too many empty list entries will be caused
-					}
-					if(isolate(input$Pos_type_select)=="Calibration files"){
-						min_ID<-(min(as.numeric(profileList_pos_cal[[4]]))-1) # adjust to lowest file ID; otherwise too many empty list entries will be caused					
-					}
-# NEW -
 					if(length(res_pos_screen_sel)>0){
 						for(i in 1:length(res_pos_screen_sel)){
-# NEW +							
-							m_min<-(i+min_ID)
-# NEW -							
 							if(length(res_pos_screen_sel[[i]])>0){
 								for(j in 1:length(res_pos_screen_sel[[i]])){
 # NEW +
-									which_where<-c(which_where,measurements[IDs==m_min,1]);
-									sample_type<-c(sample_type,measurements[IDs==m_min,3]);
+									which_where<-c(which_where,measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),1]);
+									sample_type<-c(sample_type,measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),3]);
 # NEW -
 									which_peaks<-c(which_peaks,paste(res_pos_screen_sel[[i]][[j]]$Peaks[,1],collapse=", "))
 									score_1<-c(score_1,round(res_pos_screen_sel[[i]][[j]]$score_1,digits=2));
 									score_2<-c(score_2,round(res_pos_screen_sel[[i]][[j]]$score_2,digits=2));
 									delppm<-c(delppm,paste(as.character(round(res_pos_screen_sel[[i]][[j]][[4]],digits=2)),collapse=", "));
-									#delRT<-c(delRT,paste(as.character(round(res_pos_screen_sel[[i]][[j]][[4]],digits=2)),collapse=", "));
 # NEW +									
 									if(isolate(input$Pos_type_select)=="Sample/blind files"){
 										with_peaks<-c(with_peaks,paste(as.character(
-											profileList_pos_copy[[2]][ # insert peak IDs - original $Peaks refer to an entry only!
+											profileList_pos_copy[[2]][ # insert peak IDs - original $Peaks refer to an entry ID only!
 												res_pos_screen_sel[[i]][[j]]$Peaks[,2],4
 											]
 										),collapse=", "));
 									}
 									if(isolate(input$Pos_type_select)=="Calibration files"){	
 										with_peaks<-c(with_peaks,paste(as.character(
-											profileList_pos_cal[[2]][ # insert peak IDs - original $Peaks refer to an entry only!
+											profileList_pos_cal[[2]][ # insert peak IDs - original $Peaks refer to an entry ID only!
 												res_pos_screen_sel[[i]][[j]]$Peaks[,2],4
 											]
 										),collapse=", "));
@@ -299,14 +287,6 @@ observe({
 				input$selec_pos_x
 				input$selec_pos_y
 				if (length(s) & isolate(input$screen_pos_summarize=="yes")) {		
-# NEW +	
-					if(isolate(input$Pos_type_select)=="Sample/blind files"){
-						min_ID<-(min(as.numeric(profileList_pos_copy[[4]]))-1) # adjust to lowest file ID; otherwise too many empty list entries will be caused
-					}
-					if(isolate(input$Pos_type_select)=="Calibration files"){
-						min_ID<-(min(as.numeric(profileList_pos_cal[[4]]))-1) # adjust to lowest file ID; otherwise too many empty list entries will be caused					
-					}
-# NEW -				
 					use_comp<-(
 						(patt_pos_ID==as.character(results_screen_pos[s,1])) & (patt_pos_add==as.character(results_screen_pos[s,3]))
 					)
@@ -319,9 +299,6 @@ observe({
 					if(length(res_pos_screen_sel)>0){
 						mass<-c();inte<-c();RT<-c();cutit<-c();atdate<-c();attime<-c();placed<-c();typed<-c();
 						for(i in 1:length(res_pos_screen_sel)){
-# NEW +							
-							m_min<-(i+min_ID)
-# NEW -		
 							if(length(res_pos_screen_sel[[i]])>0){
 								for(j in 1:length(res_pos_screen_sel[[i]])){
 									mass<-c(mass,res_pos_screen_sel[[i]][[j]][[7]])
@@ -342,10 +319,12 @@ observe({
 										cutit<-c(cutit,0);
 									}
 									lengi<-length(res_pos_screen_sel[[i]][[j]][[7]])
-									placed<-c(placed,rep(measurements[IDs==m_min,5],lengi))
-									typed<-c(typed,rep(measurements[IDs==m_min,3],lengi))
-									atdate<-c(atdate,rep(measurements[IDs==m_min,6],lengi))
-									attime<-c(attime,rep(measurements[IDs==m_min,7],lengi))								
+# NEW +	
+									placed<-c(placed,rep(measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),5],lengi))
+									typed<-c(typed,rep(measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),3],lengi))
+									atdate<-c(atdate,rep(measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),6],lengi))
+									attime<-c(attime,rep(measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),7],lengi))	
+# NEW -										
 								}
 							}
 						}
@@ -493,15 +472,7 @@ observe({
 				)
 			,]		
 			if(length(measurements[,1])>0 ){
-				IDs<-as.numeric(measurements[,1])
-				
-# NEW +	
-				min_ID_sam<-(min(as.numeric(profileList_pos_copy[[4]]))-1) # adjust to lowest file ID; otherwise too many empty list entries will be caused
-				min_ID_cal<-(min(as.numeric(profileList_pos_cal[[4]]))-1) # adjust to lowest file ID; otherwise too many empty list entries will be caused					
-# NEW -				
-				
-				
-				
+				IDs<-measurements[,1]
 				count_file_compound_pos<-measurements[,c(1,2,3)]
 				count_file_compound_pos<-cbind(
 					count_file_compound_pos,
@@ -517,16 +488,13 @@ observe({
 							for(i in 1:length(res_IS_pos_screen)){ # per compound_adduct
 								if(length(res_IS_pos_screen[[i]])>0){ 
 									for(j in 1:length(res_IS_pos_screen[[i]])){ # per file
-# NEW +							
-										m_min<-(j+min_ID_sam)
-# NEW -		
 										if(length(res_IS_pos_screen[[i]][[j]])>0){ # per matches
 											for(k in 1:length(res_IS_pos_screen[[i]][[j]])){ 				
 												if(!is.na(res_IS_pos_screen[[i]][[j]][[k]]$score_1)){
 													if(res_IS_pos_screen[[i]][[j]][[k]]$score_1>=cut_score){
 # NEW +														
-														count_file_compound_pos[IDs==m_min,4]<-(
-															count_file_compound_pos[IDs==m_min,4]+1
+														count_file_compound_pos[IDs==res_IS_pos_screen[[i]][[j]][[k]]$file_ID,4]<-(
+															count_file_compound_pos[IDs==res_IS_pos_screen[[i]][[j]][[k]]$file_ID,4]+1
 														);
 # NEW -															
 														break;
@@ -549,16 +517,13 @@ observe({
 							for(i in 1:length(res_IS_pos_screen_cal)){ # per compound_adduct
 								if(length(res_IS_pos_screen_cal[[i]])>0){ 
 									for(j in 1:length(res_IS_pos_screen_cal[[i]])){ # per file
-# NEW +							
-										m_min<-(j+min_ID_cal)
-# NEW -										
 										if(length(res_IS_pos_screen_cal[[i]][[j]])>0){ # per matches
 											for(k in 1:length(res_IS_pos_screen_cal[[i]][[j]])){ 				
 												if(!is.na(res_IS_pos_screen_cal[[i]][[j]][[k]]$score_1)){
 													if(res_IS_pos_screen_cal[[i]][[j]][[k]]$score_1>=cut_score){
 # NEW +														
-														count_file_compound_pos[IDs==m_min,4]<-(
-															count_file_compound_pos[IDs==m_min,4]+1
+														count_file_compound_pos[IDs==res_IS_pos_screen_cal[[i]][[j]][[k]]$file_ID,4]<-(
+															count_file_compound_pos[IDs==res_IS_pos_screen_cal[[i]][[j]][[k]]$file_ID,4]+1
 														);
 # NEW -														
 														break;
@@ -581,16 +546,13 @@ observe({
 							for(i in 1:length(res_target_pos_screen)){ # per compound_adduct
 								if(length(res_target_pos_screen[[i]])>0){ 
 									for(j in 1:length(res_target_pos_screen[[i]])){ # per file
-# NEW +							
-										m_min<-(j+min_ID_sam)
-# NEW -		
 										if(length(res_target_pos_screen[[i]][[j]])>0){ # per matches
 											for(k in 1:length(res_target_pos_screen[[i]][[j]])){ 				
 												if(!is.na(res_target_pos_screen[[i]][[j]][[k]]$score_1)){
 													if(res_target_pos_screen[[i]][[j]][[k]]$score_1>=cut_score){
 # NEW +														
-														count_file_compound_pos[IDs==m_min,5]<-(
-															count_file_compound_pos[IDs==m_min,5]+1
+														count_file_compound_pos[IDs==res_target_pos_screen[[i]][[j]][[k]]$file_ID,5]<-(
+															count_file_compound_pos[IDs==res_target_pos_screen[[i]][[j]][[k]]$file_ID,5]+1
 														);
 # NEW -															
 														break;
@@ -613,16 +575,13 @@ observe({
 							for(i in 1:length(res_target_pos_screen_cal)){ # per compound_adduct
 								if(length(res_target_pos_screen_cal[[i]])>0){ 
 									for(j in 1:length(res_target_pos_screen_cal[[i]])){ # per file
-# NEW +							
-										m_min<-(j+min_ID_cal)
-# NEW -	
 										if(length(res_target_pos_screen_cal[[i]][[j]])>0){ # per matches
 											for(k in 1:length(res_target_pos_screen_cal[[i]][[j]])){ 				
 												if(!is.na(res_target_pos_screen_cal[[i]][[j]][[k]]$score_1)){
 													if(res_target_pos_screen_cal[[i]][[j]][[k]]$score_1>=cut_score){
 # NEW +													
-														count_file_compound_pos[IDs==m_min,5]<-(
-															count_file_compound_pos[IDs==m_min,5]+1
+														count_file_compound_pos[IDs==res_target_pos_screen_cal[[i]][[j]][[k]]$file_ID,5]<-(
+															count_file_compound_pos[IDs==res_target_pos_screen_cal[[i]][[j]][[k]]$file_ID,5]+1
 														);
 # NEW -															
 														break;
@@ -789,7 +748,7 @@ observe({
 				found_table<-FALSE				
 			}
 		}
-		if(found_table & (isolate(input$Neg_compound_select=="Target compounds")||isolate(input$Neg_compound_select=="Internal standards")) ){
+		if(found_table & (isolate(input$Neg_compound_select=="Target compounds") || isolate(input$Neg_compound_select=="Internal standards")) ){
 			# name selected compound & adduct
 			named_compound <- renderText({
 				s<-input$Table_screening_neg_row_last_clicked
@@ -860,41 +819,29 @@ observe({
 					which_where<-c();which_peaks<-c();sample_type<-c();score_1<-c();score_2<-c();delppm<-c();delRT<-c();inte<-c();
 					with_peaks<-c();#with_file<-c();with_s<-c();
 					IDs<-as.numeric(measurements[,1]) 
-# NEW +	
-					if(isolate(input$Neg_type_select)=="Sample/blind files"){
-						min_ID<-(min(as.numeric(profileList_neg_copy[[4]]))-1) # adjust to lowest file ID; otherwise too many empty list entries will be caused
-					}
-					if(isolate(input$Neg_type_select)=="Calibration files"){
-						min_ID<-(min(as.numeric(profileList_neg_cal[[4]]))-1) # adjust to lowest file ID; otherwise too many empty list entries will be caused					
-					}
-# NEW -
 					if(length(res_neg_screen_sel)>0){
 						for(i in 1:length(res_neg_screen_sel)){
-# NEW +							
-							m_min<-(i+min_ID)
-# NEW -							
 							if(length(res_neg_screen_sel[[i]])>0){
 								for(j in 1:length(res_neg_screen_sel[[i]])){
 # NEW +
-									which_where<-c(which_where,measurements[IDs==m_min,1]);
-									sample_type<-c(sample_type,measurements[IDs==m_min,3]);
+									which_where<-c(which_where,measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),1]);
+									sample_type<-c(sample_type,measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),3]);
 # NEW -
 									which_peaks<-c(which_peaks,paste(res_neg_screen_sel[[i]][[j]]$Peaks[,1],collapse=", "))
 									score_1<-c(score_1,round(res_neg_screen_sel[[i]][[j]]$score_1,digits=2));
 									score_2<-c(score_2,round(res_neg_screen_sel[[i]][[j]]$score_2,digits=2));
 									delppm<-c(delppm,paste(as.character(round(res_neg_screen_sel[[i]][[j]][[4]],digits=2)),collapse=", "));
-									#delRT<-c(delRT,paste(as.character(round(res_neg_screen_sel[[i]][[j]][[4]],digits=2)),collapse=", "));
 # NEW +									
 									if(isolate(input$Neg_type_select)=="Sample/blind files"){
 										with_peaks<-c(with_peaks,paste(as.character(
-											profileList_neg_copy[[2]][ # insert peak IDs - original $Peaks refer to an entry only!
+											profileList_neg_copy[[2]][ # insert peak IDs - original $Peaks refer to an entry ID only!
 												res_neg_screen_sel[[i]][[j]]$Peaks[,2],4
 											]
 										),collapse=", "));
 									}
 									if(isolate(input$Neg_type_select)=="Calibration files"){	
 										with_peaks<-c(with_peaks,paste(as.character(
-											profileList_neg_cal[[2]][ # insert peak IDs - original $Peaks refer to an entry only!
+											profileList_neg_cal[[2]][ # insert peak IDs - original $Peaks refer to an entry ID only!
 												res_neg_screen_sel[[i]][[j]]$Peaks[,2],4
 											]
 										),collapse=", "));
@@ -922,7 +869,7 @@ observe({
 				}else{
 					DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No compound selected or adducts collapsed")
 				}
-			},server = TRUE)			
+			},server = TRUE)
 			# initialize intensity range for selected internal standard
 			observe({ 
 				s<-input$Table_screening_neg_row_last_clicked
@@ -945,14 +892,6 @@ observe({
 				input$selec_neg_x
 				input$selec_neg_y
 				if (length(s) & isolate(input$screen_neg_summarize=="yes")) {		
-# NEW +	
-					if(isolate(input$Neg_type_select)=="Sample/blind files"){
-						min_ID<-(min(as.numeric(profileList_neg_copy[[4]]))-1) # adjust to lowest file ID; otherwise too many empty list entries will be caused
-					}
-					if(isolate(input$Neg_type_select)=="Calibration files"){
-						min_ID<-(min(as.numeric(profileList_neg_cal[[4]]))-1) # adjust to lowest file ID; otherwise too many empty list entries will be caused					
-					}
-# NEW -				
 					use_comp<-(
 						(patt_neg_ID==as.character(results_screen_neg[s,1])) & (patt_neg_add==as.character(results_screen_neg[s,3]))
 					)
@@ -965,9 +904,6 @@ observe({
 					if(length(res_neg_screen_sel)>0){
 						mass<-c();inte<-c();RT<-c();cutit<-c();atdate<-c();attime<-c();placed<-c();typed<-c();
 						for(i in 1:length(res_neg_screen_sel)){
-# NEW +							
-							m_min<-(i+min_ID)
-# NEW -		
 							if(length(res_neg_screen_sel[[i]])>0){
 								for(j in 1:length(res_neg_screen_sel[[i]])){
 									mass<-c(mass,res_neg_screen_sel[[i]][[j]][[7]])
@@ -988,10 +924,12 @@ observe({
 										cutit<-c(cutit,0);
 									}
 									lengi<-length(res_neg_screen_sel[[i]][[j]][[7]])
-									placed<-c(placed,rep(measurements[IDs==m_min,5],lengi))
-									typed<-c(typed,rep(measurements[IDs==m_min,3],lengi))
-									atdate<-c(atdate,rep(measurements[IDs==m_min,6],lengi))
-									attime<-c(attime,rep(measurements[IDs==m_min,7],lengi))								
+# NEW +	
+									placed<-c(placed,rep(measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),5],lengi))
+									typed<-c(typed,rep(measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),3],lengi))
+									atdate<-c(atdate,rep(measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),6],lengi))
+									attime<-c(attime,rep(measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),7],lengi))	
+# NEW -										
 								}
 							}
 						}
@@ -1126,7 +1064,7 @@ observe({
 			},width = "auto", height = 250)
 			output$count_aboveBlank_neg<-renderText({
 				paste("Ratios of sample vs. blank intensities for screened compounds from the above table. This concerns",as.character(sum(rat_sam_blank_neg>0)),"compounds.")
-			})
+			})			
 		} # if(found_table)
 		if(isolate(input$Neg_compound_select=="File-wise counts")){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -1139,15 +1077,7 @@ observe({
 				)
 			,]		
 			if(length(measurements[,1])>0 ){
-				IDs<-as.numeric(measurements[,1])
-				
-# NEW +	
-				min_ID_sam<-(min(as.numeric(profileList_neg_copy[[4]]))-1) # adjust to lowest file ID; otherwise too many empty list entries will be caused
-				min_ID_cal<-(min(as.numeric(profileList_neg_cal[[4]]))-1) # adjust to lowest file ID; otherwise too many empty list entries will be caused					
-# NEW -				
-				
-				
-				
+				IDs<-measurements[,1]
 				count_file_compound_neg<-measurements[,c(1,2,3)]
 				count_file_compound_neg<-cbind(
 					count_file_compound_neg,
@@ -1163,16 +1093,13 @@ observe({
 							for(i in 1:length(res_IS_neg_screen)){ # per compound_adduct
 								if(length(res_IS_neg_screen[[i]])>0){ 
 									for(j in 1:length(res_IS_neg_screen[[i]])){ # per file
-# NEW +							
-										m_min<-(j+min_ID_sam)
-# NEW -		
 										if(length(res_IS_neg_screen[[i]][[j]])>0){ # per matches
 											for(k in 1:length(res_IS_neg_screen[[i]][[j]])){ 				
 												if(!is.na(res_IS_neg_screen[[i]][[j]][[k]]$score_1)){
 													if(res_IS_neg_screen[[i]][[j]][[k]]$score_1>=cut_score){
 # NEW +														
-														count_file_compound_neg[IDs==m_min,4]<-(
-															count_file_compound_neg[IDs==m_min,4]+1
+														count_file_compound_neg[IDs==res_IS_neg_screen[[i]][[j]][[k]]$file_ID,4]<-(
+															count_file_compound_neg[IDs==res_IS_neg_screen[[i]][[j]][[k]]$file_ID,4]+1
 														);
 # NEW -															
 														break;
@@ -1195,16 +1122,13 @@ observe({
 							for(i in 1:length(res_IS_neg_screen_cal)){ # per compound_adduct
 								if(length(res_IS_neg_screen_cal[[i]])>0){ 
 									for(j in 1:length(res_IS_neg_screen_cal[[i]])){ # per file
-# NEW +							
-										m_min<-(j+min_ID_cal)
-# NEW -										
 										if(length(res_IS_neg_screen_cal[[i]][[j]])>0){ # per matches
 											for(k in 1:length(res_IS_neg_screen_cal[[i]][[j]])){ 				
 												if(!is.na(res_IS_neg_screen_cal[[i]][[j]][[k]]$score_1)){
 													if(res_IS_neg_screen_cal[[i]][[j]][[k]]$score_1>=cut_score){
 # NEW +														
-														count_file_compound_neg[IDs==m_min,4]<-(
-															count_file_compound_neg[IDs==m_min,4]+1
+														count_file_compound_neg[IDs==res_IS_neg_screen_cal[[i]][[j]][[k]]$file_ID,4]<-(
+															count_file_compound_neg[IDs==res_IS_neg_screen_cal[[i]][[j]][[k]]$file_ID,4]+1
 														);
 # NEW -														
 														break;
@@ -1227,16 +1151,13 @@ observe({
 							for(i in 1:length(res_target_neg_screen)){ # per compound_adduct
 								if(length(res_target_neg_screen[[i]])>0){ 
 									for(j in 1:length(res_target_neg_screen[[i]])){ # per file
-# NEW +							
-										m_min<-(j+min_ID_sam)
-# NEW -		
 										if(length(res_target_neg_screen[[i]][[j]])>0){ # per matches
 											for(k in 1:length(res_target_neg_screen[[i]][[j]])){ 				
 												if(!is.na(res_target_neg_screen[[i]][[j]][[k]]$score_1)){
 													if(res_target_neg_screen[[i]][[j]][[k]]$score_1>=cut_score){
 # NEW +														
-														count_file_compound_neg[IDs==m_min,5]<-(
-															count_file_compound_neg[IDs==m_min,5]+1
+														count_file_compound_neg[IDs==res_target_neg_screen[[i]][[j]][[k]]$file_ID,5]<-(
+															count_file_compound_neg[IDs==res_target_neg_screen[[i]][[j]][[k]]$file_ID,5]+1
 														);
 # NEW -															
 														break;
@@ -1259,16 +1180,13 @@ observe({
 							for(i in 1:length(res_target_neg_screen_cal)){ # per compound_adduct
 								if(length(res_target_neg_screen_cal[[i]])>0){ 
 									for(j in 1:length(res_target_neg_screen_cal[[i]])){ # per file
-# NEW +							
-										m_min<-(j+min_ID_cal)
-# NEW -	
 										if(length(res_target_neg_screen_cal[[i]][[j]])>0){ # per matches
 											for(k in 1:length(res_target_neg_screen_cal[[i]][[j]])){ 				
 												if(!is.na(res_target_neg_screen_cal[[i]][[j]][[k]]$score_1)){
 													if(res_target_neg_screen_cal[[i]][[j]][[k]]$score_1>=cut_score){
 # NEW +													
-														count_file_compound_neg[IDs==m_min,5]<-(
-															count_file_compound_neg[IDs==m_min,5]+1
+														count_file_compound_neg[IDs==res_target_neg_screen_cal[[i]][[j]][[k]]$file_ID,5]<-(
+															count_file_compound_neg[IDs==res_target_neg_screen_cal[[i]][[j]][[k]]$file_ID,5]+1
 														);
 # NEW -															
 														break;
@@ -1293,8 +1211,8 @@ observe({
 		}
 	} # if init$a
 })  
-
 ##############################################################################
+
 
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_obs_screening.r!")}
 

@@ -167,7 +167,7 @@
 					res_target_pos_screen[[i]]<-list()
 					for(m in 1:length(target_pos_screen_listed[[i]])){ # m - sample
 # NEW +						
-						at_ID<-set_ID[profileList_pos[[4]]==as.character(profileList_pos[[2]][m,6])]
+						at_ID<-set_ID[profileList_pos[[4]]==colnames(target_pos_screen_listed[[i]][[m]])[1]]
 # NEW -	
 						if(length(target_pos_screen_listed[[i]][[m]])>0){
 							if(do_LOD){
@@ -198,7 +198,7 @@
 							)
 							for(k in 1:length(combination_matches)){ # add file ID
 								combination_matches[[k]][[10]]<-colnames(target_pos_screen_listed[[i]][[m]])[1]
-								names(combination_matches[[1]])[10]<-"file_ID"
+								names(combination_matches[[k]])[10]<-"file_ID"
 							}
 							res_target_pos_screen[[i]][[at_ID]]<-combination_matches
 # NEW -	
@@ -437,7 +437,7 @@
 					res_target_neg_screen[[i]]<-list()
 					for(m in 1:length(target_neg_screen_listed[[i]])){ # m - sample
 # NEW +						
-						at_ID<-set_ID[profileList_neg[[4]]==as.character(profileList_neg[[2]][m,6])]
+						at_ID<-set_ID[profileList_neg[[4]]==colnames(target_neg_screen_listed[[i]][[m]])[1]]
 # NEW -	
 						if(length(target_neg_screen_listed[[i]][[m]])>0){
 							if(do_LOD){
@@ -468,7 +468,7 @@
 							)
 							for(k in 1:length(combination_matches)){ # add file ID
 								combination_matches[[k]][[10]]<-colnames(target_neg_screen_listed[[i]][[m]])[1]
-								names(combination_matches[[1]])[10]<-"file_ID"
+								names(combination_matches[[k]])[10]<-"file_ID"
 							}
 							res_target_neg_screen[[i]][[at_ID]]<-combination_matches
 # NEW -	

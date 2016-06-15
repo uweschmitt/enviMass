@@ -10,8 +10,9 @@
 #' @param int_tol
 #' @param use_score_cut Logical.
 #' @param score_cut Numeric.
-#' @param plotit
-#' @param verbose
+#' @param plotit Logical.
+#' @param verbose Logical.
+#' @param RT_seperate Logical.
 #' 
 #' @details enviMass workflow function
 #' 
@@ -26,7 +27,8 @@ recomb_score<-function(
 		use_score_cut=FALSE,
 		score_cut=0,		
 		plotit=FALSE,
-		verbose=FALSE
+		verbose=FALSE,
+		RT_seperate=FALSE
 	){
 			
 	#######################################################################
@@ -42,14 +44,13 @@ recomb_score<-function(
 	check_nodes<-list()
 	check_nodes_index<-list()
 	# Pre-decompose by RT gaps, especially for suspect screening 
-	if(length(cent_peak_mat[,2])>1){
+	if((length(cent_peak_mat[,2])>1) & RT_seperate){
 		cent_peak_mat<-cent_peak_mat[
 			order(profileList[[2]][cent_peak_mat[,2],3],decreasing=FALSE)
 		,,drop=FALSE]	
 		at_RT<-profileList[[2]][cent_peak_mat[,2],3]
 		in_node<-rep(1,length(cent_peak_mat[,1]))
 		init_node<-1
-	
 		for(i in 2:length(cent_peak_mat[,2])){
 			if((at_RT[i]-at_RT[i-1])>RT_tol_inside){
 				init_node<-(init_node+1)
@@ -59,6 +60,7 @@ recomb_score<-function(
 		if(init_node>1){
 			for(i in 1:max(init_node)){
 				check_nodes[[i]]<-cent_peak_mat[in_node==i,,drop=FALSE]
+				check_nodes[[i]]<-(check_nodes[[i]][order(check_nodes[[i]][,1],decreasing=FALSE),,drop=FALSE])
 				check_nodes_index[[i]]<-sum(in_node==i)
 			}
 		}else{
@@ -76,7 +78,7 @@ recomb_score<-function(
 		at_new_nodes<-1
 		checked<-FALSE
 		for(k in 1:length(check_nodes)){
-			if(verbose){cat(" :: "); cat(paste(check_nodes[[k]][,2],collapse=","))}
+			if(verbose){cat("\n  :: "); cat(paste(check_nodes[[k]][,2],collapse=","))}
 			if(plotit){	
 				rescale<-weighted.mean(
 					x=(pattern_compound[check_nodes[[k]][,1],2]/profileList[[2]][check_nodes[[k]][,2],2]),
@@ -102,7 +104,7 @@ recomb_score<-function(
 			# score intensities ...
 			rescale<-weighted.mean(
 				x=(pattern_compound[check_nodes[[k]][,1],2]/profileList[[2]][check_nodes[[k]][,2],2]),
-				w=( profileList[[2]][check_nodes[[k]][,2],2] / (int_tol/100*profileList[[2]][check_nodes[[k]][,2],2]) )
+				w=(profileList[[2]][check_nodes[[k]][,2],2]/(int_tol/100*profileList[[2]][check_nodes[[k]][,2],2]) )
 			)
 			above_LOD<-((pattern_compound[,2]/rescale)>LOD)
 			# ... measured "above LOD threshold:"
@@ -115,13 +117,28 @@ recomb_score<-function(
 				score1<-NA
 			}
 			if(use_score_cut=="TRUE"){
-				if(is.na(score1)){
+				if(is.na(score1)){ 		# ... discarded if below LOD
+					if(verbose){cat("- all below LOD.")}
 					next;
 				}
-				if(score1<=score_cut){
+				if(score1<=score_cut){ 	# 
+					if(verbose){cat("- discarded by score.")}				
 					next;
 				}				
 			}
+			contained<-FALSE
+			if(length(results)>0){
+				for(n in 1:length(results)){
+					if( !any(is.na(match(check_nodes[[k]][,2],results[[n]][[1]][,2]))) ){
+						contained<-TRUE;
+						break; # skip - already contained in some larger combination
+					}
+				}
+			}
+			if(contained){
+				if(verbose){cat("-redundant.")}
+				next
+			}			
 			get_plaus<-check_plaus( # returns TRUE or FALSE
 				cent_peak_combi=check_nodes[[k]],
 				pattern_centro=pattern_compound,
@@ -130,8 +147,7 @@ recomb_score<-function(
 				int_tol
 			) 
 			if(get_plaus){
-				if(verbose){cat("-TRUE");stop()}
-				contained<-FALSE
+				if(verbose){cat("-TRUE")}
 				if(length(results)>0){
 					for(n in 1:length(results)){
 						if( !any(is.na(match(check_nodes[[k]][,2],results[[n]][[1]][,2]))) ){
@@ -140,31 +156,30 @@ recomb_score<-function(
 						}
 					}
 				}
-				if(!contained){
-					if(verbose){cat("-ok")}
-					results[[at_results]]<-list()
-					results[[at_results]][[1]]<-check_nodes[[k]]
-					results[[at_results]][[2]]<-score1
-					# ... measured "below LOD threshold:"
-					if(any(!above_LOD)){
-						score2<-(
-							#sum(pattern_compound[check_nodes[[k]][,1],2][!above_LOD[check_nodes[[k]][,1]]]) / sum(pattern_compound[!above_LOD,2])
-							sum(pattern_compound[check_nodes[[k]][,1],2][!above_LOD[check_nodes[[k]][,1]]]) / sum(pattern_compound[,2])
-						)
-					}else{
-						score2<-NA
-					}
-					results[[at_results]][[3]]<-score2
-					results[[at_results]][[4]]<-((pattern_compound[check_nodes[[k]][,1],1]-profileList[[2]][check_nodes[[k]][,2],1])/mean(pattern_compound[check_nodes[[k]][,1],1])*1E6)				
-					results[[at_results]][[5]]<-(mean(profileList[[2]][check_nodes[[k]][,2],3])-profileList[[2]][check_nodes[[k]][,2],3])
-					results[[at_results]][[6]]<-rescale
-					results[[at_results]][[7]]<-profileList[[2]][check_nodes[[k]][,2],1]
-					results[[at_results]][[8]]<-profileList[[2]][check_nodes[[k]][,2],2]
-					results[[at_results]][[9]]<-profileList[[2]][check_nodes[[k]][,2],3]
-					names(results[[at_results]])<-c("Peaks","score_1","score_2","ppm deviation","RT deviation from mean","rescale factor","m/z","Intensity","RT")
-					at_results<-(at_results+1)
-					if(plotit){box(col="green",lwd=5);title(main=paste(score1,score2,k,sep=" - "));Sys.sleep(3);}
-				}	
+				if(verbose){cat("-ok")}
+				results[[at_results]]<-list()
+				check_nodes[[k]]<-check_nodes[[k]][order(check_nodes[[k]][,1],decreasing=FALSE),,drop=FALSE]
+				results[[at_results]][[1]]<-check_nodes[[k]]
+				results[[at_results]][[2]]<-score1
+				# ... measured "below LOD threshold:"
+				if(any(!above_LOD)){
+					score2<-(
+						#sum(pattern_compound[check_nodes[[k]][,1],2][!above_LOD[check_nodes[[k]][,1]]]) / sum(pattern_compound[!above_LOD,2])
+						sum(pattern_compound[check_nodes[[k]][,1],2][!above_LOD[check_nodes[[k]][,1]]]) / sum(pattern_compound[,2])
+					)
+				}else{
+					score2<-NA
+				}
+				results[[at_results]][[3]]<-score2
+				results[[at_results]][[4]]<-((pattern_compound[check_nodes[[k]][,1],1]-profileList[[2]][check_nodes[[k]][,2],1])/mean(pattern_compound[check_nodes[[k]][,1],1])*1E6)				
+				results[[at_results]][[5]]<-(mean(profileList[[2]][check_nodes[[k]][,2],3])-profileList[[2]][check_nodes[[k]][,2],3])
+				results[[at_results]][[6]]<-rescale
+				results[[at_results]][[7]]<-profileList[[2]][check_nodes[[k]][,2],1]
+				results[[at_results]][[8]]<-profileList[[2]][check_nodes[[k]][,2],2]
+				results[[at_results]][[9]]<-profileList[[2]][check_nodes[[k]][,2],3]
+				names(results[[at_results]])<-c("Peaks","score_1","score_2","ppm deviation","RT deviation from mean","rescale factor","m/z","Intensity","RT")
+				at_results<-(at_results+1)
+				if(plotit){box(col="green",lwd=5);title(main=paste(score1,score2,k,sep=" - "));Sys.sleep(3);}
 			}else{
 				if(verbose){cat("-FALSE")}
 				# maker smaller combinations by omission of one (centroid,peak)
@@ -189,7 +204,8 @@ recomb_score<-function(
 		}
 		check_nodes<-new_nodes
 		check_nodes_index<-new_nodes_index
-	}
+	
+	} # while
 	#######################################################################	
 	# resort list - largest combinations go first #########################
 	results2<-list()

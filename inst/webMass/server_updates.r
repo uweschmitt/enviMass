@@ -1,6 +1,6 @@
 # include updates - if older projects are reopened
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_updates.r!")}
-stop("\n\nMaintenance work; enviMass will be back in a couple of hours!")
+#stop("\n\nMaintenance work; enviMass will be back in a couple of hours! Please update again later.")
 #if(logfile[[10]]<3.100){
 #if(logfile[[10]]<3.102){
 if(TRUE){

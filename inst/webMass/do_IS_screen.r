@@ -167,7 +167,7 @@
 					res_IS_pos_screen[[i]]<-list()
 					for(m in 1:length(IS_pos_screen_listed[[i]])){ # m (relates to IDs in profileList_pos[[4]])
 # NEW +						
-						at_ID<-set_ID[profileList_pos[[4]]==as.character(profileList_pos[[2]][m,6])]
+						at_ID<-set_ID[profileList_pos[[4]]==colnames(IS_pos_screen_listed[[i]][[m]])[1]]
 # NEW -						
 						if(length(IS_pos_screen_listed[[i]][[m]])>0){
 							if(do_LOD){
@@ -198,7 +198,7 @@
 							)
 							for(k in 1:length(combination_matches)){ # add file ID
 								combination_matches[[k]][[10]]<-colnames(IS_pos_screen_listed[[i]][[m]])[1]
-								names(combination_matches[[1]])[10]<-"file_ID"
+								names(combination_matches[[k]])[10]<-"file_ID"
 							}
 							res_IS_pos_screen[[i]][[at_ID]]<-combination_matches
 # NEW -	
@@ -330,6 +330,16 @@
 		load(file=file.path(logfile[[1]],"results","patternDelRT_neg_IS"),envir=as.environment(".GlobalEnv"));
 		pattern_delRT<<-patternDelRT_neg_IS;rm(patternDelRT_neg_IS,envir=as.environment(".GlobalEnv"));
 		
+		if(FALSE){ # debug - reduce to a speccific compound & adduct
+			use_that<-names(pattern)=="21_M-H_none_none_none" # Bentazone
+			use_that<-names(pattern)=="692_M-H_none_none_none" # Bezafibrat
+			use_that<-names(pattern)=="16_M-H_none_none_none" # 1,4-D 613C
+			use_that<-names(pattern)=="320_M-H_none_none_none" # Diclofenac
+			pattern_RT<<-pattern_RT[use_that]
+			pattern_delRT<<-pattern_delRT[use_that]
+			pattern<<-pattern[use_that]
+		}
+		
 		mztol<-as.numeric(logfile$parameters$IS_dmz)				# m/z tolerance ...
 		ppm<-as.logical(as.character(logfile$parameters$IS_ppm))	# ... given in pppm?
 		cutint<-as.numeric(logfile$parameters$IS_intcut)			# Lower intensity threhold
@@ -439,7 +449,7 @@
 					res_IS_neg_screen[[i]]<-list()
 					for(m in 1:length(IS_neg_screen_listed[[i]])){ # m (relates to IDs in profileList_neg[[4]])
 # NEW +						
-						at_ID<-set_ID[profileList_neg[[4]]==as.character(profileList_neg[[2]][m,6])]
+						at_ID<-set_ID[profileList_neg[[4]]==colnames(IS_neg_screen_listed[[i]][[m]])[1]]
 # NEW -						
 						if(length(IS_neg_screen_listed[[i]][[m]])>0){
 							if(do_LOD){
@@ -455,7 +465,6 @@
 							}else{
 								use_cutint<-cutint
 							}
-# NEW +								
 							combination_matches<-recomb_score(
 								cent_peak_mat=IS_neg_screen_listed[[i]][[m]],
 								pattern_compound=pattern[[i]],
@@ -466,11 +475,12 @@
 								use_score_cut=use_score_cut,
 								score_cut=score_cut,
 								plotit=FALSE,
-								verbose=FALSE
-							)
+								verbose=FALSE,
+								RT_seperate=TRUE
+							)		
 							for(k in 1:length(combination_matches)){ # add file ID
 								combination_matches[[k]][[10]]<-colnames(IS_neg_screen_listed[[i]][[m]])[1]
-								names(combination_matches[[1]])[10]<-"file_ID"
+								names(combination_matches[[k]])[10]<-"file_ID"
 							}
 							res_IS_neg_screen[[i]][[at_ID]]<-combination_matches
 # NEW -	
