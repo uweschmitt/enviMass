@@ -38,7 +38,8 @@
 		max_len<-10000
 		at_matrix<-matrix(nrow=10000,ncol=9,0)
 		min_ID<-(min(as.numeric(profileList[[4]]))-1) # adjust to lowest file ID; otherwise too many empty list entries will be caused
-		colnames(at_matrix)<-c("m/z","log Intensity","Measured RT","m/z deviation [ppm]","RT deviation within","above_cutscore","Time sequence","Expected RT","File ID")
+		colnames(at_matrix)<-c("m/z","log Intensity","Measured RT","m/z deviation [ppm]","RT deviation within","above_cutscore",
+		"Time sequence","Expected RT","File ID")
 # NEW+
 		set_ID<-seq(1:length(measurements_table[,1]))
 # NEW-

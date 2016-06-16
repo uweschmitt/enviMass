@@ -47,9 +47,9 @@ newproject<-function(pro_name,pro_dir,IS,targets){
   write.table(targets,file=file.path(pro_dir,pro_name,"dataframes","targets.txt"),row.names=FALSE,sep="\t",quote=FALSE)      	  
   # write measurement table #################################################### 
   measurements<-data.frame(c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),
-    c("-"),c("FALSE"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"));
+    c("-"),c("FALSE"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"));
   names(measurements)<-c("ID","Name","Type","Mode","Place","Date","Time","include","copied","picked",
-  "checked","recal","align","norm","profiled","LOD","IS_screen","tar_screen","tag1","tag2","tag3")
+  "checked","recal","align","norm","profiled","LOD","IS_screen","tar_screen","tag1","tag2","tag3","date_end","time_end")
   write.csv(measurements,file=file.path(pro_dir,pro_name,"dataframes","measurements"),row.names=FALSE)
   ##############################################################################
   # create & save a logfile ####################################################

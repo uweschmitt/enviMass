@@ -458,7 +458,7 @@ observe({
 				}
 			},width = "auto", height = 250)
 			output$count_aboveBlank_pos<-renderText({
-				paste("Ratios of sample vs. blank intensities for screened compounds from the above table. This concerns",as.character(sum(rat_sam_blank_neg>0)),"compounds.")
+				paste("Ratios of sample vs. blank intensities for screened compounds from the above table. This concerns",as.character(sum(rat_sam_blank_pos>0)),"compounds.")
 			})			
 		} # if(found_table)
 		if(isolate(input$Pos_compound_select=="File-wise counts")){

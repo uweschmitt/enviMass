@@ -186,11 +186,11 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 					ID_target_missing," not valid. Either it is set to FALSE and shouldn`t or the required adduct is not included in the adduct selection of this target! Please adjust.",sep="")
 				}
 				found_standard<-TRUE
-				if( !any(intstand_check[,1]==targets_check[i,6]) ){ # does the internal standard exist?		
+				if( !any(intstand_check[ intstand_check[,7]==targets_check[i,8],1]==targets_check[i,6]) ){ # does the internal standard exist?		
 					say<-paste(
 					"Quantification/calibration problem: internal standard with ID ",
 					ID_IS_missing," for target compound with ID ",ID_target_missing,
-					" not found. Check compound target table, column ID_internal_standard.",
+					" not found at this ionization mode. Check compound target table, column ID_internal_standard.",
 					sep="")
 					found_standard<-FALSE
 				}

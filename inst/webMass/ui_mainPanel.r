@@ -33,28 +33,29 @@
 							column(width = 5, selectInput("Measadd_incl", "Include?", choices = c("TRUE","FALSE"))),
 							column(width = 5, selectInput("Measadd_mode", "Choose ionization mode:", choices = c("positive", "negative")))	
 						),
-						HTML('<hr noshade="noshade" />'),
-						fluidRow(
-							column(width = 5,textInput("Measadd_place", "Place:", value = "Rhine")),		
-							column(width = 5,dateInput("Measadd_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
-							column(width = 5,textInput("Measadd_time", "Time:(HH:MM:SS)", value = "12:00:00")),							
-							column(width = 5,textInput("Measadd_tag3", "Replicate group (tag3)", value = "FALSE"))							
-						),					
+						conditionalPanel(
+							condition = "input.Measadd_type != 'calibration'",						
+							HTML('<hr noshade="noshade" />'),
+							fluidRow(
+								column(width = 5,textInput("Measadd_place", "Place:", value = "Rhine")),		
+								column(width = 5,dateInput("Measadd_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
+								column(width = 5,textInput("Measadd_time", "Time (HH:MM:SS)", value = "12:00:00")),							
+								column(width = 5,textInput("Measadd_tag3", "Replicate group (tag3)", value = "FALSE")),
+								column(width = 5, selectInput("Measadd_profiled", "Use for profiling (if Settings/Profiling/Omit adjusted to do so)?", choices = c("TRUE","FALSE"), selected = "TRUE"))
+							)			
+						),	
 						conditionalPanel(
 							condition = "input.Measadd_type == 'calibration'", 
 							HTML('<hr noshade="noshade" />'),
 							fluidRow(
 								column(width = 5,textInput("Measadd_tag1", "Concentration (no units; tag1)", value = "FALSE")),
-								column(width = 5,textInput("Measadd_tag2", "Calibration group (required; tag2)", value = "Group A"))
+								column(width = 5,textInput("Measadd_tag2", "Calibration group (required; tag2)", value = "Group A")),
+								column(width = 5,dateInput("Measadd_cal_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+								column(width = 5,textInput("Measadd_cal_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
+								column(width = 5,dateInput("Measadd_cal_date2", "Date end", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+								column(width = 5,textInput("Measadd_cal_time2", "Time end (HH:MM:SS)", value = "12:00:00"))							
 							)
 						),
-						conditionalPanel(
-							condition = "input.Measadd_type != 'calibration'",
-							HTML('<hr noshade="noshade" />'),
-							fluidRow(
-								column(width = 5, selectInput("Measadd_profiled", "Use for profiling (if Settings/Profiling/Omit adjusted to do so)?", choices = c("TRUE","FALSE"), selected = "TRUE"))
-							)						
-						),	
 						HTML('<hr noshade="noshade" />'),
 						div(style = widget_style,
 							fileInput("Measadd_path", "Select centroided .mzXML file:", multiple = FALSE, accept = c(".mzXML",".raw")),
@@ -69,12 +70,12 @@
 					bsCollapsePanel("Delete LC-HRMS file", 		
 						tags$h5("Delete file by its unique ID from the below file table"),
 						textInput("Measdel_ID", "ID:", value = "123"),
-						actionButton("Measdel","Remove")		
+						bsButton("Measdel","Remove",style="primary")		
 					),				
 					bsCollapsePanel("Modify a file specification", 
 						fluidRow(
-							column(width = 4, helpText("Load settings of a file into below mask by its ID, modify and then export the new settings into the main table. Modifications make a full recalculation default.")),
-							column(width = 3, textInput("Modif_ID", "ID:", value = "123"), actionButton("Modif_load","Load"))
+							column(width = 4, helpText("Load settings of a file into below mask by its ID, modify and then save the new settings into the main table. Modifications make a full recalculation default.")),
+							column(width = 3, textInput("Modif_ID", "ID:", value = "123"), bsButton("Modif_load","Load",style="primary"))
 						),
 						HTML('<hr noshade="noshade" />'),
 						fluidRow(
@@ -83,30 +84,31 @@
 							column(width = 5, selectInput("Modif_include","Include in workflow?",choices = c("TRUE","FALSE"),selected="TRUE")),
 							column(width = 5, selectInput("Modif_mode", "Choose ionization mode:", choices = c("positive", "negative")))	
 						),
-						HTML('<hr noshade="noshade" />'),
-						fluidRow(
-							column(width = 5,textInput("Modif_place", "Place:", value = "Rhine")),		
-							column(width = 5,dateInput("Modif_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
-							column(width = 5,textInput("Modif_time", "Time:(HH:MM:SS)", value = "12:00:00")),							
-							column(width = 5,textInput("Modif_tag3", "Replicate group (tag3)", value = "FALSE"))				
+						conditionalPanel(
+							condition = "input.Modif_type != 'calibration'", 						
+							HTML('<hr noshade="noshade" />'),
+							fluidRow(
+								column(width = 5,textInput("Modif_place", "Place:", value = "Rhine")),		
+								column(width = 5,dateInput("Modif_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
+								column(width = 5,textInput("Modif_time", "Time:(HH:MM:SS)", value = "12:00:00")),							
+								column(width = 5,textInput("Modif_tag3", "Replicate group (tag3)", value = "FALSE")),
+								column(width = 5, selectInput("Modif_profiled","Use for profiling (if Settings/Profiling/Omit adjusted to do so)?",choices = c("TRUE","FALSE"),selected="TRUE"))								
+							)
 						),
 						conditionalPanel(
 							condition = "input.Modif_type == 'calibration'", 
 							HTML('<hr noshade="noshade" />'),
 							fluidRow(
 								column(width = 5,textInput("Modif_tag1", "Concentration (no units; tag1)", value = "FALSE")),
-								column(width = 5,textInput("Modif_tag2", "Calibration group (tag2)", value = "FALSE"))
+								column(width = 5,textInput("Modif_tag2", "Calibration group (tag2)", value = "FALSE")),
+								column(width = 5,dateInput("Modif_cal_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+								column(width = 5,textInput("Modif_cal_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
+								column(width = 5,dateInput("Modif_cal_date2", "Date end", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+								column(width = 5,textInput("Modif_cal_time2", "Time end (HH:MM:SS)", value = "12:00:00"))							
 							)
 						),
-						conditionalPanel(
-							condition = "input.Modif_type != 'calibration'",
-							HTML('<hr noshade="noshade" />'),
-							fluidRow(
-								column(width = 5, selectInput("Modif_profiled","Use for profiling (if Settings/Profiling/Omit adjusted to do so)?",choices = c("TRUE","FALSE"),selected="TRUE"))
-							)	
-						),
 						HTML('<hr noshade="noshade" />'),
-						actionButton("Modif_export","Save")
+						bsButton("Modif_export","Save",style="primary")
 					),
 					bsCollapsePanel("Batch upload from folder", 	
 						tags$h5("Read in batches of files (.mzXML) from a folder; file specifications will be guessed and can later be modified above. 
@@ -121,7 +123,7 @@
 							title = "File import to existing files",
 							content = "If a file in the folder with the same filename as one already existing in the project is found, should it be imported (new ID assigned)?", 
 							placement = "right", trigger = "hover"),
-						actionButton("Import_file_folder","Import"),
+						bsButton("Import_file_folder","Import",style="primary"),
 						HTML('<hr noshade="noshade" />'),
 						textOutput("had_import_folder")						
 					),
@@ -137,7 +139,7 @@
 							title = "File duplicate handling",
 							content = "A file with the same type, time, date, ionization and place as one which already exists will not be imported.", 
 							placement = "right", trigger = "hover"),
-						actionButton("Import_project","Import"),		
+						bsButton("Import_project","Import",style="primary"),		
 						HTML('<hr noshade="noshade" />'),
 						textOutput("had_import_project")	
 					)					
@@ -156,7 +158,7 @@
 					bsCollapsePanel("Add internal standard compound", 
 						fluidRow(
 							column(width = 5, helpText("To add a new internal standard, fill out the below form and press Add") ),
-							column(width = 2, offset = 0.3, actionButton("AddIS","Add"))
+							column(width = 2, offset = 0.3, bsButton("AddIS","Add",style="primary"))
 						),
 						HTML('<hr noshade="noshade" />'),
 						div(style = widget_style,
@@ -206,7 +208,7 @@
 					bsCollapsePanel("Remove internal standard compound", 					
 						helpText("To delete a compound from the list, type in its ID and press Delete"),
 						textInput("ISdelete_ID", "ID for deletion:", value = "123_XYZ"),          
-						actionButton("DeleteIS","Delete")					
+						bsButton("DeleteIS","Delete",style="primary")					
 					),
 					bsCollapsePanel("Import compound list", 					
 						fileInput("ISlist_path", "Select IS.txt file, e.g. from dataframes folder of another project", multiple = FALSE, accept = c(".txt"))
@@ -253,7 +255,7 @@
 					bsCollapsePanel("Add target compound", 
 						fluidRow(
 							column(width = 5, helpText("To add a new target, fill out the below form and press Add.") ),
-							column(width = 2, offset = 0.3,  actionButton("Addtargets","Add"))
+							column(width = 2, offset = 0.3,  bsButton("Addtargets","Add",style="primary"))
 						),			
 						div(style = widget_style,
 							textInput("targetsadd_ID", "Unique ID:", value = "123_XYZ"),          
@@ -303,7 +305,7 @@
 					bsCollapsePanel("Remove target compound", 
 						helpText("To delete a compound from the list, type in its ID and press Delete"),
 						textInput("targetsdelete_ID", "ID for deletion:", value = "123_XYZ"),          
-						actionButton("Deletetargets","Delete")					
+						bsButton("Deletetargets","Delete",style="primary")					
 					),
 					bsCollapsePanel("Import compound list", 					
 						fileInput("targetlist_path", "Select targets.txt file, e.g. from dataframes folder of another project", multiple = FALSE, accept = c(".txt"))
@@ -743,42 +745,43 @@
 			tabsetPanel( 
 				tabPanel("Create",
 					HTML('<hr noshade="noshade" />'),
-					selectInput("Ion_mode_Cal", label="Ionization mode", c("none","positive","negative"), selected = ("none"), multiple = FALSE),	
 					helpText("Select the ionization mode to load the available calibration file groups into the below selection."),
+					selectInput("Ion_mode_Cal", label="Ionization mode", c("none","positive","negative"), selected = ("none"), multiple = FALSE),	
 					HTML('<hr noshade="noshade" />'),
 					HTML('<h1 align="center"> &#x21e9; </h1> '),
 						
 					conditionalPanel(
 						condition = "input.Ion_mode_Cal != 'none'", 	
-						selectInput(inputId="Cal_file_set",label="Specify calibration file group",choices=c("none"),selected = "none", multiple = FALSE),
 						helpText("Select the calibration file group to continue with the below compound selection."),
+						selectInput(inputId="Cal_file_set",label="Specify calibration file group",choices=c("none"),selected = "none", multiple = FALSE),
 						HTML('<hr noshade="noshade" />'),
 						HTML('<h1 align="center"> &#x21e9; </h1> '),
 						
 						conditionalPanel(
 							condition = "input.Cal_file_set != 'none'", 
+							helpText("Select compounds to (resume) work on their individual calibration models below. The screened compounds can also be viewed in the Results/Compound screening tab."),
 							fluidRow(
-								column(3, selectInput(inputId="Cal_IS_ID",label="Internal standard ID",choices=c("none"),selected = "none", multiple = FALSE)),
-								column(3, selectInput(inputId="Cal_IS_name",label="Name",choices=c("none"),selected = "none", multiple = FALSE)),
-								column(2, selectInput(inputId="Cal_IS_adduct",label="Adduct",choices=c("none"),selected = "none", multiple = FALSE)),
-								column(2, selectInput(inputId="Cal_IS_peak",label="Isotopologue peak #",choices=c("none"),selected = "none", multiple = FALSE))
+								column(3, selectInput(inputId="Cal_target_name",label="Target name",choices=c("none"),selected = "none", multiple = FALSE)),							
+								column(3, selectInput(inputId="Cal_target_ID",label="Target ID",choices=c("none"),selected = "none", multiple = FALSE))
 							),
 							fluidRow(
-								column(3, selectInput(inputId="Cal_target_ID",label="Target ID",choices=c("none"),selected = "none", multiple = FALSE)),
-								column(3, selectInput(inputId="Cal_target_name",label="Name",choices=c("none"),selected = "none", multiple = FALSE)),								
-								column(2, selectInput(inputId="Cal_target_adduct",label="Adduct",choices=c("none"),selected = "none", multiple = FALSE)),
-								column(2, selectInput(inputId="Cal_target_peak",label="Isotopologue peak #",choices=c("none"),selected = "none", multiple = FALSE))
+								column(3, selectInput(inputId="Cal_IS_name",label="Internal standard name",choices=c("none"),selected = "none", multiple = FALSE)),
+								column(3, selectInput(inputId="Cal_IS_ID",label="Internal standard ID",choices=c("none"),selected = "none", multiple = FALSE))
 							),
-							selectInput(inputId="Cal_load",label="Load a previously established calibration model and all underlying data points",choices=c("none"),selected = "none", multiple = FALSE),
-							helpText("Select compounds or their established calibrations to (resume) work on their individual calibration models below. 
-							The screened compounds can also be viewed in the Results/Compound screening tab."),
+							HTML('<hr noshade="noshade" />'),			
+							helpText("Proceed stepwise through entries in the target compound list:"),
+							fluidRow(
+								column(1, bsButton("Cal_first", label="", icon = icon("step-backward"))),
+								column(1, bsButton("Cal_previous", label="", icon = icon("arrow-left"))),
+								column(1, bsButton("Cal_next", label="", icon = icon("arrow-right"))),								
+								column(1, bsButton("Cal_last", label="", icon = icon("step-forward")))								
+							),							
 							HTML('<hr noshade="noshade" />'),
 							
 							HTML('<h1 align="center"> &#x21e9; </h1> '),
 							conditionalPanel(
 								condition = "
-									input.Cal_target_ID != 'none' & input.Cal_target_name != 'none' & input.Cal_target_adduct != 'none' & input.Cal_target_peak != 'none' &
-									input.Cal_IS_ID != 'none' & input.Cal_IS_name != 'none' & input.Cal_IS_adduct != 'none' & input.Cal_IS_peak != 'none' ", 
+									input.Cal_target_ID != 'none' & input.Cal_target_name != 'none' & input.Cal_IS_ID != 'none' & input.Cal_IS_name != 'none'  ", 
 								
 								
 								

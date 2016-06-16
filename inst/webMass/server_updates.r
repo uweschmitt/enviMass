@@ -458,16 +458,6 @@ if(logfile[[10]]<3.101){
 		names(logfile)[14]<<-"Negative_subtraction_files"
 	}
 	################################################################################################	
-	# modify measurements table ####################################################################
-	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-	if( any(names(measurements)=="feat.") ){
-		names(measurements)[names(measurements)=="feat."]<-"profiled";
-		measurements[,names(measurements)=="profiled"]<-"TRUE";
-	}
-	names(measurements)<-c("ID","Name","Type","Mode","Place","Date","Time","include","copied","picked",
-	"checked","recal","align","norm","profiled","LOD","IS_screen","tar_screen","tag1","tag2","tag3")
-	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
-	################################################################################################	
 	logfile[[10]]<<-3.101
 	names(logfile)[10]<<-"version"
 	################################################################################################		
@@ -555,6 +545,24 @@ if(logfile[[10]]<3.102){
 	if(!any(names(logfile$workflow)=="homologues")){
 		logfile$workflow[22]<<-"yes"; 	names(logfile$workflow)[22]<<-"homologues"
 	}		
+	################################################################################################	
+	# modify measurements table ####################################################################
+	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+	if( !any(names(measurements)=="date_end") ){
+		measurements<-cbind(
+			measurements,
+			rep("2019-06-08",length(measurements[,1])),
+			rep("12:00:00",length(measurements[,1]))
+		)
+	}
+	if( any(names(measurements)=="feat.") ){
+		names(measurements)[names(measurements)=="feat."]<-"profiled";
+		measurements[,names(measurements)=="profiled"]<-"TRUE";
+	}
+	names(measurements)<-c("ID","Name","Type","Mode","Place","Date","Time","include","copied","picked",
+	"checked","recal","align","norm","profiled","LOD","IS_screen","tar_screen","tag1","tag2","tag3","date_end","time_end")
+	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+	rm(measurements)
 	################################################################################################	
 	logfile[[10]]<<-3.102
 	names(logfile)[10]<<-"version"
