@@ -82,7 +82,7 @@ observe({
 		logfile$parameters[[16]]<<-as.character(isolate(input$replicate_ppm))
 		#logfile$parameters[[17]]<<-as.character(isolate(input$replicate_recalib))
 		logfile$parameters[[18]]<<-as.character(isolate(input$replicate_delRT))	
-		logfile$parameters[[19]]<<-as.character(isolate(input$replicate_IS_dInt))	
+		logfile$parameters[[19]]<<-as.character(isolate(input$replicate_dInt))	
 		at2<-logfile$parameters[c(15,16,17,18,19)];
 		if(any(is.na(at2))){stop("\nThere was an issue reading out the new settings - maybe comma / dot separation was not fullfilled?")}		
 		if(!enviMass:::comp_list(at1,at2)){ 

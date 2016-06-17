@@ -272,6 +272,9 @@ maincalc6<-reactive({
 			if(isolate(input$filterProf_sort)=="maximum intensity"){
 				profpeaks2<<-profpeaks2[order(profpeaks2[,4],decreasing=TRUE),]
 			}
+			if(isolate(input$filterProf_sort)=="total peak number"){
+				profpeaks2<<-profpeaks2[order(profpeaks2[,11],profpeaks2[,4],decreasing=TRUE),]
+			}			
 			if(isolate(input$filterProf_sort)=="mean intensity"){
 				profpeaks2<<-profpeaks2[order(profpeaks2[,2],decreasing=TRUE),]
 			}

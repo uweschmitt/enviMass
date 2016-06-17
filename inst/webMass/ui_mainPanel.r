@@ -596,7 +596,7 @@
 				selectInput("replicate_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),	
 				#selectInput("replicate_recalib", "... and corrected by recalibration results (if available)", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE"),	
 				numericInput("replicate_delRT", "RT tolerance window of peaks caused by the same analyte across replicate samples [s]", 30),
-				numericInput("replicate_IS_dInt", "Intensity tolerance X (log scale, 1E^X):", 5)
+				numericInput("replicate_dInt", "Intensity tolerance X (log scale, 1E^X):", 6)
 			),	
             # ALLIGNMENT #######################################################
             #tabPanel("Alignment",
@@ -1088,7 +1088,7 @@
 									placement = "top", trigger = "hover"),
 								div(style = widget_style3,radioButtons("filterProf_notblind", "Not in blind?", c("no"="no","yes"="yes"))),
 								div(style = widget_style3,selectInput("filterProf_sort", "Sort profile list by:", 
-									choices = c("ID","mean m/z","mean RT","maximum intensity","mean intensity","global trend intensity","current trend intensity"), selected="current trend intensity")),
+									choices = c("ID","mean m/z","mean RT","maximum intensity","mean intensity","global trend intensity","current trend intensity","total peak number"), selected="current trend intensity")),
 								div(style = widget_style3,numericInput("filterProf_count", "Restrict list size:", 500)),
 								conditionalPanel( # IS filter				
 										condition = "input.screen_IS == 'yes'",

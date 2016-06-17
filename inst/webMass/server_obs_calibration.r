@@ -240,7 +240,7 @@ observe({
 observe({ 
 	init$b
 	input$Cal_next
-	if((isolate(init$a)=="TRUE")){
+	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_file_set)!="none")){
 		is_at_targetID<-(isolate(input$Cal_target_ID))
 		is_at_ISID<-(isolate(input$Cal_IS_ID))
 		in_table<-which( ((targets[,1]==is_at_targetID)&(targets[,6]==is_at_ISID)) )
@@ -273,7 +273,7 @@ observe({
 observe({ 
 	init$b
 	input$Cal_previous
-	if((isolate(init$a)=="TRUE")&(isolate(input$Cal_target_name)!="none")){
+	if((isolate(init$a)=="TRUE")&(isolate(input$Cal_target_name)!="none")& (isolate(input$Cal_file_set)!="none")){
 		is_at_targetID<-(isolate(input$Cal_target_ID))
 		is_at_ISID<-(isolate(input$Cal_IS_ID))
 		in_table<-which( ((targets[,1]==is_at_targetID)&(targets[,6]==is_at_ISID)) )
@@ -305,7 +305,7 @@ observe({
 observe({ 
 	init$b
 	input$Cal_first
-	if((isolate(init$a)=="TRUE")){
+	if((isolate(init$a)=="TRUE")& (isolate(input$Cal_file_set)!="none")){
 		at_target_ID<-"none"
 		at_IS_ID<-"none"
 		if( (length(targets[,1])>0)){ # match with is_at_ISID not existing in table; reset to first available entry
@@ -321,7 +321,7 @@ observe({
 observe({ 
 	init$b
 	input$Cal_last
-	if((isolate(init$a)=="TRUE")){
+	if((isolate(init$a)=="TRUE")& (isolate(input$Cal_file_set)!="none")){
 		at_target_ID<-"none"
 		at_IS_ID<-"none"
 		if( (length(targets[,1])>0)){ # match with is_at_ISID not existing in table; reset to first available entry
@@ -345,7 +345,7 @@ observe({
 	input$Cal_IS_name
 	input$Cal_target_ID
 	input$Cal_target_name
-	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_IS_ID)!="none") & (isolate(input$Cal_target_ID)!="none")){	
+	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_IS_ID)!="none") & (isolate(input$Cal_target_ID)!="none")& (isolate(input$Cal_file_set)!="none")){	
 			if(isolate(input$Ion_mode_Cal)=="positive"){	
 				IS_ID<-isolate(input$Cal_IS_ID)
 				target_ID<-isolate(input$Cal_target_ID)

@@ -30,7 +30,7 @@ updateNumericInput(session, "recal_maxdmz", "Maximum allowable m/z correction ..
 updateNumericInput(session, "replicate_dmz", "m/z tolerance ...", value = as.numeric(logfile$parameters[[15]]))   
 updateSelectInput(session, "replicate_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"),  selected = as.character(logfile$parameters[[16]]))
 #updateSelectInput(session, "replicate_recalib", "... and corrected by recalibration results (if available)", choices = c("TRUE"="TRUE","FALSE"="FALSE"),  selected = as.character(logfile$parameters[[17]]))
-updateNumericInput(session, "replicate_delRT", "RT tolerance of a compound peaks across replicate samples [s]", value = as.numeric(logfile$parameters[[18]]))   
+updateNumericInput(session, "replicate_delRT", "RT tolerance of a compound peak across replicate samples [s]", value = as.numeric(logfile$parameters[[18]]))   
 updateNumericInput(session,"replicate_IS_dInt", value = as.numeric(logfile$parameters[[19]]))
 # PROFILING ####################################################################
 updateSliderInput(session, "prof_sets",value = as.numeric(logfile$parameters[[38]]))
