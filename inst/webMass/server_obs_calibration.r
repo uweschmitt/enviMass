@@ -345,12 +345,12 @@ observe({
 	input$Cal_IS_name
 	input$Cal_target_ID
 	input$Cal_target_name
-	if((isolate(init$a)=="TRUE")){	
+	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_IS_ID)!="none") & (isolate(input$Cal_target_ID)!="none")){	
 			if(isolate(input$Ion_mode_Cal)=="positive"){	
 				IS_ID<-isolate(input$Cal_IS_ID)
 				target_ID<-isolate(input$Cal_target_ID)
 				at_Cal<-isolate(input$Cal_file_set)
-				#target_ID<-"4"; IS_ID<-"693"			
+				#target_ID<-"4"; IS_ID<-"693";at_Cal<-"A"			
 				# extract IS peaks ######################################################
 				IS_adduct<-intstand[intstand[,1]==IS_ID,19]
 				IS_peak<-as.numeric(intstand[intstand[,1]==IS_ID,20])
@@ -415,7 +415,7 @@ observe({
 				}
 				# derive pairs ##########################################################
 				mat_cal<-matrix(nrow=0,ncol=7)
-				colnames(mat_cal)<-c("intensity_target","intensity_IS","ratio","concentration","score_target","score_IS","used?")
+				colnames(mat_cal)<-c("Target intensity","IS intensity","Intensity ratio","Concentration","Target score","IS score","Used?")
 				if(	(length(target_in_file)>0) & (length(IS_in_file)>0)	){
 					for(i in 1:length(target_in_file)){
 						if(any(IS_in_file==target_in_file[i])){
@@ -424,20 +424,37 @@ observe({
 								cbind(
 									rep(profileList_pos_cal[[2]][target_with_peak[i],2],length(those)), # intensity target
 									(profileList_pos_cal[[2]][IS_with_peak[those],2]), 					# intensity IS
-									((profileList_pos_cal[[2]][IS_with_peak[those],2])/profileList_pos_cal[[2]][target_with_peak[i],2]), # ration
+									(profileList_pos_cal[[2]][target_with_peak[i],2]/(profileList_pos_cal[[2]][IS_with_peak[those],2])), # ratio									
 									rep(as.numeric(
 										measurements[measurements[,1]==target_in_file[i],]$tag1	
 									),length(those)), # concentration
 									rep(target_with_score[i],length(those)), # score target
 									IS_with_score[those],
 									rep(1,length(those)) # used?
-								)
-							)
+								,deparse.level = 0),
+							deparse.level = 0)
 						}
 					}
 				}
-				print(mat_cal)
-				# filter IS intensities #################################################
+				rownames(mat_cal)<-NULL
+				# filter ################################################################
+				mat_cal<-mat_cal[!duplicated(mat_cal),,drop=FALSE] # same peaks in different combinations - remove
+				min_int<-as.numeric(intstand[intstand[,1]==IS_ID,17])
+				max_int<-as.numeric(intstand[intstand[,1]==IS_ID,18])
+				mat_cal[mat_cal[,2]<min_int,7]<-0
+				mat_cal[mat_cal[,2]>max_int,7]<-0
+				mat_cal<<-mat_cal
+				# generate outputs ######################################################
+				if(length(mat_cal[,1])>0){
+					output$cal_table <- renderDataTable(mat_cal)
+					output$cal_plot <- renderPlot({
+						plot(mat_cal[,4], mat_cal[,3],
+						xlab="Concentration",ylab="Intensity ratio",pch=19)	
+					})
+				}else{
+				
+				
+				}
 				
 								
 	

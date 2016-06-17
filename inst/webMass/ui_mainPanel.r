@@ -782,12 +782,11 @@
 							conditionalPanel(
 								condition = "
 									input.Cal_target_ID != 'none' & input.Cal_target_name != 'none' & input.Cal_IS_ID != 'none' & input.Cal_IS_name != 'none'  ", 
-								
-								
-								
-								textOutput('IS_in_file'),
-								textOutput('target_in_file'),
-								
+								plotOutput("cal_plot", click = "plot_click"),
+								fluidRow(
+									column(12,dataTableOutput('cal_table'))
+								),			
+								HTML('<h1 align="center"> &#x21e9; </h1> '),
 								bsButton("save_Cal","Save this calibration set",style="success"),
 								bsButton("remove_Cal","Remove this calibration set",style="danger")
 							)
