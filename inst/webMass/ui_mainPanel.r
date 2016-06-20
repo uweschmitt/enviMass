@@ -782,13 +782,19 @@
 							conditionalPanel(
 								condition = "
 									input.Cal_target_ID != 'none' & input.Cal_target_name != 'none' & input.Cal_IS_ID != 'none' & input.Cal_IS_name != 'none'  ", 
-								plotOutput("cal_plot", click = "plot_click"),
+								bsButton("save_Cal","Save this calibration set",style="success"),
+								bsButton("remove_Cal","Remove this calibration set",style="danger"),
+								plotOutput("cal_plot", 
+									dblclick = "cal_plot_dblclick",
+									brush = brushOpts(
+									  id = "cal_plot_brush",
+									  resetOnNew = TRUE
+									)
+								),
 								fluidRow(
 									column(12,dataTableOutput('cal_table'))
 								),			
-								HTML('<h1 align="center"> &#x21e9; </h1> '),
-								bsButton("save_Cal","Save this calibration set",style="success"),
-								bsButton("remove_Cal","Remove this calibration set",style="danger")
+								HTML('<h1 align="center"> &#x21e9; </h1> ')
 							)
 							
 							

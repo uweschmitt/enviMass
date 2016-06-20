@@ -346,125 +346,201 @@ observe({
 	input$Cal_target_ID
 	input$Cal_target_name
 	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_IS_ID)!="none") & (isolate(input$Cal_target_ID)!="none")& (isolate(input$Cal_file_set)!="none")){	
-			if(isolate(input$Ion_mode_Cal)=="positive"){	
-				IS_ID<-isolate(input$Cal_IS_ID)
-				target_ID<-isolate(input$Cal_target_ID)
-				at_Cal<-isolate(input$Cal_file_set)
-				#target_ID<-"4"; IS_ID<-"693";at_Cal<-"A"			
-				# extract IS peaks ######################################################
-				IS_adduct<-intstand[intstand[,1]==IS_ID,19]
-				IS_peak<-as.numeric(intstand[intstand[,1]==IS_ID,20])
-				at_entry<-FALSE
-				for(i in 1:length(names(res_IS_pos_screen_cal))){ # where?
-					if(
-						(strsplit(names(res_IS_pos_screen_cal)[i],"_")[[1]][1]==IS_ID) &
-						(strsplit(names(res_IS_pos_screen_cal)[i],"_")[[1]][2]==IS_adduct)
-					){
-						at_entry<-i;break;
-					}
+		if(isolate(input$Ion_mode_Cal)=="positive"){	
+			IS_ID<-isolate(input$Cal_IS_ID)
+			target_ID<-isolate(input$Cal_target_ID)
+			at_Cal<-isolate(input$Cal_file_set)
+			#target_ID<-"4"; IS_ID<-"693";at_Cal<-"A"			
+			# extract IS peaks ######################################################
+			IS_adduct<-intstand[intstand[,1]==IS_ID,19]
+			IS_peak<-as.numeric(intstand[intstand[,1]==IS_ID,20])
+			at_entry<-FALSE
+			for(i in 1:length(names(res_IS_pos_screen_cal))){ # where?
+				if(
+					(strsplit(names(res_IS_pos_screen_cal)[i],"_")[[1]][1]==IS_ID) &
+					(strsplit(names(res_IS_pos_screen_cal)[i],"_")[[1]][2]==IS_adduct)
+				){
+					at_entry<-i;break;
 				}
-				IS_in_file<-c()
-				IS_with_peak<-c()
-				IS_with_score<-c()
-				if(length(res_IS_pos_screen_cal[[at_entry]])>0){
-					for(j in 1:length(res_IS_pos_screen_cal[[at_entry]])){
-						if(length(res_IS_pos_screen_cal[[at_entry]][[j]])>0){						
-							if(measurements[measurements[,1]==res_IS_pos_screen_cal[[at_entry]][[j]][[1]]$file_ID,]$tag2==at_Cal){
-								for(k in 1:length(res_IS_pos_screen_cal[[at_entry]][[j]])){
-									if(any(res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==IS_peak)){
-										that<-which(res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==IS_peak)
-										IS_in_file<-c(IS_in_file,res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$file_ID)
-										IS_with_peak<-c(IS_with_peak,res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[that,2])
-										IS_with_score<-c(IS_with_score,res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$score_1)	
-									}
-								}
-							}
-						}
-					}
-				}
-				# extract target peaks ##################################################
-				target_adduct<-targets[targets[,1]==target_ID,20]
-				target_peak<-as.numeric(targets[targets[,1]==target_ID,21])
-				at_entry<-FALSE
-				for(i in 1:length(names(res_target_pos_screen_cal))){ # where?
-					if(
-						(strsplit(names(res_target_pos_screen_cal)[i],"_")[[1]][1]==target_ID) &
-						(strsplit(names(res_target_pos_screen_cal)[i],"_")[[1]][2]==target_adduct)
-					){
-						at_entry<-i;break;
-					}
-				}
-				target_in_file<-c()
-				target_with_peak<-c()
-				target_with_score<-c()
-				if(length(res_target_pos_screen_cal[[at_entry]])>0){
-					for(j in 1:length(res_target_pos_screen_cal[[at_entry]])){
-						if(length(res_target_pos_screen_cal[[at_entry]][[j]])>0){						
-							if(measurements[measurements[,1]==res_target_pos_screen_cal[[at_entry]][[j]][[1]]$file_ID,]$tag2==at_Cal){
-								for(k in 1:length(res_target_pos_screen_cal[[at_entry]][[j]])){
-									if(any(res_target_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==target_peak)){
-										that<-which(res_target_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==target_peak)
-										target_in_file<-c(target_in_file,res_target_pos_screen_cal[[at_entry]][[j]][[k]]$file_ID)
-										target_with_peak<-c(target_with_peak,res_target_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[that,2])
-										target_with_score<-c(target_with_score,res_target_pos_screen_cal[[at_entry]][[j]][[k]]$score_1)
-									}
-								}
-							}
-						}
-					}
-				}
-				# derive pairs ##########################################################
-				mat_cal<-matrix(nrow=0,ncol=7)
-				colnames(mat_cal)<-c("Target intensity","IS intensity","Intensity ratio","Concentration","Target score","IS score","Used?")
-				if(	(length(target_in_file)>0) & (length(IS_in_file)>0)	){
-					for(i in 1:length(target_in_file)){
-						if(any(IS_in_file==target_in_file[i])){
-							those<-which(IS_in_file==target_in_file[i])
-							mat_cal<-rbind(mat_cal,
-								cbind(
-									rep(profileList_pos_cal[[2]][target_with_peak[i],2],length(those)), # intensity target
-									(profileList_pos_cal[[2]][IS_with_peak[those],2]), 					# intensity IS
-									(profileList_pos_cal[[2]][target_with_peak[i],2]/(profileList_pos_cal[[2]][IS_with_peak[those],2])), # ratio									
-									rep(as.numeric(
-										measurements[measurements[,1]==target_in_file[i],]$tag1	
-									),length(those)), # concentration
-									rep(target_with_score[i],length(those)), # score target
-									IS_with_score[those],
-									rep(1,length(those)) # used?
-								,deparse.level = 0),
-							deparse.level = 0)
-						}
-					}
-				}
-				rownames(mat_cal)<-NULL
-				# filter ################################################################
-				mat_cal<-mat_cal[!duplicated(mat_cal),,drop=FALSE] # same peaks in different combinations - remove
-				min_int<-as.numeric(intstand[intstand[,1]==IS_ID,17])
-				max_int<-as.numeric(intstand[intstand[,1]==IS_ID,18])
-				mat_cal[mat_cal[,2]<min_int,7]<-0
-				mat_cal[mat_cal[,2]>max_int,7]<-0
-				mat_cal<<-mat_cal
-				# generate outputs ######################################################
-				if(length(mat_cal[,1])>0){
-					output$cal_table <- renderDataTable(mat_cal)
-					output$cal_plot <- renderPlot({
-						plot(mat_cal[,4], mat_cal[,3],
-						xlab="Concentration",ylab="Intensity ratio",pch=19)	
-					})
-				}else{
-				
-				
-				}
-				
-								
-	
 			}
-			if(isolate(input$Ion_mode_Cal)=="negative"){	
+			IS_in_file<-c()
+			IS_with_peak<-c()
+			IS_with_score<-c()
+			if(length(res_IS_pos_screen_cal[[at_entry]])>0){
+				for(j in 1:length(res_IS_pos_screen_cal[[at_entry]])){
+					if(length(res_IS_pos_screen_cal[[at_entry]][[j]])>0){						
+						if(measurements[measurements[,1]==res_IS_pos_screen_cal[[at_entry]][[j]][[1]]$file_ID,]$tag2==at_Cal){
+							for(k in 1:length(res_IS_pos_screen_cal[[at_entry]][[j]])){
+								if(any(res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==IS_peak)){
+									that<-which(res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==IS_peak)
+									IS_in_file<-c(IS_in_file,res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$file_ID)
+									IS_with_peak<-c(IS_with_peak,res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[that,2])
+									IS_with_score<-c(IS_with_score,res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$score_1)	
+								}
+								}
+						}
+					}
+				}
+			}
+			# extract target peaks ##################################################
+			target_adduct<-targets[targets[,1]==target_ID,20]
+			target_peak<-as.numeric(targets[targets[,1]==target_ID,21])
+			at_entry<-FALSE
+			for(i in 1:length(names(res_target_pos_screen_cal))){ # where?
+				if(
+					(strsplit(names(res_target_pos_screen_cal)[i],"_")[[1]][1]==target_ID) &
+					(strsplit(names(res_target_pos_screen_cal)[i],"_")[[1]][2]==target_adduct)
+				){
+					at_entry<-i;break;
+				}
+			}
+			target_in_file<-c()
+			target_with_peak<-c()
+			target_with_score<-c()
+			if(length(res_target_pos_screen_cal[[at_entry]])>0){
+				for(j in 1:length(res_target_pos_screen_cal[[at_entry]])){
+					if(length(res_target_pos_screen_cal[[at_entry]][[j]])>0){						
+						if(measurements[measurements[,1]==res_target_pos_screen_cal[[at_entry]][[j]][[1]]$file_ID,]$tag2==at_Cal){
+							for(k in 1:length(res_target_pos_screen_cal[[at_entry]][[j]])){
+								if(any(res_target_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==target_peak)){
+									that<-which(res_target_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==target_peak)
+									target_in_file<-c(target_in_file,res_target_pos_screen_cal[[at_entry]][[j]][[k]]$file_ID)
+									target_with_peak<-c(target_with_peak,res_target_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[that,2])
+									target_with_score<-c(target_with_score,res_target_pos_screen_cal[[at_entry]][[j]][[k]]$score_1)
+								}
+							}
+						}
+					}
+				}
+			}
+			# derive pairs ##########################################################
+			mat_cal<-matrix(nrow=0,ncol=7)
+			colnames(mat_cal)<-c("Target intensity","IS intensity","Intensity ratio","Concentration","Target score","IS score","Used?")
+			if(	(length(target_in_file)>0) & (length(IS_in_file)>0)	){
+				for(i in 1:length(target_in_file)){
+					if(any(IS_in_file==target_in_file[i])){
+						those<-which(IS_in_file==target_in_file[i])
+						mat_cal<-rbind(mat_cal,
+							cbind(
+								round(rep(profileList_pos_cal[[2]][target_with_peak[i],2],length(those)),digits=0), # intensity target
+								round(profileList_pos_cal[[2]][IS_with_peak[those],2],digits=0), 					# intensity IS
+								(profileList_pos_cal[[2]][target_with_peak[i],2]/(profileList_pos_cal[[2]][IS_with_peak[those],2])), # ratio									
+								rep(as.numeric(
+									measurements[measurements[,1]==target_in_file[i],]$tag1	
+								),length(those)), # concentration
+								rep(target_with_score[i],length(those)), # score target
+								IS_with_score[those],
+								rep(1,length(those)) # used?
+							,deparse.level = 0),
+						deparse.level = 0)
+					}
+				}
+			}
+			rownames(mat_cal)<-NULL
+			# filter ################################################################
+			mat_cal<-mat_cal[!duplicated(mat_cal),,drop=FALSE] # same peaks in different combinations - remove
+			min_int<-as.numeric(intstand[intstand[,1]==IS_ID,17])
+			max_int<-as.numeric(intstand[intstand[,1]==IS_ID,18])
+			mat_cal[mat_cal[,2]<min_int,7]<-0
+			mat_cal[mat_cal[,2]>max_int,7]<-0
+			mat_cal<<-mat_cal
+			
+		}
+		if(isolate(input$Ion_mode_Cal)=="negative"){	
 # TO BE COMPLETED	
-			}
+		}
+	}	
+})				
+				
+
+###########################################################################################################
+# RETRIEVE SETS & PLOT THEM ###############################################################################
+observe({ 
+	init$b
+	input$Cal_IS_ID
+	input$Cal_IS_name
+	input$Cal_target_ID
+	input$Cal_target_name
+	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_IS_ID)!="none") & (isolate(input$Cal_target_ID)!="none")& (isolate(input$Cal_file_set)!="none")){					
+		# generate outputs ######################################################
+		if(length(mat_cal[,1])>0){
+			output$cal_table <- renderDataTable(mat_cal)
+			output$cal_plot <- renderPlot({
+				plot(mat_cal[,4], mat_cal[,3],
+				xlab="Concentration",ylab="Intensity ratio",pch=19,
+				xlim=ranges_cal_plot$x,ylim=ranges_cal_plot$y,
+				main="Brush and double-click to zoom in, double-click to zoom out.",cex.main=1)
+					if((!is.null(ranges_cal_plot$x))||(!is.null(ranges_cal_plot$y))){
+					mtext("Now zoomed in",side=3,col="gray")
+				}
+			})
+		}else{
+			output$cal_plot <- renderPlot({
+				plot(0.5,0.5,col="white",xlim=c(0,1),ylim=c(0,1))
+				text(0.5,0.5,"No data available")
+			})
+			output$cal_table <- renderDataTable(
+				DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No target screening results available")
+			)
+		}	
 	}	
 })
 ###########################################################################################################
+
+###########################################################################################################
+# PLOT ZOOM & TABLE SELECTION #############################################################################
+
+# When a double-click happens, check if there's a brush on the plot.
+# If so, zoom to the brush bounds; if not, reset the zoom.
+ranges_cal_plot <- reactiveValues(x = NULL, y = NULL)
+observeEvent(input$cal_plot_dblclick, {
+    brush <- input$cal_plot_brush
+    if (!is.null(brush)) {
+		ranges_cal_plot$x <- c(brush$xmin, brush$xmax)
+		ranges_cal_plot$y <- c(brush$ymin, brush$ymax)
+    } else {
+		ranges_cal_plot$x <- NULL
+		ranges_cal_plot$y <- NULL
+    }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###########################################################################################################
+
+
+
+
+
 
   
  if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_screening.r!")}
