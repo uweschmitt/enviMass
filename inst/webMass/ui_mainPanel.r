@@ -744,7 +744,6 @@
         tabPanel("Calibration", 	
 			tabsetPanel( 
 				tabPanel("Create",
-					HTML('<hr noshade="noshade" />'),
 					helpText("Select the ionization mode to load the available calibration file groups into the below selection."),
 					selectInput("Ion_mode_Cal", label="Ionization mode", c("none","positive","negative"), selected = ("none"), multiple = FALSE),	
 					HTML('<hr noshade="noshade" />'),
@@ -752,7 +751,7 @@
 						
 					conditionalPanel(
 						condition = "input.Ion_mode_Cal != 'none'", 	
-						helpText("Select the calibration file group to continue with the below compound selection."),
+						#helpText("Select the calibration file group to continue with the below compound selection."),
 						selectInput(inputId="Cal_file_set",label="Specify calibration file group",choices=c("none"),selected = "none", multiple = FALSE),
 						HTML('<hr noshade="noshade" />'),
 						HTML('<h1 align="center"> &#x21e9; </h1> '),
@@ -777,24 +776,24 @@
 								column(1, bsButton("Cal_last", label="", icon = icon("step-forward")))								
 							),							
 							HTML('<hr noshade="noshade" />'),
-							
 							HTML('<h1 align="center"> &#x21e9; </h1> '),
+							bsButton("save_Cal","Save model",style="success"),
+							bsButton("remove_Cal","Remove model",style="danger"),
 							conditionalPanel(
 								condition = "
 									input.Cal_target_ID != 'none' & input.Cal_target_name != 'none' & input.Cal_IS_ID != 'none' & input.Cal_IS_name != 'none'  ", 
-								bsButton("save_Cal","Save this calibration set",style="success"),
-								bsButton("remove_Cal","Remove this calibration set",style="danger"),
-								plotOutput("cal_plot", 
-									dblclick = "cal_plot_dblclick",
-									brush = brushOpts(
-									  id = "cal_plot_brush",
-									  resetOnNew = TRUE
+								div(style = widget_style6,
+									plotOutput("cal_plot", 
+										dblclick = "cal_plot_dblclick",
+										brush = brushOpts(
+										  id = "cal_plot_brush",
+										  resetOnNew = TRUE
+										)
 									)
 								),
 								fluidRow(
 									column(12,dataTableOutput('cal_table'))
-								),			
-								HTML('<h1 align="center"> &#x21e9; </h1> ')
+								)							
 							)
 							
 							

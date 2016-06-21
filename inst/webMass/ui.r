@@ -47,7 +47,10 @@ widget_style5 <-
   border-radius: 4px;
   border-color: darkgrey;
   background-color: #cccccc;"
-  
+
+widget_style6 <-
+  "max-width: 600px;"  
+ 
 shinyUI(
 pageWithSidebar(
 ################################################################################

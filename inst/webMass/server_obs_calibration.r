@@ -339,6 +339,7 @@ observe({
 
 ###########################################################################################################
 # RETRIEVE SETS & PLOT THEM ###############################################################################
+ranges_cal_plot <- reactiveValues(x = NULL, y = NULL)
 observe({ 
 	init$b
 	input$Cal_IS_ID
@@ -414,14 +415,15 @@ observe({
 				}
 			}
 			# derive pairs ##########################################################
-			mat_cal<-matrix(nrow=0,ncol=7)
-			colnames(mat_cal)<-c("Target intensity","IS intensity","Intensity ratio","Concentration","Target score","IS score","Used?")
+			mat_cal<-matrix(nrow=0,ncol=8)
+			colnames(mat_cal)<-c("Pair #","Target intensity","IS intensity","Intensity ratio","Concentration","Target score","IS score","Used?")
 			if(	(length(target_in_file)>0) & (length(IS_in_file)>0)	){
 				for(i in 1:length(target_in_file)){
 					if(any(IS_in_file==target_in_file[i])){
 						those<-which(IS_in_file==target_in_file[i])
 						mat_cal<-rbind(mat_cal,
 							cbind(
+								rep(1,length(those)),
 								round(rep(profileList_pos_cal[[2]][target_with_peak[i],2],length(those)),digits=0), # intensity target
 								round(profileList_pos_cal[[2]][IS_with_peak[those],2],digits=0), 					# intensity IS
 								(profileList_pos_cal[[2]][target_with_peak[i],2]/(profileList_pos_cal[[2]][IS_with_peak[those],2])), # ratio									
@@ -433,6 +435,7 @@ observe({
 								rep(1,length(those)) # used?
 							,deparse.level = 0),
 						deparse.level = 0)
+						mat_cal[,1]<-(1:length(mat_cal[,1]))
 					}
 				}
 			}
@@ -441,8 +444,8 @@ observe({
 			mat_cal<-mat_cal[!duplicated(mat_cal),,drop=FALSE] # same peaks in different combinations - remove
 			min_int<-as.numeric(intstand[intstand[,1]==IS_ID,17])
 			max_int<-as.numeric(intstand[intstand[,1]==IS_ID,18])
-			mat_cal[mat_cal[,2]<min_int,7]<-0
-			mat_cal[mat_cal[,2]>max_int,7]<-0
+			mat_cal[mat_cal[,2]<min_int,8]<-0
+			mat_cal[mat_cal[,2]>max_int,8]<-0
 			mat_cal<<-mat_cal
 			
 		}
@@ -455,36 +458,66 @@ observe({
 
 ###########################################################################################################
 # RETRIEVE SETS & PLOT THEM ###############################################################################
+redo_cal<-reactiveValues() 	# reactive value to indicate ...
+redo_cal$a<-1
 observe({ 
 	init$b
 	input$Cal_IS_ID
 	input$Cal_IS_name
 	input$Cal_target_ID
 	input$Cal_target_name
+	redo_cal$a
 	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_IS_ID)!="none") & (isolate(input$Cal_target_ID)!="none")& (isolate(input$Cal_file_set)!="none")){					
 		# generate outputs ######################################################
 		if(length(mat_cal[,1])>0){
-			output$cal_table <- renderDataTable(mat_cal)
-			output$cal_plot <- renderPlot({
-				plot(mat_cal[,4], mat_cal[,3],
-				xlab="Concentration",ylab="Intensity ratio",pch=19,
-				xlim=ranges_cal_plot$x,ylim=ranges_cal_plot$y,
-				main="Brush and double-click to zoom in, double-click to zoom out.",cex.main=1)
-					if((!is.null(ranges_cal_plot$x))||(!is.null(ranges_cal_plot$y))){
-					mtext("Now zoomed in",side=3,col="gray")
-				}
-			})
+			output$cal_table <- DT::renderDataTable(			
+				mat_cal,
+				server = TRUE,
+				selection =c(mode = 'single'),
+				class = 'cell-border stripe'
+			)
 		}else{
-			output$cal_plot <- renderPlot({
-				plot(0.5,0.5,col="white",xlim=c(0,1),ylim=c(0,1))
-				text(0.5,0.5,"No data available")
-			})
 			output$cal_table <- renderDataTable(
 				DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No target screening results available")
 			)
 		}	
 	}	
 })
+
+observe({ 
+	init$b
+	input$Cal_IS_ID
+	input$Cal_IS_name
+	input$Cal_target_ID
+	input$Cal_target_name
+	redo_cal$a
+	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_IS_ID)!="none") & (isolate(input$Cal_target_ID)!="none")& (isolate(input$Cal_file_set)!="none")){					
+		# generate outputs ######################################################
+		if(length(mat_cal[,1])>1){
+			output$cal_plot <- renderPlot({
+				plot(mat_cal[,5], mat_cal[,4],
+				ylab="Concentration",xlab="Intensity ratio",pch=19,
+				xlim=ranges_cal_plot$y,ylim=ranges_cal_plot$x,
+				main="Brush and double-click to zoom in, double-click to zoom out.",cex.main=1,col="white")
+				points(mat_cal[mat_cal[,8]==1,5], mat_cal[mat_cal[,8]==1,4],col="black",pch=19)
+				points(mat_cal[mat_cal[,8]==0,5], mat_cal[mat_cal[,8]==0,4],col="gray",pch=19)				
+				if((!is.null(ranges_cal_plot$x))||(!is.null(ranges_cal_plot$y))){
+					mtext("Now zoomed in",side=3,col="gray")
+				}
+				if(sum(mat_cal[,8])>=2){
+					model<-lm(mat_cal[mat_cal[,8]==1,4]~mat_cal[mat_cal[,8]==1,5])
+					abline(model,col="red",lwd=2)
+				}
+			})
+		}else{
+			output$cal_plot <- renderPlot({
+				plot(0.5,0.5,col="white",xlim=c(0,1),ylim=c(0,1))
+				text(0.5,0.5,"Not enough calibration data available")
+			})
+		}	
+	}	
+})
+
 ###########################################################################################################
 
 ###########################################################################################################
@@ -496,44 +529,27 @@ ranges_cal_plot <- reactiveValues(x = NULL, y = NULL)
 observeEvent(input$cal_plot_dblclick, {
     brush <- input$cal_plot_brush
     if (!is.null(brush)) {
-		ranges_cal_plot$x <- c(brush$xmin, brush$xmax)
-		ranges_cal_plot$y <- c(brush$ymin, brush$ymax)
+		ranges_cal_plot$y <- c(brush$xmin, brush$xmax)
+		ranges_cal_plot$x <- c(brush$ymin, brush$ymax)
     } else {
 		ranges_cal_plot$x <- NULL
 		ranges_cal_plot$y <- NULL
     }
 })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+observeEvent(
+	input$cal_table_row_last_clicked,{
+	cal_table_s<-input$cal_table_row_last_clicked
+	cat(paste("Modified calibration table in row",cal_table_s))
+	if((isolate(init$a)=="TRUE")&(length(cal_table_s))){
+		if(mat_cal[cal_table_s,8]==1){
+			mat_cal[cal_table_s,8]<<-0
+		}else{
+			mat_cal[cal_table_s,8]<<-1
+		}
+		redo_cal$a<-(redo_cal$a+1)
+	}
+})
 
 ###########################################################################################################
 
@@ -544,3 +560,14 @@ observeEvent(input$cal_plot_dblclick, {
 
   
  if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_screening.r!")}
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
