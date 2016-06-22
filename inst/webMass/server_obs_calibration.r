@@ -1,10 +1,11 @@
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_screening.r!")}
-
+verbose<-TRUE
 ###########################################################################################################
 # SPECIFY IONIZATION MODE #################################################################################
 observe({ 
 	input$Ion_mode_Cal 
 	init$b
+	if(verbose){cat("\n in A")}
 	if(isolate(init$a)=="TRUE"){
 		if(isolate(input$Ion_mode_Cal)=="positive"){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -43,6 +44,7 @@ observe({
 observe({ 
 	input$Cal_file_set
 	init$b
+	if(verbose){cat("\n in B")}
 	if(isolate(init$a)=="TRUE"){
 		if(isolate(input$Cal_file_set)!="none"){
 			if(
@@ -84,6 +86,14 @@ observe({
 				target_IDs<-target_IDs[order(target_IDs)]
 				target_IDs<-c("none",target_IDs)
 				updateSelectInput(session,inputId="Cal_target_ID",label="Target ID",choices=target_IDs,selected = target_IDs[1])
+				# load & update available calibration models
+				load(file=file.path(logfile[[1]],"quantification","cal_models_pos"),envir=as.environment(".GlobalEnv"));	
+				if(!any(names(cal_models_pos)==isolate(input$Cal_file_set))){ # make an entry for this calibration set, always at end
+					insert_at<-(length(cal_models_pos)+1)
+					cal_models_pos[[insert_at]]<<-list()
+					names(cal_models_pos)[insert_at]<<-isolate(input$Cal_file_set)
+					save(cal_models_pos,file=file.path(logfile$project_folder,"quantification","cal_models_pos"));	
+				}
 			}else{ # not available
 				if((isolate(input$Ion_mode_Cal)!="negative")){
 					updateSelectInput(session,inputId="Cal_IS_name",choices="none",selected = "none")
@@ -133,6 +143,14 @@ observe({
 				target_IDs<-target_IDs[order(target_IDs)]
 				target_IDs<-c("none",target_IDs)
 				updateSelectInput(session,inputId="Cal_target_ID",label="Target ID",choices=target_IDs,selected = target_IDs[1])
+				# load & update available calibration models
+				load(file=file.path(logfile[[1]],"quantification","cal_models_neg"),envir=as.environment(".GlobalEnv"));	
+				if(!any(names(cal_models_neg)==isolate(input$Cal_file_set))){ # make an entry for this calibration set, always at end
+					insert_at<-(length(cal_models_neg)+1)
+					cal_models_neg[[insert_at]]<<-list()
+					names(cal_models_neg)[insert_at]<<-isolate(input$Cal_file_set)
+					save(cal_models_neg,file=file.path(logfile$project_folder,"quantification","cal_models_neg"));	
+				}
 			}else{ # not available
 				if((isolate(input$Ion_mode_Cal)!="positive")){
 					updateSelectInput(session,inputId="Cal_IS_name",choices="none",selected = "none")
@@ -151,6 +169,7 @@ observe({
 observe({ 
 	input$Cal_IS_ID
 	init$b
+	if(verbose){cat("\n in C")}
 	if((isolate(init$a)=="TRUE")){
 		if(isolate(input$Cal_IS_ID)!="none"){
 				if(isolate(input$Ion_mode_Cal)=="positive"){
@@ -174,6 +193,7 @@ observe({
 observe({ 
 	input$Cal_IS_name
 	init$b
+	if(verbose){cat("\n in D")}
 	if((isolate(init$a)=="TRUE")&(isolate(input$Cal_IS_name)!="none")){
 			if(isolate(input$Ion_mode_Cal)=="positive"){
 				use_this_ID<-unique(results_screen_IS_pos_cal[[1]][
@@ -193,6 +213,7 @@ observe({
 observe({ 
 	input$Cal_target_ID
 	init$b
+	if(verbose){cat("\n in E")}
 	if((isolate(init$a)=="TRUE")){
 		if(isolate(input$Cal_target_ID)!="none"){
 				if(isolate(input$Ion_mode_Cal)=="positive"){
@@ -217,6 +238,7 @@ observe({
 observe({ 
 	input$Cal_target_name
 	init$b
+	if(verbose){cat("\n in F")}
 	if((isolate(init$a)=="TRUE")&(isolate(input$Cal_target_name)!="none")){
 			if(isolate(input$Ion_mode_Cal)=="positive"){
 				use_this_ID<-unique(results_screen_target_pos_cal[[1]][
@@ -240,6 +262,7 @@ observe({
 observe({ 
 	init$b
 	input$Cal_next
+	if(verbose){cat("\n in G")}
 	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_file_set)!="none")){
 		is_at_targetID<-(isolate(input$Cal_target_ID))
 		is_at_ISID<-(isolate(input$Cal_IS_ID))
@@ -273,6 +296,7 @@ observe({
 observe({ 
 	init$b
 	input$Cal_previous
+	if(verbose){cat("\n in H")}
 	if((isolate(init$a)=="TRUE")&(isolate(input$Cal_target_name)!="none")& (isolate(input$Cal_file_set)!="none")){
 		is_at_targetID<-(isolate(input$Cal_target_ID))
 		is_at_ISID<-(isolate(input$Cal_IS_ID))
@@ -305,6 +329,7 @@ observe({
 observe({ 
 	init$b
 	input$Cal_first
+	if(verbose){cat("\n in I")}
 	if((isolate(init$a)=="TRUE")& (isolate(input$Cal_file_set)!="none")){
 		at_target_ID<-"none"
 		at_IS_ID<-"none"
@@ -321,6 +346,7 @@ observe({
 observe({ 
 	init$b
 	input$Cal_last
+	if(verbose){cat("\n in J")}
 	if((isolate(init$a)=="TRUE")& (isolate(input$Cal_file_set)!="none")){
 		at_target_ID<-"none"
 		at_IS_ID<-"none"
@@ -346,8 +372,10 @@ observe({
 	input$Cal_IS_name
 	input$Cal_target_ID
 	input$Cal_target_name
+	if(verbose){cat("\n in K")}
 	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_IS_ID)!="none") & (isolate(input$Cal_target_ID)!="none")& (isolate(input$Cal_file_set)!="none")){	
 		if(isolate(input$Ion_mode_Cal)=="positive"){	
+			if(verbose){cat("\n in K_1")}
 			IS_ID<-isolate(input$Cal_IS_ID)
 			target_ID<-isolate(input$Cal_target_ID)
 			at_Cal<-isolate(input$Cal_file_set)
@@ -383,6 +411,7 @@ observe({
 					}
 				}
 			}
+			if(verbose){cat("\n in K_2")}
 			# extract target peaks ##################################################
 			target_adduct<-targets[targets[,1]==target_ID,20]
 			target_peak<-as.numeric(targets[targets[,1]==target_ID,21])
@@ -414,6 +443,7 @@ observe({
 					}
 				}
 			}
+			if(verbose){cat("\n in K_3")}
 			# derive pairs ##########################################################
 			mat_cal<-matrix(nrow=0,ncol=8)
 			colnames(mat_cal)<-c("Pair #","Target intensity","IS intensity","Intensity ratio","Concentration","Target score","IS score","Used?")
@@ -426,7 +456,7 @@ observe({
 								rep(1,length(those)),
 								round(rep(profileList_pos_cal[[2]][target_with_peak[i],2],length(those)),digits=0), # intensity target
 								round(profileList_pos_cal[[2]][IS_with_peak[those],2],digits=0), 					# intensity IS
-								(profileList_pos_cal[[2]][target_with_peak[i],2]/(profileList_pos_cal[[2]][IS_with_peak[those],2])), # ratio									
+								round((profileList_pos_cal[[2]][target_with_peak[i],2]/(profileList_pos_cal[[2]][IS_with_peak[those],2])),digits=2), # ratio									
 								rep(as.numeric(
 									measurements[measurements[,1]==target_in_file[i],]$tag1	
 								),length(those)), # concentration
@@ -440,6 +470,7 @@ observe({
 				}
 			}
 			rownames(mat_cal)<-NULL
+			if(verbose){cat("\n in K_4")}
 			# filter ################################################################
 			mat_cal<-mat_cal[!duplicated(mat_cal),,drop=FALSE] # same peaks in different combinations - remove
 			min_int<-as.numeric(intstand[intstand[,1]==IS_ID,17])
@@ -467,6 +498,7 @@ observe({
 	input$Cal_target_ID
 	input$Cal_target_name
 	redo_cal$a
+	if(verbose){cat("\n in L")}
 	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_IS_ID)!="none") & (isolate(input$Cal_target_ID)!="none")& (isolate(input$Cal_file_set)!="none")){					
 		# generate outputs ######################################################
 		if(length(mat_cal[,1])>0){
@@ -490,13 +522,15 @@ observe({
 	input$Cal_IS_name
 	input$Cal_target_ID
 	input$Cal_target_name
+	input$cal_model
 	redo_cal$a
+	if(verbose){cat("\n in M")}
 	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_IS_ID)!="none") & (isolate(input$Cal_target_ID)!="none")& (isolate(input$Cal_file_set)!="none")){					
 		# generate outputs ######################################################
 		if(length(mat_cal[,1])>1){
 			output$cal_plot <- renderPlot({
 				plot(mat_cal[,5], mat_cal[,4],
-				ylab="Concentration",xlab="Intensity ratio",pch=19,
+				xlab="Concentration",ylab="Intensity ratio",pch=19,
 				xlim=ranges_cal_plot$y,ylim=ranges_cal_plot$x,
 				main="Brush and double-click to zoom in, double-click to zoom out.",cex.main=1,col="white")
 				points(mat_cal[mat_cal[,8]==1,5], mat_cal[mat_cal[,8]==1,4],col="black",pch=19)
@@ -505,8 +539,19 @@ observe({
 					mtext("Now zoomed in",side=3,col="gray")
 				}
 				if(sum(mat_cal[,8])>=2){
-					model<-lm(mat_cal[mat_cal[,8]==1,4]~mat_cal[mat_cal[,8]==1,5])
-					abline(model,col="red",lwd=2)
+					lin<-(mat_cal[mat_cal[,8]==1,5])
+					resp<-mat_cal[mat_cal[,8]==1,4]
+					if(isolate(input$cal_model)=="linear"){
+						model<-lm(resp~lin)
+						abline(model,col="red",lwd=2)
+					}else{
+						quad<-((mat_cal[mat_cal[,8]==1,5])^2)
+						model<-lm(resp~lin+quad)					
+						for_x<-seq(from=min(lin),to=(max(lin)*2),length.out=100)
+						for_x2<-(for_x^2)
+						for_y<-predict(model,list(lin=for_x,quad=for_x2))
+						lines(for_x,for_y,col="red",lwd=2)
+					}
 				}
 			})
 		}else{
@@ -527,6 +572,7 @@ observe({
 # If so, zoom to the brush bounds; if not, reset the zoom.
 ranges_cal_plot <- reactiveValues(x = NULL, y = NULL)
 observeEvent(input$cal_plot_dblclick, {
+	if(verbose){cat("\n in N")}
     brush <- input$cal_plot_brush
     if (!is.null(brush)) {
 		ranges_cal_plot$y <- c(brush$xmin, brush$xmax)
@@ -539,8 +585,9 @@ observeEvent(input$cal_plot_dblclick, {
 
 observeEvent(
 	input$cal_table_row_last_clicked,{
+	if(verbose){cat("\n in O")}
 	cal_table_s<-input$cal_table_row_last_clicked
-	cat(paste("Modified calibration table in row",cal_table_s))
+	cat(paste("\nModified calibration table in row",cal_table_s))
 	if((isolate(init$a)=="TRUE")&(length(cal_table_s))){
 		if(mat_cal[cal_table_s,8]==1){
 			mat_cal[cal_table_s,8]<<-0

@@ -782,6 +782,7 @@
 							conditionalPanel(
 								condition = "
 									input.Cal_target_ID != 'none' & input.Cal_target_name != 'none' & input.Cal_IS_ID != 'none' & input.Cal_IS_name != 'none'  ", 
+								HTML('<hr noshade="noshade" />'),
 								div(style = widget_style6,
 									plotOutput("cal_plot", 
 										dblclick = "cal_plot_dblclick",
@@ -791,6 +792,9 @@
 										)
 									)
 								),
+								selectInput("cal_model", "Select calibration model", choices = c("linear","quadratic"), "linear"),
+								HTML('<hr noshade="noshade" />'),
+								helpText("Click into the below table rows to select and deselect data points for the calibration model:"),
 								fluidRow(
 									column(12,dataTableOutput('cal_table'))
 								)							

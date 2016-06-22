@@ -307,9 +307,9 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	logfile[[14]]<-"FALSE"
 	names(logfile)[14]<-"Negative_subtraction_files"
 	# calibration model ########################################################
-	cal_models_pos<-list(0)
+	cal_models_pos<-list()
 	save(cal_models_pos,file=file.path(logfile$project_folder,"quantification","cal_models_pos"));	
-	cal_models_neg<-list(0)
+	cal_models_neg<-list()
 	save(cal_models_neg,file=file.path(logfile$project_folder,"quantification","cal_models_neg"));	
     # measurement data.frame ###################################################
 	save(logfile,file=file.path(pro_dir,pro_name,"logfile.emp"));  

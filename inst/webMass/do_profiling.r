@@ -6,6 +6,8 @@
 		if(any(objects()=="peaklist")){rm(peaklist)}
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="profileList_pos")){rm(profileList_pos)}		
+		if(file.exists(file.path(as.character(logfile[[1]]),"results","profileList_pos"))){file.remove(file.path(as.character(logfile[[1]]),"results","profileList_pos"))}
+		if(file.exists(file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"))){file.remove(file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"))}
 		profileList_pos<-startprofiles(
 							logfile,
 							frac=FALSE,
@@ -71,7 +73,9 @@
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="peaklist")){rm(peaklist)}
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
-		if(any(objects()=="profileList_neg")){rm(profileList_neg)}		
+		if(any(objects()=="profileList_neg")){rm(profileList_neg)}	
+		if(file.exists(file.path(as.character(logfile[[1]]),"results","profileList_neg"))){file.remove(file.path(as.character(logfile[[1]]),"results","profileList_neg"))}
+		if(file.exists(file.path(as.character(logfile[[1]]),"results","profileList_neg_copy"))){file.remove(file.path(as.character(logfile[[1]]),"results","profileList_neg_copy"))}
 		profileList_neg<-startprofiles(
 							logfile,
 							frac=FALSE,

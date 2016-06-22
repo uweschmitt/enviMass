@@ -318,7 +318,7 @@
 
 	if(
 		file.exists(file.path(as.character(logfile[[1]]),"results","profileList_neg")) &
-		file.exists(file.path(logfile[[1]],"results","pattern_neg_IS"))
+		file.exists(file.path(logfile[[1]],"results","pattern_neg_IS")) 
 	){
 
 		load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"));
