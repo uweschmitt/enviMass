@@ -229,7 +229,7 @@
 								<li>Input format: text file (.txt), tab delimited.</li>
 								<li>Compound names: no special signs permitted. Use big and small letters, numbers, underscores, hyphen, brackets and empty spaces - and absolutely nothing else.</li>
 								<li>No empty columns. If you are not sure what to fill in, use what is given  in the template IS.txt file.</li>
-								<li>Absolutely NO duplicated IDs.</li>
+								<li>Absolutely NO duplicated IDs or IDs containing underscores.</li>
 								<li>Do not delete columns; their number, order and content types are all fixed.</li>
 								<li>No uncompleted entries per compounds.</li>
 								<li>Numeric entries with decimal points: dot-separated.</li>	
@@ -238,7 +238,7 @@
 								Help for some column contents:
 							</font></p> 
 							<ol>
-								<li>ID: numbers and characters permitted; no empty spaces or special characters. Unique, absolutely NO duplicates permitted.</li>
+								<li>ID: numbers and characters permitted; no empty spaces or special characters. Unique, absolutely NO duplicates and NO underscores permitted!</li>
 								<li>RT_tolerance: FALSE or a compound-specific retention time tolerance. Overwrites the one set as standard value in tab Settings/Screening/IS.</li>
 								<li>main_adduct: FALSE or name of a special adduct to be used for this compound entry. Valid adduct names can be found in tab Settings/Adduct.</li>								
 								<li>restrict_adduct: TRUE or FALSE. Only use the main_adduct (if specified) for this compound and ignore the ones specified in tab Settings/Adduct?</li>
@@ -326,7 +326,7 @@
 								<li>Input format: text file (.txt), tab delimited.</li>
 								<li>Compound names: no special signs permitted. Use big and small letters, numbers, underscores, hyphen, brackets and empty spaces - and absolutely nothing else.</li>
 								<li>No empty columns. If you are not sure what to fill in, use what is given  in the template targets.txt file.</li>
-								<li>Absolutely NO duplicated IDs.</li>
+								<li>Absolutely NO duplicated IDs; IDs must NOT contain underscores.</li>
 								<li>Do not delete columns; their number, order and content types are all fixed.</li>
 								<li>No uncompleted entries per compounds.</li>
 								<li>Numeric entries with decimal points: dot-separated.</li>								
@@ -335,7 +335,7 @@
 								Help for some column contents:
 							</font></p> 
 							<ol>
-								<li>ID: numbers and characters permitted; no empty spaces or special characters. Unique, absolutely NO duplicates permitted.</li>
+								<li>ID: numbers and characters permitted; no empty spaces or special characters. Unique, absolutely NO duplicates and NO underscores permitted!</li>
 								<li>RT_tolerance: FALSE or a compound-specific retention time tolerance. Overwrites the one set as standard value in tab Settings/Screening/targets.</li>
 								<li>ID_internal_standard: unique ID of a internal standard compound to be used for quantification. Set to FALSE otherwise.</li>
 								<li>main_adduct: FALSE or name of a special adduct to be used for this compound entry. Valid adduct names can be found in tab Settings/Adduct.</li>								
@@ -443,10 +443,11 @@
 					fluidRow(
 						column(width = 2, radioButtons("calib", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","Under construction")#"This step extracts calibration sets of target and internal standard compound peaks, using
-							#the provided calibration files. The sets can be used in the Calibration tab to establish specific calibration curves
-							#for quantification. If selected, the extraction of these calibration peaks will be affected by the above mass recalibration, 
-							#replicate intersection, blind subtraction and LOD interpolation steps.")
+							tags$p(align="justify","This step extracts calibration sets of target and internal standard compound peaks, using
+							the provided calibration files. The sets can be used in the Calibration tab to establish specific calibration models (curves)
+							for quantification. If selected, the extraction of these calibration peaks will be affected by the above mass recalibration, 
+							replicate intersection, blind subtraction and LOD interpolation steps. Once you have established the desired calibration models,
+							you can again deselt this step.")
 						)
 					),
 				HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Quantification </font></p> '),
@@ -596,7 +597,7 @@
 				selectInput("replicate_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),	
 				#selectInput("replicate_recalib", "... and corrected by recalibration results (if available)", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE"),	
 				numericInput("replicate_delRT", "RT tolerance window of peaks caused by the same analyte across replicate samples [s]", 30),
-				numericInput("replicate_dInt", "Intensity tolerance X (log scale, 1E^X):", 6)
+				numericInput("replicate_dInt", "Intensity tolerance X (log scale, 1E^X):", 9)
 			),	
             # ALLIGNMENT #######################################################
             #tabPanel("Alignment",
@@ -748,16 +749,14 @@
 					selectInput("Ion_mode_Cal", label="Ionization mode", c("none","positive","negative"), selected = ("none"), multiple = FALSE),	
 					HTML('<hr noshade="noshade" />'),
 					HTML('<h1 align="center"> &#x21e9; </h1> '),
-						
 					conditionalPanel(
 						condition = "input.Ion_mode_Cal != 'none'", 	
 						#helpText("Select the calibration file group to continue with the below compound selection."),
 						selectInput(inputId="Cal_file_set",label="Specify calibration file group",choices=c("none"),selected = "none", multiple = FALSE),
 						HTML('<hr noshade="noshade" />'),
 						HTML('<h1 align="center"> &#x21e9; </h1> '),
-						
 						conditionalPanel(
-							condition = "input.Cal_file_set != 'none'", 
+							condition = "input.Cal_file_set != 'none' & input.Ion_mode_Cal != 'none'", 
 							helpText("Select compounds to (resume) work on their individual calibration models below. The screened compounds can also be viewed in the Results/Compound screening tab."),
 							fluidRow(
 								column(3, selectInput(inputId="Cal_target_name",label="Target name",choices=c("none"),selected = "none", multiple = FALSE)),							
@@ -777,11 +776,10 @@
 							),							
 							HTML('<hr noshade="noshade" />'),
 							HTML('<h1 align="center"> &#x21e9; </h1> '),
-							bsButton("save_Cal","Save model",style="success"),
+							bsButton("save_Cal","Save/replace model",style="success"),
 							bsButton("remove_Cal","Remove model",style="danger"),
 							conditionalPanel(
-								condition = "
-									input.Cal_target_ID != 'none' & input.Cal_target_name != 'none' & input.Cal_IS_ID != 'none' & input.Cal_IS_name != 'none'  ", 
+								condition = "input.Cal_file_set != 'none' & input.Ion_mode_Cal != 'none' & input.Cal_target_ID != 'none' & input.Cal_target_name != 'none' & input.Cal_IS_ID != 'none' & input.Cal_IS_name != 'none'  ", 
 								HTML('<hr noshade="noshade" />'),
 								div(style = widget_style6,
 									plotOutput("cal_plot", 
@@ -794,38 +792,24 @@
 								),
 								selectInput("cal_model", "Select calibration model", choices = c("linear","quadratic"), "linear"),
 								HTML('<hr noshade="noshade" />'),
-								helpText("Click into the below table rows to select and deselect data points for the calibration model:"),
+								helpText("Click into the below table rows to select and deselect data points for the above calibration model (red line):"),
 								fluidRow(
 									column(12,dataTableOutput('cal_table'))
 								)							
 							)
-							
-							
-							
 						)
-					
-
-					),
-					
-					conditionalPanel(
-						condition = "
-							input.Cal_target_ID == 'none' | input.Cal_target_name == 'none' | input.Cal_target_adduct == 'none' | input.Cal_target_peak == 'none' |
-							input.Cal_IS_ID == 'none' | input.Cal_IS_name == 'none' | input.Cal_IS_adduct == 'none' | input.Cal_IS_peak == 'none' ", 						
-						HTML('<h3 align="center"> Complete the above selection to continue</h3> ')
 					)
-				),	
-				tabPanel("Import",
-					
-					HTML('<hr noshade="noshade" />'),
-					helpText("Import calibration files from another project (WARNING - replaces calibration files in current project):"),
-					textInput("import_pro_dir_Cal", "", value = "C:\\...\\other_project_name"),
-					bsPopover("import_pro_dir_Cal", 
-						title = "Insert full path, including the project folder, but excluding the logfile.emp.",
-						content = "Using your OS explorer, you may navigate into your project folder and copy/paste the full path.", 
-						placement = "right", trigger = "hover"),
-					bsButton("Import_project_Cal","Import",style="info")
-					
-				)
+				)#,	
+				#tabPanel("Import",	
+				#	HTML('<hr noshade="noshade" />'),
+				#	helpText("Import calibration files from another project (WARNING - replaces calibration files in current project):"),
+				#	textInput("import_pro_dir_Cal", "", value = "C:\\...\\other_project_name"),
+				#	bsPopover("import_pro_dir_Cal", 
+				#		title = "Insert full path, including the project folder, but excluding the logfile.emp.",
+				#		content = "Using your OS explorer, you may navigate into your project folder and copy/paste the full path.", 
+				#		placement = "right", trigger = "hover"),
+				#	bsButton("Import_project_Cal","Import",style="info")	
+				#)
 			)
         ),
         ########################################################################

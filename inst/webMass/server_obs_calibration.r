@@ -4,7 +4,6 @@ verbose<-TRUE
 # SPECIFY IONIZATION MODE #################################################################################
 observe({ 
 	input$Ion_mode_Cal 
-	init$b
 	if(verbose){cat("\n in A")}
 	if(isolate(init$a)=="TRUE"){
 		if(isolate(input$Ion_mode_Cal)=="positive"){
@@ -43,7 +42,6 @@ observe({
 # SPECIFY CALIBRATION GROUP ###############################################################################
 observe({ 
 	input$Cal_file_set
-	init$b
 	if(verbose){cat("\n in B")}
 	if(isolate(init$a)=="TRUE"){
 		if(isolate(input$Cal_file_set)!="none"){
@@ -168,7 +166,6 @@ observe({
 # MATCH COMPOUND NAMES AND ID SELECTIONS ##################################################################
 observe({ 
 	input$Cal_IS_ID
-	init$b
 	if(verbose){cat("\n in C")}
 	if((isolate(init$a)=="TRUE")){
 		if(isolate(input$Cal_IS_ID)!="none"){
@@ -192,7 +189,6 @@ observe({
 
 observe({ 
 	input$Cal_IS_name
-	init$b
 	if(verbose){cat("\n in D")}
 	if((isolate(init$a)=="TRUE")&(isolate(input$Cal_IS_name)!="none")){
 			if(isolate(input$Ion_mode_Cal)=="positive"){
@@ -212,7 +208,6 @@ observe({
 
 observe({ 
 	input$Cal_target_ID
-	init$b
 	if(verbose){cat("\n in E")}
 	if((isolate(init$a)=="TRUE")){
 		if(isolate(input$Cal_target_ID)!="none"){
@@ -237,7 +232,6 @@ observe({
 
 observe({ 
 	input$Cal_target_name
-	init$b
 	if(verbose){cat("\n in F")}
 	if((isolate(init$a)=="TRUE")&(isolate(input$Cal_target_name)!="none")){
 			if(isolate(input$Ion_mode_Cal)=="positive"){
@@ -260,7 +254,6 @@ observe({
 ###########################################################################################################
 # FORWARD BACKWARD ETC ####################################################################################
 observe({ 
-	init$b
 	input$Cal_next
 	if(verbose){cat("\n in G")}
 	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_file_set)!="none")){
@@ -294,7 +287,6 @@ observe({
 })
 
 observe({ 
-	init$b
 	input$Cal_previous
 	if(verbose){cat("\n in H")}
 	if((isolate(init$a)=="TRUE")&(isolate(input$Cal_target_name)!="none")& (isolate(input$Cal_file_set)!="none")){
@@ -327,7 +319,6 @@ observe({
 })
 
 observe({ 
-	init$b
 	input$Cal_first
 	if(verbose){cat("\n in I")}
 	if((isolate(init$a)=="TRUE")& (isolate(input$Cal_file_set)!="none")){
@@ -344,7 +335,6 @@ observe({
 })
 
 observe({ 
-	init$b
 	input$Cal_last
 	if(verbose){cat("\n in J")}
 	if((isolate(init$a)=="TRUE")& (isolate(input$Cal_file_set)!="none")){
@@ -367,13 +357,13 @@ observe({
 # RETRIEVE SETS & PLOT THEM ###############################################################################
 ranges_cal_plot <- reactiveValues(x = NULL, y = NULL)
 observe({ 
-	init$b
 	input$Cal_IS_ID
 	input$Cal_IS_name
 	input$Cal_target_ID
 	input$Cal_target_name
 	if(verbose){cat("\n in K")}
 	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_IS_ID)!="none") & (isolate(input$Cal_target_ID)!="none")& (isolate(input$Cal_file_set)!="none")){	
+		# POSITIVE ##################################################################
 		if(isolate(input$Ion_mode_Cal)=="positive"){	
 			if(verbose){cat("\n in K_1")}
 			IS_ID<-isolate(input$Cal_IS_ID)
@@ -424,6 +414,7 @@ observe({
 					at_entry<-i;break;
 				}
 			}
+			if(verbose){cat("\n in K_2_1")}
 			target_in_file<-c()
 			target_with_peak<-c()
 			target_with_score<-c()
@@ -478,10 +469,113 @@ observe({
 			mat_cal[mat_cal[,2]<min_int,8]<-0
 			mat_cal[mat_cal[,2]>max_int,8]<-0
 			mat_cal<<-mat_cal
-			
 		}
+		# NEGATIVE ##################################################################
 		if(isolate(input$Ion_mode_Cal)=="negative"){	
-# TO BE COMPLETED	
+			if(verbose){cat("\n in K_1")}
+			IS_ID<-isolate(input$Cal_IS_ID)
+			target_ID<-isolate(input$Cal_target_ID)
+			at_Cal<-isolate(input$Cal_file_set)
+			#target_ID<-"4"; IS_ID<-"693";at_Cal<-"A"			
+			# extract IS peaks ######################################################
+			IS_adduct<-intstand[intstand[,1]==IS_ID,19]
+			IS_peak<-as.numeric(intstand[intstand[,1]==IS_ID,20])
+			at_entry<-FALSE
+			for(i in 1:length(names(res_IS_neg_screen_cal))){ # where?
+				if(
+					(strsplit(names(res_IS_neg_screen_cal)[i],"_")[[1]][1]==IS_ID) &
+					(strsplit(names(res_IS_neg_screen_cal)[i],"_")[[1]][2]==IS_adduct)
+				){
+					at_entry<-i;break;
+				}
+			}
+			IS_in_file<-c()
+			IS_with_peak<-c()
+			IS_with_score<-c()
+			if(length(res_IS_neg_screen_cal[[at_entry]])>0){
+				for(j in 1:length(res_IS_neg_screen_cal[[at_entry]])){
+					if(length(res_IS_neg_screen_cal[[at_entry]][[j]])>0){						
+						if(measurements[measurements[,1]==res_IS_neg_screen_cal[[at_entry]][[j]][[1]]$file_ID,]$tag2==at_Cal){
+							for(k in 1:length(res_IS_neg_screen_cal[[at_entry]][[j]])){
+								if(any(res_IS_neg_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==IS_peak)){
+									that<-which(res_IS_neg_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==IS_peak)
+									IS_in_file<-c(IS_in_file,res_IS_neg_screen_cal[[at_entry]][[j]][[k]]$file_ID)
+									IS_with_peak<-c(IS_with_peak,res_IS_neg_screen_cal[[at_entry]][[j]][[k]]$Peaks[that,2])
+									IS_with_score<-c(IS_with_score,res_IS_neg_screen_cal[[at_entry]][[j]][[k]]$score_1)	
+								}
+							}
+						}
+					}
+				}
+			}
+			if(verbose){cat("\n in K_5")}
+			# extract target peaks ##################################################
+			target_adduct<-targets[targets[,1]==target_ID,20]
+			target_peak<-as.numeric(targets[targets[,1]==target_ID,21])
+			at_entry<-FALSE
+			for(i in 1:length(names(res_target_neg_screen_cal))){ # where?
+				if(
+					(strsplit(names(res_target_neg_screen_cal)[i],"_")[[1]][1]==target_ID) &
+					(strsplit(names(res_target_neg_screen_cal)[i],"_")[[1]][2]==target_adduct)
+				){
+					at_entry<-i;break;
+				}
+			}
+			if(verbose){cat("\n in K_5_1")}
+			target_in_file<-c()
+			target_with_peak<-c()
+			target_with_score<-c()
+			if(length(res_target_neg_screen_cal[[at_entry]])>0){
+				for(j in 1:length(res_target_neg_screen_cal[[at_entry]])){
+					if(length(res_target_neg_screen_cal[[at_entry]][[j]])>0){						
+						if(measurements[measurements[,1]==res_target_neg_screen_cal[[at_entry]][[j]][[1]]$file_ID,]$tag2==at_Cal){
+							for(k in 1:length(res_target_neg_screen_cal[[at_entry]][[j]])){
+								if(any(res_target_neg_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==target_peak)){
+									that<-which(res_target_neg_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==target_peak)
+									target_in_file<-c(target_in_file,res_target_neg_screen_cal[[at_entry]][[j]][[k]]$file_ID)
+									target_with_peak<-c(target_with_peak,res_target_neg_screen_cal[[at_entry]][[j]][[k]]$Peaks[that,2])
+									target_with_score<-c(target_with_score,res_target_neg_screen_cal[[at_entry]][[j]][[k]]$score_1)
+								}
+							}
+						}
+					}
+				}
+			}
+			if(verbose){cat("\n in K_6")}
+			# derive pairs ##########################################################
+			mat_cal<-matrix(nrow=0,ncol=8)
+			colnames(mat_cal)<-c("Pair #","Target intensity","IS intensity","Intensity ratio","Concentration","Target score","IS score","Used?")
+			if(	(length(target_in_file)>0) & (length(IS_in_file)>0)	){
+				for(i in 1:length(target_in_file)){
+					if(any(IS_in_file==target_in_file[i])){
+						those<-which(IS_in_file==target_in_file[i])
+						mat_cal<-rbind(mat_cal,
+							cbind(
+								rep(1,length(those)),
+								round(rep(profileList_neg_cal[[2]][target_with_peak[i],2],length(those)),digits=0), # intensity target
+								round(profileList_neg_cal[[2]][IS_with_peak[those],2],digits=0), 					# intensity IS
+								round((profileList_neg_cal[[2]][target_with_peak[i],2]/(profileList_neg_cal[[2]][IS_with_peak[those],2])),digits=2), # ratio									
+								rep(as.numeric(
+									measurements[measurements[,1]==target_in_file[i],]$tag1	
+								),length(those)), # concentration
+								rep(target_with_score[i],length(those)), # score target
+								IS_with_score[those],
+								rep(1,length(those)) # used?
+							,deparse.level = 0),
+						deparse.level = 0)
+						mat_cal[,1]<-(1:length(mat_cal[,1]))
+					}
+				}
+			}
+			rownames(mat_cal)<-NULL
+			if(verbose){cat("\n in K_7")}
+			# filter ################################################################
+			mat_cal<-mat_cal[!duplicated(mat_cal),,drop=FALSE] # same peaks in different combinations - remove
+			min_int<-as.numeric(intstand[intstand[,1]==IS_ID,17])
+			max_int<-as.numeric(intstand[intstand[,1]==IS_ID,18])
+			mat_cal[mat_cal[,2]<min_int,8]<-0
+			mat_cal[mat_cal[,2]>max_int,8]<-0
+			mat_cal<<-mat_cal
 		}
 	}	
 })				
@@ -492,7 +586,6 @@ observe({
 redo_cal<-reactiveValues() 	# reactive value to indicate ...
 redo_cal$a<-1
 observe({ 
-	init$b
 	input$Cal_IS_ID
 	input$Cal_IS_name
 	input$Cal_target_ID
@@ -517,7 +610,6 @@ observe({
 })
 
 observe({ 
-	init$b
 	input$Cal_IS_ID
 	input$Cal_IS_name
 	input$Cal_target_ID
@@ -542,17 +634,67 @@ observe({
 					lin<-(mat_cal[mat_cal[,8]==1,5])
 					resp<-mat_cal[mat_cal[,8]==1,4]
 					if(isolate(input$cal_model)=="linear"){
-						model<-lm(resp~lin)
-						abline(model,col="red",lwd=2)
+						cal_model<<-lm(resp~lin)
+						abline(cal_model,col="red",lwd=2)
 					}else{
 						quad<-((mat_cal[mat_cal[,8]==1,5])^2)
-						model<-lm(resp~lin+quad)					
+						cal_model<<-lm(resp~lin+quad)					
 						for_x<-seq(from=min(lin),to=(max(lin)*2),length.out=100)
 						for_x2<-(for_x^2)
-						for_y<-predict(model,list(lin=for_x,quad=for_x2))
+						for_y<-predict(cal_model,list(lin=for_x,quad=for_x2))
 						lines(for_x,for_y,col="red",lwd=2)
 					}
 				}
+				# add saved calibration model ############################################################
+				IS_ID<-isolate(input$Cal_IS_ID)
+				target_ID<-isolate(input$Cal_target_ID)
+				at_Cal<-isolate(input$Cal_file_set)
+				use_cal<-which(names(cal_models_pos)==at_Cal)
+				use_name<-paste(IS_ID,target_ID,sep="_")
+				if(isolate(input$Ion_mode_Cal)=="positive"){	
+					if(any(names(cal_models_pos[[use_cal]])==use_name)){
+						use_entry<-which((names(cal_models_pos[[use_cal]])==use_name))
+						if(length(cal_models_pos[[use_cal]][[use_entry]][[1]])==2){ # for the linear model
+							abline(cal_models_pos[[use_cal]][[use_entry]],col="gray",lwd=1,lty=2)
+						}
+						if(length(cal_models_pos[[use_cal]][[use_entry]][[1]])==3){ # for the quadratic model
+							for_x<-seq(from=min(lin),to=(max(lin)*2),length.out=100)
+							for_x2<-(for_x^2)
+							for_y<-predict(cal_models_pos[[use_cal]][[use_entry]],list(lin=for_x,quad=for_x2))
+							lines(for_x,for_y,col="gray",lwd=1,lty=2)
+						}
+						points(
+							cal_models_pos[[use_cal]][[use_entry]][[12]]$lin,
+							cal_models_pos[[use_cal]][[use_entry]][[12]]$resp,
+							pch=0,col="gray",cex=2.5
+						)
+						mtext("Saved calibration model available",side=3,col="gray",line=-1)
+					}else{
+						mtext("No saved calibration model available",side=3,col="gray",line=-1)
+					}
+				}
+				if(isolate(input$Ion_mode_Cal)=="negative"){
+					if(any(names(cal_models_neg[[use_cal]])==use_name)){
+						use_entry<-which((names(cal_models_neg[[use_cal]])==use_name))
+						if(length(cal_models_neg[[use_cal]][[use_entry]][[1]])==2){ # for the linear model
+							abline(cal_models_neg[[use_cal]][[use_entry]],col="gray",lwd=1,lty=2)
+						}
+						if(length(cal_models_neg[[use_cal]][[use_entry]][[1]])==3){ # for the quadratic model
+							for_x<-seq(from=min(lin),to=(max(lin)*2),length.out=100)
+							for_x2<-(for_x^2)
+							for_y<-predict(cal_models_neg[[use_cal]][[use_entry]],list(lin=for_x,quad=for_x2))
+							lines(for_x,for_y,col="gray",lwd=1,lty=2)
+						}
+						points(
+							cal_models_neg[[use_cal]][[use_entry]][[12]]$lin,
+							cal_models_neg[[use_cal]][[use_entry]][[12]]$resp,
+							pch=0,col="gray",cex=2.5
+						)
+						mtext("Saved calibration model available",side=3,col="gray",line=-1)
+					}else{
+						mtext("No saved calibration model available",side=3,col="gray",line=-1)
+					}
+				}				
 			})
 		}else{
 			output$cal_plot <- renderPlot({
@@ -600,9 +742,117 @@ observeEvent(
 
 ###########################################################################################################
 
+###########################################################################################################
+# SAVE & REMOVE MODELS ####################################################################################
 
+observe({ 
+	input$save_Cal
+	if((isolate(init$a)=="TRUE")){
+		if(verbose){cat("\n in P")}
+		if(isolate(input$Ion_mode_Cal)=="positive"){
+			IS_ID<-isolate(input$Cal_IS_ID)
+			target_ID<-isolate(input$Cal_target_ID)
+			at_Cal<-isolate(input$Cal_file_set)
+			use_cal<-which(names(cal_models_pos)==at_Cal)
+			use_name<-paste(IS_ID,target_ID,sep="_")
+			if(!any(names(cal_models_pos[[use_cal]])==use_name)){ # model not yet existing
+				make_entry<-1
+				if(length(cal_models_pos[[use_cal]])>0){
+					gapped<-FALSE
+					for(make_entry in 1:length(cal_models_pos[[use_cal]])){
+						if(length(cal_models_pos[[use_cal]][[make_entry]])==0){
+							gapped<-TRUE
+							break
+						}
+					}
+					if(!gapped){
+						make_entry<-(length(cal_models_pos[[use_cal]])+1)
+					}
+				}
+			}else{
+				make_entry<-which((names(cal_models_pos[[use_cal]])==use_name))
+			}			
+			assign("cal_model_saved",cal_model)
+			cal_models_pos[[use_cal]][[make_entry]]<<-cal_model_saved
+			names(cal_models_pos[[use_cal]])[make_entry]<<-use_name
+			save(cal_models_pos,file=file.path(logfile[[1]],"quantification","cal_models_pos"),envir=as.environment(".GlobalEnv"));	
+			cat("\n Calibration model saved")
+		}
+		if(isolate(input$Ion_mode_Cal)=="negative"){
+			IS_ID<-isolate(input$Cal_IS_ID)
+			target_ID<-isolate(input$Cal_target_ID)
+			at_Cal<-isolate(input$Cal_file_set)
+			use_cal<-which(names(cal_models_neg)==at_Cal)
+			use_name<-paste(IS_ID,target_ID,sep="_")
+			if(!any(names(cal_models_neg[[use_cal]])==use_name)){ # model not yet existing
+				make_entry<-1
+				if(length(cal_models_neg[[use_cal]])>0){
+					gapped<-FALSE
+					for(make_entry in 1:length(cal_models_neg[[use_cal]])){
+						if(length(cal_models_neg[[use_cal]][[make_entry]])==0){
+							gapped<-TRUE
+							break
+						}
+					}
+					if(!gapped){
+						make_entry<-(length(cal_models_neg[[use_cal]])+1)
+					}
+				}
+			}else{
+				make_entry<-which((names(cal_models_neg[[use_cal]])==use_name))
+			}			
+			assign("cal_model_saved",cal_model)
+			cal_models_neg[[use_cal]][[make_entry]]<<-cal_model_saved
+			names(cal_models_neg[[use_cal]])[make_entry]<<-use_name
+			save(cal_models_neg,file=file.path(logfile[[1]],"quantification","cal_models_neg"),envir=as.environment(".GlobalEnv"));	
+			cat("\n Calibration model saved")
+		}
+		isolate(redo_cal$a<-(redo_cal$a+1))
+	}
+})
 
+observe({ 
+	input$remove_Cal
+	if((isolate(init$a)=="TRUE")){
+		if(verbose){cat("\n in Q")}
+		if(isolate(input$Ion_mode_Cal)=="positive"){
+			IS_ID<-isolate(input$Cal_IS_ID)
+			target_ID<-isolate(input$Cal_target_ID)
+			at_Cal<-isolate(input$Cal_file_set)
+			use_cal<-which(names(cal_models_pos)==at_Cal)
+			use_name<-paste(IS_ID,target_ID,sep="_")
+			if(any(names(cal_models_pos[[use_cal]])==use_name)){ # model not yet existing
+				delete_entry<-which((names(cal_models_pos[[use_cal]])==use_name))
+				cal_models_pos[[use_cal]][[delete_entry]]<<-list()
+				names(cal_models_pos[[use_cal]])[delete_entry]<<-"_"
+				if(length(cal_models_pos[[use_cal]][[delete_entry]])!=0){
+					stop("\n Calibration model delete fucked up. Debug me")
+				}
+			}
+			save(cal_models_pos,file=file.path(logfile[[1]],"quantification","cal_models_pos"),envir=as.environment(".GlobalEnv"));			
+		}
+		if(isolate(input$Ion_mode_Cal)=="negative"){
+			IS_ID<-isolate(input$Cal_IS_ID)
+			target_ID<-isolate(input$Cal_target_ID)
+			at_Cal<-isolate(input$Cal_file_set)
+			use_cal<-which(names(cal_models_neg)==at_Cal)
+			use_name<-paste(IS_ID,target_ID,sep="_")
+			if(any(names(cal_models_neg[[use_cal]])==use_name)){ # model not yet existing
+				delete_entry<-which((names(cal_models_neg[[use_cal]])==use_name))
+				cal_models_neg[[use_cal]][[delete_entry]]<<-list()
+				names(cal_models_neg[[use_cal]])[delete_entry]<<-"_"
+				if(length(cal_models_neg[[use_cal]][[delete_entry]])!=0){
+					stop("\n Calibration model delete fucked up. Debug me")
+				}
+			}
+			save(cal_models_neg,file=file.path(logfile[[1]],"quantification","cal_models_neg"),envir=as.environment(".GlobalEnv"));			
 
+		}
+		isolate(redo_cal$a<-(redo_cal$a+1))
+	}
+})
+
+###########################################################################################################
 
 
   
