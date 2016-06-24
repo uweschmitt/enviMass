@@ -356,7 +356,7 @@ observe({
 ###########################################################################################################
 # RETRIEVE SETS ###########################################################################################
 ranges_cal_plot <- reactiveValues(x = NULL, y = NULL)
-
+dd	<-	reactiveValues()
 observe({ 
 	input$Cal_IS_ID
 	input$Cal_IS_name
@@ -470,6 +470,7 @@ observe({
 			mat_cal[mat_cal[,2]<min_int,8]<-0
 			mat_cal[mat_cal[,2]>max_int,8]<-0
 			mat_cal<<-mat_cal
+			dd$d<-mat_cal
 		}
 		# NEGATIVE ##################################################################
 		if(isolate(input$Ion_mode_Cal)=="negative"){	
@@ -585,7 +586,7 @@ observe({
 ###########################################################################################################
 # PLOT SETS & OUTPUT TABLE ################################################################################
 
-redo_cal<-reactiveValues() 	# reactive value to indicate ...
+redo_cal<-reactiveValues() 	# reactive value to indicate model save / removal
 redo_cal$a<-1
 observe({ 
 	input$Cal_IS_ID
@@ -597,11 +598,10 @@ observe({
 	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_IS_ID)!="none") & (isolate(input$Cal_target_ID)!="none")& (isolate(input$Cal_file_set)!="none")){					
 		# generate outputs ######################################################
 		if(length(mat_cal[,1])>0){
-			output$cal_table <- DT::renderDataTable(			
-				mat_cal,
-				server = TRUE,
-				selection =c(mode = 'single'),
-				class = 'cell-border stripe'
+			output$cal_table <- DT::renderDataTable(
+				datatable(
+					dd$d,selection =c('single')
+				)
 			)
 		}else{
 			output$cal_table <- renderDataTable(
@@ -621,25 +621,25 @@ observe({
 	if(verbose){cat("\n in M")}
 	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_IS_ID)!="none") & (isolate(input$Cal_target_ID)!="none")& (isolate(input$Cal_file_set)!="none")){					
 		# generate outputs ######################################################
-		if(length(mat_cal[,1])>1){
+		if(length(dd$d[,1])>1){
 			output$cal_plot <- renderPlot({
-				plot(mat_cal[,5], mat_cal[,4],
+				plot(dd$d[,5], dd$d[,4],
 				xlab="Concentration",ylab="Intensity ratio",pch=19,
 				xlim=ranges_cal_plot$y,ylim=ranges_cal_plot$x,
 				main="Brush and double-click to zoom in, double-click to zoom out.",cex.main=1,col="white")
-				points(mat_cal[mat_cal[,8]==1,5], mat_cal[mat_cal[,8]==1,4],col="black",pch=19)
-				points(mat_cal[mat_cal[,8]==0,5], mat_cal[mat_cal[,8]==0,4],col="gray",pch=19)				
+				points(dd$d[dd$d[,8]==1,5], dd$d[dd$d[,8]==1,4],col="black",pch=19)
+				points(dd$d[dd$d[,8]==0,5], dd$d[dd$d[,8]==0,4],col="gray",pch=19)				
 				if((!is.null(ranges_cal_plot$x))||(!is.null(ranges_cal_plot$y))){
 					mtext("Now zoomed in",side=3,col="gray")
 				}
-				if(sum(mat_cal[,8])>=2){
-					lin<-(mat_cal[mat_cal[,8]==1,5])
-					resp<-mat_cal[mat_cal[,8]==1,4]
+				if(sum(dd$d[,8])>=2){
+					lin<-(dd$d[dd$d[,8]==1,5])
+					resp<-dd$d[dd$d[,8]==1,4]
 					if(isolate(input$cal_model)=="linear"){
 						cal_model<<-lm(resp~lin)
 						abline(cal_model,col="red",lwd=2)
 					}else{
-						quad<-((mat_cal[mat_cal[,8]==1,5])^2)
+						quad<-((dd$d[dd$d[,8]==1,5])^2)
 						cal_model<<-lm(resp~lin+quad)					
 						for_x<-seq(from=min(lin),to=(max(lin)*2),length.out=100)
 						for_x2<-(for_x^2)
@@ -729,17 +729,15 @@ observeEvent(input$cal_plot_dblclick, {
 })
 
 observeEvent(
-	input$cal_table_row_last_clicked,{
+	input$cal_table_rows_selected,{
 	if(verbose){cat("\n in O")}
-	cal_table_s<-input$cal_table_row_last_clicked
-	cat(paste("\nModified calibration table in row",cal_table_s))
-	if((isolate(init$a)=="TRUE")&(length(cal_table_s))){
-		if(mat_cal[cal_table_s,8]==1){
-			mat_cal[cal_table_s,8]<<-0
+	cat(paste("\nModified calibration table in row",as.character(input$cal_table_rows_selected)))
+	if((isolate(init$a)=="TRUE")&(all(input$cal_table_rows_selected>0))){
+		if(dd$d[input$cal_table_rows_selected,8]==1){
+			dd$d[input$cal_table_rows_selected,8]<-0
 		}else{
-			mat_cal[cal_table_s,8]<<-1
+			dd$d[input$cal_table_rows_selected,8]<-1
 		}
-		redo_cal$a<-(redo_cal$a+1)
 	}
 })
 
@@ -858,8 +856,7 @@ observe({
 ###########################################################################################################
 
 
-  
- if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_screening.r!")}
+if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_screening.r!")}
  
  
  
