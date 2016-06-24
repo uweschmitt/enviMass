@@ -4,17 +4,21 @@
 			<script type='text/javascript'>
 				setInterval(function(){
 				  if( ($('html').attr('class')=='shiny-busy') ){
+					setTimeout(function() {
+					if ($('html').attr('class')=='shiny-busy') {
 						if($('#textit').html()!='Waiting...' ){
 							$('div.busy1').show()
 						}
 						if($('#textit').html()=='Waiting...'){
 							$('div.busy2').show()
 						}
+					}	
+					},1000)	
 				  } else {
 					$('div.busy1').hide()
 					$('div.busy2').hide()
 				  }
-				},1000)	
+				},100)	
 			</script>
 			</head>
 			<body>
