@@ -40,6 +40,22 @@
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="peakTable")){rm(peakTable,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="fileID")){rm(fileID,envir=as.environment(".GlobalEnv"))}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="time_start")){rm(time_start,envir=as.environment(".GlobalEnv"))}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="cal_model")){rm(cal_model,envir=as.environment(".GlobalEnv"))}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="cal_models_neg")){rm(cal_models_neg,envir=as.environment(".GlobalEnv"))}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="cal_models_pos")){rm(cal_models_pos,envir=as.environment(".GlobalEnv"))}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="intstand")){rm(intstand,envir=as.environment(".GlobalEnv"))}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="logfile")){rm(logfile,envir=as.environment(".GlobalEnv"))}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="mat_cal")){rm(mat_cal,envir=as.environment(".GlobalEnv"))}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="measurements")){rm(measurements,envir=as.environment(".GlobalEnv"))}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="res_IS_neg_screen_cal")){rm(res_IS_neg_screen_cal,envir=as.environment(".GlobalEnv"))}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="res_target_neg_screen_cal")){rm(res_target_neg_screen_cal,envir=as.environment(".GlobalEnv"))}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="res_IS_pos_screen_cal")){rm(res_IS_pos_screen_cal,envir=as.environment(".GlobalEnv"))}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="res_target_pos_screen_cal")){rm(res_target_pos_screen_cal,envir=as.environment(".GlobalEnv"))}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="results_screen_IS_neg_cal")){rm(results_screen_IS_neg_cal,envir=as.environment(".GlobalEnv"))}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="results_screen_target_neg_cal")){rm(results_screen_target_neg_cal,envir=as.environment(".GlobalEnv"))}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="results_screen_IS_pos_cal")){rm(results_screen_IS_pos_cal,envir=as.environment(".GlobalEnv"))}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="results_screen_target_pos_cal")){rm(results_screen_target_pos_cal,envir=as.environment(".GlobalEnv"))}	
 	###############################################################################
 	
 	###############################################################################
