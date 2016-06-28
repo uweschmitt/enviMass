@@ -1,5 +1,5 @@
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_screening.r!")}
-
+verbose<-TRUE
 ##############################################################################
 # update screening results ###################################################
 ##############################################################################
@@ -166,14 +166,9 @@ observe({
 					if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1")}															
 					pattern_sel<-pattern_pos[use_comp][[1]]
 					res_pos_screen_sel<-res_pos_screen[use_comp][[1]]
-					if(isolate(input$Pos_compound_select=="Internal standards")){
-						int_tol<-as.numeric(logfile$parameters$IS_inttol)
-					}
-					if(isolate(input$Pos_compound_select=="Target compounds")){
-						int_tol<-as.numeric(logfile$parameters$tar_inttol)
-					}
-					ylim_up<-(int_tol+100+(int_tol*0.1))
-					plot(pattern_sel[,1],pattern_sel[,2],type="h",lwd=3,col="red",xlab="m/z",ylab="Rescaled intensity",ylim=c(0,ylim_up))
+					plot(pattern_sel[,1],pattern_sel[,2],type="h",lwd=3,col="red",xlab="m/z",ylab="Rescaled intensity",
+						xlim=ranges_plot_pattern_pos$x,ylim=ranges_plot_pattern_pos$y,
+						main="Brush and double-click to zoom in, double-click to zoom out.",cex.main=1)
 					if(length(res_pos_screen_sel)>0){
 						for(i in 1:length(res_pos_screen_sel)){
 							if(length(res_pos_screen_sel[[i]])>0){
@@ -195,9 +190,8 @@ observe({
 							}
 						}
 					}
-					points(pattern_sel[,1],pattern_sel[,2],type="h",lwd=3,col="red",xlab="m/z",ylab="Rescaled intensity",ylim=c(0,110))
-					plot.window(xlim=c(0,1),ylim=c(0,1))
-					legend(0.8,1,legend=c("Theoretical pattern","Matches","Co-occurrences"),fill=c("red","darkgreen","grey"),border=c("red","darkgreen","grey"))
+					points(pattern_sel[,1],pattern_sel[,2],type="h",lwd=3,col="red",xlab="m/z",ylab="Rescaled intensity")
+					legend(x="topright",legend=c("Theoretical pattern","Matches","Co-occurrences"),fill=c("red","darkgreen","grey"),border=c("red","darkgreen","grey"))
 				}else{
 					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(.5,.5,labels="No compound selected or adducts collapsed",col="red",cex=1.6)				
 				}
@@ -218,15 +212,12 @@ observe({
 						for(i in 1:length(res_pos_screen_sel)){
 							if(length(res_pos_screen_sel[[i]])>0){
 								for(j in 1:length(res_pos_screen_sel[[i]])){
-# NEW +
 									which_where<-c(which_where,measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),1]);
 									sample_type<-c(sample_type,measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),3]);
-# NEW -
 									which_peaks<-c(which_peaks,paste(res_pos_screen_sel[[i]][[j]]$Peaks[,1],collapse=", "))
 									score_1<-c(score_1,round(res_pos_screen_sel[[i]][[j]]$score_1,digits=2));
 									score_2<-c(score_2,round(res_pos_screen_sel[[i]][[j]]$score_2,digits=2));
-									delppm<-c(delppm,paste(as.character(round(res_pos_screen_sel[[i]][[j]][[4]],digits=2)),collapse=", "));
-# NEW +									
+									delppm<-c(delppm,paste(as.character(round(res_pos_screen_sel[[i]][[j]][[4]],digits=2)),collapse=", "));								
 									if(isolate(input$Pos_type_select)=="Sample/blind files"){
 										with_peaks<-c(with_peaks,paste(as.character(
 											profileList_pos_copy[[2]][ # insert peak IDs - original $Peaks refer to an entry ID only!
@@ -240,8 +231,7 @@ observe({
 												res_pos_screen_sel[[i]][[j]]$Peaks[,2],4
 											]
 										),collapse=", "));
-									}	
-# NEW -									
+									}									
 									delRT<-c(delRT,
 										paste(as.character(round(res_pos_screen_sel[[i]][[j]]$RT,digits=2)),collapse=", ")
 									)
@@ -268,17 +258,42 @@ observe({
 			# initialize intensity range for selected internal standard
 			observe({ 
 				s<-input$Table_screening_pos_row_last_clicked
-				if (length(s) & isolate(input$screen_pos_summarize=="yes") & isolate(input$Pos_compound_select=="Internal standards")) {
-					updateNumericInput(session, "screen_int_pos_low", "Lower bound", value = 5,step=0.1)   
-					updateNumericInput(session, "screen_int_pos_up", "Upper bound", value = 6,step=0.1) 
+				if(
+					length(s) & 
+					isolate(input$screen_pos_summarize=="yes") & 
+					isolate(input$Pos_compound_select=="Internal standards")
+				){				
+					use_comp_ID<-as.character(results_screen_pos[s,1])
+					use_comp_add<-as.character(results_screen_pos[s,3])	
+					if(compound_table[compound_table[,1]==use_comp_ID,19]==use_comp_add){ # thats the specified calibration adduct?
+						lower_bound<-as.numeric(compound_table[compound_table[,1]==use_comp_ID,17])
+						upper_bound<-as.numeric(compound_table[compound_table[,1]==use_comp_ID,18])
+						if(upper_bound==Inf){
+							upper_bound<-lower_bound
+						}
+						output$info_IS_bounds_pos<-renderText({"Adopt new log intensity bounds for the IS peak used in quantification?"})
+					}else{
+						lower_bound<-0;upper_bound<-0
+						output$info_IS_bounds_pos<-renderText({"Compound/adduct not used for quantification"})
+					}
+					updateNumericInput(session, "screen_int_pos_low", "Lower bound", value = lower_bound,step=0.1)   
+					updateNumericInput(session, "screen_int_pos_up", "Upper bound", value = upper_bound,step=0.1) 					
 				}	
 			})
 			# export intensity range for selected internal standard
 			observe({
 				input$save_int_pos
 				s<-isolate(input$Table_screening_pos_row_last_clicked)
-				if (isolate(input$save_int_pos) & length(s) & isolate(input$screen_pos_summarize=="yes") & isolate(input$Pos_compound_select=="Internal standards")) {
-# BAUSTELLE				
+				if(isolate(input$save_int_pos) & length(s) & isolate(input$screen_pos_summarize=="yes") & isolate(input$Pos_compound_select=="Internal standards")) {			
+					use_comp_ID<-as.character(results_screen_pos[s,1])
+					use_comp_add<-as.character(results_screen_pos[s,3])	
+					if(compound_table[compound_table[,1]==use_comp_ID,19]==use_comp_add){ # thats the specified calibration adduct?
+						lower_bound<-isolate(input$screen_int_pos_low)
+						upper_bound<-isolate(input$screen_int_pos_up)
+						compound_table[compound_table[,1]==use_comp_ID,17]<<-as.character(lower_bound)
+						compound_table[compound_table[,1]==use_comp_ID,18]<<-as.character(upper_bound)				
+						write.table(compound_table,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)
+					}
 				}
 			})
 			output$plot_selec_dist_pos <- renderPlot({
@@ -318,13 +333,11 @@ observe({
 									}else{
 										cutit<-c(cutit,0);
 									}
-									lengi<-length(res_pos_screen_sel[[i]][[j]][[7]])
-# NEW +	
+									lengi<-length(res_pos_screen_sel[[i]][[j]][[7]])	
 									placed<-c(placed,rep(measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),5],lengi))
 									typed<-c(typed,rep(measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),3],lengi))
 									atdate<-c(atdate,rep(measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),6],lengi))
-									attime<-c(attime,rep(measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),7],lengi))	
-# NEW -										
+									attime<-c(attime,rep(measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),7],lengi))										
 								}
 							}
 						}
@@ -491,12 +504,10 @@ observe({
 										if(length(res_IS_pos_screen[[i]][[j]])>0){ # per matches
 											for(k in 1:length(res_IS_pos_screen[[i]][[j]])){ 				
 												if(!is.na(res_IS_pos_screen[[i]][[j]][[k]]$score_1)){
-													if(res_IS_pos_screen[[i]][[j]][[k]]$score_1>=cut_score){
-# NEW +														
+													if(res_IS_pos_screen[[i]][[j]][[k]]$score_1>=cut_score){													
 														count_file_compound_pos[IDs==res_IS_pos_screen[[i]][[j]][[k]]$file_ID,4]<-(
 															count_file_compound_pos[IDs==res_IS_pos_screen[[i]][[j]][[k]]$file_ID,4]+1
-														);
-# NEW -															
+														);														
 														break;
 													}
 												}	
@@ -520,12 +531,10 @@ observe({
 										if(length(res_IS_pos_screen_cal[[i]][[j]])>0){ # per matches
 											for(k in 1:length(res_IS_pos_screen_cal[[i]][[j]])){ 				
 												if(!is.na(res_IS_pos_screen_cal[[i]][[j]][[k]]$score_1)){
-													if(res_IS_pos_screen_cal[[i]][[j]][[k]]$score_1>=cut_score){
-# NEW +														
+													if(res_IS_pos_screen_cal[[i]][[j]][[k]]$score_1>=cut_score){														
 														count_file_compound_pos[IDs==res_IS_pos_screen_cal[[i]][[j]][[k]]$file_ID,4]<-(
 															count_file_compound_pos[IDs==res_IS_pos_screen_cal[[i]][[j]][[k]]$file_ID,4]+1
-														);
-# NEW -														
+														);													
 														break;
 													}
 												}	
@@ -549,12 +558,10 @@ observe({
 										if(length(res_target_pos_screen[[i]][[j]])>0){ # per matches
 											for(k in 1:length(res_target_pos_screen[[i]][[j]])){ 				
 												if(!is.na(res_target_pos_screen[[i]][[j]][[k]]$score_1)){
-													if(res_target_pos_screen[[i]][[j]][[k]]$score_1>=cut_score){
-# NEW +														
+													if(res_target_pos_screen[[i]][[j]][[k]]$score_1>=cut_score){													
 														count_file_compound_pos[IDs==res_target_pos_screen[[i]][[j]][[k]]$file_ID,5]<-(
 															count_file_compound_pos[IDs==res_target_pos_screen[[i]][[j]][[k]]$file_ID,5]+1
-														);
-# NEW -															
+														);														
 														break;
 													}
 												}	
@@ -578,12 +585,10 @@ observe({
 										if(length(res_target_pos_screen_cal[[i]][[j]])>0){ # per matches
 											for(k in 1:length(res_target_pos_screen_cal[[i]][[j]])){ 				
 												if(!is.na(res_target_pos_screen_cal[[i]][[j]][[k]]$score_1)){
-													if(res_target_pos_screen_cal[[i]][[j]][[k]]$score_1>=cut_score){
-# NEW +													
+													if(res_target_pos_screen_cal[[i]][[j]][[k]]$score_1>=cut_score){												
 														count_file_compound_pos[IDs==res_target_pos_screen_cal[[i]][[j]][[k]]$file_ID,5]<-(
 															count_file_compound_pos[IDs==res_target_pos_screen_cal[[i]][[j]][[k]]$file_ID,5]+1
-														);
-# NEW -															
+														);															
 														break;
 													}
 												}	
@@ -771,14 +776,9 @@ observe({
 					if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1")}															
 					pattern_sel<-pattern_neg[use_comp][[1]]
 					res_neg_screen_sel<-res_neg_screen[use_comp][[1]]
-					if(isolate(input$Neg_compound_select=="Internal standards")){
-						int_tol<-as.numeric(logfile$parameters$IS_inttol)
-					}
-					if(isolate(input$Neg_compound_select=="Target compounds")){
-						int_tol<-as.numeric(logfile$parameters$tar_inttol)
-					}
-					ylim_up<-(int_tol+100+(int_tol*0.1))
-					plot(pattern_sel[,1],pattern_sel[,2],type="h",lwd=3,col="red",xlab="m/z",ylab="Rescaled intensity",ylim=c(0,ylim_up))
+					plot(pattern_sel[,1],pattern_sel[,2],type="h",lwd=3,col="red",xlab="m/z",ylab="Rescaled intensity",
+						xlim=ranges_plot_pattern_neg$x,ylim=ranges_plot_pattern_neg$y,
+						main="Brush and double-click to zoom in, double-click to zoom out.",cex.main=1)
 					if(length(res_neg_screen_sel)>0){
 						for(i in 1:length(res_neg_screen_sel)){
 							if(length(res_neg_screen_sel[[i]])>0){
@@ -800,9 +800,8 @@ observe({
 							}
 						}
 					}
-					points(pattern_sel[,1],pattern_sel[,2],type="h",lwd=3,col="red",xlab="m/z",ylab="Rescaled intensity",ylim=c(0,110))
-					plot.window(xlim=c(0,1),ylim=c(0,1))
-					legend(0.8,1,legend=c("Theoretical pattern","Matches","Co-occurrences"),fill=c("red","darkgreen","grey"),border=c("red","darkgreen","grey"))
+					points(pattern_sel[,1],pattern_sel[,2],type="h",lwd=3,col="red",xlab="m/z",ylab="Rescaled intensity")
+					legend(x="topright",legend=c("Theoretical pattern","Matches","Co-occurrences"),fill=c("red","darkgreen","grey"),border=c("red","darkgreen","grey"))
 				}else{
 					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(.5,.5,labels="No compound selected or adducts collapsed",col="red",cex=1.6)				
 				}
@@ -823,15 +822,12 @@ observe({
 						for(i in 1:length(res_neg_screen_sel)){
 							if(length(res_neg_screen_sel[[i]])>0){
 								for(j in 1:length(res_neg_screen_sel[[i]])){
-# NEW +
 									which_where<-c(which_where,measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),1]);
 									sample_type<-c(sample_type,measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),3]);
-# NEW -
 									which_peaks<-c(which_peaks,paste(res_neg_screen_sel[[i]][[j]]$Peaks[,1],collapse=", "))
 									score_1<-c(score_1,round(res_neg_screen_sel[[i]][[j]]$score_1,digits=2));
 									score_2<-c(score_2,round(res_neg_screen_sel[[i]][[j]]$score_2,digits=2));
-									delppm<-c(delppm,paste(as.character(round(res_neg_screen_sel[[i]][[j]][[4]],digits=2)),collapse=", "));
-# NEW +									
+									delppm<-c(delppm,paste(as.character(round(res_neg_screen_sel[[i]][[j]][[4]],digits=2)),collapse=", "));								
 									if(isolate(input$Neg_type_select)=="Sample/blind files"){
 										with_peaks<-c(with_peaks,paste(as.character(
 											profileList_neg_copy[[2]][ # insert peak IDs - original $Peaks refer to an entry ID only!
@@ -845,8 +841,7 @@ observe({
 												res_neg_screen_sel[[i]][[j]]$Peaks[,2],4
 											]
 										),collapse=", "));
-									}	
-# NEW -									
+									}									
 									delRT<-c(delRT,
 										paste(as.character(round(res_neg_screen_sel[[i]][[j]]$RT,digits=2)),collapse=", ")
 									)
@@ -873,17 +868,43 @@ observe({
 			# initialize intensity range for selected internal standard
 			observe({ 
 				s<-input$Table_screening_neg_row_last_clicked
-				if (length(s) & isolate(input$screen_neg_summarize=="yes") & isolate(input$Neg_compound_select=="Internal standards")) {
-					updateNumericInput(session, "screen_int_neg_low", "Lower bound", value = 5,step=0.1)   
-					updateNumericInput(session, "screen_int_neg_up", "Upper bound", value = 6,step=0.1) 
+				if(
+					length(s) & 
+					isolate(input$screen_neg_summarize=="yes") & 
+					isolate(input$Neg_compound_select=="Internal standards")
+				){				
+					use_comp_ID<-as.character(results_screen_neg[s,1])
+					use_comp_add<-as.character(results_screen_neg[s,3])	
+					if(compound_table[compound_table[,1]==use_comp_ID,19]==use_comp_add){ # thats the specified calibration adduct?
+						lower_bound<-as.numeric(compound_table[compound_table[,1]==use_comp_ID,17])
+						upper_bound<-as.numeric(compound_table[compound_table[,1]==use_comp_ID,18])
+						if(upper_bound==Inf){
+							upper_bound<-lower_bound
+						}
+						output$info_IS_bounds_neg<-renderText({"Adopt new log intensity bounds for the IS peak used in quantification?"})
+					}else{
+						lower_bound<-0;upper_bound<-0
+						output$info_IS_bounds_neg<-renderText({"Compound/adduct not used for quantification"})
+					}
+					updateNumericInput(session, "screen_int_neg_low", "Lower bound", value = lower_bound,step=0.1)   
+					updateNumericInput(session, "screen_int_neg_up", "Upper bound", value = upper_bound,step=0.1) 					
 				}	
 			})
 			# export intensity range for selected internal standard
 			observe({
 				input$save_int_neg
 				s<-isolate(input$Table_screening_neg_row_last_clicked)
-				if (isolate(input$save_int_neg) & length(s) & isolate(input$screen_neg_summarize=="yes") & isolate(input$Neg_compound_select=="Internal standards")) {
-# BAUSTELLE				
+				if(isolate(input$save_int_neg) & length(s) & isolate(input$screen_neg_summarize=="yes") & 
+				isolate(input$Neg_compound_select=="Internal standards")) {			
+					use_comp_ID<-as.character(results_screen_neg[s,1])
+					use_comp_add<-as.character(results_screen_neg[s,3])	
+					if(compound_table[compound_table[,1]==use_comp_ID,19]==use_comp_add){ # thats the specified calibration adduct?
+						lower_bound<-isolate(input$screen_int_neg_low)
+						upper_bound<-isolate(input$screen_int_neg_up)
+						compound_table[compound_table[,1]==use_comp_ID,17]<<-as.character(lower_bound)
+						compound_table[compound_table[,1]==use_comp_ID,18]<<-as.character(upper_bound)				
+						write.table(compound_table,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)
+					}
 				}
 			})
 			output$plot_selec_dist_neg <- renderPlot({
@@ -923,13 +944,11 @@ observe({
 									}else{
 										cutit<-c(cutit,0);
 									}
-									lengi<-length(res_neg_screen_sel[[i]][[j]][[7]])
-# NEW +	
+									lengi<-length(res_neg_screen_sel[[i]][[j]][[7]])	
 									placed<-c(placed,rep(measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),5],lengi))
 									typed<-c(typed,rep(measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),3],lengi))
 									atdate<-c(atdate,rep(measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),6],lengi))
-									attime<-c(attime,rep(measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),7],lengi))	
-# NEW -										
+									attime<-c(attime,rep(measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),7],lengi))										
 								}
 							}
 						}
@@ -1096,12 +1115,10 @@ observe({
 										if(length(res_IS_neg_screen[[i]][[j]])>0){ # per matches
 											for(k in 1:length(res_IS_neg_screen[[i]][[j]])){ 				
 												if(!is.na(res_IS_neg_screen[[i]][[j]][[k]]$score_1)){
-													if(res_IS_neg_screen[[i]][[j]][[k]]$score_1>=cut_score){
-# NEW +														
+													if(res_IS_neg_screen[[i]][[j]][[k]]$score_1>=cut_score){													
 														count_file_compound_neg[IDs==res_IS_neg_screen[[i]][[j]][[k]]$file_ID,4]<-(
 															count_file_compound_neg[IDs==res_IS_neg_screen[[i]][[j]][[k]]$file_ID,4]+1
-														);
-# NEW -															
+														);														
 														break;
 													}
 												}	
@@ -1125,12 +1142,10 @@ observe({
 										if(length(res_IS_neg_screen_cal[[i]][[j]])>0){ # per matches
 											for(k in 1:length(res_IS_neg_screen_cal[[i]][[j]])){ 				
 												if(!is.na(res_IS_neg_screen_cal[[i]][[j]][[k]]$score_1)){
-													if(res_IS_neg_screen_cal[[i]][[j]][[k]]$score_1>=cut_score){
-# NEW +														
+													if(res_IS_neg_screen_cal[[i]][[j]][[k]]$score_1>=cut_score){													
 														count_file_compound_neg[IDs==res_IS_neg_screen_cal[[i]][[j]][[k]]$file_ID,4]<-(
 															count_file_compound_neg[IDs==res_IS_neg_screen_cal[[i]][[j]][[k]]$file_ID,4]+1
-														);
-# NEW -														
+														);														
 														break;
 													}
 												}	
@@ -1154,12 +1169,10 @@ observe({
 										if(length(res_target_neg_screen[[i]][[j]])>0){ # per matches
 											for(k in 1:length(res_target_neg_screen[[i]][[j]])){ 				
 												if(!is.na(res_target_neg_screen[[i]][[j]][[k]]$score_1)){
-													if(res_target_neg_screen[[i]][[j]][[k]]$score_1>=cut_score){
-# NEW +														
+													if(res_target_neg_screen[[i]][[j]][[k]]$score_1>=cut_score){													
 														count_file_compound_neg[IDs==res_target_neg_screen[[i]][[j]][[k]]$file_ID,5]<-(
 															count_file_compound_neg[IDs==res_target_neg_screen[[i]][[j]][[k]]$file_ID,5]+1
-														);
-# NEW -															
+														);														
 														break;
 													}
 												}	
@@ -1183,12 +1196,10 @@ observe({
 										if(length(res_target_neg_screen_cal[[i]][[j]])>0){ # per matches
 											for(k in 1:length(res_target_neg_screen_cal[[i]][[j]])){ 				
 												if(!is.na(res_target_neg_screen_cal[[i]][[j]][[k]]$score_1)){
-													if(res_target_neg_screen_cal[[i]][[j]][[k]]$score_1>=cut_score){
-# NEW +													
+													if(res_target_neg_screen_cal[[i]][[j]][[k]]$score_1>=cut_score){													
 														count_file_compound_neg[IDs==res_target_neg_screen_cal[[i]][[j]][[k]]$file_ID,5]<-(
 															count_file_compound_neg[IDs==res_target_neg_screen_cal[[i]][[j]][[k]]$file_ID,5]+1
-														);
-# NEW -															
+														);															
 														break;
 													}
 												}	
@@ -1211,6 +1222,47 @@ observe({
 		}
 	} # if init$a
 })  
+##############################################################################
+
+##############################################################################
+# ZOOM IN PLOTS ##############################################################
+ranges_plot_pattern_pos <- reactiveValues(x = NULL, y = NULL)
+observeEvent(input$plot_pattern_pos_dblclick, {
+	if(verbose){cat("\n in N")}
+    brush <- input$plot_pattern_pos_brush
+    if (!is.null(brush)) {
+		ranges_plot_pattern_pos$x <- c(brush$xmin, brush$xmax)
+		ranges_plot_pattern_pos$y <- c(brush$ymin, brush$ymax)
+    } else {
+		if(isolate(input$Pos_compound_select=="Internal standards")){
+			int_tol<-as.numeric(logfile$parameters$IS_inttol)
+		}
+		if(isolate(input$Pos_compound_select=="Target compounds")){
+			int_tol<-as.numeric(logfile$parameters$tar_inttol)
+		}
+		ranges_plot_pattern_pos$x <- NULL
+		ranges_plot_pattern_pos$y <- c(0,(int_tol+100+(int_tol*0.1)))
+    }
+})
+
+ranges_plot_pattern_neg <- reactiveValues(x = NULL, y = NULL)
+observeEvent(input$plot_pattern_neg_dblclick, {
+	if(verbose){cat("\n in N")}
+    brush <- input$plot_pattern_neg_brush
+    if (!is.null(brush)) {
+		ranges_plot_pattern_neg$x <- c(brush$xmin, brush$xmax)
+		ranges_plot_pattern_neg$y <- c(brush$ymin, brush$ymax)
+    } else {
+		if(isolate(input$Neg_compound_select=="Internal standards")){
+			int_tol<-as.numeric(logfile$parameters$IS_inttol)
+		}
+		if(isolate(input$Neg_compound_select=="Target compounds")){
+			int_tol<-as.numeric(logfile$parameters$tar_inttol)
+		}
+		ranges_plot_pattern_neg$x <- NULL
+		ranges_plot_pattern_neg$y <- c(0,(int_tol+100+(int_tol*0.1)))
+    }
+})
 ##############################################################################
 
 

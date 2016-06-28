@@ -895,47 +895,49 @@
 							),
 							conditionalPanel(			
 								condition = "input.Pos_compound_select == 'Internal standards' || input.Pos_compound_select == 'Target compounds'",	
-								
-								conditionalPanel(			
-								condition = "input.screen_pos_summarize == 'yes'",	
-								
-								bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_pos_one",
-									bsCollapsePanel(title="Pattern match for selected compound", #style="info",
-										textOutput('screening_details_comp_pos'),
-										plotOutput("plot_pattern_pos")
-									),
-									bsCollapsePanel(title="Characteristics for selected compound",
-										textOutput('screening_details_comp_pos2'),
-										HTML('<hr noshade="noshade" />'),
-										fluidRow(										
-											column(4, selectInput(inputId="selec_pos_x",label="x axis",
-												choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "m/z", multiple = FALSE)),
-											column(4, selectInput(inputId="selec_pos_y",label="y axis",
-												choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "RT", multiple = FALSE)),									
-											column(4, radioButtons("selec_pos_log_rat", "Log intensity?", c("yes"="yes","no"="no"),inline=TRUE))
+									conditionalPanel(			
+									condition = "input.screen_pos_summarize == 'yes'",	
+									bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_pos_one",
+										bsCollapsePanel(title="Pattern match for selected compound", #style="info",
+											textOutput('screening_details_comp_pos'),
+											plotOutput("plot_pattern_pos", 
+												dblclick = "plot_pattern_pos_dblclick",
+												brush = brushOpts(
+													id = "plot_pattern_pos_brush",
+													resetOnNew = TRUE
+												)
+											)
 										),
-										HTML('<hr noshade="noshade" />'),						
-										plotOutput("plot_selec_dist_pos"),
-										conditionalPanel(				
-											condition = "input.Pos_compound_select == 'Internal standards'",					
+										bsCollapsePanel(title="Characteristics for selected compound",
+											textOutput('screening_details_comp_pos2'),
 											HTML('<hr noshade="noshade" />'),
 											fluidRow(										
-												column(4,tags$p(align="justify","Adopt a new log intensity range for the future screening of this selected compound-adduct?")),
-												column(3,numericInput("screen_int_pos_low", "Lower bound", 0,step=0.1)),
-												column(3,numericInput("screen_int_pos_up", "Upper bound", 10,step=0.1)),
-												column(2,bsButton("save_int_pos"," Adopt",style="warning",icon=icon("bookmark")))
+												column(4, selectInput(inputId="selec_pos_x",label="x axis",
+													choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "m/z", multiple = FALSE)),
+												column(4, selectInput(inputId="selec_pos_y",label="y axis",
+													choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "RT", multiple = FALSE)),									
+												column(4, radioButtons("selec_pos_log_rat", "Log intensity?", c("yes"="yes","no"="no"),inline=TRUE))
+											),
+											HTML('<hr noshade="noshade" />'),						
+											plotOutput("plot_selec_dist_pos"),
+											HTML('<hr noshade="noshade" />'),
+											textOutput('info_IS_bounds_pos'),
+											conditionalPanel(				
+												condition = "(input.Pos_compound_select == 'Internal standards') & (output.info_IS_bounds_pos != 'Compound/adduct not used for quantification')",					
+													fluidRow(										
+														column(3,numericInput("screen_int_pos_low", "Lower bound", 0,step=0.1)),
+														column(3,numericInput("screen_int_pos_up", "Upper bound", 10,step=0.1)),
+														column(2,bsButton("save_int_pos"," Adopt",style="warning",icon=icon("bookmark")))
+													)	
 											)
+										),
+										bsCollapsePanel(title="Screening table for selected compound", 
+											textOutput('screening_details_comp_pos3'),
+											HTML('<hr noshade="noshade" />'),
+											DT::dataTableOutput('Table_screening_selected_pos')
 										)
-									),
-									bsCollapsePanel(title="Screening table for selected compound", 
-										textOutput('screening_details_comp_pos3'),
-										HTML('<hr noshade="noshade" />'),
-										DT::dataTableOutput('Table_screening_selected_pos')
-									)
-								)		
-
+									)		
 								),
-								
 								HTML('<hr noshade="noshade" />'),
 								tags$p(align="justify","The below sample and blank matches give the number of files with matches above the cutoff score, 
 								with multiple matches per file above this cutoff merged."),
@@ -981,47 +983,49 @@
 							),
 							conditionalPanel(			
 								condition = "input.Neg_compound_select == 'Internal standards' || input.Neg_compound_select == 'Target compounds'",	
-								
 								conditionalPanel(			
 								condition = "input.screen_neg_summarize == 'yes'",	
-								
-								bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_neg_one",
-									bsCollapsePanel(title="Pattern match for selected compound", #style="info",
-										textOutput('screening_details_comp_neg'),
-										plotOutput("plot_pattern_neg")
-									),
-									bsCollapsePanel(title="Characteristics for selected compound",
-										textOutput('screening_details_comp_neg2'),
-										HTML('<hr noshade="noshade" />'),
-										fluidRow(										
-											column(4, selectInput(inputId="selec_neg_x",label="x axis",
-												choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "m/z", multiple = FALSE)),
-											column(4, selectInput(inputId="selec_neg_y",label="y axis",
-												choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "RT", multiple = FALSE)),									
-											column(4, radioButtons("selec_neg_log_rat", "Log intensity?", c("yes"="yes","no"="no"),inline=TRUE))
+									bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_neg_one",
+										bsCollapsePanel(title="Pattern match for selected compound", #style="info",
+											textOutput('screening_details_comp_neg'),
+											plotOutput("plot_pattern_neg", 
+												dblclick = "plot_pattern_neg_dblclick",
+												brush = brushOpts(
+													id = "plot_pattern_neg_brush",
+													resetOnNew = TRUE
+												)
+											)
 										),
-										HTML('<hr noshade="noshade" />'),						
-										plotOutput("plot_selec_dist_neg"),
-										conditionalPanel(				
-											condition = "input.Neg_compound_select == 'Internal standards'",					
+										bsCollapsePanel(title="Characteristics for selected compound",
+											textOutput('screening_details_comp_neg2'),
 											HTML('<hr noshade="noshade" />'),
 											fluidRow(										
-												column(4,tags$p(align="justify","Adopt a new log intensity range for the future screening of this selected compound-adduct?")),
-												column(3,numericInput("screen_int_neg_low", "Lower bound", 0,step=0.1)),
-												column(3,numericInput("screen_int_neg_up", "Upper bound", 10,step=0.1)),
-												column(2,bsButton("save_int_neg"," Adopt",style="warning",icon=icon("bookmark")))
+												column(4, selectInput(inputId="selec_neg_x",label="x axis",
+													choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "m/z", multiple = FALSE)),
+												column(4, selectInput(inputId="selec_neg_y",label="y axis",
+													choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "RT", multiple = FALSE)),									
+												column(4, radioButtons("selec_neg_log_rat", "Log intensity?", c("yes"="yes","no"="no"),inline=TRUE))
+											),
+											HTML('<hr noshade="noshade" />'),						
+											plotOutput("plot_selec_dist_neg"),
+											HTML('<hr noshade="noshade" />'),
+											textOutput('info_IS_bounds_neg'),
+											conditionalPanel(				
+												condition = "(input.Neg_compound_select == 'Internal standards') & (output.info_IS_bounds_neg != 'Compound/adduct not used for quantification')",					
+													fluidRow(										
+														column(3,numericInput("screen_int_neg_low", "Lower bound", 0,step=0.1)),
+														column(3,numericInput("screen_int_neg_up", "Upper bound", 10,step=0.1)),
+														column(2,bsButton("save_int_neg"," Adopt",style="warning",icon=icon("bookmark")))
+													)	
 											)
+										),
+										bsCollapsePanel(title="Screening table for selected compound", 
+											textOutput('screening_details_comp_neg3'),
+											HTML('<hr noshade="noshade" />'),
+											DT::dataTableOutput('Table_screening_selected_neg')
 										)
-									),
-									bsCollapsePanel(title="Screening table for selected compound", 
-										textOutput('screening_details_comp_neg3'),
-										HTML('<hr noshade="noshade" />'),
-										DT::dataTableOutput('Table_screening_selected_neg')
-									)
-								)		
-
+									)		
 								),
-								
 								HTML('<hr noshade="noshade" />'),
 								tags$p(align="justify","The below sample and blank matches give the number of files with matches above the cutoff score, 
 								with multiple matches per file above this cutoff merged."),
@@ -1083,16 +1087,16 @@
 								div(style = widget_style3,selectInput("filterProf_sort", "Sort profile list by:", 
 									choices = c("ID","mean m/z","mean RT","maximum intensity","mean intensity","global trend intensity","current trend intensity","total peak number"), selected="current trend intensity")),
 								div(style = widget_style3,numericInput("filterProf_count", "Restrict list size:", 500)),
-								conditionalPanel( # IS filter				
-										condition = "input.screen_IS == 'yes'",
-										tags$h5("IS compounds filter:"),										
-										HTML('<hr noshade="noshade" />')
-								),
-								conditionalPanel( # target filter				
-										condition = "input.screen_target == 'yes'",	
-										tags$h5("Target compounds filter:"),	
-										HTML('<hr noshade="noshade" />')
-								),															
+								#conditionalPanel( # IS filter				
+								#		condition = "input.screen_IS == 'yes'",
+								#		tags$h5("IS compounds filter:"),										
+								#		HTML('<hr noshade="noshade" />')
+								#),
+								#conditionalPanel( # target filter				
+								#		condition = "input.screen_target == 'yes'",	
+								#		tags$h5("Target compounds filter:"),	
+								#		HTML('<hr noshade="noshade" />')
+								#),															
 								HTML('<hr noshade="noshade" />'),
 								bsCollapse(multiple = FALSE, open = "col2", id = "collapse2",
 									bsCollapsePanel("Profile statistics", 
@@ -1142,7 +1146,7 @@
 								div(style = widget_style3,numericInput("profentry", "Entry # in (filtered, sorted) profile list:", 0)),
 								div(style = widget_style3,radioButtons("prof_log", "Logarithmic intensity?", c("no"="no","yes"="yes"))),
 								div(style = widget_style3,textOutput("peak_number")),
-								imageOutput("timeprofile", height="auto"),
+								#imageOutput("timeprofile", height="auto"),
 								bsCollapse(multiple = FALSE, open = "col1", id = "collapse1",
 									bsCollapsePanel("Profile EICs & Peak viewer", 
 										div(style = widget_style3,numericInput("profpeakID", "Peak entry #:", min=0, 0)),
