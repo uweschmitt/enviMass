@@ -1146,7 +1146,7 @@
 								div(style = widget_style3,numericInput("profentry", "Entry # in (filtered, sorted) profile list:", 0)),
 								div(style = widget_style3,radioButtons("prof_log", "Logarithmic intensity?", c("no"="no","yes"="yes"))),
 								div(style = widget_style3,textOutput("peak_number")),
-								#imageOutput("timeprofile", height="auto"),
+								imageOutput("timeprofile", height="auto"),
 								bsCollapse(multiple = FALSE, open = "col1", id = "collapse1",
 									bsCollapsePanel("Profile EICs & Peak viewer", 
 										div(style = widget_style3,numericInput("profpeakID", "Peak entry #:", min=0, 0)),

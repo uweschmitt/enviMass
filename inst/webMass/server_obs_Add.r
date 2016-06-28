@@ -834,8 +834,11 @@ impfolder<-reactive({
 								"TRUE", # to be included?
 								"TRUE","FALSE","FALSE","FALSE","FALSE","FALSE",
 								"TRUE", # to be profiled?
-								"FALSE","FALSE","FALSE","FALSE","FALSE","FALSE"
-							)
+								"FALSE","FALSE","FALSE",
+								"FALSE","FALSE","FALSE",
+								at_date,
+								as.character("12:00:00")
+							)							
 							measurements3<-rbind(measurements2,measurements1);
 							names(measurements3)<-nameit;
 							measurements3<-enviMass:::convDate(measurements3);
