@@ -24,7 +24,7 @@ observe({
         # PW path ##############################################################
 		logfile[[4]]<<-as.character(isolate(input$PWpath));
 		# peak picking #########################################################
-		at1<-logfile$parameters[c(1,2,3,4,5,6,7,8,9,10,11,12,13,14)];
+		at1<-logfile$parameters[c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,92)];
 		logfile$parameters$peak_MSlevel<<-as.character(1); # MSlevel=1
 		logfile$parameters$peak_drtgap<<-as.character(isolate(input$peak_drtgap))
 		logfile$parameters$peak_dmzdens<<-as.character(isolate(input$peak_dmzdens))		
@@ -39,7 +39,8 @@ observe({
 		logfile$parameters$peak_ended<<-as.character(isolate(input$peak_ended))		
 		logfile$parameters$peak_weight<<-as.character(isolate(input$peak_weight))
 		logfile$parameters$peak_maxint_log10<<-as.character(isolate(input$peak_maxint))
-		at2<-logfile$parameters[c(1,2,3,4,5,6,7,8,9,10,11,12,13,14)]
+		logfile$parameters$peak_perc_cut<<-as.character(isolate(input$peak_perc_cut))
+		at2<-logfile$parameters[c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,92)]
 		if(any(is.na(at2))){stop("\nThere was an issue reading out the new settings - maybe comma / dot separation was not fullfilled?")}		
 		if(!enviMass:::comp_list(at1,at2)){ 
 			enviMass:::workflow_set(down="peakpicking",check_node=TRUE)

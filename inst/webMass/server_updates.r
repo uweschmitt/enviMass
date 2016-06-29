@@ -159,6 +159,11 @@ if(TRUE){
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 	}
+	if(!any(names(logfile$parameters)=="peak_perc_cut")){	
+		logfile$parameters[[92]]<<-"0"; 	names(logfile$parameters)[92]<<-"peak_perc_cut"  
+		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
+	}
 	# logfile$Tasks_to_redo ##################################################################
 	if(length(logfile[[2]])<22){
 		logfile[[2]]<<-rep("TRUE",22)

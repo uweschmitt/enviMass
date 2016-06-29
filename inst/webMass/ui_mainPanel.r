@@ -562,7 +562,8 @@
 					tags$h5("Advanced"),
 					numericInput("peak_ended", "How often can a peak detection fail to end the recursion? - peak picking", 1),
 					numericInput("peak_weight", "Weight for assigning measurements to a peak - peak picking", 1),
-					sliderInput("peak_maxint", "Upper log10(intensity) safety threshold", min = 0, max = 15, value = 6.7, step= .1)
+					sliderInput("peak_maxint", "Upper log10(intensity) safety threshold", min = 0, max = 15, value = 6.7, step= .1),
+					sliderInput("peak_perc_cut", "Percentage of low-intense data points to discard", min = 0, max = 100, value = 0, step= .1)
 				),
               tags$h4(""),
               tags$h4("")              

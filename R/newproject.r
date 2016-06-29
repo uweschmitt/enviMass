@@ -118,6 +118,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters[[12]]<-"1"; 	names(logfile$parameters)[12]<-"peak_ended"  
 		logfile$parameters[[13]]<-"1"; 	names(logfile$parameters)[13]<-"peak_weight"
 		logfile$parameters[[14]]<-"6.5"; 	names(logfile$parameters)[14]<-"peak_maxint_log10"    
+		logfile$parameters[[92]]<-"0"; 	names(logfile$parameters)[92]<-"peak_perc_cut"  
 		# show progbar? ########################################################
 		logfile$parameters[[21]]<-"FALSE";	names(logfile$parameters)[21]<-"progressBar"    
 		# isotope patterns #####################################################

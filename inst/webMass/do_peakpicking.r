@@ -14,8 +14,16 @@
 					progbar=logfile$parameters[21], # progbar
 					minRT=FALSE,maxRT=FALSE,minmz=FALSE,maxmz=FALSE,
 					ion_mode=measurements[i,4]
-				);  				
-				cat(" data read -");
+				);
+				cat(" data read -");  				
+				if(logfile$parameters[92]>"0"){
+					len1<-length(MSlist[[4]][[2]][,2])
+					MSlist[[4]][[2]]<-MSlist[[4]][[2]][
+						MSlist[[4]][[2]][,2]>=quantile(MSlist[[4]][[2]][,2],(as.numeric(logfile$parameters[92])/100))
+					,]
+					len2<-length(MSlist[[4]][[2]][,2])
+					cat(paste(" ",as.character(len1-len2),"of",as.character(len1),"data points discarded -"))
+				}
 				MSlist<-enviPick::mzagglom(
 					MSlist,
 					((as.numeric(logfile$parameters[[3]])*2)+1),

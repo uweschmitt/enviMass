@@ -16,6 +16,7 @@ updateSliderInput(session, "peak_recurs",value = as.numeric(logfile$parameters[[
 updateSliderInput(session, "peak_ended",value = as.numeric(logfile$parameters[[12]]))
 updateSliderInput(session, "peak_weight",value = as.numeric(logfile$parameters[[13]]))
 updateNumericInput(session, "peak_maxint",value = as.numeric(logfile$parameters[[14]]))
+updateSliderInput(session, "peak_perc_cut",value = as.numeric(logfile$parameters[[92]]))
 # PROGRESS BAR #################################################################
 updateSelectInput(session, "progressbar", "Show progress bar (Windows only)", choices = c("TRUE","FALSE"),  selected = as.character(logfile$parameters[[21]]))
 # RESOLUTION ###################################################################
