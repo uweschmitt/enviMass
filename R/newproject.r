@@ -219,9 +219,9 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	logfile$workflow[21]<-"yes"; 	names(logfile$workflow)[21]<-"adducts"	
 	logfile$workflow[22]<-"yes"; 	names(logfile$workflow)[22]<-"homologues"	
 	################################################################################################
-	# define matrix of downstream workflow dependencies ############################################
-	# (or with recalculations of previous steps if their results are overwritten, e.g. IS_subtr or #
-	# target_subtr) ################################################################################
+	# define matrix of downstream workflow dependencies and ########################################
+	# recalculations of previous steps if their results are overwritten, e.g. IS_subtr or ##########
+	# target_subtr #################################################################################
 	# requires only a definition of direct ones - inderect ones will be in workflow_set.r ##########
 	# below specified in a row-wise fashion (but stored columnwise): ###############################
 	# define workflow order of logfile$Tasks_to_redo by server.calculation.r #######################
@@ -277,9 +277,9 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	must[,colnames(must)=="LOD"]<-				c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,				0,				0,		0,			0,			0,				0,			0,				0,		0)
 	must[,colnames(must)=="calibration"]<-		c(1,			0,	0,		0,		0,		0,			0,			1,			0,			0,			0,				0,		0,				0,				0,		0,			0,			0,				0,			0,				0,		0)
 	must[,colnames(must)=="quantification"]<-	c(1,			0,	0,		0,		0,		0,			0,			1,			0,			1,			1,				0,		0,				0,				0,		0,			0,			0,				0,			0,				0,		0)
-	must[,colnames(must)=="IS_subtr"]<-			c(1,			0,	0,		0,		0,		0,			0,			1,			0,			1,			1,				0,		0,				0,				0,		0,			0,			0,				0,			0,				0,		0)
-	must[,colnames(must)=="target_subtr"]<-		c(1,			0,	0,		0,		0,		0,			0,			1,			0,			1,			1,				0,		0,				0,				0,		0,			0,			0,				0,			0,				0,		0)	
-	must[,colnames(must)=="blind_subtr"]<-		c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,				0,				1,		0,			0,			0,				0,			0,				0,		0)
+	must[,colnames(must)=="IS_subtr"]<-			c(1,			0,	0,		0,		0,		1,			0,			1,			0,			1,			1,				0,		0,				0,				0,		0,			0,			0,				0,			0,				0,		0)
+	must[,colnames(must)=="target_subtr"]<-		c(1,			0,	0,		0,		0,		1,			0,			1,			0,			1,			1,				0,		0,				0,				0,		0,			0,			0,				0,			0,				0,		0)	
+	must[,colnames(must)=="blind_subtr"]<-		c(1,			0,	0,		0,		0,		1,			0,			0,			0,			0,			0,				0,		0,				0,				1,		0,			0,			0,				0,			0,				0,		0)
 	must[,colnames(must)=="isotopologues"]<-	c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,				0,				0,		0,			0,			0,				0,			0,				0,		0)
 	must[,colnames(must)=="adducts"]<-			c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,				0,				0,		0,			0,			0,				0,			0,				0,		0)
 	must[,colnames(must)=="homologues"]<-		c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,				0,				0,		0,			0,			0,				0,			0,				0,		0)
