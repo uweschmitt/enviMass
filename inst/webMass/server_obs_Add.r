@@ -1,7 +1,8 @@
 ##############################################################################
 # update compounds, measurements, etc ########################################
 ##############################################################################
-  
+
+##############################################################################   
 # ADD IS #####################################################################
 observe({ # update selectable adducts by ionization mode 
 	input$ISadd_charge
@@ -57,7 +58,9 @@ observe({
 		if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_Add.r!")}
     }
 })
+############################################################################## 
 
+############################################################################## 
 # ADD IS LIST ################################################################
 observe({
  	input$ISlist_path
@@ -78,7 +81,8 @@ observe({
 	}
 })  
 ##############################################################################	
-  
+
+##############################################################################   
 # DELETE IS ##################################################################
 observe({
     input$DeleteIS
@@ -96,7 +100,9 @@ observe({
 		if(any(ls()=="logfile")){stop("illegal logfile detected #1 in server_obs_Add.r!")}
     }
 })
-  
+############################################################################## 
+ 
+##############################################################################  
 # ADD TARGET #################################################################
 observe({ # update selectable adducts by ionization mode 
 	input$targetsadd_charge
@@ -153,7 +159,9 @@ observe({
 		if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_Add.r!")}
     }
 })
+############################################################################## 
 
+############################################################################## 
 # ADD TARGET LIST ############################################################
 observe({
  	input$targetlist_path
@@ -174,7 +182,8 @@ observe({
 	}
 })  
 ##############################################################################	
- 
+
+############################################################################## 
 # DELETE TARGET ##############################################################
 observe({
     input$Deletetargets
@@ -193,7 +202,8 @@ observe({
     }
 })
 ##############################################################################
-  
+ 
+############################################################################## 
 # ADD MEASUREMENT ############################################################
 addmeasu<-reactive({
 	input$Measadd_path
@@ -252,9 +262,10 @@ addmeasu<-reactive({
 							as.character(isolate(input$Measadd_cal_date2)),							
 							as.character(isolate(input$Measadd_cal_time2))							
 						)
-						measurements3<-rbind(measurements2,measurements1);
+						measurements3<-rbind(measurements2,measurements1,stringsAsFactors=FALSE);
 						names(measurements3)<-nameit;
-						measurements3<-enviMass:::convDate(measurements3);
+						measurements3[,6]<-enviMass:::convDate(measurements3[,6]);
+						measurements3[,22]<-enviMass:::convDate(measurements3[,22]);
 						write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 						rm(measurements1,measurements2,measurements3);
 						output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
@@ -326,9 +337,10 @@ addmeasu<-reactive({
 						as.character(isolate(input$Measadd_cal_date2)),							
 						as.character(isolate(input$Measadd_cal_time2))	
 					)
-					measurements3<-rbind(measurements2,measurements1);
+					measurements3<-rbind(measurements2,measurements1,stringsAsFactors=FALSE);
 					names(measurements3)<-nameit;
-					measurements3<-enviMass:::convDate(measurements3);
+					measurements3[,6]<-enviMass:::convDate(measurements3[,6]);
+					measurements3[,22]<-enviMass:::convDate(measurements3[,22]);
 					write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 					rm(measurements1,measurements2,measurements3);
 					#############################################################################
@@ -410,6 +422,7 @@ addmeasu<-reactive({
 output$had_meas_added<-renderText(paste(addmeasu()))  
 ##############################################################################
   
+############################################################################## 
 # DELETE MEASUREMENT #########################################################
 observe({
     input$Measdel
@@ -516,6 +529,7 @@ observe({
 })
 ##############################################################################
 
+############################################################################## 
 # IMPORT MEASUREMENTS ########################################################
 impproj<-reactive({
     input$Import_project
@@ -570,7 +584,7 @@ impproj<-reactive({
 					  from=file.path(file_in,"peaklist",as.character(measurements_2[i,1])),
 					  to=file.path(logfile[[1]],"peaklist",as.character(newID)),
 					  overwrite=TRUE);
-				measurements_1<-rbind(measurements_1,measurements_2[i,])	
+				measurements_1<-rbind(measurements_1,measurements_2[i,],stringsAsFactors=FALSE)	
 				at<-length(measurements_1[,1])
 				measurements_1[at,1]<-newID
 				measurements_1<-measurements_1[measurements_1[,1]!="-",]
@@ -638,6 +652,7 @@ impproj<-reactive({
 output$had_import_project<-renderText(paste(impproj()))  
 ##############################################################################
 
+############################################################################## 
 # MODIFY MEASUREMENTS ########################################################  
 # LOAD
 observe({
@@ -686,15 +701,15 @@ observe({
 				start_time<-as.character(isolate(input$Modif_cal_time1))
 			}else{
 				use_profiling<-as.character(isolate(input$Modif_profiled))
-				start_date<-as.character(isolate(input$Measadd_date))
-				start_time<-as.character(isolate(input$Measadd_time))					
+				start_date<-as.character(isolate(input$Modif_date))
+				start_time<-as.character(isolate(input$Modif_time))				
 			}
 			measurements3[measurements3[,1]==atID,2]<-as.character(isolate(input$Modif_name))
 			measurements3[measurements3[,1]==atID,3]<-as.character(isolate(input$Modif_type))
 			measurements3[measurements3[,1]==atID,4]<-as.character(isolate(input$Modif_mode))
 			measurements3[measurements3[,1]==atID,5]<-as.character(isolate(input$Modif_place))
 			measurements3[measurements3[,1]==atID,6]<-start_date
-			measurements3[measurements3[,1]==atID,]<-enviMass:::convDate(measurements3[measurements3[,1]==atID,]);
+			measurements3[measurements3[,1]==atID,6]<-enviMass:::convDate(measurements3[measurements3[,1]==atID,6]);
 			measurements3[measurements3[,1]==atID,7]<-start_time	
 			measurements3[measurements3[,1]==atID,19]<-as.character(isolate(input$Modif_tag1))
 			measurements3[measurements3[,1]==atID,20]<-as.character(isolate(input$Modif_tag2))
@@ -702,6 +717,7 @@ observe({
 			measurements3[measurements3[,1]==atID,8]<-as.character(isolate(input$Modif_include))				
 			measurements3[measurements3[,1]==atID,15]<-use_profiling	
 			measurements3[measurements3[,1]==atID,22]<-as.character(isolate(input$Modif_cal_date2))
+			measurements3[measurements3[,1]==atID,22]<-enviMass:::convDate(measurements3[measurements3[,1]==atID,22]);
 			measurements3[measurements3[,1]==atID,23]<-as.character(isolate(input$Modif_cal_time2))
 			if(measurements3[measurements3[,1]==atID,8]){ # included?
 				enviMass:::workflow_set(down="peakpicking",check_node=TRUE,single_file=TRUE)
@@ -770,7 +786,8 @@ observe({
 })  
 ##############################################################################  
 
-# IMPORT FOLDER ##############################################################   
+############################################################################## 
+# BATCH IMPORT FOLDER ########################################################  
 impfolder<-reactive({
 	input$Import_file_folder
 	if(isolate(input$Import_file_folder)){
@@ -811,7 +828,7 @@ impfolder<-reactive({
 							from=filepath,
 							to=file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")),
 							overwrite=TRUE)	
-						if( file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep=""))) ){ # copy completed?			
+						if( file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep=""))) ){ # check: copy completed?			
 							mz1<-readMzXmlData:::readMzXmlFile(
 								mzXmlFile=file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")),
 								removeMetaData = FALSE,verbose = FALSE)
@@ -839,9 +856,10 @@ impfolder<-reactive({
 								at_date,
 								as.character("12:00:00")
 							)							
-							measurements3<-rbind(measurements2,measurements1);
+							measurements3<-rbind(measurements2,measurements1,stringsAsFactors=FALSE);
 							names(measurements3)<-nameit;
-							measurements3<-enviMass:::convDate(measurements3);
+							measurements3[,6]<-enviMass:::convDate(measurements3[,6]);
+							measurements3[,22]<-enviMass:::convDate(measurements3[,22]);
 							write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 							rm(measurements1,measurements2,measurements3);
 							#############################################################################			
@@ -895,9 +913,10 @@ impfolder<-reactive({
 									"TRUE", # to be profiled?
 									"FALSE","FALSE","FALSE","FALSE","FALSE","FALSE"
 								)
-								measurements3<-rbind(measurements2,measurements1);
+								measurements3<-rbind(measurements2,measurements1,stringsAsFactors=FALSE);
 								names(measurements3)<-nameit;
-								measurements3<-enviMass:::convDate(measurements3);
+								measurements3[,6]<-enviMass:::convDate(measurements3[,6]);
+								measurements3[,22]<-enviMass:::convDate(measurements3[,22]);
 								write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 								rm(measurements1,measurements2,measurements3);
 								#############################################################################			
@@ -946,7 +965,7 @@ output$had_import_folder<-renderText(paste(impfolder()))
 ##############################################################################  
  
 ############################################################################## 
-# Import parameters ##########################################################  
+# IMPORT PARAMETERS ##########################################################  
 observe({
     input$Import_project_para
     if(input$Import_project_para){

@@ -34,7 +34,8 @@
 								to=FALSE,
 								progbar=logfile$parameters$progressBar,
 								plotit=FALSE,
-								replicates=FALSE
+								replicates=FALSE,
+								IDs=FALSE
 							)
 		}else{ # run a profiling in the replicate groups first
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -94,14 +95,16 @@
 						)
 		if(logfile$parameters[[91]]=="no"){ 				
 			profileList_neg<-partcluster(
-								profileList_neg,
+								profileList=profileList_neg,
 								dmass=as.numeric(logfile$parameters$prof_dmz),
 								ppm=as.logical(as.character(logfile$parameters$prof_ppm)),
 								dret=as.numeric(logfile$parameters$prof_drt),
 								from=FALSE,
 								to=FALSE,
 								progbar=logfile$parameters$progressBar,
-								plotit=FALSE
+								plotit=FALSE,
+								replicates=FALSE,
+								IDs=FALSE
 							)
 		}else{ # run a profiling in the replicate groups first
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");

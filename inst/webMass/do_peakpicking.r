@@ -76,9 +76,16 @@
 				cat(" plot -");  
 				path=file.path(logfile[[1]],"pics",paste("peakhist_",as.character(measurements[i,1]),sep=""))
 				png(filename = path, bg = "white")    
-				hist(log10(MSlist[[4]][[2]][,2]),breaks=200,xlab="log10(Intensity)",main="All measurements (black) vs. measurements in peaks (red)")
-				hist(log10(MSlist[[4]][[2]][MSlist[[4]][[2]][,7]!=0,2]),breaks=200,col="red",add=TRUE)        
-				dev.off() 
+				a<-hist(log10(MSlist[[4]][[2]][,2]),breaks=200,plot=FALSE)
+				hist(log10(MSlist[[4]][[2]][,2]),breaks=a$breaks,
+					xlim=c(min(a$breaks),max(a$breaks)),ylim=c(0,max(a$counts)),
+					xlab="log10(Intensity)",main="All data points (white histrogram), those in peaks (red) and their count ratio (blue points)",cex.main=.8)
+				b<-hist(log10(MSlist[[4]][[2]][MSlist[[4]][[2]][,7]!=0,2]),breaks=a$breaks,col="red",add=TRUE)        
+				atfrac<-(b$counts/a$counts)
+				plot.window(xlim=c(min(a$breaks),max(a$breaks)),ylim=c(0,1))
+				points(a$mids[!is.na(atfrac)],atfrac[!is.na(atfrac)],col="blue",cex=.5,pch=19)
+				axis(4)
+				dev.off() 				
 				path=file.path(logfile[[1]],"pics",paste("peakmzRT_",as.character(measurements[i,1]),sep=""))
 				png(filename = path, bg = "white")    
 				plot(MSlist[[8]][,1],MSlist[[8]][,5],xlab="m/z",ylab="RT",pch=19,cex=0.3,main="Picked peaks")

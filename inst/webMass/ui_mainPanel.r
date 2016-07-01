@@ -19,6 +19,7 @@
 		tabPanel("Files",
 			HTML('<hr noshade="noshade" />'),
 				bsCollapse(multiple = FALSE, open = "files_open", id = "files",
+					# ADD FILE #################################################
 					bsCollapsePanel("Add LC-HRMS file", 		
 						helpText("To add a new file, set the below specifications accordingly and select it."),
 						HTML('<hr noshade="noshade" />'),												
@@ -67,11 +68,13 @@
 							textOutput("had_meas_added")		
 						)
 					),
+					# DELETE FILE ##################################################
 					bsCollapsePanel("Delete LC-HRMS file", 		
 						tags$h5("Delete file by its unique ID from the below file table"),
 						textInput("Measdel_ID", "ID:", value = "123"),
 						bsButton("Measdel","Remove",style="primary")		
 					),				
+					# MODIFY FILE ##################################################
 					bsCollapsePanel("Modify a file specification", 
 						fluidRow(
 							column(width = 4, helpText("Load settings of a file into below mask by its ID, modify and then save the new settings into the main table. Modifications make a full recalculation default.")),
@@ -110,6 +113,7 @@
 						HTML('<hr noshade="noshade" />'),
 						bsButton("Modif_export","Save",style="primary")
 					),
+					# BATCH UPLOAD ##################################################
 					bsCollapsePanel("Batch upload from folder", 	
 						tags$h5("Read in batches of files (.mzXML) from a folder; file specifications will be guessed and can later be modified above. 
 						File dates are set in the sequence of files provided in the folder."),	
