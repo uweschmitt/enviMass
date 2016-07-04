@@ -40,9 +40,7 @@
 		min_ID<-(min(as.numeric(profileList[[4]]))-1) # adjust to lowest file ID; otherwise too many empty list entries will be caused
 		colnames(at_matrix)<-c("m/z","log Intensity","Measured RT","m/z deviation [ppm]","RT deviation within","above_cutscore",
 		"Time sequence","Expected RT","File ID")
-# NEW+
 		set_ID<-seq(1:length(measurements_table[,1]))
-# NEW-
 		for(i in 1:length(screened_listed)){
 			IDed[i]<-strsplit(names(pattern)[i],"_")[[1]][1]
 			named[i]<-compound_table[compound_table[,1]==strsplit(names(pattern)[i],"_")[[1]][1],2]
@@ -62,9 +60,8 @@
 			if(length(screened_listed[[i]])>0){
 				for(m in 1:length(screened_listed[[i]])){
 					if(length(screened_listed[[i]][[m]])>0){
-# NEW+
-						at_ID<-set_ID[measurements_table[,1]==screened_listed[[i]][[m]][[1]]$file_ID]	
-# NEW-						
+
+						at_ID<-set_ID[measurements_table[,1]==screened_listed[[i]][[m]][[1]]$file_ID]							
 						is_sample<-(measurements_table[at_ID,3]!="blank")	# sample, calibration, doted; but not blank/blind				
 						if(!is_sample){ # could still be doted or blind or ...
 							is_blank<-(measurements_table[at_ID,3]=="blank")
@@ -127,10 +124,8 @@
 									as.numeric(as.Date(measurements_table[at_ID,6]))+
 									as.numeric(as.difftime(measurements_table[at_ID,7])/24)
 								)
-								at_matrix[at_len:(at_len+local_len-1),8]<-at_RT[i]
-# NEW+								
-								at_matrix[at_len:(at_len+local_len-1),9]<-as.numeric(measurements_table[at_ID,1]);
-# NEW-									
+								at_matrix[at_len:(at_len+local_len-1),8]<-at_RT[i]							
+								at_matrix[at_len:(at_len+local_len-1),9]<-as.numeric(measurements_table[at_ID,1]);									
 								at_len<-(at_len+local_len)
 							}
 						}

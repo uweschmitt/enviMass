@@ -447,11 +447,11 @@
 					fluidRow(
 						column(width = 2, radioButtons("calib", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","This step extracts calibration sets of target and internal standard compound peaks, using
+							tags$p(align="justify","This step screens for calibration sets of target and internal standard compound peaks, using
 							the provided calibration files. The sets can be used in the Calibration tab to establish specific calibration models (curves)
 							for quantification. If selected, the extraction of these calibration peaks will be affected by the above mass recalibration, 
 							replicate intersection, blind subtraction and LOD interpolation steps. Once you have established the desired calibration models,
-							you can again deselt this step.")
+							you can (should) again deselect this step, unless new calibration files are added.")
 						)
 					),
 				HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Quantification </font></p> '),

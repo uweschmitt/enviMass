@@ -467,14 +467,14 @@ observe({
 			mat_cal<-mat_cal[!duplicated(mat_cal),,drop=FALSE] # same peaks in different combinations - remove
 			min_int<-as.numeric(intstand[intstand[,1]==IS_ID,17])
 			max_int<-as.numeric(intstand[intstand[,1]==IS_ID,18])
-			mat_cal[mat_cal[,2]<min_int,8]<-0
-			mat_cal[mat_cal[,2]>max_int,8]<-0
+			mat_cal[log10(mat_cal[,2])<min_int,8]<-0
+			mat_cal[log10(mat_cal[,2])>max_int,8]<-0
 			mat_cal<<-mat_cal
 			dd$d<-mat_cal
 		}
 		# NEGATIVE ##################################################################
 		if(isolate(input$Ion_mode_Cal)=="negative"){	
-			if(verbose){cat("\n in K_1")}
+			if(verbose){cat("\n in K_negative_1")}
 			IS_ID<-isolate(input$Cal_IS_ID)
 			target_ID<-isolate(input$Cal_target_ID)
 			at_Cal<-isolate(input$Cal_file_set)
@@ -510,7 +510,7 @@ observe({
 					}
 				}
 			}
-			if(verbose){cat("\n in K_5")}
+			if(verbose){cat("\n in K_negative_5")}
 			# extract target peaks ##################################################
 			target_adduct<-targets[targets[,1]==target_ID,20]
 			target_peak<-as.numeric(targets[targets[,1]==target_ID,21])
@@ -523,7 +523,7 @@ observe({
 					at_entry<-i;break;
 				}
 			}
-			if(verbose){cat("\n in K_5_1")}
+			if(verbose){cat("\n in K_negative_5_1")}
 			target_in_file<-c()
 			target_with_peak<-c()
 			target_with_score<-c()
@@ -543,7 +543,7 @@ observe({
 					}
 				}
 			}
-			if(verbose){cat("\n in K_6")}
+			if(verbose){cat("\n in K_negative_6")}
 			# derive pairs ##########################################################
 			mat_cal<-matrix(nrow=0,ncol=8)
 			colnames(mat_cal)<-c("Pair #","Target intensity","IS intensity","Intensity ratio","Concentration","Target score","IS score","Used?")
@@ -570,7 +570,7 @@ observe({
 				}
 			}
 			rownames(mat_cal)<-NULL
-			if(verbose){cat("\n in K_7")}
+			if(verbose){cat("\n in K_negative_7")}
 			# filter ################################################################
 			mat_cal<-mat_cal[!duplicated(mat_cal),,drop=FALSE] # same peaks in different combinations - remove
 			min_int<-as.numeric(intstand[intstand[,1]==IS_ID,17])
@@ -578,6 +578,7 @@ observe({
 			mat_cal[mat_cal[,2]<min_int,8]<-0
 			mat_cal[mat_cal[,2]>max_int,8]<-0
 			mat_cal<<-mat_cal
+			dd$d<-mat_cal
 		}
 	}	
 })				

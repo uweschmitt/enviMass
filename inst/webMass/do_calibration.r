@@ -144,10 +144,8 @@
 			screen_list[[centro_ID[i]]][[centro_number[i]]]<-getit[i]
 		}
 		# resort to a full result list: pattern x sample x (centroids,matches) ( = peak index in profileList_pos_cal)		
-		IS_pos_screen_listed_cal<-list()  # default: no match at all
-# NEW +		
-		set_ID<-seq(1:length(profileList_pos_cal[[4]]))
-# NEW -		
+		IS_pos_screen_listed_cal<-list()  # default: no match at all	
+		set_ID<-seq(1:length(profileList_pos_cal[[4]]))	
 		for(i in 1:length(screen_list)){ # over compound x adduct = i
 			if(any(is.na(screen_list[[i]]==FALSE))){
 				IS_pos_screen_listed_cal[[i]]<-list() # m-level		
@@ -163,7 +161,6 @@
 								}else{
 									if((delmass*1E6/pattern[[i]][j,1])>mztol){next}
 								}
-# NEW +	
 								at_ID<-set_ID[profileList_pos_cal[[4]]==as.character(profileList_pos_cal[[2]][m,6])]								
 								if(length(IS_pos_screen_listed_cal[[i]])<at_ID){							
 									IS_pos_screen_listed_cal[[i]][[at_ID]]<-matrix(ncol=2,nrow=0)	
@@ -175,8 +172,7 @@
 								IS_pos_screen_listed_cal[[i]][[at_ID]]<-rbind(
 									IS_pos_screen_listed_cal[[i]][[at_ID]],c(j,m)
 								)					
-								colnames(IS_pos_screen_listed_cal[[i]][[at_ID]])<-c(as.character(profileList_pos_cal[[4]][at_ID]),"")
-# NEW -									
+								colnames(IS_pos_screen_listed_cal[[i]][[at_ID]])<-c(as.character(profileList_pos_cal[[4]][at_ID]),"")								
 							}							
 						}
 					}
@@ -200,15 +196,11 @@
 			for(i in 1:length(IS_pos_screen_listed_cal)){ # i - on compound_adduct
 				if(length(IS_pos_screen_listed_cal[[i]])>0){
 					res_IS_pos_screen_cal[[i]]<-list()
-					for(m in 1:length(IS_pos_screen_listed_cal[[i]])){ # m (relates to IDs in profileList_pos_cal[[4]])
-# NEW +						
-						at_ID<-set_ID[profileList_pos_cal[[4]]==colnames(IS_pos_screen_listed_cal[[i]][[m]])[1]]
-# NEW -						
+					for(m in 1:length(IS_pos_screen_listed_cal[[i]])){ # m (relates to IDs in profileList_pos_cal[[4]])				
+						at_ID<-set_ID[profileList_pos_cal[[4]]==colnames(IS_pos_screen_listed_cal[[i]][[m]])[1]]					
 						if(length(IS_pos_screen_listed_cal[[i]][[m]])>0){
-							if(do_LOD){
-# NEW +								
-								with_model<-which(names(LOD_splined)==paste("LOD_",colnames(IS_pos_screen_listed_cal[[i]][[m]])[1],sep=""))
-# NEW -							
+							if(do_LOD){							
+								with_model<-which(names(LOD_splined)==paste("LOD_",colnames(IS_pos_screen_listed_cal[[i]][[m]])[1],sep=""))						
 								if(length(with_model)>0){						
 									use_cutint<-10^(predict(LOD_splined[[with_model]],pattern_RT[i])$y)
 								}else{
@@ -217,8 +209,7 @@
 								}
 							}else{
 								use_cutint<-cutint
-							}
-# NEW +								
+							}								
 							combination_matches<-recomb_score(
 								cent_peak_mat=IS_pos_screen_listed_cal[[i]][[m]],
 								pattern_compound=pattern[[i]],
@@ -236,7 +227,6 @@
 								names(combination_matches[[k]])[10]<-"file_ID"
 							}
 							res_IS_pos_screen_cal[[i]][[at_ID]]<-combination_matches
-# NEW -	
 							if(length(combination_matches)>1){many_unamb<-(many_unamb+1)}
 							many<-(many+1)
 						}

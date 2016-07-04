@@ -481,7 +481,7 @@ SEXP correct_intens(
                            }
                        }
                    }
-                   if(maxit<maxat){
+                   if(maxit<maxat){ /* rewrite vector with candidate cluster indices */
                        i=maxat;
                        k=0;
                        for(m=0;m<i;m++){
