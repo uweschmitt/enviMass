@@ -327,7 +327,7 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
   filed<-list.files(file.path(logfile[[1]],"files"))
   if(!length(filed)){say<-"No measurements available!"}
   measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
-  if(!all(!duplicated(measurements[,1]))){say<-"Duplicated measurements IDs. Revise!"}
+  if(!all(!duplicated(measurements[,1]))){say<-paste("Duplicated measurements IDs.",measurements[duplicated(measurements[,1]),1],"Revise!")}
   #measurements<-measurements[!duplicated(measurements[,1]),]
   if(any(is.na(as.numeric(measurements[,1])))){say<-"Non-numeric measurements IDs. Revise!"}  
   measurements_ID<-measurements[,1]

@@ -1,11 +1,27 @@
- observe({ # Set calculation counter "do_flow"
+mainchecked<-reactive({
+    input$Check
+    if(input$Check){
+		say<-enviMass:::checkproject(isotopes,adducts,skipcheck=isolate(input$do_project_check));
+		output$dowhat<<-renderText(say)
+		if(say=="Project consistent"){
+			cat("Project consistent\n");
+			return("Project consistent\n");
+		}else{
+			cat("Project inconsistent\n");
+			info(say);
+			return("Project inconsistent\n");		
+		}
+	}
+})
+output$had_checked<-renderText(paste(mainchecked()))  
+
+observe({ # Set calculation counter "do_flow"
     input$Calc
     if(input$Calc){
       do_flow<<-1
 	  time_start<<-Sys.time()
     }
 })
-
 
 #observe({ # Run calculations
 maincalc<-reactive({

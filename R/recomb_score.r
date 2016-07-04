@@ -177,8 +177,7 @@ recomb_score<-function(
 				results[[at_results]][[7]]<-profileList[[2]][check_nodes[[k]][,2],1]
 				results[[at_results]][[8]]<-profileList[[2]][check_nodes[[k]][,2],2]
 				results[[at_results]][[9]]<-profileList[[2]][check_nodes[[k]][,2],3]
-				results[[at_results]][[10]]<-"-"
-				names(results[[at_results]])<-c("Peaks","score_1","score_2","ppm deviation","RT deviation from mean","rescale factor","m/z","Intensity","RT","Concentration")
+				names(results[[at_results]])<-c("Peaks","score_1","score_2","ppm deviation","RT deviation from mean","rescale factor","m/z","Intensity","RT")
 				at_results<-(at_results+1)
 				if(plotit){box(col="green",lwd=5);title(main=paste(score1,score2,k,sep=" - "));Sys.sleep(3);}
 			}else{

@@ -60,7 +60,6 @@
 			if(length(screened_listed[[i]])>0){
 				for(m in 1:length(screened_listed[[i]])){
 					if(length(screened_listed[[i]][[m]])>0){
-
 						at_ID<-set_ID[measurements_table[,1]==screened_listed[[i]][[m]][[1]]$file_ID]							
 						is_sample<-(measurements_table[at_ID,3]!="blank")	# sample, calibration, doted; but not blank/blind				
 						if(!is_sample){ # could still be doted or blind or ...

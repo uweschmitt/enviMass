@@ -56,13 +56,22 @@ sidebarPanel(
       helpText("Project state:"),
 	  htmlOutput("summa_html"),
 	  HTML('<hr noshade="noshade" />'),
+	  fluidRow(
+			column(width = 5, bsButton("Check","Check project",style="success"),textOutput("had_checked")),
+			column(width = 1,  conditionalPanel(
+									condition = "output.had_checked == 'Project consistent'",	  
+									HTML('<h1 align="right"> &#x2713; </h1> ')
+								)
+			)
+	  ),
+	  HTML('<hr noshade="noshade" />'),
       bsButton("Calc","Calculate",style="danger"),
 	  bsPopover("Calc", 
 		title = "Start new project (re)calculation.",
 		content = "The current settings for parameters and workflow steps will be used. Calculation results will be displayed in the results tabset.", 
 		placement = "right", trigger = "hover"),
-	  textOutput("had_calculated"),
-	  HTML('<hr noshade="noshade" />'),
+	  textOutput("had_calculated"),		  
+	  HTML('<hr noshade="noshade" />'),		  
       actionButton("Restart","Back"),
 	  bsPopover("Restart", 
 		title = "Return to start page ...",content = "... to start a new project or open an existing one.", 

@@ -109,10 +109,8 @@
 			screen_list[[centro_ID[i]]][[centro_number[i]]]<-getit[i]
 		}
 		# resort to a full result list: pattern x sample x (centroids,matches) ( = peak index in profileList_pos)		
-		IS_pos_screen_listed<-list()  # default: no match at all
-# NEW +		
-		set_ID<-seq(1:length(profileList_pos[[4]]))
-# NEW -		
+		IS_pos_screen_listed<-list()  # default: no match at all		
+		set_ID<-seq(1:length(profileList_pos[[4]]))	
 		for(i in 1:length(screen_list)){ # over compound x adduct = i
 			if(any(is.na(screen_list[[i]]==FALSE))){
 				IS_pos_screen_listed[[i]]<-list() # m-level		
@@ -128,7 +126,6 @@
 								}else{
 									if((delmass*1E6/pattern[[i]][j,1])>mztol){next}
 								}
-# NEW +	
 								at_ID<-set_ID[profileList_pos[[4]]==as.character(profileList_pos[[2]][m,6])]								
 								if(length(IS_pos_screen_listed[[i]])<at_ID){							
 									IS_pos_screen_listed[[i]][[at_ID]]<-matrix(ncol=2,nrow=0)	
@@ -140,8 +137,7 @@
 								IS_pos_screen_listed[[i]][[at_ID]]<-rbind(
 									IS_pos_screen_listed[[i]][[at_ID]],c(j,m)
 								)					
-								colnames(IS_pos_screen_listed[[i]][[at_ID]])<-c(as.character(profileList_pos[[4]][at_ID]),"")
-# NEW -									
+								colnames(IS_pos_screen_listed[[i]][[at_ID]])<-c(as.character(profileList_pos[[4]][at_ID]),"")							
 							}							
 						}
 					}
@@ -150,6 +146,7 @@
 				IS_pos_screen_listed[[i]]<-numeric(0)	
 			}
 		}	
+		names(IS_pos_screen_listed)<-names(pattern)
 		# decompose ###########################################################################		
 		if( logfile$parameters$screen_IS_cutit=="TRUE" ){
 			use_score_cut<-TRUE;
@@ -165,15 +162,11 @@
 			for(i in 1:length(IS_pos_screen_listed)){ # i - on compound_adduct
 				if(length(IS_pos_screen_listed[[i]])>0){
 					res_IS_pos_screen[[i]]<-list()
-					for(m in 1:length(IS_pos_screen_listed[[i]])){ # m (relates to IDs in profileList_pos[[4]])
-# NEW +						
-						at_ID<-set_ID[profileList_pos[[4]]==colnames(IS_pos_screen_listed[[i]][[m]])[1]]
-# NEW -						
+					for(m in 1:length(IS_pos_screen_listed[[i]])){ # m (relates to IDs in profileList_pos[[4]])					
+						at_ID<-set_ID[profileList_pos[[4]]==colnames(IS_pos_screen_listed[[i]][[m]])[1]]					
 						if(length(IS_pos_screen_listed[[i]][[m]])>0){
-							if(do_LOD){
-# NEW +								
-								with_model<-which(names(LOD_splined)==paste("LOD_",colnames(IS_pos_screen_listed[[i]][[m]])[1],sep=""))
-# NEW -							
+							if(do_LOD){							
+								with_model<-which(names(LOD_splined)==paste("LOD_",colnames(IS_pos_screen_listed[[i]][[m]])[1],sep=""))						
 								if(length(with_model)>0){						
 									use_cutint<-10^(predict(LOD_splined[[with_model]],pattern_RT[i])$y)
 								}else{
@@ -182,8 +175,7 @@
 								}
 							}else{
 								use_cutint<-cutint
-							}
-# NEW +								
+							}							
 							combination_matches<-recomb_score(
 								cent_peak_mat=IS_pos_screen_listed[[i]][[m]],
 								pattern_compound=pattern[[i]],
@@ -201,7 +193,7 @@
 								names(combination_matches[[k]])[10]<-"file_ID"
 							}
 							res_IS_pos_screen[[i]][[at_ID]]<-combination_matches
-# NEW -	
+							names(res_IS_pos_screen[[i]])[[at_ID]]<-combination_matches[[k]][[10]]
 							if(length(combination_matches)>1){many_unamb<-(many_unamb+1)}
 							many<-(many+1)
 						}
@@ -216,7 +208,7 @@
 		save(res_IS_pos_screen,file=file.path(logfile$project_folder,"results","screening","res_IS_pos_screen"))
 		# assemble output table of length(list) ############################################################
 		# iterator m is NOT directly equal to the sample ID ################################################
-		# must be corrected by the smalles ID in the file set used #########################################
+		# must be corrected by the smallest ID in the file set used ########################################
 		if( length(IS_pos_screen_listed)>0 ){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements<-measurements[measurements[,8]=="TRUE",]
@@ -224,7 +216,6 @@
 				measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
 			}
 			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
-# NEW +	
 			results_screen_IS_pos<-enviMass:::get_screening_results(
 				screened_listed=res_IS_pos_screen,
 				pattern=pattern,
@@ -234,7 +225,6 @@
 				compound_table=intstand,
 				cut_score=cut_score
 			)		
-# NEW -	
 			# create links in link_list_pos for peaks in profileList_pos = used for tracing back ###########
 			use_entries<-find_empty(links_peaks_pos)
 			for(i in 1:length(res_IS_pos_screen)){
@@ -391,10 +381,8 @@
 			screen_list[[centro_ID[i]]][[centro_number[i]]]<-getit[i]
 		}
 		# resort to a full result list: pattern x sample x (centroids,matches) ( = peak index in profileList_neg)		
-		IS_neg_screen_listed<-list()  # default: no match at all
-# NEW +		
+		IS_neg_screen_listed<-list()  # default: no match at all	
 		set_ID<-seq(1:length(profileList_neg[[4]]))
-# NEW -		
 		for(i in 1:length(screen_list)){ # over compound x adduct = i
 			if(any(is.na(screen_list[[i]]==FALSE))){
 				IS_neg_screen_listed[[i]]<-list() # m-level		
@@ -410,7 +398,6 @@
 								}else{
 									if((delmass*1E6/pattern[[i]][j,1])>mztol){next}
 								}
-# NEW +	
 								at_ID<-set_ID[profileList_neg[[4]]==as.character(profileList_neg[[2]][m,6])]								
 								if(length(IS_neg_screen_listed[[i]])<at_ID){							
 									IS_neg_screen_listed[[i]][[at_ID]]<-matrix(ncol=2,nrow=0)	
@@ -422,8 +409,7 @@
 								IS_neg_screen_listed[[i]][[at_ID]]<-rbind(
 									IS_neg_screen_listed[[i]][[at_ID]],c(j,m)
 								)					
-								colnames(IS_neg_screen_listed[[i]][[at_ID]])<-c(as.character(profileList_neg[[4]][at_ID]),"")
-# NEW -									
+								colnames(IS_neg_screen_listed[[i]][[at_ID]])<-c(as.character(profileList_neg[[4]][at_ID]),"")							
 							}							
 						}
 					}
@@ -447,15 +433,11 @@
 			for(i in 1:length(IS_neg_screen_listed)){ # i - on compound_adduct
 				if(length(IS_neg_screen_listed[[i]])>0){
 					res_IS_neg_screen[[i]]<-list()
-					for(m in 1:length(IS_neg_screen_listed[[i]])){ # m (relates to IDs in profileList_neg[[4]])
-# NEW +						
-						at_ID<-set_ID[profileList_neg[[4]]==colnames(IS_neg_screen_listed[[i]][[m]])[1]]
-# NEW -						
+					for(m in 1:length(IS_neg_screen_listed[[i]])){ # m (relates to IDs in profileList_neg[[4]])						
+						at_ID<-set_ID[profileList_neg[[4]]==colnames(IS_neg_screen_listed[[i]][[m]])[1]]					
 						if(length(IS_neg_screen_listed[[i]][[m]])>0){
-							if(do_LOD){
-# NEW +								
-								with_model<-which(names(LOD_splined)==paste("LOD_",colnames(IS_neg_screen_listed[[i]][[m]])[1],sep=""))
-# NEW -							
+							if(do_LOD){							
+								with_model<-which(names(LOD_splined)==paste("LOD_",colnames(IS_neg_screen_listed[[i]][[m]])[1],sep=""))			
 								if(length(with_model)>0){						
 									use_cutint<-10^(predict(LOD_splined[[with_model]],pattern_RT[i])$y)
 								}else{
@@ -483,7 +465,6 @@
 								names(combination_matches[[k]])[10]<-"file_ID"
 							}
 							res_IS_neg_screen[[i]][[at_ID]]<-combination_matches
-# NEW -	
 							if(length(combination_matches)>1){many_unamb<-(many_unamb+1)}
 							many<-(many+1)
 						}
@@ -506,7 +487,6 @@
 				measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
 			}
 			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
-# NEW +	
 			results_screen_IS_neg<-enviMass:::get_screening_results(
 				screened_listed=res_IS_neg_screen,
 				pattern=pattern,
@@ -516,7 +496,6 @@
 				compound_table=intstand,
 				cut_score=cut_score
 			)		
-# NEW -	
 			# create links in link_list_neg for peaks in profileList_neg = used for tracing back ###########
 			use_entries<-find_empty(links_peaks_neg)
 			for(i in 1:length(res_IS_neg_screen)){
