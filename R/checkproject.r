@@ -163,11 +163,12 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 		rm(checked,targets_check)  
 	}   
 	##############################################################################
-	# check compounds for calibration & quantification ###########################
+	# check compounds and files for calibration & quantification #################
 	if(
 		(logfile$workflow[names(logfile$workflow)=="calibration"])=="yes" ||
 		(logfile$workflow[names(logfile$workflow)=="quantification"])=="yes"	
 	){
+		# check compounds ########################################################
 		targets_check<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character",blank.lines.skip=TRUE);
 		intstand_check<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character",blank.lines.skip=TRUE);
 		# check if all relations / adducts are correct
@@ -209,6 +210,63 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 				}
 			}
 		}	
+		# check files ##########################################################
+		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		if(!any(measurements[,3]=="calibration") & (logfile$workflow[names(logfile$workflow)=="calibration"]=="yes")){
+			say<-"No calibration files available, although calibration is enabled in the workflow. Please revise: either remove this workflow option or include calibration files!"
+		}else{
+			measurements<-measurements[measurements[,3]=="calibration",,drop=FALSE]
+			measurements_pos<-measurements[measurements[,4]=="positive",,drop=FALSE]
+			measurements_pos<-unique(measurements_pos[,c(20,6,7,22,23),drop=FALSE])
+			if(any(duplicated(measurements_pos$tag2))){
+				say<-"Calibration file specification violation (positive mode). Have you used different time period specifications for the same group? Please revise."
+			}
+			# no temporal overlaps of calibration file groups?
+			if(length(measurements_pos[,1])>1){
+				for(i in 1:(length(measurements_pos[,1])-1)){
+					starttime_i<-as.difftime(measurements_pos[i,3]);startdate_i<-as.Date(measurements_pos[i,2]);
+					numstart_i<-(as.numeric(startdate_i)+as.numeric(starttime_i/24))		
+					endtime_i<-as.difftime(measurements_pos[i,5]);enddate_i<-as.Date(measurements_pos[i,4]);
+					numend_i<-(as.numeric(enddate_i)+as.numeric(endtime_i/24))		
+					for(j in (i+1):(length(measurements_pos[,1]))){			
+						starttime_j<-as.difftime(measurements_pos[j,3]);startdate_j<-as.Date(measurements_pos[j,2]);
+						numstart_j<-(as.numeric(startdate_j)+as.numeric(starttime_j/24))		
+						endtime_j<-as.difftime(measurements_pos[j,5]);enddate_j<-as.Date(measurements_pos[j,4]);
+						numend_j<-(as.numeric(enddate_j)+as.numeric(endtime_j/24))		
+						if(
+							(numstart_i<=numend_j)&(numstart_j<=numend_i)
+						){
+							say<-paste("Problem with calibration files, positive mode: time periods of calibration groups",measurements_pos$tag2[i],"and",measurements_pos$tag2[j],"overlap. They must not. Please revise!")
+						}
+					}
+				}
+			}			
+			measurements_neg<-measurements[measurements[,4]=="negative",,drop=FALSE]
+			measurements_neg<-unique(measurements_neg[,c(20,22,23),drop=FALSE])
+			if(any(duplicated(measurements_neg$tag2))){
+				say<-"Calibration file specification violation (negative mode). Have you used different time period specifications for the same group? Please revise."
+			}
+			# no temporal overlaps of calibration file groups?
+			if(length(measurements_neg[,1])>1){
+				for(i in 1:(length(measurements_neg[,1])-1)){
+					starttime_i<-as.difftime(measurements_neg[i,3]);startdate_i<-as.Date(measurements_neg[i,2]);
+					numstart_i<-(as.numeric(startdate_i)+as.numeric(starttime_i/24))		
+					endtime_i<-as.difftime(measurements_neg[i,5]);enddate_i<-as.Date(measurements_neg[i,4]);
+					numend_i<-(as.numeric(enddate_i)+as.numeric(endtime_i/24))		
+					for(j in (i+1):(length(measurements_neg[,1]))){			
+						starttime_j<-as.difftime(measurements_neg[j,3]);startdate_j<-as.Date(measurements_neg[j,2]);
+						numstart_j<-(as.numeric(startdate_j)+as.numeric(starttime_j/24))		
+						endtime_j<-as.difftime(measurements_neg[j,5]);enddate_j<-as.Date(measurements_neg[j,4]);
+						numend_j<-(as.numeric(enddate_j)+as.numeric(endtime_j/24))		
+						if(
+							(numstart_i<=numend_j)&(numstart_j<=numend_i)
+						){
+							say<-paste("Problem with calibration files, negative mode: time periods of calibration groups",measurements_pos$tag2[i],"and",measurements_pos$tag2[j],"overlap. They must not. Please revise!")
+						}
+					}
+				}
+			}
+		}
 	}
   # enough compounds for recalibration available? ##############################
   if(logfile[[6]][2]=="yes"){

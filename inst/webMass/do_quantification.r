@@ -17,7 +17,12 @@
 		IS_table<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 		# WHICH measurements belongs to which calibration set, if at all? ##################
-
+		measurements<-measurements[measurements[,3]=="calibration",,drop=FALSE]
+		cal_files<-measurements[measurements[,4]=="positive",,drop=FALSE]
+		cal_files<-unique(cal_files[,c(20,22,23),drop=FALSE])
+		
+		
+		
 # add to checkproject: (1) dates for calibration files in a group all equal / (2) no overlaps in dates among calibration groups
 		
 system.time({		
