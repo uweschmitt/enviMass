@@ -601,7 +601,7 @@ observe({
 		if(length(mat_cal[,1])>0){
 			output$cal_table <- DT::renderDataTable(
 				datatable(
-					dd$d,selection =c('single')
+					dd$d,selection =c('single'),options = list(lengthMenu = c(25,50,100))
 				)
 			)
 		}else{
