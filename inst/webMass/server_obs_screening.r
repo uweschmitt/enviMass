@@ -292,7 +292,8 @@ observe({
 						upper_bound<-isolate(input$screen_int_pos_up)
 						compound_table[compound_table[,1]==use_comp_ID,17]<<-as.character(lower_bound)
 						compound_table[compound_table[,1]==use_comp_ID,18]<<-as.character(upper_bound)				
-						write.table(compound_table,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)
+						write.table(compound_table,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)			
+						output$IS<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 					}
 				}
 			})
@@ -904,6 +905,7 @@ observe({
 						compound_table[compound_table[,1]==use_comp_ID,17]<<-as.character(lower_bound)
 						compound_table[compound_table[,1]==use_comp_ID,18]<<-as.character(upper_bound)				
 						write.table(compound_table,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)
+						output$IS<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 					}
 				}
 			})

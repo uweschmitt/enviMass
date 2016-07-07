@@ -1,5 +1,5 @@
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_screening.r!")}
-verbose<-FALSE
+verbose<-TRUE
 ###########################################################################################################
 # SPECIFY IONIZATION MODE #################################################################################
 observe({ 
@@ -66,21 +66,29 @@ observe({
 				targets<-targets[targets[,6]!="FALSE",,drop=FALSE]
 				targets<<-targets
 				intstand<<-intstand
-				# Update IS compounds
-				IS_names<-unique(results_screen_IS_pos_cal[[1]][,2])
+				# Update IS compounds; only use compounds that were screened & appear in the compound tables
+				IS_names1<-unique(results_screen_IS_pos_cal[[1]][,2])
+				IS_names2<-unique(intstand[,2])
+				IS_names<-intersect(IS_names1,IS_names2)
 				IS_names<-IS_names[order(IS_names)]
 				IS_names<-c("none",IS_names)
-				updateSelectInput(session,inputId="Cal_IS_name",label="Name",choices=IS_names,selected = IS_names[1])
-				IS_IDs<-unique(results_screen_IS_pos_cal[[1]][,1])		
+				updateSelectInput(session,inputId="Cal_IS_name",label="Internal standard name",choices=IS_names,selected = IS_names[1])
+				IS_IDs1<-unique(results_screen_IS_pos_cal[[1]][,1])		
+				IS_IDs2<-unique(intstand[,1])
+				IS_IDs<-intersect(IS_IDs1,IS_IDs2)
 				IS_IDs<-IS_IDs[order(IS_IDs)]
 				IS_IDs<-c("none",IS_IDs)
 				updateSelectInput(session,inputId="Cal_IS_ID",label="Internal standard ID",choices=IS_IDs,selected = IS_IDs[1])
-				# Update target compounds
-				target_names<-unique(results_screen_target_pos_cal[[1]][,2])
+				# Update target compounds; only use compounds that were screened & appear in the compound tables
+				target_names1<-unique(results_screen_target_pos_cal[[1]][,2])
+				target_names2<-unique(targets[,2])
+				target_names<-intersect(target_names1,target_names2)
 				target_names<-target_names[order(target_names)]
 				target_names<-c("none",target_names)
-				updateSelectInput(session,inputId="Cal_target_name",label="Name",choices=target_names,selected = target_names[1])
-				target_IDs<-unique(results_screen_target_pos_cal[[1]][,1])		
+				updateSelectInput(session,inputId="Cal_target_name",label="Target name",choices=target_names,selected = target_names[1])
+				target_IDs1<-unique(results_screen_target_pos_cal[[1]][,1])		
+				target_IDs2<-unique(targets[,1])
+				target_IDs<-intersect(target_IDs1,target_IDs2)
 				target_IDs<-target_IDs[order(target_IDs)]
 				target_IDs<-c("none",target_IDs)
 				updateSelectInput(session,inputId="Cal_target_ID",label="Target ID",choices=target_IDs,selected = target_IDs[1])
@@ -121,23 +129,29 @@ observe({
 				targets<-targets[targets[,6]!="FALSE",,drop=FALSE]
 				targets<<-targets
 				intstand<<-intstand
-				# Update IS compounds
-				IS_names<-unique(results_screen_IS_neg_cal[[1]][
-					results_screen_IS_neg_cal[[1]][,4]!=0
-				,2])
+				# Update IS compounds; only use compounds that were screened & appear in the compound tables
+				IS_names1<-unique(results_screen_IS_neg_cal[[1]][,2])
+				IS_names<-unique(intstand[,2])
+				#IS_names<-intersect(IS_names1,IS_names2)
 				IS_names<-IS_names[order(IS_names)]
 				IS_names<-c("none",IS_names)
-				updateSelectInput(session,inputId="Cal_IS_name",label="Name",choices=IS_names,selected = IS_names[1])
-				IS_IDs<-unique(results_screen_IS_neg_cal[[1]][,1])		
+				updateSelectInput(session,inputId="Cal_IS_name",label="Internal standard name",choices=IS_names,selected = IS_names[1])
+				IS_IDs1<-unique(results_screen_IS_neg_cal[[1]][,1])		
+				IS_IDs<-unique(intstand[,1])
+				#ID_IDs<-intersect(IS_IDs1,IS_IDs2)
 				IS_IDs<-IS_IDs[order(IS_IDs)]
 				IS_IDs<-c("none",IS_IDs)
 				updateSelectInput(session,inputId="Cal_IS_ID",label="Internal standard ID",choices=IS_IDs,selected = IS_IDs[1])
-				# Update target compounds
-				target_names<-unique(results_screen_target_neg_cal[[1]][,2])
+				# Update target compounds; only use compounds that were screened & appear in the compound tables
+				target_names1<-unique(results_screen_target_neg_cal[[1]][,2])
+				target_names<-unique(targets[,2])
+				#target_names<-intersect(target_names1,target_names2)
 				target_names<-target_names[order(target_names)]
 				target_names<-c("none",target_names)
-				updateSelectInput(session,inputId="Cal_target_name",label="Name",choices=target_names,selected = target_names[1])
-				target_IDs<-unique(results_screen_target_neg_cal[[1]][,1])		
+				updateSelectInput(session,inputId="Cal_target_name",label="Target name",choices=target_names,selected = target_names[1])
+				target_IDs1<-unique(results_screen_target_neg_cal[[1]][,1])	
+				target_IDs<-unique(targets[,1])				
+				#target_IDs<-intersect(target_IDs1,target_IDs2)
 				target_IDs<-target_IDs[order(target_IDs)]
 				target_IDs<-c("none",target_IDs)
 				updateSelectInput(session,inputId="Cal_target_ID",label="Target ID",choices=target_IDs,selected = target_IDs[1])
@@ -165,20 +179,85 @@ observe({
 ###########################################################################################################
 # MATCH COMPOUND NAMES AND ID SELECTIONS ##################################################################
 observe({ 
-	input$Cal_IS_ID
+	input$Cal_target_ID
 	if(verbose){cat("\n in C")}
+	if((isolate(init$a)=="TRUE")){
+		if(isolate(input$Cal_target_ID)!="none"){
+				if(isolate(input$Ion_mode_Cal)=="positive"){
+					# update target name
+					use_this_name<-targets[targets[,1]==isolate(input$Cal_target_ID),2]
+					#unique(results_screen_target_pos_cal[[1]][
+					#	as.character(results_screen_target_pos_cal[[1]][,1])==isolate(input$Cal_target_ID)
+					#,2,drop=FALSE])				
+					updateSelectInput(session,inputId="Cal_target_name",selected = as.character(use_this_name))
+					# update IS ID, if set in compound table
+					new_IS_ID<-targets[targets[,1]==isolate(input$Cal_target_ID),6]
+if(verbose){cat(" -p- ");cat(new_IS_ID)}
+					if(length(new_IS_ID)>0){ # just in case ...
+						if(new_IS_ID!="FALSE"){
+							updateSelectInput(session,inputId="Cal_IS_ID",selected = as.character(new_IS_ID))
+						}
+					}
+				}
+				if(isolate(input$Ion_mode_Cal)=="negative"){
+					use_this_name<-targets[targets[,1]==isolate(input$Cal_target_ID),2]
+					#unique(results_screen_target_neg_cal[[1]][
+					#	as.character(results_screen_target_neg_cal[[1]][,1])==isolate(input$Cal_target_ID)
+					#,2,drop=FALSE])
+					updateSelectInput(session,inputId="Cal_target_name",selected = as.character(use_this_name))
+					# update IS ID, if set in compound table
+					new_IS_ID<-targets[targets[,1]==isolate(input$Cal_target_ID),6]
+if(verbose){cat(" -n- ");cat(new_IS_ID)}
+					if(length(new_IS_ID)>0){ # just in case ...
+						if(new_IS_ID!="FALSE"){
+							updateSelectInput(session,inputId="Cal_IS_ID",selected = as.character(new_IS_ID))
+						}
+					}
+				}
+		}else{	
+			updateSelectInput(session,inputId="Cal_target_name",selected="none")
+		}
+	}	
+})
+
+observe({ 
+	input$Cal_target_name
+	if(verbose){cat("\n in D")}
+	if((isolate(init$a)=="TRUE")&(isolate(input$Cal_target_name)!="none")){
+			if(isolate(input$Ion_mode_Cal)=="positive"){
+				use_this_ID<-use_this_name<-targets[targets[,2]==isolate(input$Cal_target_name),1]
+				#unique(results_screen_target_pos_cal[[1]][
+				#	as.character(results_screen_target_pos_cal[[1]][,2])==isolate(input$Cal_target_name)
+				#,1,drop=FALSE])
+				updateSelectInput(session,inputId="Cal_target_ID",selected = as.character(use_this_ID))
+			}
+			if(isolate(input$Ion_mode_Cal)=="negative"){	
+				use_this_ID<-use_this_name<-targets[targets[,2]==isolate(input$Cal_target_name),1]
+				#unique(results_screen_target_neg_cal[[1]][
+				#	as.character(results_screen_target_neg_cal[[1]][,2])==isolate(input$Cal_target_name)
+				#,1,drop=FALSE])
+				updateSelectInput(session,inputId="Cal_target_ID",selected = as.character(use_this_ID))
+			}
+	}	
+})
+
+observe({ 
+	input$Cal_IS_ID
+	if(verbose){cat("\n in E")}
 	if((isolate(init$a)=="TRUE")){
 		if(isolate(input$Cal_IS_ID)!="none"){
 				if(isolate(input$Ion_mode_Cal)=="positive"){
-					use_this_name<-unique(results_screen_IS_pos_cal[[1]][
-						as.character(results_screen_IS_pos_cal[[1]][,1])==isolate(input$Cal_IS_ID)
-					,2,drop=FALSE])
+					use_this_name<-intstand[intstand[,1]==isolate(input$Cal_IS_ID),2]
+					#unique(results_screen_IS_pos_cal[[1]][
+					#	as.character(results_screen_IS_pos_cal[[1]][,1])==isolate(input$Cal_IS_ID)
+					#,2,drop=FALSE])
 					updateSelectInput(session,inputId="Cal_IS_name",selected = as.character(use_this_name))
 				}
 				if(isolate(input$Ion_mode_Cal)=="negative"){
-					use_this_name<-unique(results_screen_IS_neg_cal[[1]][
-						as.character(results_screen_IS_neg_cal[[1]][,1])==isolate(input$Cal_IS_ID)
-					,2,drop=FALSE])
+					use_this_name<-intstand[intstand[,1]==isolate(input$Cal_IS_ID),2]
+					#unique(results_screen_IS_neg_cal[[1]][
+					#	as.character(results_screen_IS_neg_cal[[1]][,1])==isolate(input$Cal_IS_ID)
+					#,2,drop=FALSE])
 					updateSelectInput(session,inputId="Cal_IS_name",selected = as.character(use_this_name))
 				}
 		}else{
@@ -189,63 +268,21 @@ observe({
 
 observe({ 
 	input$Cal_IS_name
-	if(verbose){cat("\n in D")}
+	if(verbose){cat("\n in F")}
 	if((isolate(init$a)=="TRUE")&(isolate(input$Cal_IS_name)!="none")){
 			if(isolate(input$Ion_mode_Cal)=="positive"){
-				use_this_ID<-unique(results_screen_IS_pos_cal[[1]][
-					as.character(results_screen_IS_pos_cal[[1]][,2])==isolate(input$Cal_IS_name)
-				,1,drop=FALSE])
+				use_this_ID<-intstand[intstand[,2]==isolate(input$Cal_IS_name),1]
+				#unique(results_screen_IS_pos_cal[[1]][
+				#	as.character(results_screen_IS_pos_cal[[1]][,2])==isolate(input$Cal_IS_name)
+				#,1,drop=FALSE])
 				updateSelectInput(session,inputId="Cal_IS_ID",selected = as.character(use_this_ID))
 			}
 			if(isolate(input$Ion_mode_Cal)=="negative"){
-				use_this_ID<-unique(results_screen_IS_neg_cal[[1]][
-					as.character(results_screen_IS_neg_cal[[1]][,2])==isolate(input$Cal_IS_name)
-				,1,drop=FALSE])
+				use_this_ID<-intstand[intstand[,2]==isolate(input$Cal_IS_name),1]
+				#unique(results_screen_IS_neg_cal[[1]][
+				#	as.character(results_screen_IS_neg_cal[[1]][,2])==isolate(input$Cal_IS_name)
+				#,1,drop=FALSE])
 				updateSelectInput(session,inputId="Cal_IS_ID",selected = as.character(use_this_ID))
-			}
-	}	
-})
-
-observe({ 
-	input$Cal_target_ID
-	if(verbose){cat("\n in E")}
-	if((isolate(init$a)=="TRUE")){
-		if(isolate(input$Cal_target_ID)!="none"){
-				if(isolate(input$Ion_mode_Cal)=="positive"){
-					use_this_name<-unique(results_screen_target_pos_cal[[1]][
-						as.character(results_screen_target_pos_cal[[1]][,1])==isolate(input$Cal_target_ID)
-					,2,drop=FALSE])				
-					updateSelectInput(session,inputId="Cal_target_name",selected = as.character(use_this_name))
-				}
-				if(isolate(input$Ion_mode_Cal)=="negative"){
-					load(file=file.path(logfile[[1]],"quantification","results_screen_target_neg_cal"),envir=as.environment(".GlobalEnv"));	
-					use_this_name<-unique(results_screen_target_neg_cal[[1]][
-						as.character(results_screen_target_neg_cal[[1]][,1])==isolate(input$Cal_target_ID)
-					,2,drop=FALSE])
-					updateSelectInput(session,inputId="Cal_target_name",selected = as.character(use_this_name))
-				}
-		}else{	
-			updateSelectInput(session,inputId="Cal_target_name",selected="none")
-		}
-	}	
-})
-
-observe({ 
-	input$Cal_target_name
-	if(verbose){cat("\n in F")}
-	if((isolate(init$a)=="TRUE")&(isolate(input$Cal_target_name)!="none")){
-			if(isolate(input$Ion_mode_Cal)=="positive"){
-				use_this_ID<-unique(results_screen_target_pos_cal[[1]][
-					as.character(results_screen_target_pos_cal[[1]][,2])==isolate(input$Cal_target_name)
-				,1,drop=FALSE])
-				updateSelectInput(session,inputId="Cal_target_ID",selected = as.character(use_this_ID))
-			}
-			if(isolate(input$Ion_mode_Cal)=="negative"){
-				load(file=file.path(logfile[[1]],"quantification","results_screen_IS_neg_cal"),envir=as.environment(".GlobalEnv"));	
-				use_this_ID<-unique(results_screen_target_neg_cal[[1]][
-					as.character(results_screen_target_neg_cal[[1]][,2])==isolate(input$Cal_target_name)
-				,1,drop=FALSE])
-				updateSelectInput(session,inputId="Cal_target_ID",selected = as.character(use_this_ID))
 			}
 	}	
 })
@@ -263,14 +300,18 @@ observe({
 		at_target_ID<-"none"
 		at_IS_ID<-"none"
 		if( (length(in_table)==0) || (is.na(in_table[1])) ){ # match with is_at_ISID not existing in table; reset to first available entry
+			if(verbose){cat("\n in G_1")}
 			in_table<-which(targets[,1]==is_at_targetID)
 			in_table<-in_table[1]
 			if( (length(in_table)==0) || (is.na(in_table[1])) ){ # for any invalid entry, start from beginning
+				if(verbose){cat("\n in G_1_1")}
 				in_table<-1
 			}
 			at_target_ID<-as.character(targets[in_table,1])
 			at_IS_ID<-as.character(targets[in_table,6])	
+cat(" - ");cat(at_IS_ID)
 		}else{ # match existing; get next entry
+			if(verbose){cat("\n in G_2")}
 			if(in_table<length(targets[,1])){
 				in_table<-(in_table+1)
 				at_target_ID<-as.character(targets[in_table,1])
@@ -349,9 +390,7 @@ observe({
 		updateSelectInput(session, inputId="Cal_IS_ID", selected = at_IS_ID)
 	}
 })
-
 ###########################################################################################################
-
 
 ###########################################################################################################
 # RETRIEVE SETS ###########################################################################################
@@ -363,7 +402,26 @@ observe({
 	input$Cal_target_ID
 	input$Cal_target_name
 	if(verbose){cat("\n in K")}
-	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_IS_ID)!="none") & (isolate(input$Cal_target_ID)!="none")& (isolate(input$Cal_file_set)!="none")){	
+	# anything available from calibration screening?
+	nothing<-TRUE
+	if(isolate(input$Ion_mode_Cal)=="positive"){ # check if compounds in tables are also found in screening outcomes!
+		if(
+			any(as.character(results_screen_target_pos_cal[[1]][,1])==isolate(input$Cal_target_ID)) &
+			any(as.character(results_screen_IS_pos_cal[[1]][,1])==isolate(input$Cal_IS_ID))
+		){
+			nothing<-FALSE
+		}
+	}
+	if(isolate(input$Ion_mode_Cal)=="negative"){ # check if compounds in tables are also found in screening outcomes!
+		if(
+			any(as.character(results_screen_target_neg_cal[[1]][,1])==isolate(input$Cal_target_ID)) &
+			any(as.character(results_screen_IS_neg_cal[[1]][,1])==isolate(input$Cal_IS_ID))
+		){
+			nothing<-FALSE
+		}
+	}	
+	if(verbose){cat(nothing)}
+	if((isolate(init$a)=="TRUE") & (!nothing) & (isolate(input$Cal_IS_ID)!="none") & (isolate(input$Cal_target_ID)!="none")&  (isolate(input$Cal_file_set)!="none")){	
 		# POSITIVE ##################################################################
 		if(isolate(input$Ion_mode_Cal)=="positive"){	
 			if(verbose){cat("\n in K_1")}
@@ -397,7 +455,7 @@ observe({
 									IS_with_peak<-c(IS_with_peak,res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[that,2])
 									IS_with_score<-c(IS_with_score,res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$score_1)	
 								}
-								}
+							}
 						}
 					}
 				}
@@ -448,7 +506,7 @@ observe({
 								rep(1,length(those)),
 								round(rep(profileList_pos_cal[[2]][target_with_peak[i],2],length(those)),digits=0), # intensity target
 								round(profileList_pos_cal[[2]][IS_with_peak[those],2],digits=0), 					# intensity IS
-								round((profileList_pos_cal[[2]][target_with_peak[i],2]/(profileList_pos_cal[[2]][IS_with_peak[those],2])),digits=2), # ratio									
+								round((profileList_pos_cal[[2]][target_with_peak[i],2]/(profileList_pos_cal[[2]][IS_with_peak[those],2])),digits=3), # ratio									
 								rep(as.numeric(
 									measurements[measurements[,1]==target_in_file[i],]$tag1	
 								),length(those)), # concentration
@@ -479,9 +537,14 @@ observe({
 			target_ID<-isolate(input$Cal_target_ID)
 			at_Cal<-isolate(input$Cal_file_set)
 			#target_ID<-"4"; IS_ID<-"693";at_Cal<-"A"			
+			if(verbose){cat("\n in K_negative_1_2")}
 			# extract IS peaks ######################################################
 			IS_adduct<-intstand[intstand[,1]==IS_ID,19]
 			IS_peak<-as.numeric(intstand[intstand[,1]==IS_ID,20])
+cat("\n-");cat(IS_ID);
+cat("\n-");cat(target_ID);
+cat("\n-");cat(IS_adduct);
+cat("\n-");cat(IS_peak);
 			at_entry<-FALSE
 			for(i in 1:length(names(res_IS_neg_screen_cal))){ # where?
 				if(
@@ -491,6 +554,7 @@ observe({
 					at_entry<-i;break;
 				}
 			}
+			if(verbose){cat("\n in K_negative_1_3")}
 			IS_in_file<-c()
 			IS_with_peak<-c()
 			IS_with_score<-c()
@@ -580,9 +644,11 @@ observe({
 			mat_cal<<-mat_cal
 			dd$d<-mat_cal
 		}
+	}else{
+		dd$d<-matrix(ncol=2,nrow=0,0)
 	}	
 })				
-				
+###########################################################################################################				
 
 ###########################################################################################################
 # PLOT SETS & OUTPUT TABLE ################################################################################
@@ -596,9 +662,9 @@ observe({
 	input$Cal_target_name
 	redo_cal$a
 	if(verbose){cat("\n in L")}
-	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_IS_ID)!="none") & (isolate(input$Cal_target_ID)!="none")& (isolate(input$Cal_file_set)!="none")){					
+	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_IS_ID)!="none")  & (isolate(input$Cal_target_ID)!="none")& (isolate(input$Cal_file_set)!="none")){					
 		# generate outputs ######################################################
-		if(length(mat_cal[,1])>0){
+		if(length(dd$d[,1])>0){
 			output$cal_table <- DT::renderDataTable(
 				datatable(
 					dd$d,selection =c('single'),options = list(lengthMenu = c(25,50,100))
@@ -627,7 +693,9 @@ observe({
 				plot(dd$d[,5], dd$d[,4],
 				xlab="Concentration",ylab="Intensity ratio",pch=19,
 				xlim=ranges_cal_plot$y,ylim=ranges_cal_plot$x,
-				main="Brush and double-click to zoom in, double-click to zoom out.",cex.main=1,col="white")
+				main="Brush and double-click to zoom in, double-click to zoom out.",cex.main=1,col="white")#,yaxs="i",xaxs="i")
+				abline(h=0,col="lightgrey")
+				abline(v=0,col="lightgrey")				
 				points(dd$d[dd$d[,8]==1,5], dd$d[dd$d[,8]==1,4],col="black",pch=19)
 				points(dd$d[dd$d[,8]==0,5], dd$d[dd$d[,8]==0,4],col="gray",pch=19)				
 				if((!is.null(ranges_cal_plot$x))||(!is.null(ranges_cal_plot$y))){
@@ -635,7 +703,7 @@ observe({
 				}
 				if(sum(dd$d[,8])>=2){
 					lin<-(dd$d[dd$d[,8]==1,5])
-					resp<-dd$d[dd$d[,8]==1,4]
+					resp<-(dd$d[dd$d[,8]==1,4])
 					if(isolate(input$cal_model)=="linear"){
 						cal_model<<-lm(resp~lin)
 						abline(cal_model,col="red",lwd=2)
@@ -746,11 +814,10 @@ observeEvent(
 
 ###########################################################################################################
 # SAVE & REMOVE MODELS ####################################################################################
-
 observe({ 
 	input$save_Cal
+	if(verbose){cat("\n in P")}
 	if((isolate(init$a)=="TRUE")){
-		if(verbose){cat("\n in P")}
 		if(isolate(input$Ion_mode_Cal)=="positive"){
 			IS_ID<-isolate(input$Cal_IS_ID)
 			target_ID<-isolate(input$Cal_target_ID)
@@ -815,8 +882,8 @@ observe({
 
 observe({ 
 	input$remove_Cal
+	if(verbose){cat("\n in Q")}
 	if((isolate(init$a)=="TRUE")){
-		if(verbose){cat("\n in Q")}
 		if(isolate(input$Ion_mode_Cal)=="positive"){
 			IS_ID<-isolate(input$Cal_IS_ID)
 			target_ID<-isolate(input$Cal_target_ID)
@@ -853,9 +920,7 @@ observe({
 		isolate(redo_cal$a<-(redo_cal$a+1))
 	}
 })
-
 ###########################################################################################################
-
 
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_screening.r!")}
  
