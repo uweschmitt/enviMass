@@ -53,7 +53,7 @@
 								column(width = 5,textInput("Measadd_tag2", "Calibration group (required; tag2)", value = "Group A")),
 								column(width = 5,dateInput("Measadd_cal_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
 								column(width = 5,textInput("Measadd_cal_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
-								column(width = 5,dateInput("Measadd_cal_date2", "Date end", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+								column(width = 5,dateInput("Measadd_cal_date2", "Date end", value="2018-01-01", min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
 								column(width = 5,textInput("Measadd_cal_time2", "Time end (HH:MM:SS)", value = "12:00:00"))							
 							)
 						),
@@ -113,6 +113,32 @@
 						HTML('<hr noshade="noshade" />'),
 						bsButton("Modif_export","Save",style="primary")
 					),
+					# MODIFY CALIBRATION GROUP ######################################
+					bsCollapsePanel("Modify or copy a calibration group", 
+helpText("WARNING: this feature is currently under development."),
+HTML('<hr noshade="noshade" />'),
+						fluidRow(
+							column(width = 6, helpText("Load a calibration group to be modified or copied below. Insert the calibration group name (tag2 in the file table) and press Load.")),
+							column(width = 3, textInput("Modif_cal_group", "Calibration group:", value = "XY"), bsButton("Load_cal","Load",style="primary"))
+						),
+						HTML('<hr noshade="noshade" />'),
+						
+							fluidRow(
+								column(width = 5,textInput("Modif_calgroup_tag2", "Calibration group (tag2)", value = "FALSE")),
+								column(width = 5,dateInput("Modif_calgroup_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+								column(width = 5,textInput("Modif_calgroup_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
+								column(width = 5,dateInput("Modif_calgroup_date2", "Date end", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+								column(width = 5,textInput("Modif_calgroup_time2", "Time end (HH:MM:SS)", value = "12:00:00"))							
+							),
+						
+						
+					
+						helpText("Save the changed specifications for all files of the above loaded calibration group:"),
+						bsButton("Change_cal","Save",style="primary"),					
+						HTML('<hr noshade="noshade" />'),
+						helpText("Copy the calibration group to create a new group with a different name:"),
+						bsButton("Copy_cal","Copy",style="primary")						
+					),		
 					# BATCH UPLOAD ##################################################
 					bsCollapsePanel("Batch upload from folder", 	
 						tags$h5("Read in batches of files (.mzXML) from a folder; file specifications will be guessed and can later be modified above. 

@@ -629,7 +629,7 @@ observe({
 				plot(dd$d[,5], dd$d[,4],
 				xlab="Concentration",ylab="Intensity ratio",pch=19,
 				xlim=ranges_cal_plot$y,ylim=ranges_cal_plot$x,
-				main="Select a rectangle and double-click with hand to zoom into it, double-click to zoom out.",cex.main=1,col="white")#,yaxs="i",xaxs="i")
+				main="Draw rectangles and double-click into them to zoom, double-click again to zoom out.",cex.main=1,col="white")#,yaxs="i",xaxs="i")
 				abline(h=0,col="lightgrey")
 				abline(v=0,col="lightgrey")				
 				points(dd$d[dd$d[,8]==1,5], dd$d[dd$d[,8]==1,4],col="black",pch=19)
