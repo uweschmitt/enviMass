@@ -795,7 +795,12 @@
 										)
 									)
 								),
-								selectInput("cal_model", "Select calibration model", choices = c("linear","quadratic"), "linear"),
+								HTML('<hr noshade="noshade" />'),
+								fluidRow(
+									column(4,selectInput("cal_model", "Select calibration model (red in above plot)", choices = c("linear","quadratic"), "linear")),
+									column(4,checkboxInput("cal_model_0intercept", "Force 0-intercept?",  width = NULL))
+								),
+								textOutput('cal_model_summary'),					
 								HTML('<hr noshade="noshade" />'),
 								helpText("Click into the below table rows to select and deselect data points for the above calibration model (red line):"),
 								fluidRow(
