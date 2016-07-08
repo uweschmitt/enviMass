@@ -1,5 +1,5 @@
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_screening.r!")}
-verbose<-TRUE
+verbose<-FALSE
 ###########################################################################################################
 # SPECIFY IONIZATION MODE #################################################################################
 observe({ 
@@ -602,8 +602,8 @@ observe({
 			output$cal_table <- DT::renderDataTable(
 				datatable(
 					dd$d,selection =c('single'),options = list(lengthMenu = c(25,50,100))
-				)%>% 
-					formatStyle('Used?',backgroundColor = styleInterval(0.5, c('orange', 'lightgreen')))
+				)%>%
+				formatStyle('Used?',backgroundColor = styleInterval(0.5, c('orange', 'lightgreen')))
 			)
 		}else{
 			output$cal_table <- renderDataTable(
@@ -847,6 +847,7 @@ observe({
 			save(cal_models_neg,file=file.path(logfile[[1]],"quantification","cal_models_neg"),envir=as.environment(".GlobalEnv"));	
 			cat("\n Calibration model saved")
 		}
+		enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE)	
 		isolate(redo_cal$a<-(redo_cal$a+1))
 	}
 })
@@ -888,6 +889,7 @@ observe({
 			save(cal_models_neg,file=file.path(logfile[[1]],"quantification","cal_models_neg"),envir=as.environment(".GlobalEnv"));			
 
 		}
+		enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE)	
 		isolate(redo_cal$a<-(redo_cal$a+1))
 	}
 })

@@ -21,12 +21,12 @@
 				bsCollapse(multiple = FALSE, open = "files_open", id = "files",
 					# ADD FILE #################################################
 					bsCollapsePanel("Add LC-HRMS file", 		
-						helpText("To add a new file, set the below specifications accordingly and select it."),
-						HTML('<hr noshade="noshade" />'),												
-						fluidRow(
-							column(width = 5, numericInput("Measadd_ID", "Numeric ID:", value = "123")),
-							column(width = 5, radioButtons("Measadd_ID_autom", "...or assign ID automatically (highly recommended)?", c("yes"="yes","no"="no")))							
-						),
+						helpText("To add a new file.mzXML, set its specifications below and upload it."),
+						#HTML('<hr noshade="noshade" />'),												
+						#fluidRow( # BETTER HAVE THAT AUTOMATIZED PER DEFAULT
+						#	column(width = 5, numericInput("Measadd_ID", "Numeric ID:", value = "123")),
+						#	column(width = 5, radioButtons("Measadd_ID_autom", "...or assign ID automatically (highly recommended)?", c("yes"="yes","no"="no")))							
+						#),
 						HTML('<hr noshade="noshade" />'),
 						fluidRow(
 							column(width = 5, textInput("Measadd_name", "Name:", value = "Sample 1")),
@@ -59,7 +59,7 @@
 						),
 						HTML('<hr noshade="noshade" />'),
 						div(style = widget_style,
-							fileInput("Measadd_path", "Select centroided .mzXML file:", multiple = FALSE, accept = c(".mzXML",".raw")),
+							fileInput("Measadd_path", "Upload centroided .mzXML file:", multiple = FALSE, accept = c(".mzXML",".raw")),
 							bsPopover("Measadd_path", 
 								title = "WARNING",
 								content = "Files must be centroided. Check Package enviPick whether peaks can be picked properly from your files. Tested with Orbitrap files only.
@@ -75,7 +75,7 @@
 						bsButton("Measdel","Remove",style="primary")		
 					),				
 					# MODIFY FILE ##################################################
-					bsCollapsePanel("Modify a file specification", 
+					bsCollapsePanel("Modify specifications for a single file", 
 						fluidRow(
 							column(width = 4, helpText("Load settings of a file into below mask by its ID, modify and then save the new settings into the main table. Modifications make a full recalculation default.")),
 							column(width = 3, textInput("Modif_ID", "ID:", value = "123"), bsButton("Modif_load","Load",style="primary"))
@@ -102,7 +102,7 @@
 							condition = "input.Modif_type == 'calibration'", 
 							HTML('<hr noshade="noshade" />'),
 							fluidRow(
-								column(width = 5,textInput("Modif_tag1", "Concentration (no units; tag1)", value = "FALSE")),
+								column(width = 5,textInput("Modif_tag1", "Concentration (no units; tag1)", value = "0")),
 								column(width = 5,textInput("Modif_tag2", "Calibration group (tag2)", value = "FALSE")),
 								column(width = 5,dateInput("Modif_cal_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
 								column(width = 5,textInput("Modif_cal_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
@@ -114,30 +114,33 @@
 						bsButton("Modif_export","Save",style="primary")
 					),
 					# MODIFY CALIBRATION GROUP ######################################
-					bsCollapsePanel("Modify or copy a calibration group", 
-helpText("WARNING: this feature is currently under development."),
-HTML('<hr noshade="noshade" />'),
+					bsCollapsePanel("Modify, copy or delete a calibration group", 
 						fluidRow(
-							column(width = 6, helpText("Load a calibration group to be modified or copied below. Insert the calibration group name (tag2 in the file table) and press Load.")),
-							column(width = 3, textInput("Modif_cal_group", "Calibration group:", value = "XY"), bsButton("Load_cal","Load",style="primary"))
+							column(width = 4, helpText("Load a calibration group to be modified, deleted or copied below. To do so, select the ionization mode, insert the calibration group name (tag2 in the file table) and press Load.")),
+							column(width = 3, selectInput("Modif_cal_mode", "Choose ionization mode:", choices = c("positive", "negative"))),
+							column(width = 3, textInput("Modif_cal_group", "Calibration group:", value = "existing_group"), bsButton("Load_cal","Load",style="primary"))
 						),
 						HTML('<hr noshade="noshade" />'),
-						
-							fluidRow(
-								column(width = 5,textInput("Modif_calgroup_tag2", "Calibration group (tag2)", value = "FALSE")),
-								column(width = 5,dateInput("Modif_calgroup_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-								column(width = 5,textInput("Modif_calgroup_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
-								column(width = 5,dateInput("Modif_calgroup_date2", "Date end", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-								column(width = 5,textInput("Modif_calgroup_time2", "Time end (HH:MM:SS)", value = "12:00:00"))							
-							),
-						
-						
-					
-						helpText("Save the changed specifications for all files of the above loaded calibration group:"),
+						htmlOutput('Modif_cal_text_load'),
+						HTML('<hr noshade="noshade" />'),
+						helpText("Modify the specifications for all files of the above loaded calibration group and press Save to make the changes permanent"),
+						fluidRow(
+							column(width = 5,dateInput("Modif_calgroup_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+							column(width = 5,textInput("Modif_calgroup_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
+							column(width = 5,dateInput("Modif_calgroup_date2", "Date end", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+							column(width = 5,textInput("Modif_calgroup_time2", "Time end (HH:MM:SS)", value = "12:00:00"))
+						),
 						bsButton("Change_cal","Save",style="primary"),					
 						HTML('<hr noshade="noshade" />'),
-						helpText("Copy the calibration group to create a new group with a different name:"),
-						bsButton("Copy_cal","Copy",style="primary")						
+						helpText("Copy the calibration group to create a new calibration group with a different name. This will directly incorporate the above (changed) specifications for the new group."),
+						textInput("Copy_cal_group", "New calibration group name:", value = "new_group"),
+						bsButton("Copy_cal","Copy",style="primary"),	
+						HTML('<hr noshade="noshade" />'),
+						helpText("Delete all the files and any associated contents of the loaded calibration group."),
+						bsButton("Del_cal","Delete",style="primary"),
+						bsModal("Del_cal_confirm", "Sure about deleting the selected calibration file set?", "Del_cal", size = "small",
+							bsButton("yes_delete_cal","Yes",style="warning")
+						)
 					),		
 					# BATCH UPLOAD ##################################################
 					bsCollapsePanel("Batch upload from folder", 	
@@ -172,7 +175,16 @@ HTML('<hr noshade="noshade" />'),
 						bsButton("Import_project","Import",style="primary"),		
 						HTML('<hr noshade="noshade" />'),
 						textOutput("had_import_project")	
-					)					
+					),
+					bsCollapsePanel("File overview", 	
+						plotOutput("file_overview", 
+							dblclick = "file_overview_dblclick",
+							brush = brushOpts(
+								id = "file_overview_brush",
+								resetOnNew = TRUE
+							)
+						)
+					)
 				),	
 			HTML('<hr noshade="noshade" />'),
 			DT::dataTableOutput("measurements")	

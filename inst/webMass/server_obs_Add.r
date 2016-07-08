@@ -218,11 +218,11 @@ addmeasu<-reactive({
 					measurements1<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 					nameit<-names(measurements1);
 					measurements1<-measurements1[measurements1[,1]!="-",]		
-					if(isolate(input$Measadd_ID_autom)=="yes"){
+					#if(isolate(input$Measadd_ID_autom)=="yes"){
 						newID<-getID(as.numeric(measurements1[,1]))
-					}else{
-						newID<-as.character(isolate(input$Measadd_ID))
-					}
+					#}else{
+						#newID<-as.character(isolate(input$Measadd_ID))
+					#}
 					file.copy(
 					  from=isolate(input$Measadd_path[[4]]),
 					  to=file.path(logfile[[1]],"files",paste(as.character(newID),".raw",sep="")),
@@ -300,11 +300,11 @@ addmeasu<-reactive({
 				measurements1<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 				nameit<-names(measurements1);
 				measurements1<-measurements1[measurements1[,1]!="-",]		
-				if(isolate(input$Measadd_ID_autom)=="yes"){
+				#if(isolate(input$Measadd_ID_autom)=="yes"){
 					newID<-getID(as.numeric(measurements1[,1]))
-				}else{
-					newID<-as.character(isolate(input$Measadd_ID))
-				}
+				#}else{
+				#	newID<-as.character(isolate(input$Measadd_ID))
+				#}
 				file.copy(
 					from=isolate(input$Measadd_path[[4]]),
 					to=file.path(logfile[[1]],"files",paste(as.character(newID),".mzXML",sep="")),
@@ -653,7 +653,7 @@ output$had_import_project<-renderText(paste(impproj()))
 ##############################################################################
 
 ############################################################################## 
-# MODIFY MEASUREMENTS ########################################################  
+# MODIFY SINGLE MEASUREMENT FILES ############################################  
 # LOAD
 observe({
 	input$Modif_load
@@ -672,12 +672,10 @@ observe({
 			updateTextInput(session, "Modif_tag3",value = as.character(measurements3[measurements3[,1]==atID,21]))
 			updateSelectInput(session, "Modif_include", selected = as.character(measurements3[measurements3[,1]==atID,8]))
 			updateSelectInput(session, "Modif_profiled", selected = as.character(measurements3[measurements3[,1]==atID,15]))
-
 			updateDateInput(session, "Modif_cal_date1", value = as.character(measurements3[measurements3[,1]==atID,6]))
 			updateTextInput(session, "Modif_cal_time1",value = as.character(measurements3[measurements3[,1]==atID,7]))
 			updateDateInput(session, "Modif_cal_date2", value = as.character(measurements3[measurements3[,1]==atID,22]))
 			updateTextInput(session, "Modif_cal_time2",value = as.character(measurements3[measurements3[,1]==atID,23]))
-			
 			output$dowhat<-renderText("Specifications loaded into mask.");
 			cat("\n specifications loaded into mask")
 			rm(measurements3)
@@ -784,6 +782,226 @@ observe({
 		}
 	}
 })  
+##############################################################################  
+
+############################################################################## 
+# MODIFY CALIBRATION GROUP ###################################################
+# LOAD
+observe({
+	input$Load_cal
+	if(isolate(input$Load_cal)){
+		measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		measurements3<-measurements3[measurements3[,4]==isolate(input$Modif_cal_mode),,drop=FALSE]
+		measurements3<-measurements3[measurements3[,3]=="calibration",,drop=FALSE]
+		measurements3<-measurements3[measurements3$tag2==isolate(input$Modif_cal_group),,drop=FALSE]		
+		if(length(measurements3[,1])>0){
+			updateDateInput(session, "Modif_calgroup_date1", value = as.character(measurements3[1,6]))
+			updateTextInput(session, "Modif_calgroup_time1",value = as.character(measurements3[1,7]))
+			updateDateInput(session, "Modif_calgroup_date2", value = as.character(measurements3[1,22]))
+			updateTextInput(session, "Modif_calgroup_time2",value = as.character(measurements3[1,23]))			
+			cat("\nCalibration group loaded")
+			concen<-paste(measurements3$tag1[order(as.numeric(measurements3$tag1),decreasing=FALSE)],sep="",collapse=", ")
+			text_out<-paste("Group with ",length(measurements3[,1])," files selected, containing target concentrations of ",concen,".",sep="")
+			if(length(unique(measurements3[,6]))!=1){
+				text_out<-paste(text_out,"WARNING: group files have different start dates. Should be corrected!", sep = '<br/>')
+			}
+			if(length(unique(measurements3[,7]))!=1){
+				text_out<-paste(text_out,"WARNING: group files have different start times. Should be corrected!", sep = '<br/>')			
+			}
+			if(length(unique(measurements3[,22]))!=1){
+				text_out<-paste(text_out,"WARNING: group files have different end dates. Should be corrected!", sep = '<br/>')			
+			}
+			if(length(unique(measurements3[,23]))!=1){
+				text_out<-paste(text_out,"WARNING: group files have different end times. Should be corrected!", sep = '<br/>')	
+			}			
+			output$Modif_cal_text_load<-renderText({text_out})
+		}else{
+			cat("\nInvalid calibration group")		
+			output$Modif_cal_text_load<-renderText({"Invalid calibration group selected. Nothing to load."})
+		}
+	}
+})
+# MODIFY
+observe({
+	input$Change_cal
+	if(isolate(input$Change_cal)){
+		measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		for_those<-which( 
+			(measurements3$tag2==isolate(input$Modif_cal_group)) &
+			(measurements3$Mode==isolate(input$Modif_cal_mode))
+		)
+		cat(for_those)
+		if(length(for_those)>0){
+			measurements3[for_those,6]<-as.character(isolate(input$Modif_calgroup_date1))
+			measurements3[for_those,6]<-enviMass:::convDate(measurements3[for_those,6]);
+			measurements3[for_those,7]<-as.character(isolate(input$Modif_calgroup_time1))	
+			measurements3[for_those,22]<-as.character(isolate(input$Modif_calgroup_date2))
+			measurements3[for_those,22]<-enviMass:::convDate(measurements3[for_those,22]);
+			measurements3[for_those,23]<-as.character(isolate(input$Modif_calgroup_time2))		
+			any_include<-any(measurements3[for_those,8]=="TRUE")
+			write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+			rm(measurements3)
+			any_calibrated<-FALSE
+			if(isolate(input$Modif_cal_mode)=="positive"){ # check occurence in positive calibration models
+				load(file=file.path(logfile[[1]],"quantification","cal_models_pos"),envir=as.environment(".GlobalEnv"));	
+				if(any(names(cal_models_pos)==isolate(input$Modif_cal_mode))){ # make an entry for this calibration set, always at end
+					any_calibrated<-TRUE;
+				}
+				rm(cal_model_pos)
+			}
+			if(isolate(input$Modif_cal_mode)=="negative"){ # check occurence in negative calibration models
+				load(file=file.path(logfile[[1]],"quantification","cal_models_neg"),envir=as.environment(".GlobalEnv"));	
+				if(any(names(cal_models_neg)==isolate(input$Modif_cal_mode))){ # make an entry for this calibration set, always at end
+					any_calibrated<-TRUE;
+				}
+				rm(cal_model_neg)
+			}			
+			if( any_include & any_calibrated ){ # included & calibration models exist? Changed time period only affects quantification, calibration models remain the same
+				enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE)					
+			}	
+			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 			
+			output$Modif_cal_text_load<-renderText({"Modified specifications saved."})
+			cat("\n Changed calibration group specifications.")
+		}else{
+			output$Modif_cal_text_load<-renderText({"Invalid group to modify. Done nothing."})
+			cat("\n Invalid group to modify. Done nothing.")		
+		}
+	}
+})	
+# COPY
+observe({
+	input$Copy_cal
+	if(isolate(input$Copy_cal)){
+		measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		# new group name valid?
+		itsok<-TRUE
+		cat("\nCheck modified group name:")
+		if(any(measurements3[measurements3[,4]==isolate(input$Modif_cal_mode),,drop=FALSE]$tag2==isolate(input$Copy_cal_group))){
+			itsok<-FALSE
+			cat(" invalid.")
+			output$Modif_cal_text_load<-renderText({"New specification cannot be saved. The chosen group name already exists!"})
+		}else{cat(" ok.")}
+		for_those<-which( 
+			(measurements3$tag2==isolate(input$Modif_cal_group)) &
+			(measurements3$Mode==isolate(input$Modif_cal_mode))
+		)
+		if( itsok & (length(for_those)>0) ){ # = a valid new group name
+			measurements4<-measurements3[for_those,]
+			measurements4[,6]<-as.character(isolate(input$Modif_calgroup_date1))
+			measurements4[,6]<-enviMass:::convDate(measurements4[,6]);
+			measurements4[,7]<-as.character(isolate(input$Modif_calgroup_time1))	
+			measurements4[,22]<-as.character(isolate(input$Modif_calgroup_date2))
+			measurements4[,22]<-enviMass:::convDate(measurements4[,22]);
+			measurements4[,23]<-as.character(isolate(input$Modif_calgroup_time2))		
+			measurements4$tag2<-rep(isolate(input$Copy_cal_group),length(measurements4$tag2))		
+			for(i in 1:length(measurements4[,1])){
+				oldID<-measurements4[i,1]
+				# get new IDs!	
+				newID<-getID(as.numeric(c(measurements3[,1],measurements4[,1]))) # here, measurements4 still partly contain duplicated, old IDs
+				measurements4[i,1]<-newID
+				# copy mzML-files with new IDs. must exist!
+				if(file.exists(file.path(logfile$project_folder,"files",paste(oldID,".mzXML",sep="")))){
+					file.copy(
+						from=file.path(logfile$project_folder,"files",paste(oldID,".mzXML",sep="")),
+						to=file.path(logfile$project_folder,"files",paste(newID,".mzXML",sep=""))
+					)
+				}else{
+					stop("Copying calibration files.mzXML: missing file. Aborted. DEBUG YOUR PROJECT!")
+				}
+				# copy MSlists with new IDs, if existing!				
+				if(file.exists(file.path(logfile$project_folder,"peaklist",oldID))){
+					file.copy(
+						from=file.path(logfile$project_folder,"peaklist",oldID),
+						to=file.path(logfile$project_folder,"peaklist",newID)
+					)
+				}
+				# copy peaklists with new IDs, if existing!
+				if(file.exists(file.path(logfile$project_folder,"MSlist",oldID))){
+					file.copy(
+						from=file.path(logfile$project_folder,"MSlist",oldID),
+						to=file.path(logfile$project_folder,"MSlist",newID)
+					)
+				}
+			}			
+			measurements3<-rbind(measurements3,measurements4)
+			write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);		
+			rm(measurements3)
+			enviMass:::workflow_set(down="calibration",check_node=TRUE,single_file=FALSE)
+			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 	
+			cat("Calibration file set copied.")
+			output$Modif_cal_text_load<-renderText({"Calibration file set copied."})
+		}else{
+			cat("Calibration file set not copied.")
+			output$Modif_cal_text_load<-renderText({"Calibration file set not copied, such a group already exists and cannot be overwritten."})		
+		}
+	}
+})	
+# DELETE
+observe({
+	input$yes_delete_cal
+	if(isolate(input$yes_delete_cal)){
+		toggleModal(session,"Del_cal_confirm", toggle = "close")
+		measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		for_those<-which( 
+			(measurements3$tag2==isolate(input$Modif_cal_group)) &
+			(measurements3$Mode==isolate(input$Modif_cal_mode))
+		)
+		if(length(for_those)>0){
+			cat(for_those)
+			rem_IDs<-measurements3[for_those,1]
+			any_include<-any(measurements3[rem_IDs,8]=="TRUE")
+			measurements3<-measurements3[-for_those,]
+			write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+			rm(measurements3)
+			for(i in 1:length(rem_IDs)){ # remove MSlists & peaklist
+				if(file.exists(file.path(logfile$project_folder,"files",paste(rem_IDs[i],".mzXML",sep="")))){
+					file.remove(file.path(logfile$project_folder,"files",paste(rem_IDs[i],".mzXML",sep="")))
+				}else{
+					cat("\nMissing file.mzXML while deleting calibration files. Debug this project?")
+				}
+				if(file.exists(file.path(logfile$project_folder,"peaklist",rem_IDs[i]))){
+					file.remove(file.path(logfile$project_folder,"peaklist",rem_IDs[i]))
+				}
+				if(file.exists(file.path(logfile$project_folder,"MSlist",rem_IDs[i]))){
+					file.remove(file.path(logfile$project_folder,"MSlist",rem_IDs[i]))
+				}
+			}
+			any_calibrated<-FALSE
+			if(isolate(input$Modif_cal_mode)=="positive"){ # clean positive calibration models
+				load(file=file.path(logfile[[1]],"quantification","cal_models_pos"),envir=as.environment(".GlobalEnv"));	
+				if(any(names(cal_models_pos)==isolate(input$Modif_cal_mode))){ # make an entry for this calibration set, always at end
+					where_delete<-which(names(cal_models_pos)==isolate(input$Modif_cal_mode))
+					cal_models_pos[[where_delete]]<<-list()
+					names(cal_models_pos)[where_delete]<<-""
+					save(cal_models_pos,file=file.path(logfile$project_folder,"quantification","cal_models_pos"));	
+					any_calibrated<-TRUE;
+				}
+				rm(cal_model_pos)
+			}
+			if(isolate(input$Modif_cal_mode)=="negative"){ # clean negative calibration models
+				load(file=file.path(logfile[[1]],"quantification","cal_models_neg"),envir=as.environment(".GlobalEnv"));	
+				if(any(names(cal_models_neg)==isolate(input$Modif_cal_mode))){ # make an entry for this calibration set, always at end
+					where_delete<-which(names(cal_models_neg)==isolate(input$Modif_cal_mode))
+					cal_models_neg[[where_delete]]<<-list()
+					names(cal_models_neg)[where_delete]<<-""
+					save(cal_models_neg,file=file.path(logfile$project_folder,"quantification","cal_models_neg"));	
+					any_calibrated<-TRUE;
+				}
+				rm(cal_model_neg)
+			}			
+			if( any_include & any_calibrated ){ # included & calibration models exist?
+				enviMass:::workflow_set(down="calibration",check_node=TRUE,single_file=FALSE)	# is this optional? after all, the sets are just removed ...
+				enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE)					
+			}	
+			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
+			output$Modif_cal_text_load<-renderText({"Calibration group deleted."})
+			cat("\n Calibration group deleted.")
+		}else{
+			output$Modif_cal_text_load<-renderText({"Invalid group to delete. Done nothing."})
+			cat("\n Invalid group to delete. Done nothing.")		
+		}
+	}
+})	
 ##############################################################################  
 
 ############################################################################## 
@@ -992,7 +1210,21 @@ observe({
 }) 
 ############################################################################## 
  
-  
+##############################################################################
+# PLOT FILE OVERVIEW #########################################################
+observe({
+	input$Measadd_path
+	input$Measdel
+	input$Import_project
+	input$Modif_export
+	input$Change_cal
+	input$Copy_cal
+	input$yes_delete_cal
+	output$file_overview <- renderPlot({
+		plot_measurements(logfile)
+	})
+})
+##############################################################################
   
   
   
