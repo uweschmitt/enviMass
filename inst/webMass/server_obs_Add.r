@@ -1221,7 +1221,7 @@ observe({
 	input$Copy_cal
 	input$yes_delete_cal
 	output$file_overview <- renderPlot({
-		plot_measurements(logfile)
+		enviMass:::plot_measurements(logfile)
 	})
 })
 ##############################################################################
