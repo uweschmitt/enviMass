@@ -5,6 +5,7 @@
 #' @description Overview plot of measurements in a project
 #'
 #' @param logfile
+#' @param ranges
 #' 
 #' @details enviMass workflow function for profile plotting
 #' 
@@ -12,7 +13,7 @@
 
 plot_measurements<-function(
 	logfile,
-	xlim=NULL
+	ranges_overview
 ){
 
     ############################################################################
@@ -29,12 +30,27 @@ plot_measurements<-function(
     ord<-order(as.numeric(atdate),as.numeric(attime2));
     atPOSIXsort<-atPOSIX[ord];
 	dated<-as.POSIXct(atPOSIXsort)
-	dated2<-pretty(dated)
     ############################################################################
 	par(mar=c(2,4.5,.8,.2))
 	plot.new()
+	if(length(ranges_overview$x)==0){
+		use_x_lim<-c(min(atPOSIX),max(atPOSIX))
+		dated2<-pretty(dated)
+	}else{
+		use_x_lim<-ranges_overview$x	
+		dated2<-dated[
+			(dated>=ranges_overview$x[1])&
+			(dated<=ranges_overview$x[2])
+		]
+		dated2<-pretty(dated2)
+	}
+	if(length(ranges_overview$y)==0){
+		use_y_lim<-c(0,12)
+	}else{
+		use_y_lim<-ranges_overview$y
+	}
 	plot.window(
-		ylim=c(0,12),xlim=c(min(atPOSIX),max(atPOSIX))
+		xlim=use_x_lim,ylim=use_y_lim
 	)
 	text(min(atPOSIX),11,labels="Positive ionization",pos=4,cex=.8,col="black")
 	text(min(atPOSIX),5,labels="Negative ionization",pos=4,cex=.8,col="black")
@@ -47,6 +63,9 @@ plot_measurements<-function(
 	mtext("calibration",side=2,at=8,las=1,col="red",cex=1)
 	mtext("blank/blind",side=2,at=9,las=1,col="orange",cex=1)
 	mtext("sample",side=2,at=10,las=1,col="darkgreen",cex=1)	
+	if((!is.null(ranges_overview$x))||(!is.null(ranges_overview$y))){
+		mtext("Now zoomed in",side=3,col="gray")
+	}
 	# time regions for calibration files
 	if(any((measurements$Type=="calibration")&(measurements$Mode=="positive"))){ # add bars for calibration groups, positive!
 		measurements2<-measurements[
@@ -103,7 +122,7 @@ plot_measurements<-function(
 		}
 		points(at_x,at_y,col=use_col,pch=with_pch,cex=.5)
 	}
-	title(main="Available project files",cex.main=1)
+	title(main="Select and double-click to zoom in, double-click again to zoom out.",cex.main=1)
 	axis(1,at=dated2,labels=dated2,col="grey",cex.axis=.9) # former at=dated
     ############################################################################
 

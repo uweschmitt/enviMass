@@ -1212,6 +1212,8 @@ observe({
  
 ##############################################################################
 # PLOT FILE OVERVIEW #########################################################
+ranges_overview <- reactiveValues(x = NULL, y = NULL)
+
 observe({
 	input$Measadd_path
 	input$Measdel
@@ -1221,9 +1223,22 @@ observe({
 	input$Copy_cal
 	input$yes_delete_cal
 	output$file_overview <- renderPlot({
-		enviMass:::plot_measurements(logfile)
+		enviMass:::plot_measurements(logfile,ranges_overview)
 	})
 })
+
+observeEvent(input$file_overview_dblclick, {
+    brush <- input$file_overview_brush
+    if (!is.null(brush)) {
+		ranges_overview$x <- c(brush$xmin, brush$xmax)
+		ranges_overview$y <- NULL#c(brush$ymin, brush$ymax)
+    } else {
+		ranges_overview$x <- NULL
+		ranges_overview$y <- NULL
+    }
+})
+
+
 ##############################################################################
   
   

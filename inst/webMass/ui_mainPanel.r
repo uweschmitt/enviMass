@@ -181,7 +181,8 @@
 							dblclick = "file_overview_dblclick",
 							brush = brushOpts(
 								id = "file_overview_brush",
-								resetOnNew = TRUE
+								resetOnNew = TRUE,
+								direction = "x"
 							)
 						)
 					)
