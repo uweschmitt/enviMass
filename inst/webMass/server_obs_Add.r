@@ -892,7 +892,8 @@ observe({
 			measurements4[,7]<-as.character(isolate(input$Modif_calgroup_time1))	
 			measurements4[,22]<-as.character(isolate(input$Modif_calgroup_date2))
 			measurements4[,22]<-enviMass:::convDate(measurements4[,22]);
-			measurements4[,23]<-as.character(isolate(input$Modif_calgroup_time2))		
+			measurements4[,23]<-as.character(isolate(input$Modif_calgroup_time2))	
+			measurements4[,16]<-"FALSE"	# redo LOD!
 			measurements4$tag2<-rep(isolate(input$Copy_cal_group),length(measurements4$tag2))		
 			for(i in 1:length(measurements4[,1])){
 				oldID<-measurements4[i,1]
@@ -914,6 +915,7 @@ observe({
 						from=file.path(logfile$project_folder,"peaklist",oldID),
 						to=file.path(logfile$project_folder,"peaklist",newID)
 					)
+					cat("\n   copied calibration peaklist.")
 				}
 				# copy peaklists with new IDs, if existing!
 				if(file.exists(file.path(logfile$project_folder,"MSlist",oldID))){
@@ -921,12 +923,13 @@ observe({
 						from=file.path(logfile$project_folder,"MSlist",oldID),
 						to=file.path(logfile$project_folder,"MSlist",newID)
 					)
+					cat("\n    copied calibration MSlist.")
 				}
 			}			
 			measurements3<-rbind(measurements3,measurements4)
 			write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);		
 			rm(measurements3)
-			enviMass:::workflow_set(down="calibration",check_node=TRUE,single_file=FALSE)
+			enviMass:::workflow_set(down="LOD",check_node=TRUE,single_file=TRUE)
 			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 	
 			cat("Calibration file set copied.")
 			output$Modif_cal_text_load<-renderText({"Calibration file set copied."})
@@ -1237,8 +1240,6 @@ observeEvent(input$file_overview_dblclick, {
 		ranges_overview$y <- NULL
     }
 })
-
-
 ##############################################################################
   
   

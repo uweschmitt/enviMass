@@ -235,7 +235,6 @@ observe({
 			}
 			at_target_ID<-as.character(targets[in_table,1])
 			at_IS_ID<-as.character(targets[in_table,6])	
-cat(" - ");cat(at_IS_ID)
 		}else{ # match existing; get next entry
 			if(verbose){cat("\n in G_2")}
 			if(in_table<length(targets[,1])){
@@ -627,9 +626,9 @@ observe({
 		if(length(dd$d[,1])>1){
 			output$cal_plot <- renderPlot({
 				plot(dd$d[,5], dd$d[,4],
-				xlab="Concentration",ylab="Intensity ratio",pch=19,
-				xlim=ranges_cal_plot$y,ylim=ranges_cal_plot$x,
-				main="Draw rectangles and double-click into them to zoom, double-click again to zoom out.",cex.main=1,col="white")#,yaxs="i",xaxs="i")
+					xlab="Concentration",ylab="Intensity ratio",pch=19,
+					xlim=ranges_cal_plot$y,ylim=ranges_cal_plot$x,
+					main="Draw rectangles and double-click into them to zoom, double-click again to zoom out.",cex.main=1,col="white")#,yaxs="i",xaxs="i")
 				abline(h=0,col="lightgrey")
 				abline(v=0,col="lightgrey")				
 				points(dd$d[dd$d[,8]==1,5], dd$d[dd$d[,8]==1,4],col="black",pch=19)

@@ -5,13 +5,27 @@ measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),
 
 # MAKE this run file-wise
 if(length(those)>0){
-
-	LOD_splined<-list()
+	LOD_splined_new<-list()
+	if(file.exists(file.path(logfile$project_folder,"results","LOD","LOD_splined"))){ # load existing model
+		load(file.path(logfile$project_folder,"results","LOD","LOD_splined"))
+	}
 	at<-1;
 	cat(" | ")
 	for(i in 1:length(those)){
 		if(!any(measurements[,1]==those[i])){cat("\n orphaned peaklist found.");next;} # not in list of measurements?
-		if(measurements[measurements[,1]==those[i],16]=="TRUE"){next} # already done?
+		if(measurements[measurements[,1]==those[i],8]=="FALSE"){next}
+		if(measurements[measurements[,1]==those[i],16]=="TRUE"){ # ONLY valid for old files! Not for newly loaded ones!
+			if(any(names(LOD_splined)==paste("LOD_",those[i],sep=""))){ # copy old model, already done
+				copy_this<-which(names(LOD_splined)==paste("LOD_",those[i],sep=""))
+				LOD_splined_new[[at]]<-LOD_splined[[copy_this]]
+				names(LOD_splined_new)[at]<-paste("LOD_",those[i],sep="")
+				at<-(at+1)
+				cat("\nCould copy LOD model.")
+				next;
+			}
+			#}else{
+			cat("\nDoing a new LOD model.")
+		} 		
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="peaklist")){rm(peaklist)}
 		load(file.path(logfile$project_folder,"peaklist",those[i]),envir=as.environment(".GlobalEnv"))
@@ -34,8 +48,8 @@ if(length(those)>0){
 		}
 		model<-smooth.spline(x=get_ret,y=get_int)	
 		assign(paste("LOD_",those[i],sep=""),model);rm(model)
-		LOD_splined[[at]]<-get(paste("LOD_",those[i],sep=""))
-		names(LOD_splined)[at]<-paste("LOD_",those[i],sep="")
+		LOD_splined_new[[at]]<-get(paste("LOD_",those[i],sep=""))
+		names(LOD_splined_new)[at]<-paste("LOD_",those[i],sep="")
 		at<-(at+1)
 		if(TRUE){
 			png(file=file.path(logfile$project_folder,"results","LOD",paste("plot_LOD_",those[i],".png",sep="")),
@@ -49,10 +63,11 @@ if(length(those)>0){
 				lines(get_ret,predict(get(paste("LOD_",those[i],sep="")))$y,col="red",lwd=2)
 				points(get_ret,get_int,col="black",pch=19,cex=0.5)
 				box()
-			dev.off();cat(".")
+			dev.off();cat("!")
 		}
 		measurements[measurements[,1]==those[i],16]<-"TRUE";
 	}
+	LOD_splined<-LOD_splined_new
 	save(LOD_splined,file=file.path(logfile$project_folder,"results","LOD","LOD_splined"))
 	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 }

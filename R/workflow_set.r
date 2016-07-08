@@ -233,7 +233,7 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 		}		
 	}	
 	########################################################################################
-	if(any(work_stream=="quantification")){
+	if(any(work_stream=="calibration")){
 		if(logfile$workflow[names(logfile$workflow)=="calibration"]=="yes"){
 			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="calibration"]<<-TRUE;
 		}	

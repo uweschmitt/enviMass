@@ -262,8 +262,8 @@ if(TRUE){
 	}
 	################################################################################################
 	# define matrix of downstream workflow dependencies ############################################
-	# (or with recalculations of previous steps if their results are overwritten, e.g. IS_subtr or #
-	# target_subtr) ################################################################################
+	# (or with recalculations of previous steps if previous results need to be again written to, ###
+	# e.g. IS_subtr or target_subtr) ###############################################################
 	# requires only a definition of direct ones - indirect ones will be in workflow_set.r ##########
 	# below specified in a row-wise fashion (but stored and retrieved columnwise): #################
 	# define workflow order of logfile$Tasks_to_redo by server.calculation.r #######################

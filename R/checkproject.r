@@ -242,7 +242,7 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 				}
 			}			
 			measurements_neg<-measurements[measurements[,4]=="negative",,drop=FALSE]
-			measurements_neg<-unique(measurements_neg[,c(20,22,23),drop=FALSE])
+			measurements_neg<-unique(measurements_neg[,c(20,6,7,22,23),drop=FALSE])
 			if(any(duplicated(measurements_neg$tag2))){
 				say<-"Calibration file specification violation (negative mode). Have you used different time period specifications for the same group? Please revise."
 			}
@@ -251,12 +251,15 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
 				for(i in 1:(length(measurements_neg[,1])-1)){
 					starttime_i<-as.difftime(measurements_neg[i,3]);startdate_i<-as.Date(measurements_neg[i,2]);
 					numstart_i<-(as.numeric(startdate_i)+as.numeric(starttime_i/24))		
-					endtime_i<-as.difftime(measurements_neg[i,5]);enddate_i<-as.Date(measurements_neg[i,4]);
+					endtime_i<-as.difftime(measurements_neg[i,5]);
+					enddate_i<-as.Date(measurements_neg[i,4]);
 					numend_i<-(as.numeric(enddate_i)+as.numeric(endtime_i/24))		
 					for(j in (i+1):(length(measurements_neg[,1]))){			
-						starttime_j<-as.difftime(measurements_neg[j,3]);startdate_j<-as.Date(measurements_neg[j,2]);
+						starttime_j<-as.difftime(measurements_neg[j,3]);
+						startdate_j<-as.Date(measurements_neg[j,2]);
 						numstart_j<-(as.numeric(startdate_j)+as.numeric(starttime_j/24))		
-						endtime_j<-as.difftime(measurements_neg[j,5]);enddate_j<-as.Date(measurements_neg[j,4]);
+						endtime_j<-as.difftime(measurements_neg[j,5]);
+						enddate_j<-as.Date(measurements_neg[j,4]);
 						numend_j<-(as.numeric(enddate_j)+as.numeric(endtime_j/24))		
 						if(
 							(numstart_i<=numend_j)&(numstart_j<=numend_i)
