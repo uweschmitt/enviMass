@@ -868,36 +868,39 @@
 			tabsetPanel( 
 				###################################################################################################################### 
 				tabPanel("Processing",            
-					selectInput("sel_meas", "Select file ID:", choices = c("none"), "none"),
-					HTML('<hr noshade="noshade" />'),
-					fluidRow(										
-						column(4,tags$h5("File name:"),textOutput('file_proc_name') ),
-						column(4,tags$h5("File type: "),textOutput('file_proc_type')),										
-						column(4,tags$h5("Ionization mode: "),textOutput('file_proc_mode'))										
-					),									
-					HTML('<hr noshade="noshade" />'),
-					fluidRow(										
-						column(4,tags$h5("Number of peaks: "),textOutput('file_peak_number') ),
-						column(4,tags$h5("% of peaks affected by blind filter: "),textOutput('file_blind_rem')),										
-						column(4,tags$h5("% of peaks removed by replicate filter: "),textOutput('file_repl_rem'))										
-					),					
-					HTML('<hr noshade="noshade" />'),
-					imageOutput("recal_pic", height="auto"),
-					HTML('<hr noshade="noshade" />'),
-					imageOutput("peakhist_pic", height="auto"),
-					HTML('<hr noshade="noshade" />'),
-					imageOutput("peakmzRT_pic", height="auto"),
-					HTML('<hr noshade="noshade" />'),
-					imageOutput("LOD_pic", height="auto"),
-					HTML('<hr noshade="noshade" />'),
-					div(style = widget_style3,
-						bsButton("expo_peaklist","Export peaklist in .csv format",style="info"),
-						textOutput("expo2"),
-						bsPopover("expo_peaklist", 
-							title = "Export peaklist of above selected file",
-							content = "Export as peaklist.csv to the export folder of this project, with three columns of mass, intensity and RT. Peaklists are affected by blind and replicate filters contained in the workflow.", 
-							placement = "right", trigger = "hover")),
-					HTML('<hr noshade="noshade" />')					
+					numericInput("sel_meas", "Type in file ID:", 0),
+					conditionalPanel(			
+						condition = "output.dowhat != 'Invalid ID chosen to view processing results.'",
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(										
+							column(4,tags$h5("File name:"),textOutput('file_proc_name') ),
+							column(4,tags$h5("File type: "),textOutput('file_proc_type')),										
+							column(4,tags$h5("Ionization mode: "),textOutput('file_proc_mode'))										
+						),									
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(										
+							column(4,tags$h5("Number of peaks: "),textOutput('file_peak_number') ),
+							column(4,tags$h5("% of peaks affected by blind filter: "),textOutput('file_blind_rem')),										
+							column(4,tags$h5("% of peaks removed by replicate filter: "),textOutput('file_repl_rem'))										
+						),					
+						HTML('<hr noshade="noshade" />'),
+						imageOutput("recal_pic", height="auto"),
+						HTML('<hr noshade="noshade" />'),
+						imageOutput("peakhist_pic", height="auto"),
+						HTML('<hr noshade="noshade" />'),
+						imageOutput("peakmzRT_pic", height="auto"),
+						HTML('<hr noshade="noshade" />'),
+						imageOutput("LOD_pic", height="auto"),
+						HTML('<hr noshade="noshade" />'),
+						div(style = widget_style3,
+							bsButton("expo_peaklist","Export peaklist in .csv format",style="info"),
+							textOutput("expo2"),
+							bsPopover("expo_peaklist", 
+								title = "Export peaklist of above selected file",
+								content = "Export as peaklist.csv to the export folder of this project, with three columns of mass, intensity and RT. Peaklists are affected by blind and replicate filters contained in the workflow.", 
+								placement = "right", trigger = "hover")),
+						HTML('<hr noshade="noshade" />')		
+					)
 				),
 				######################################################################################################################
 				tabPanel("Quality control",
@@ -922,8 +925,8 @@
 				),
 				######################################################################################################################
                 tabPanel("EIC & Peaks",
-					div(style = widget_style3,selectInput("sel_meas_ID", "Select file ID:", choices = c("none"), "none")),
-					div(style = widget_style3,numericInput("sel_peak_ID", "Select peak ID:", 0)),
+					div(style = widget_style3,numericInput("sel_meas_ID", "Type in file ID:", 0)),
+					div(style = widget_style3,numericInput("sel_peak_ID", "Type in peak ID:", 0)),
 					imageOutput("EIC1", height="auto"),
 					imageOutput("EIC2", height="auto"),
 					imageOutput("EIC3", height="auto")

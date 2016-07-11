@@ -245,11 +245,8 @@ maincalc2<-reactive({
 				output$peakmzRT_pic<-renderImage(exprrec, deleteFile = FALSE);
 			
 			
-			# (4) Available measurements ###########################################
-			# if(logfile$workflow[2]=="yes"){	
-				updateSelectInput(session, "sel_meas", label = "Select file by ID:", choices =  c("none",as.character(measurements[,1])), selected = "none")
-			# }
-			updateSelectInput(session, "sel_meas_ID", label = "Select file by ID:", choices =  c("none",as.character(measurements[,1])), selected = "none")
+			# (4) Available measurements ###########################################	
+			# SelectInput - bad: only 999 possible choices	
 			# (5) RT Alignment #####################################################
 						
 			# (6) IS-Normalization #################################################

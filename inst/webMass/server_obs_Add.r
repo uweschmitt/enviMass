@@ -927,7 +927,7 @@ observe({
 				}
 			}			
 			measurements3<-rbind(measurements3,measurements4)
-			write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);		
+			write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 			rm(measurements3)
 			enviMass:::workflow_set(down="LOD",check_node=TRUE,single_file=TRUE)
 			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 	

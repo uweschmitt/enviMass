@@ -3,62 +3,68 @@
 ##############################################################################
 observe({
     input$sel_meas
-    if(isolate(input$sel_meas)!="none"){
+	if(!is.na(isolate(input$sel_meas))){
+    if(isolate(input$sel_meas)!=0){
 		##########################################################################	
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-		output$file_proc_name<-renderText(measurements[measurements[,1]==as.character(isolate(input$sel_meas)),2])
-		output$file_proc_type<-renderText(measurements[measurements[,1]==as.character(isolate(input$sel_meas)),3])
-		output$file_proc_mode<-renderText(measurements[measurements[,1]==as.character(isolate(input$sel_meas)),4])		
-		# peaklist info ##########################################################
-		if(file.exists(file.path(logfile$project_folder,"peaklist",as.character(isolate(input$sel_meas))))){
-			load(file=file.path(logfile$project_folder,"peaklist",as.character(isolate(input$sel_meas))),envir=as.environment(".GlobalEnv"),verbose=FALSE);			
-			output$file_peak_number<-renderText(as.character(length(peaklist[,1])));	
-			blind_rem<-round(
-				(sum(peaklist[,colnames(peaklist)=="keep_2"]==0))/length(peaklist[,1])*100
-			,digits=3)
-			output$file_blind_rem<-renderText(as.character(blind_rem));
-			repl_rem<-round(
-				(sum(peaklist[,colnames(peaklist)=="keep"]==0))/length(peaklist[,1])*100
-			,digits=3)
-			output$file_repl_rem<-renderText(as.character(repl_rem));
-			#rm(peaklist,envir=as.environment(".GlobalEnv")) # wtf?
+		if(any(measurements[,1]==as.character(isolate(input$sel_meas)))){
+			output$file_proc_name<-renderText(measurements[measurements[,1]==as.character(isolate(input$sel_meas)),2])
+			output$file_proc_type<-renderText(measurements[measurements[,1]==as.character(isolate(input$sel_meas)),3])
+			output$file_proc_mode<-renderText(measurements[measurements[,1]==as.character(isolate(input$sel_meas)),4])		
+			# peaklist info ##########################################################
+			if(file.exists(file.path(logfile$project_folder,"peaklist",as.character(isolate(input$sel_meas))))){
+				load(file=file.path(logfile$project_folder,"peaklist",as.character(isolate(input$sel_meas))),envir=as.environment(".GlobalEnv"),verbose=FALSE);			
+				output$file_peak_number<-renderText(as.character(length(peaklist[,1])));	
+				blind_rem<-round(
+					(sum(peaklist[,colnames(peaklist)=="keep_2"]==0))/length(peaklist[,1])*100
+				,digits=3)
+				output$file_blind_rem<-renderText(as.character(blind_rem));
+				repl_rem<-round(
+					(sum(peaklist[,colnames(peaklist)=="keep"]==0))/length(peaklist[,1])*100
+				,digits=3)
+				output$file_repl_rem<-renderText(as.character(repl_rem));
+				#rm(peaklist,envir=as.environment(".GlobalEnv")) # wtf?
+			}else{
+				cat("\n no peaklist for processing view found")
+			}
+			##########################################################################		
+			pics<-list.files(file.path(logfile[[1]],"pics"))
+			# recalibration ##########################################################
+			if(
+				any(pics==paste("recal_",as.character(isolate(input$sel_meas),sep=""))) & (logfile$workflow[2]=="yes")
+			){
+				expr1<-list(src=file.path(logfile[[1]],"pics",paste("recal_",as.character(isolate(input$sel_meas)),sep="")))
+				output$recal_pic<-renderImage(expr1, deleteFile = FALSE)
+			}
+			##########################################################################
+			# peak picking ###########################################################
+			if(
+				any(pics==paste("peakhist_",as.character(isolate(input$sel_meas)),sep=""))
+			){
+				expr2<-list(src=file.path(logfile[[1]],"pics",paste("peakhist_",as.character(isolate(input$sel_meas)),sep="")))
+				output$peakhist_pic<-renderImage(expr2, deleteFile = FALSE)
+			}
+			if(
+				any(pics==paste("peakmzRT_",as.character(isolate(input$sel_meas)),sep=""))
+			){
+				expr3<-list(src=file.path(logfile[[1]],"pics",paste("peakmzRT_",as.character(isolate(input$sel_meas)),sep="")))
+				output$peakmzRT_pic<-renderImage(expr3, deleteFile = FALSE)
+			}
+			##########################################################################
+			# LOD  ###################################################################
+			if( file.exists( file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",as.character(isolate(input$sel_meas)),".png",sep="") ) ) ){
+				expr_LOD<-list( src=file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",as.character(isolate(input$sel_meas)),".png",sep="")) )
+				output$LOD_pic<-renderImage(expr_LOD, deleteFile = FALSE)	
+			}else{
+				cat("\n LOD pic file not found")
+			}
+			##########################################################################
+			output$dowhat<-renderText("Processing per file viewed.");	
 		}else{
-			cat("\n no peaklist for processing view found")
+			output$dowhat<-renderText("Invalid ID chosen to view processing results.");		
 		}
-		##########################################################################		
-		pics<-list.files(file.path(logfile[[1]],"pics"))
-		# recalibration ##########################################################
-		if(
-			any(pics==paste("recal_",isolate(input$sel_meas),sep="")) & (logfile$workflow[2]=="yes")
-		){
-			expr1<-list(src=file.path(logfile[[1]],"pics",paste("recal_",isolate(input$sel_meas),sep="")))
-			output$recal_pic<-renderImage(expr1, deleteFile = FALSE)
-		}
-		##########################################################################
-		# peak picking ###########################################################
-		if(
-			any(pics==paste("peakhist_",isolate(input$sel_meas),sep=""))
-		){
-			expr2<-list(src=file.path(logfile[[1]],"pics",paste("peakhist_",isolate(input$sel_meas),sep="")))
-			output$peakhist_pic<-renderImage(expr2, deleteFile = FALSE)
-		}
-		if(
-			any(pics==paste("peakmzRT_",isolate(input$sel_meas),sep=""))
-		){
-			expr3<-list(src=file.path(logfile[[1]],"pics",paste("peakmzRT_",isolate(input$sel_meas),sep="")))
-			output$peakmzRT_pic<-renderImage(expr3, deleteFile = FALSE)
-		}
-		##########################################################################
-		# LOD  ###################################################################
-		if( file.exists( file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",isolate(input$sel_meas),".png",sep="") ) ) ){
-			expr_LOD<-list( src=file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",isolate(input$sel_meas),".png",sep="")) )
-			output$LOD_pic<-renderImage(expr_LOD, deleteFile = FALSE)	
-		}else{
-			cat("\n LOD pic file not found")
-		}
-		##########################################################################
-		output$dowhat<-renderText("Processing per file viewed.");	
     }
+	}
 })
 ##############################################################################
 
@@ -68,82 +74,84 @@ observe({
 observe({
     input$sel_meas_ID
 	input$sel_peak_ID
-	if(!any(objects(envir=as.environment(".GlobalEnv"))=="atit")){
-		#atit<<-(0)
-		assign("atit",0,envir=as.environment(".GlobalEnv"))
-	}
-    if(isolate(input$sel_meas_ID)!="none"){
-		if( (file.exists(file.path(logfile[[1]],"MSlist",isolate(input$sel_meas_ID)))) & 
-			(isolate(input$sel_meas_ID)!=atit) 
-		){
-				if(any(objects(envir=as.environment(".GlobalEnv"))=="MSlist")){rm(MSlist,envir=as.environment(".GlobalEnv"))}
-				if(any(objects()=="MSlist")){rm(MSlist)}				
-				load(file.path(logfile[[1]],"MSlist",isolate(input$sel_meas_ID)), envir=as.environment(".GlobalEnv"))
-				cat("\nafter:\n "); print(gc());	
-				cat("\n MSlist file loaded")
-				#atit<<-isolate(input$sel_meas_ID)
-				assign("atit",isolate(input$sel_meas_ID),envir=as.environment(".GlobalEnv"))
+	if(!is.na(isolate(input$sel_meas_ID))){ # if user deletes entry!
+		if(!any(objects(envir=as.environment(".GlobalEnv"))=="atit")){ # atit -> dont load the same MSlist twice = too slow
+			#atit<<-(0)
+			assign("atit",0,envir=as.environment(".GlobalEnv"))
 		}
-		if( !is.na(isolate(input$sel_peak_ID)) & 
-			(isolate(input$sel_peak_ID)!=0) & 
-			any(MSlist[[8]][,10]==isolate(input$sel_peak_ID)) &
-			any(objects(envir=as.environment(".GlobalEnv"))=="MSlist")
-		){
-			EIC_ID<<-unique(MSlist[[8]][MSlist[[8]][,10]==isolate(input$sel_peak_ID),9]);
-			peakit<<-MSlist[[4]][[2]][c(MSlist[[7]][isolate(input$sel_peak_ID),1]:MSlist[[7]][isolate(input$sel_peak_ID),2]),]			
-			if(length(peakit)>7){
-				EICit<<-MSlist[[4]][[2]][c(MSlist[[6]][EIC_ID,1]:MSlist[[6]][EIC_ID,2]),]
-				path=file.path(logfile[[1]],"pics","EIC1");
-				png(filename = path, bg = "white", width = 1100, height= 300)
-					if(length(EICit)>7){
-						plot(EICit[,3],EICit[,2],type="h",col="darkgrey",xlab="RT",ylab="Intensity",main="EIC (grey) & Peak (red)",xlim=c(min(MSlist[[4]][[1]]),max(MSlist[[4]][[1]])))
-					}else{
-						plot(EICit[3],EICit[2],type="h",col="darkgrey",xlab="RT",ylab="Intensity",main="EIC (grey) & Peak (red)")
-					}
-					if(length(peakit)>7){	
-						points(peakit[,3],peakit[,2],type="h",col="red",lwd=2)
-					}else{
-						points(peakit[3],peakit[2],type="h",col="red",lwd=2)				
-					}
-				dev.off();
-				expr6<-list(src=file.path(logfile[[1]],"pics","EIC1"));
-				output$EIC1<-renderImage(expr6, deleteFile = FALSE);
-				path=file.path(logfile[[1]],"pics","EIC2");
-				png(filename = path, bg = "white", width = 1100, height= 300);
-					if(length(EICit)>7){
-						plot(EICit[,3],EICit[,2],type="h",col="darkgrey",xlab="RT",ylab="Intensity")
-					}else{
-						plot(EICit[3],EICit[2],type="h",col="darkgrey",xlab="RT",ylab="Intensity")
-					}
-					if(length(peakit)>7){	
-						points(peakit[,3],peakit[,2],type="h",col="red",lwd=2)
-					}else{
-						points(peakit[3],peakit[2],type="h",col="red",lwd=2)				
-					}
-				dev.off();
-				expr7<-list(src=file.path(logfile[[1]],"pics","EIC2"));
-				output$EIC2<-renderImage(expr7, deleteFile = FALSE);
-				path=file.path(logfile[[1]],"pics","EIC3");
-				png(filename = path, bg = "white", width = 1100, height= 300);
-					if(length(EICit)>7){
-						plot(EICit[,3],EICit[,1],pch=19,col="darkgrey",xlab="RT",ylab="m/z")			
-					}else{
-						plot(EICit[3],EICit[1],pch=19,col="darkgrey",xlab="RT",ylab="m/z")
-					}
-					if(length(peakit)>7){	
-						points(peakit[,3],peakit[,1],pch=19,col="red",cex=1.5)
-					}else{
-						points(peakit[,3],peakit[,1],pch=19,col="red",cex=1.5)				
-					}
-				dev.off();
-				expr8<-list(src=file.path(logfile[[1]],"pics","EIC3"));
-				output$EIC3<-renderImage(expr8, deleteFile = FALSE);
-				cat("\n EIC & peak extracted")
-			}else{
-				cat("\n Peak based on single measurement - plotting skipped.")
+		if(isolate(input$sel_meas_ID)!=0){
+			if( (file.exists(file.path(logfile[[1]],"MSlist",as.character(isolate(input$sel_meas_ID))))) & 
+				(isolate(input$sel_meas_ID)!=atit) 
+			){
+					if(any(objects(envir=as.environment(".GlobalEnv"))=="MSlist")){rm(MSlist,envir=as.environment(".GlobalEnv"))}
+					if(any(objects()=="MSlist")){rm(MSlist)}				
+					load(file.path(logfile[[1]],"MSlist",as.character(isolate(input$sel_meas_ID))), envir=as.environment(".GlobalEnv"))
+					cat("\nafter:\n "); print(gc());	
+					cat("\n MSlist file loaded")
+					#atit<<-isolate(input$sel_meas_ID)
+					assign("atit",isolate(input$sel_meas_ID),envir=as.environment(".GlobalEnv"))
 			}
-		}	
-    }
+			if( !is.na(isolate(input$sel_peak_ID)) & 
+				(isolate(input$sel_peak_ID)!=0) & 
+				any(MSlist[[8]][,10]==isolate(input$sel_peak_ID)) &
+				any(objects(envir=as.environment(".GlobalEnv"))=="MSlist")
+			){
+				EIC_ID<<-unique(MSlist[[8]][MSlist[[8]][,10]==isolate(input$sel_peak_ID),9]);
+				peakit<<-MSlist[[4]][[2]][c(MSlist[[7]][isolate(input$sel_peak_ID),1]:MSlist[[7]][isolate(input$sel_peak_ID),2]),]			
+				if(length(peakit)>7){
+					EICit<<-MSlist[[4]][[2]][c(MSlist[[6]][EIC_ID,1]:MSlist[[6]][EIC_ID,2]),]
+					path=file.path(logfile[[1]],"pics","EIC1");
+					png(filename = path, bg = "white", width = 1100, height= 300)
+						if(length(EICit)>7){
+							plot(EICit[,3],EICit[,2],type="h",col="darkgrey",xlab="RT",ylab="Intensity",main="EIC (grey) & Peak (red)",xlim=c(min(MSlist[[4]][[1]]),max(MSlist[[4]][[1]])))
+						}else{
+							plot(EICit[3],EICit[2],type="h",col="darkgrey",xlab="RT",ylab="Intensity",main="EIC (grey) & Peak (red)")
+						}
+						if(length(peakit)>7){	
+							points(peakit[,3],peakit[,2],type="h",col="red",lwd=2)
+						}else{
+							points(peakit[3],peakit[2],type="h",col="red",lwd=2)				
+						}
+					dev.off();
+					expr6<-list(src=file.path(logfile[[1]],"pics","EIC1"));
+					output$EIC1<-renderImage(expr6, deleteFile = FALSE);
+					path=file.path(logfile[[1]],"pics","EIC2");
+					png(filename = path, bg = "white", width = 1100, height= 300);
+						if(length(EICit)>7){
+							plot(EICit[,3],EICit[,2],type="h",col="darkgrey",xlab="RT",ylab="Intensity")
+						}else{
+							plot(EICit[3],EICit[2],type="h",col="darkgrey",xlab="RT",ylab="Intensity")
+						}
+						if(length(peakit)>7){	
+							points(peakit[,3],peakit[,2],type="h",col="red",lwd=2)
+						}else{
+							points(peakit[3],peakit[2],type="h",col="red",lwd=2)				
+						}
+					dev.off();
+					expr7<-list(src=file.path(logfile[[1]],"pics","EIC2"));
+					output$EIC2<-renderImage(expr7, deleteFile = FALSE);
+					path=file.path(logfile[[1]],"pics","EIC3");
+					png(filename = path, bg = "white", width = 1100, height= 300);
+						if(length(EICit)>7){
+							plot(EICit[,3],EICit[,1],pch=19,col="darkgrey",xlab="RT",ylab="m/z")			
+						}else{
+							plot(EICit[3],EICit[1],pch=19,col="darkgrey",xlab="RT",ylab="m/z")
+						}
+						if(length(peakit)>7){	
+							points(peakit[,3],peakit[,1],pch=19,col="red",cex=1.5)
+						}else{
+							points(peakit[,3],peakit[,1],pch=19,col="red",cex=1.5)				
+						}
+					dev.off();
+					expr8<-list(src=file.path(logfile[[1]],"pics","EIC3"));
+					output$EIC3<-renderImage(expr8, deleteFile = FALSE);
+					cat("\n EIC & peak extracted")
+				}else{
+					cat("\n Peak based on single measurement - plotting skipped.")
+				}
+			}	
+		}
+	}
 })
 ##############################################################################
 

@@ -39,7 +39,7 @@ exported_2<-reactive({
 	peaklistID<-isolate(input$sel_meas)
 	if(isolate(init$a)=="TRUE"){
 		if(
-			(peaklistID!="none")&(file.exists(file.path(logfile[[1]],"peaklist",as.character(peaklistID))))
+			(peaklistID!=0)&(file.exists(file.path(logfile[[1]],"peaklist",as.character(peaklistID))))
 		){
 			load(file=file.path(logfile[[1]],"peaklist",as.character(peaklistID)),envir=as.environment(".GlobalEnv"),verbose=FALSE);
 			peaklist<-peaklist[

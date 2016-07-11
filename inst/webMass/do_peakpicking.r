@@ -113,6 +113,5 @@
 	output$measurements<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
 	if(addit){library(nlme)}
     cat("Peak picking completed \n"); 	  
-    updateSelectInput(session, "sel_meas_ID", label = "Select file by ID:", choices =  c("none",as.character(measurements[,1])), selected = "none")
-
+    
 
