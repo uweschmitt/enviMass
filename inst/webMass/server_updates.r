@@ -506,15 +506,6 @@ if(logfile[[10]]<3.102){
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	
 	}				
 	################################################################################################	
-	if(!file.exists(file.path(logfile$project_folder,"quantification","cal_models_pos"))){
-		cal_models_pos<-list()
-		save(cal_models_pos,file=file.path(logfile$project_folder,"quantification","cal_models_pos"));	
-	}
-	if(!file.exists(file.path(logfile$project_folder,"quantification","cal_models_neg"))){
-		cal_models_neg<-list()
-		save(cal_models_neg,file=file.path(logfile$project_folder,"quantification","cal_models_neg"));	
-	}
-	################################################################################################	
 	# extend logfile$summary
 	if(!any(logfile$summary[,1]=="calibration")){
 		logfile$summary[,1]<<-as.character(logfile$summary[,1])

@@ -1,11 +1,13 @@
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_screening.r!")}
-verbose<-FALSE
+verbose<-TRUE
 ###########################################################################################################
 # SPECIFY IONIZATION MODE #################################################################################
 observe({ 
 	input$Ion_mode_Cal 
 	if(verbose){cat("\n in A")}
 	if(isolate(init$a)=="TRUE"){
+	if(logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="calibration"]!="TRUE"){ # e.g., if files were changed / added / ...
+		if(verbose){cat("\n in A_1")}
 		if(isolate(input$Ion_mode_Cal)=="positive"){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements<-measurements[measurements[,3]=="calibration",,drop=FALSE]
@@ -34,6 +36,10 @@ observe({
 				}
 			}
 		}
+	}else{
+		info("Calibration files have been added or modified or copied. Workflow recalculation including the calibration required.");
+		cat("\n Calibration files have been added or modified or copied. Recalculation required!")
+	}	
 	}
 })
 ###########################################################################################################
@@ -85,13 +91,13 @@ observe({
 				target_IDs<-c("none",target_IDs)
 				updateSelectInput(session,inputId="Cal_target_ID",label="Target ID",choices=target_IDs,selected = target_IDs[1])
 				# load & update available calibration models
-				load(file=file.path(logfile[[1]],"quantification","cal_models_pos"),envir=as.environment(".GlobalEnv"));	
-				if(!any(names(cal_models_pos)==isolate(input$Cal_file_set))){ # make an entry for this calibration set, always at end
-					insert_at<-(length(cal_models_pos)+1)
-					cal_models_pos[[insert_at]]<<-list()
-					names(cal_models_pos)[insert_at]<<-isolate(input$Cal_file_set)
-					save(cal_models_pos,file=file.path(logfile$project_folder,"quantification","cal_models_pos"));	
+				if(!file.exists(file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")))){
+					cal_models_pos<<-list()
+					cal_models_pos[[1]]<<-list()
+					names(cal_models_pos)<<-isolate(input$Cal_file_set)
+					save(cal_models_pos,file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));			
 				}
+				load(file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));	
 			}else{ # not available
 				if((isolate(input$Ion_mode_Cal)!="negative")){
 					updateSelectInput(session,inputId="Cal_IS_name",choices="none",selected = "none")
@@ -140,13 +146,13 @@ observe({
 				target_IDs<-c("none",target_IDs)
 				updateSelectInput(session,inputId="Cal_target_ID",label="Target ID",choices=target_IDs,selected = target_IDs[1])
 				# load & update available calibration models
-				load(file=file.path(logfile[[1]],"quantification","cal_models_neg"),envir=as.environment(".GlobalEnv"));	
-				if(!any(names(cal_models_neg)==isolate(input$Cal_file_set))){ # make an entry for this calibration set, always at end
-					insert_at<-(length(cal_models_neg)+1)
-					cal_models_neg[[insert_at]]<<-list()
-					names(cal_models_neg)[insert_at]<<-isolate(input$Cal_file_set)
-					save(cal_models_neg,file=file.path(logfile$project_folder,"quantification","cal_models_neg"));	
+				if(!file.exists(file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")))){
+					cal_models_neg<<-list()
+					cal_models_neg[[1]]<<-list()
+					names(cal_models_neg)<<-isolate(input$Cal_file_set)
+					save(cal_models_neg,file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));			
 				}
+				load(file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));	
 			}else{ # not available
 				if((isolate(input$Ion_mode_Cal)!="positive")){
 					updateSelectInput(session,inputId="Cal_IS_name",choices="none",selected = "none")
@@ -327,12 +333,12 @@ observe({
 	input$Cal_target_ID
 	input$Cal_target_name
 	if(verbose){cat("\n in K")}
-	# anything available from calibration screening?
+	# anything available from calibration screening? Results still in measurements?
 	nothing<-TRUE
 	if(isolate(input$Ion_mode_Cal)=="positive"){ # check if compounds in tables are also found in screening outcomes!
 		if(
 			any(as.character(results_screen_target_pos_cal[[1]][,1])==isolate(input$Cal_target_ID)) &
-			any(as.character(results_screen_IS_pos_cal[[1]][,1])==isolate(input$Cal_IS_ID))
+			any(as.character(results_screen_IS_pos_cal[[1]][,1])==isolate(input$Cal_IS_ID)) 
 		){
 			nothing<-FALSE
 		}
@@ -346,7 +352,13 @@ observe({
 		}
 	}	
 	if(verbose){cat(nothing)}
-	if((isolate(init$a)=="TRUE") & (!nothing) & (isolate(input$Cal_IS_ID)!="none") & (isolate(input$Cal_target_ID)!="none")&  (isolate(input$Cal_file_set)!="none")){	
+	if(
+		(isolate(init$a)=="TRUE") & 
+		(!nothing) & 
+		(isolate(input$Cal_IS_ID)!="none") & 
+		(isolate(input$Cal_target_ID)!="none") &  
+		(isolate(input$Cal_file_set)!="none")
+	){	
 		# POSITIVE ##################################################################
 		if(isolate(input$Ion_mode_Cal)=="positive"){	
 			if(verbose){cat("\n in K_1")}
@@ -636,7 +648,7 @@ observe({
 				if((!is.null(ranges_cal_plot$x))||(!is.null(ranges_cal_plot$y))){
 					mtext("Now zoomed in",side=3,col="gray")
 				}
-				if(sum(dd$d[,8])>=2){
+				if(sum(dd$d[,8])>=2){ # at least two data points!
 					lin<-(dd$d[dd$d[,8]==1,5])
 					resp<-(dd$d[dd$d[,8]==1,4])
 					if(isolate(input$cal_model)=="linear"){
@@ -663,23 +675,47 @@ observe({
 				IS_ID<-isolate(input$Cal_IS_ID)
 				target_ID<-isolate(input$Cal_target_ID)
 				at_Cal<-isolate(input$Cal_file_set)
+				#IS_ID<-"693";target_ID<-"4";at_Cal<-"new_group"
 				use_name<-paste(IS_ID,target_ID,sep="_")
 				if(isolate(input$Ion_mode_Cal)=="positive"){	
-					use_cal<-which(names(cal_models_pos)==at_Cal)
+					if(verbose){cat("\n in M_positive")}
+					use_cal<-which(names(cal_models_pos)==at_Cal) # = 1
 					if(any(names(cal_models_pos[[use_cal]])==use_name)){
 						use_entry<-which((names(cal_models_pos[[use_cal]])==use_name))
-						if(length(cal_models_pos[[use_cal]][[use_entry]][[1]])==2){ # for the linear model
-							abline(cal_models_pos[[use_cal]][[use_entry]],col="gray",lwd=1,lty=2)
+						if(cal_models_pos[[use_cal]][[use_entry]]$call=="resp ~ 0 + lin"){ # linear, 0-intercept
+							abline(
+								a=0,
+								b=cal_models_pos[[use_cal]][[use_entry]]$coefficients,
+								col="gray",lwd=1,lty=2)
 						}
-						if(length(cal_models_pos[[use_cal]][[use_entry]][[1]])==3){ # for the quadratic model
+						if(cal_models_pos[[use_cal]][[use_entry]]$call=="resp ~ lin"){ # linear, with intercept
+							abline(
+								a=cal_models_pos[[use_cal]][[use_entry]]$coefficients[1],
+								b=cal_models_pos[[use_cal]][[use_entry]]$coefficients[2],
+								col="gray",lwd=1,lty=2)						
+						}
+						if(cal_models_pos[[use_cal]][[use_entry]]$call=="resp ~ 0 + lin + quad"){ # quadratic, 0-intercept
 							for_x<-seq(from=0,to=(max(dd$d[,5]*2)),length.out=100)
-							for_x2<-(for_x^2)
-							for_y<-predict(cal_models_pos[[use_cal]][[use_entry]],list(lin=for_x,quad=for_x2))
-							lines(for_x,for_y,col="gray",lwd=1,lty=2)
+							for_x2<-(for_x^2)							
+							for_y<-(
+								(cal_models_pos[[use_cal]][[use_entry]]$coefficients[1]*for_x)+
+								(cal_models_pos[[use_cal]][[use_entry]]$coefficients[2]*for_x2)
+							)
+							lines(for_x,for_y,col="gray",lwd=1,lty=2)						
+						}
+						if(cal_models_pos[[use_cal]][[use_entry]]$call=="resp ~ lin + quad"){ # quadratic, 0-intercept
+							for_x<-seq(from=0,to=(max(dd$d[,5]*2)),length.out=100)
+							for_x2<-(for_x^2)							
+							for_y<-(
+								(cal_models_pos[[use_cal]][[use_entry]]$coefficients[1]) +
+								(cal_models_pos[[use_cal]][[use_entry]]$coefficients[2]*for_x)+
+								(cal_models_pos[[use_cal]][[use_entry]]$coefficients[3]*for_x2)
+							)
+							lines(for_x,for_y,col="gray",lwd=1,lty=2)						
 						}
 						points(
-							cal_models_pos[[use_cal]][[use_entry]][[12]]$lin,
-							cal_models_pos[[use_cal]][[use_entry]][[12]]$resp,
+							cal_models_pos[[use_cal]][[use_entry]]$data[,2],
+							cal_models_pos[[use_cal]][[use_entry]]$data[,1],
 							pch=0,col="gray",cex=2.5
 						)
 						mtext("Saved calibration model available",side=3,col="gray",line=-1)
@@ -688,30 +724,59 @@ observe({
 					}
 				}
 				if(isolate(input$Ion_mode_Cal)=="negative"){
-					use_cal<-which(names(cal_models_neg)==at_Cal)
+					if(verbose){cat("\n in M_negative")}
+					use_cal<-which(names(cal_models_neg)==at_Cal)				
+if(length(use_cal)!=0){
 					if(any(names(cal_models_neg[[use_cal]])==use_name)){
+						if(verbose){cat("\n in M_negative_inside")}
 						use_entry<-which((names(cal_models_neg[[use_cal]])==use_name))
-						if(length(cal_models_neg[[use_cal]][[use_entry]][[1]])==2){ # for the linear model
-							abline(cal_models_neg[[use_cal]][[use_entry]],col="gray",lwd=1,lty=2)
+						if(cal_models_neg[[use_cal]][[use_entry]]$call=="resp ~ 0 + lin"){ # linear, 0-intercept
+							abline(
+								a=0,
+								b=cal_models_neg[[use_cal]][[use_entry]]$coefficients,
+								col="gray",lwd=1,lty=2)
 						}
-						if(length(cal_models_neg[[use_cal]][[use_entry]][[1]])==3){ # for the quadratic model
-							for_x<-seq(from=min(lin),to=(max(lin)*2),length.out=100)
-							for_x2<-(for_x^2)
-							for_y<-predict(cal_models_neg[[use_cal]][[use_entry]],list(lin=for_x,quad=for_x2))
-							lines(for_x,for_y,col="gray",lwd=1,lty=2)
+						if(cal_models_neg[[use_cal]][[use_entry]]$call=="resp ~ lin"){ # linear, with intercept
+							abline(
+								a=cal_models_neg[[use_cal]][[use_entry]]$coefficients[1],
+								b=cal_models_neg[[use_cal]][[use_entry]]$coefficients[2],
+								col="gray",lwd=1,lty=2)						
+						}
+						if(cal_models_neg[[use_cal]][[use_entry]]$call=="resp ~ 0 + lin + quad"){ # quadratic, 0-intercept
+							for_x<-seq(from=0,to=(max(dd$d[,5]*2)),length.out=100)
+							for_x2<-(for_x^2)							
+							for_y<-(
+								(cal_models_neg[[use_cal]][[use_entry]]$coefficients[1]*for_x)+
+								(cal_models_neg[[use_cal]][[use_entry]]$coefficients[2]*for_x2)
+							)
+							lines(for_x,for_y,col="gray",lwd=1,lty=2)						
+						}
+						if(cal_models_neg[[use_cal]][[use_entry]]$call=="resp ~ lin + quad"){ # quadratic, 0-intercept
+							for_x<-seq(from=0,to=(max(dd$d[,5]*2)),length.out=100)
+							for_x2<-(for_x^2)							
+							for_y<-(
+								(cal_models_neg[[use_cal]][[use_entry]]$coefficients[1]) +
+								(cal_models_neg[[use_cal]][[use_entry]]$coefficients[2]*for_x)+
+								(cal_models_neg[[use_cal]][[use_entry]]$coefficients[3]*for_x2)
+							)
+							lines(for_x,for_y,col="gray",lwd=1,lty=2)						
 						}
 						points(
-							cal_models_neg[[use_cal]][[use_entry]][[12]]$lin,
-							cal_models_neg[[use_cal]][[use_entry]][[12]]$resp,
+							cal_models_neg[[use_cal]][[use_entry]]$data[,2],
+							cal_models_neg[[use_cal]][[use_entry]]$data[,1],
 							pch=0,col="gray",cex=2.5
 						)
 						mtext("Saved calibration model available",side=3,col="gray",line=-1)
 					}else{
 						mtext("No saved calibration model available",side=3,col="gray",line=-1)
-					}
-				}				
+					}					
+				}		
+}else{
+	mtext("No saved calibration model available",side=3,col="gray",line=-1)
+}				
 			})
-			output$cal_model_summary<-renderText({
+			output$cal_model_summary<-renderText({		
+				if(verbose){cat("\n in M_text_output")}
 				if(cal_model$call[[2]]=="resp ~ 0 + lin"){ # linear, 0-intercept
 					coefi<-cal_model$coefficient
 					printthis<-paste("Ratio = ",as.character(round(coefi[[1]],digits=5)),"*Concentration",sep="")
@@ -737,7 +802,7 @@ observe({
 						as.character(round(coefi[[3]],digits=5)),"*Concentration^2",					
 					sep="")
 				}				
-				return(printthis)
+				return(printthis)			
 			})
 			}else{
 			output$cal_plot <- renderPlot({
@@ -792,7 +857,8 @@ observe({
 			IS_ID<-isolate(input$Cal_IS_ID)
 			target_ID<-isolate(input$Cal_target_ID)
 			at_Cal<-isolate(input$Cal_file_set)
-			use_cal<-which(names(cal_models_pos)==at_Cal)
+			#IS_ID<-"693";target_ID<-"4";at_Cal<-"A"
+			use_cal<-which(names(cal_models_pos)==at_Cal) # well, the first entry ... just in case different calibration groups are merged into a list at some point (= makes saving too slow).
 			use_name<-paste(IS_ID,target_ID,sep="_")
 			if(!any(names(cal_models_pos[[use_cal]])==use_name)){ # model not yet existing
 				make_entry<-1
@@ -810,11 +876,13 @@ observe({
 				}
 			}else{
 				make_entry<-which((names(cal_models_pos[[use_cal]])==use_name))
-			}			
-			assign("cal_model_saved",cal_model)
-			cal_models_pos[[use_cal]][[make_entry]]<<-cal_model_saved
-			names(cal_models_pos[[use_cal]])[make_entry]<<-use_name
-			save(cal_models_pos,file=file.path(logfile[[1]],"quantification","cal_models_pos"),envir=as.environment(".GlobalEnv"));	
+			}	
+			cal_models_pos[[use_cal]][[make_entry]]<<-list()
+			cal_models_pos[[use_cal]][[make_entry]]$call<<-cal_model$call[[2]]
+			cal_models_pos[[use_cal]][[make_entry]]$coefficients<<-cal_model$coefficients
+			cal_models_pos[[use_cal]][[make_entry]]$data<<-cal_model$model
+			names(cal_models_pos[[use_cal]])[make_entry]<<-use_name	
+			save(cal_models_pos,file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));					
 			cat("\n Calibration model saved")
 		}
 		if(isolate(input$Ion_mode_Cal)=="negative"){
@@ -841,9 +909,12 @@ observe({
 				make_entry<-which((names(cal_models_neg[[use_cal]])==use_name))
 			}			
 			assign("cal_model_saved",cal_model)
-			cal_models_neg[[use_cal]][[make_entry]]<<-cal_model_saved
+			cal_models_neg[[use_cal]][[make_entry]]<<-list()
+			cal_models_neg[[use_cal]][[make_entry]]$call<<-cal_model$call[[2]]
+			cal_models_neg[[use_cal]][[make_entry]]$coefficients<<-cal_model$coefficients
+			cal_models_neg[[use_cal]][[make_entry]]$data<<-cal_model$model
 			names(cal_models_neg[[use_cal]])[make_entry]<<-use_name
-			save(cal_models_neg,file=file.path(logfile[[1]],"quantification","cal_models_neg"),envir=as.environment(".GlobalEnv"));	
+			save(cal_models_neg,file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));					
 			cat("\n Calibration model saved")
 		}
 		enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE)	
@@ -869,7 +940,7 @@ observe({
 					stop("\n Calibration model delete fucked up. Debug me")
 				}
 			}
-			save(cal_models_pos,file=file.path(logfile[[1]],"quantification","cal_models_pos"),envir=as.environment(".GlobalEnv"));			
+			save(cal_models_pos,file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));					
 		}
 		if(isolate(input$Ion_mode_Cal)=="negative"){
 			IS_ID<-isolate(input$Cal_IS_ID)
@@ -885,8 +956,7 @@ observe({
 					stop("\n Calibration model delete fucked up. Debug me")
 				}
 			}
-			save(cal_models_neg,file=file.path(logfile[[1]],"quantification","cal_models_neg"),envir=as.environment(".GlobalEnv"));			
-
+			save(cal_models_neg,file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));					
 		}
 		enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE)	
 		isolate(redo_cal$a<-(redo_cal$a+1))
@@ -894,9 +964,9 @@ observe({
 })
 ###########################################################################################################
 
-if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_screening.r!")}
- 
- 
+if(any(ls()=="logfile")){stop("\n illegal logfile detected in server_obs_calibration.r!")}
+if(any(ls()=="cal_models_neg")){stop("\n illegal cal_models_neg detected in server_obs_calibration.r!")}
+if(any(ls()=="cal_models_pos")){stop("\n illegal cal_models_pos detected in server_obs_calibration.r!")} 
  
  
  

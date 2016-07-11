@@ -885,7 +885,7 @@ observe({
 			(measurements3$tag2==isolate(input$Modif_cal_group)) &
 			(measurements3$Mode==isolate(input$Modif_cal_mode))
 		)
-		if( itsok & (length(for_those)>0) ){ # = a valid new group name
+		if( itsok & (length(for_those)>0) ){ # = a valid new group name		
 			measurements4<-measurements3[for_those,]
 			measurements4[,6]<-as.character(isolate(input$Modif_calgroup_date1))
 			measurements4[,6]<-enviMass:::convDate(measurements4[,6]);
@@ -898,14 +898,17 @@ observe({
 			for(i in 1:length(measurements4[,1])){
 				oldID<-measurements4[i,1]
 				# get new IDs!	
-				newID<-getID(as.numeric(c(measurements3[,1],measurements4[,1]))) # here, measurements4 still partly contain duplicated, old IDs
+				newID<-enviMass:::getID(as.numeric(c(measurements3[,1],measurements4[,1]))) # here, measurements4 still partly contain duplicated, old IDs
+				newID<-as.character(newID)
 				measurements4[i,1]<-newID
 				# copy mzML-files with new IDs. must exist!
 				if(file.exists(file.path(logfile$project_folder,"files",paste(oldID,".mzXML",sep="")))){
 					file.copy(
 						from=file.path(logfile$project_folder,"files",paste(oldID,".mzXML",sep="")),
-						to=file.path(logfile$project_folder,"files",paste(newID,".mzXML",sep=""))
+						to=file.path(logfile$project_folder,"files",paste(newID,".mzXML",sep="")),	
+						overwrite=TRUE
 					)
+					cat("\n   copied .mzXML file.")
 				}else{
 					stop("Copying calibration files.mzXML: missing file. Aborted. DEBUG YOUR PROJECT!")
 				}
@@ -913,7 +916,8 @@ observe({
 				if(file.exists(file.path(logfile$project_folder,"peaklist",oldID))){
 					file.copy(
 						from=file.path(logfile$project_folder,"peaklist",oldID),
-						to=file.path(logfile$project_folder,"peaklist",newID)
+						to=file.path(logfile$project_folder,"peaklist",newID),
+						overwrite=TRUE
 					)
 					cat("\n   copied calibration peaklist.")
 				}
@@ -921,14 +925,60 @@ observe({
 				if(file.exists(file.path(logfile$project_folder,"MSlist",oldID))){
 					file.copy(
 						from=file.path(logfile$project_folder,"MSlist",oldID),
-						to=file.path(logfile$project_folder,"MSlist",newID)
+						to=file.path(logfile$project_folder,"MSlist",newID),
+						overwrite=TRUE
 					)
-					cat("\n    copied calibration MSlist.")
+					cat("\n   copied calibration MSlist.")
 				}
+				if(file.exists(file.path(logfile[[1]],"pics",paste("recal_",oldID,sep="")))){
+					file.copy(				
+						from=file.path(logfile[[1]],"pics",paste("recal_",oldID,sep="")),
+						to=file.path(logfile[[1]],"pics",paste("recal_",newID,sep="")),
+						overwrite=TRUE
+					)
+				}
+				if(file.exists(file.path(logfile[[1]],"pics",paste("peakhist_",oldID,sep="")))){
+					file.copy(				
+						from=file.path(logfile[[1]],"pics",paste("peakhist_",oldID,sep="")),
+						to=file.path(logfile[[1]],"pics",paste("peakhist_",newID,sep="")),
+						overwrite=TRUE
+					)
+				}
+				if(file.exists(file.path(logfile[[1]],"pics",paste("peakmzRT_",oldID,sep="")))){
+					file.copy(				
+						from=file.path(logfile[[1]],"pics",paste("peakmzRT_",oldID,sep="")),
+						to=file.path(logfile[[1]],"pics",paste("peakmzRT_",newID,sep="")),
+						overwrite=TRUE
+					)
+				}
+				if(file.exists(file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",oldID,".png",sep="")))){
+					file.copy(				
+						from=file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",oldID,".png",sep="")),
+						to=file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",newID,".png",sep="")),
+						overwrite=TRUE
+					)
+				}				
 			}			
 			measurements3<-rbind(measurements3,measurements4)
 			write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
-			rm(measurements3)
+			rm(measurements3,measurements4)
+			# copy existing calibration models
+			if(isolate(input$Modif_cal_mode)=="positive"){ # positive
+				if(file.exists(file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Modif_cal_group),sep="")))){
+					load(file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Modif_cal_group),sep="")),envir=as.environment(".GlobalEnv"));					
+					names(cal_models_pos)<-isolate(input$Copy_cal_group) # rename!
+					save(cal_models_pos,file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Copy_cal_group),sep="")),envir=as.environment(".GlobalEnv"));					
+					rm(cal_models_pos)
+				}
+			}
+			if(isolate(input$Modif_cal_mode)=="negative"){ # negative
+				if(file.exists(file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Modif_cal_group),sep="")))){
+					load(file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Modif_cal_group),sep="")),envir=as.environment(".GlobalEnv"));					
+					names(cal_models_neg)<-isolate(input$Copy_cal_group) # rename!
+					save(cal_models_neg,file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Copy_cal_group),sep="")),envir=as.environment(".GlobalEnv"));					
+					rm(cal_models_neg)
+				}
+			}
 			enviMass:::workflow_set(down="LOD",check_node=TRUE,single_file=TRUE)
 			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 	
 			cat("Calibration file set copied.")
@@ -967,34 +1017,34 @@ observe({
 				}
 				if(file.exists(file.path(logfile$project_folder,"MSlist",rem_IDs[i]))){
 					file.remove(file.path(logfile$project_folder,"MSlist",rem_IDs[i]))
+				}	
+				if(file.exists(file.path(logfile[[1]],"pics",paste("recal_",rem_IDs[i],sep="")))){
+					file.remove(file.path(logfile[[1]],"pics",paste("recal_",rem_IDs[i],sep="")))
+				}
+				if(file.exists(file.path(logfile[[1]],"pics",paste("peakhist_",rem_IDs[i],sep="")))){
+					file.remove(file.path(logfile[[1]],"pics",paste("peakhist_",rem_IDs[i],sep="")))
+				}
+				if(file.exists(file.path(logfile[[1]],"pics",paste("peakmzRT_",rem_IDs[i],sep="")))){
+					file.remove(file.path(logfile[[1]],"pics",paste("peakmzRT_",rem_IDs[i],sep="")))
+				}
+				if(file.exists(file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",rem_IDs[i],".png",sep="")))){
+					file.remove(file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",rem_IDs[i],".png",sep="")))
+				}				
+			}
+			if(isolate(input$Modif_cal_mode)=="positive"){ # positive
+				if(file.exists(file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Modif_cal_group),sep="")))){
+					file.remove(file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Modif_cal_group),sep="")))					
 				}
 			}
-			any_calibrated<-FALSE
-			if(isolate(input$Modif_cal_mode)=="positive"){ # clean positive calibration models
-				load(file=file.path(logfile[[1]],"quantification","cal_models_pos"),envir=as.environment(".GlobalEnv"));	
-				if(any(names(cal_models_pos)==isolate(input$Modif_cal_mode))){ # make an entry for this calibration set, always at end
-					where_delete<-which(names(cal_models_pos)==isolate(input$Modif_cal_mode))
-					cal_models_pos[[where_delete]]<<-list()
-					names(cal_models_pos)[where_delete]<<-""
-					save(cal_models_pos,file=file.path(logfile$project_folder,"quantification","cal_models_pos"));	
-					any_calibrated<-TRUE;
+			if(isolate(input$Modif_cal_mode)=="negative"){ # negative
+				if(file.exists(file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Modif_cal_group),sep="")))){
+					file.remove(file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Modif_cal_group),sep="")))					
 				}
-				rm(cal_model_pos)
 			}
-			if(isolate(input$Modif_cal_mode)=="negative"){ # clean negative calibration models
-				load(file=file.path(logfile[[1]],"quantification","cal_models_neg"),envir=as.environment(".GlobalEnv"));	
-				if(any(names(cal_models_neg)==isolate(input$Modif_cal_mode))){ # make an entry for this calibration set, always at end
-					where_delete<-which(names(cal_models_neg)==isolate(input$Modif_cal_mode))
-					cal_models_neg[[where_delete]]<<-list()
-					names(cal_models_neg)[where_delete]<<-""
-					save(cal_models_neg,file=file.path(logfile$project_folder,"quantification","cal_models_neg"));	
-					any_calibrated<-TRUE;
-				}
-				rm(cal_model_neg)
-			}			
-			if( any_include & any_calibrated ){ # included & calibration models exist?
+			if( any_include ){ # included & calibration models exist?
 				enviMass:::workflow_set(down="calibration",check_node=TRUE,single_file=FALSE)	# is this optional? after all, the sets are just removed ...
-				enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE)					
+				enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE)	
+				updateSelectInput(session,"Ion_mode_Cal",selected = "none") # stops, in combination with Tasks_to_redo, invalid selections in the calibration tab!
 			}	
 			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
 			output$Modif_cal_text_load<-renderText({"Calibration group deleted."})
@@ -1108,7 +1158,6 @@ impfolder<-reactive({
 								notintern=FALSE,
 								use_format="mzXML");     				  
 							file.remove(file.path(logfile[[1]],"files",paste(newID,".raw",sep="")))
-			
 							if( file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep=""))) ){ # copy completed and conversion ok?			
 								mz1<-readMzXmlData:::readMzXmlFile(
 									mzXmlFile=file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")),

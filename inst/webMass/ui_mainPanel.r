@@ -118,7 +118,7 @@
 						fluidRow(
 							column(width = 4, helpText("Load a calibration group to be modified, deleted or copied below. To do so, select the ionization mode, insert the calibration group name (tag2 in the file table) and press Load.")),
 							column(width = 3, selectInput("Modif_cal_mode", "Choose ionization mode:", choices = c("positive", "negative"))),
-							column(width = 3, textInput("Modif_cal_group", "Calibration group:", value = "existing_group"), bsButton("Load_cal","Load",style="primary"))
+							column(width = 3, textInput("Modif_cal_group", "Calibration group:", value = "existinggroup"), bsButton("Load_cal","Load",style="primary"))
 						),
 						HTML('<hr noshade="noshade" />'),
 						htmlOutput('Modif_cal_text_load'),
@@ -133,7 +133,7 @@
 						bsButton("Change_cal","Save",style="primary"),					
 						HTML('<hr noshade="noshade" />'),
 						helpText("Copy the calibration group to create a new calibration group with a different name. This will directly incorporate the above (changed) specifications for the new group."),
-						textInput("Copy_cal_group", "New calibration group name:", value = "new_group"),
+						textInput("Copy_cal_group", "New calibration group name (no underscores permitted!):", value = "newgroup"),
 						bsButton("Copy_cal","Copy",style="primary"),	
 						HTML('<hr noshade="noshade" />'),
 						helpText("Delete all the files and any associated contents of the loaded calibration group."),

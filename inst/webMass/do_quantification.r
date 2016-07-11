@@ -7,7 +7,7 @@
 		(file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos"))) &		# the summary screening table for IS compounds	
 		(file.exists(file=file.path(logfile$project_folder,"quantification","cal_models_pos")))		
 	){
-	
+if(FALSE){	
 		# LOAD DATA ########################################################################
 		load(file=file.path(logfile$project_folder,"results","screening","res_target_pos_screen"))		
 		load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos")) # requires new entries to [[1]] and [[2]]
@@ -121,7 +121,7 @@
 		save(results_screen_target_pos,file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))
 	}
 	
-	
+}	
 	
 	
 	# NEGATIVE IONIZATION ##################################################################
