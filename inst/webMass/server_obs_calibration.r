@@ -1,8 +1,10 @@
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_screening.r!")}
-verbose<-TRUE
+verbose<-FALSE
 
 ranges_cal_plot <- reactiveValues(x = NULL, y = NULL)
-dd	<-	reactiveValues() # reactive value to indicate model save / removal
+dd	<-	reactiveValues() # reactive value ...
+dd$d<-matrix(ncol=2,nrow=0,0) 	# ... to indicate & contain model save / removal
+dd$entry<-"none_none"			# ... non-redundant changes in the compounds selection
 redo_cal<-reactiveValues() 	# reactive value to indicate model save / removal
 redo_cal$a<-1
 
@@ -192,6 +194,9 @@ observe({ # Update target name & IS_ID - C
 					updateSelectInput(session,inputId="Cal_IS_ID",selected = as.character(new_IS_ID))
 				}
 			}
+			if(isolate(dd$entry)!=paste(input$Cal_IS_ID,input$Cal_target_ID,sep="_")){
+				isolate(dd$entry<-paste(input$Cal_IS_ID,input$Cal_target_ID,sep="_"))
+			}
 		}else{	
 			updateSelectInput(session,inputId="Cal_target_name",selected="none")
 		}
@@ -214,6 +219,9 @@ observe({ # Update IS name - E
 		if(isolate(input$Cal_IS_ID)!="none"){
 			use_this_name<-intstand[intstand[,1]==isolate(input$Cal_IS_ID),2]
 			updateSelectInput(session,inputId="Cal_IS_name",selected = as.character(use_this_name))
+			if(isolate(dd$entry)!=paste(input$Cal_IS_ID,input$Cal_target_ID,sep="_")){
+				isolate(dd$entry<-paste(input$Cal_IS_ID,input$Cal_target_ID,sep="_"))
+			}
 		}else{
 			updateSelectInput(session,inputId="Cal_IS_name",selected="none")
 		}
@@ -240,7 +248,6 @@ observe({ # - G
 		is_at_ISID<-(isolate(input$Cal_IS_ID))
 		in_table<-which( ((targets[,1]==is_at_targetID)&(targets[,6]==is_at_ISID)) )
 		at_target_ID<-"none"
-		#at_IS_ID<-"none"
 		if( (length(in_table)==0) || (is.na(in_table[1])) ){ # match with is_at_ISID not existing in table; reset to first available entry
 			if(verbose){cat("\n in G_1")}
 			in_table<-which(targets[,1]==is_at_targetID)
@@ -252,21 +259,17 @@ observe({ # - G
 			if(in_table<length(targets[,1])){
 				in_table<-(in_table+1)		
 			}
-			at_target_ID<-as.character(targets[in_table,1])
-			#at_IS_ID<-as.character(targets[in_table,6])	
+			at_target_ID<-as.character(targets[in_table,1])	
 		}else{ # match existing; get next entry
 			if(verbose){cat("\n in G_2")}
 			if(in_table<length(targets[,1])){
 				in_table<-(in_table+1)
-				at_target_ID<-as.character(targets[in_table,1])
-				#at_IS_ID<-as.character(targets[in_table,6])			
+				at_target_ID<-as.character(targets[in_table,1])			
 			}else{
 				at_target_ID<-"none"
-				#at_IS_ID<-"none"
 			}
 		}
 		updateSelectInput(session, inputId="Cal_target_ID", selected = at_target_ID)
-		#updateSelectInput(session, inputId="Cal_IS_ID", selected = at_IS_ID)
 	}
 })
 
@@ -278,7 +281,6 @@ observe({ # - H
 		is_at_ISID<-(isolate(input$Cal_IS_ID))
 		in_table<-which( ((targets[,1]==is_at_targetID)&(targets[,6]==is_at_ISID)) )
 		at_target_ID<-"none"
-		#at_IS_ID<-"none"
 		if( (length(in_table)==0) || (is.na(in_table[1])) ){ # match with is_at_ISID not existing in table; reset to first available entry
 			in_table<-which(targets[,1]==is_at_targetID)
 			in_table<-in_table[1] # should only be one entry!
@@ -289,20 +291,16 @@ observe({ # - H
 				in_table<-(in_table-1)		
 			}
 			at_target_ID<-as.character(targets[in_table,1])
-			at_target_ID<-as.character(targets[in_table,1])
-			#at_IS_ID<-as.character(targets[in_table,6])	
+			at_target_ID<-as.character(targets[in_table,1])	
 		}else{ # match existing; get next entry
 			if(in_table>1){
 				in_table<-(in_table-1)
-				at_target_ID<-as.character(targets[in_table,1])
-				#at_IS_ID<-as.character(targets[in_table,6])			
+				at_target_ID<-as.character(targets[in_table,1])			
 			}else{
 				at_target_ID<-"none"
-				#at_IS_ID<-"none"
 			}
 		}	
 		updateSelectInput(session, inputId="Cal_target_ID", selected = at_target_ID)
-		#updateSelectInput(session, inputId="Cal_IS_ID", selected = at_IS_ID)	
 	}
 })
 
@@ -311,14 +309,11 @@ observe({ # - I
 	if(verbose){cat("\n in   I")}
 	if((isolate(init$a)=="TRUE")& (isolate(input$Cal_file_set)!="none")){
 		at_target_ID<-"none"
-		#at_IS_ID<-"none"
 		if(length(targets[,1])>0){ # match with is_at_ISID not existing in table; reset to first available entry
 			in_table<-1
-			at_target_ID<-as.character(targets[in_table,1])
-			#at_IS_ID<-as.character(targets[in_table,6])	
+			at_target_ID<-as.character(targets[in_table,1])	
 		}
 		updateSelectInput(session, inputId="Cal_target_ID", selected = at_target_ID)
-		#updateSelectInput(session, inputId="Cal_IS_ID", selected = at_IS_ID)
 	}
 })
 
@@ -327,14 +322,11 @@ observe({ # find last entry - J
 	if(verbose){cat("\n in   J")}
 	if((isolate(init$a)=="TRUE")& (isolate(input$Cal_file_set)!="none")){
 		at_target_ID<-"none"
-		#at_IS_ID<-"none"
 		if(length(targets[,1])>0){ # match with is_at_ISID not existing in table; reset to first available entry
 			in_table<-length(targets[,1])
 			at_target_ID<-as.character(targets[in_table,1])
-			#at_IS_ID<-as.character(targets[in_table,6])	
 		}
 		updateSelectInput(session, inputId="Cal_target_ID", selected = at_target_ID)
-		#updateSelectInput(session, inputId="Cal_IS_ID", selected = at_IS_ID)
 	}
 })
 ###########################################################################################################
@@ -343,32 +335,34 @@ observe({ # find last entry - J
 # RELOAD DATA (e.g., when IS intensity ranges were changed) ###############################################
 observe({ # - Reload
 	input$reload_Cal
-	if(isolate(input$Cal_file_set)!="none"){
-		if(verbose){cat("\nReloaded:")}
-		if(
-			(isolate(input$Ion_mode_Cal)=="positive")
-		){
-			targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
-			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
-			targets<-targets[targets[,8]=="positive",,drop=FALSE]
-			intstand<-intstand[intstand[,7]=="positive",,drop=FALSE]
-			targets<-targets[targets[,6]!="FALSE",,drop=FALSE]
-			targets<<-targets
-			intstand<<-intstand
-			if(verbose){cat(" positive")}
+	if(isolate(init$a)=="TRUE"){
+		if(isolate(input$Cal_file_set)!="none"){
+			if(verbose){cat("\nReloaded:")}
+			if(
+				(isolate(input$Ion_mode_Cal)=="positive")
+			){
+				targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
+				intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
+				targets<-targets[targets[,8]=="positive",,drop=FALSE]
+				intstand<-intstand[intstand[,7]=="positive",,drop=FALSE]
+				targets<-targets[targets[,6]!="FALSE",,drop=FALSE]
+				targets<<-targets
+				intstand<<-intstand
+				if(verbose){cat(" positive")}
+			}
+			if(
+				(isolate(input$Ion_mode_Cal)=="negative")		
+			){
+				targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
+				intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
+				targets<-targets[targets[,8]=="negative",,drop=FALSE]
+				intstand<-intstand[intstand[,7]=="negative",,drop=FALSE]
+				targets<-targets[targets[,6]!="FALSE",,drop=FALSE]
+				targets<<-targets
+				intstand<<-intstand
+				if(verbose){cat(" negative")}
+			}		
 		}
-		if(
-			(isolate(input$Ion_mode_Cal)=="negative")		
-		){
-			targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
-			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
-			targets<-targets[targets[,8]=="negative",,drop=FALSE]
-			intstand<-intstand[intstand[,7]=="negative",,drop=FALSE]
-			targets<-targets[targets[,6]!="FALSE",,drop=FALSE]
-			targets<<-targets
-			intstand<<-intstand
-			if(verbose){cat(" negative")}
-		}		
 	}
 })	
 ###########################################################################################################
@@ -376,285 +370,280 @@ observe({ # - Reload
 ###########################################################################################################
 # RETRIEVE SETS ###########################################################################################
 observe({ # - K
-	input$Cal_IS_ID
-	#input$Cal_IS_name # required?
-	input$Cal_target_ID
-	#input$Cal_target_name # required?
+	dd$entry
 	input$reload_Cal
 	if(verbose){cat("\n in K")}
-	# anything available from calibration screening? Results still in measurements?
-	something<-FALSE
-	if(isolate(input$Ion_mode_Cal)=="positive"){ # check if compounds in tables are also found in screening outcomes!
-		if(
-			any(as.character(results_screen_target_pos_cal[[1]][,1])==isolate(input$Cal_target_ID)) &
-			any(as.character(results_screen_IS_pos_cal[[1]][,1])==isolate(input$Cal_IS_ID)) 
-		){
-			something<-TRUE
-		}
-	}
-	if(isolate(input$Ion_mode_Cal)=="negative"){ # check if compounds in tables are also found in screening outcomes!
-		if(
-			any(as.character(results_screen_target_neg_cal[[1]][,1])==isolate(input$Cal_target_ID)) &
-			any(as.character(results_screen_IS_neg_cal[[1]][,1])==isolate(input$Cal_IS_ID))
-		){
-			something<-TRUE
-		}
-	}	
-	if(verbose){cat(something)}
-	if(
-		(isolate(init$a)=="TRUE") & 
-		(something) & 
-		(isolate(input$Cal_IS_ID)!="none") & 
-		(isolate(input$Cal_target_ID)!="none") &  
-		(isolate(input$Cal_file_set)!="none")
-	){	
-		# POSITIVE ##################################################################
-		if(isolate(input$Ion_mode_Cal)=="positive"){	
-			if(verbose){cat("\n in K_1")}
-			IS_ID<-isolate(input$Cal_IS_ID)
-			target_ID<-isolate(input$Cal_target_ID)
-			at_Cal<-isolate(input$Cal_file_set)
-			#target_ID<-"4"; IS_ID<-"693";at_Cal<-"A"			
-			# extract IS peaks ######################################################
-			IS_adduct<-intstand[intstand[,1]==IS_ID,19]
-			IS_peak<-as.numeric(intstand[intstand[,1]==IS_ID,20])
-			at_entry<-FALSE
-			for(i in 1:length(names(res_IS_pos_screen_cal))){ # where?
-				if(
-					(strsplit(names(res_IS_pos_screen_cal)[i],"_")[[1]][1]==IS_ID) &
-					(strsplit(names(res_IS_pos_screen_cal)[i],"_")[[1]][2]==IS_adduct)
-				){
-					at_entry<-i;break;
-				}
+		if(isolate(init$a)=="TRUE"){
+		# anything available from calibration screening? Results still in measurements?
+		something<-FALSE
+		if(isolate(input$Ion_mode_Cal)=="positive"){ # check if compounds in tables are also found in screening outcomes!
+			if(
+				any(as.character(results_screen_target_pos_cal[[1]][,1])==isolate(input$Cal_target_ID)) &
+				any(as.character(results_screen_IS_pos_cal[[1]][,1])==isolate(input$Cal_IS_ID)) 
+			){
+				something<-TRUE
 			}
-			IS_in_file<-c()
-			IS_with_peak<-c()
-			IS_with_score<-c()
-			if(length(res_IS_pos_screen_cal[[at_entry]])>0){
-				for(j in 1:length(res_IS_pos_screen_cal[[at_entry]])){
-					if(length(res_IS_pos_screen_cal[[at_entry]][[j]])>0){						
-						if(measurements[measurements[,1]==res_IS_pos_screen_cal[[at_entry]][[j]][[1]]$file_ID,]$tag2==at_Cal){
-							for(k in 1:length(res_IS_pos_screen_cal[[at_entry]][[j]])){
-								if(any(res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==IS_peak)){
-									that<-which(res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==IS_peak)
-									IS_in_file<-c(IS_in_file,res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$file_ID)
-									IS_with_peak<-c(IS_with_peak,res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[that,2])
-									IS_with_score<-c(IS_with_score,res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$score_1)	
+		}
+		if(isolate(input$Ion_mode_Cal)=="negative"){ # check if compounds in tables are also found in screening outcomes!
+			if(
+				any(as.character(results_screen_target_neg_cal[[1]][,1])==isolate(input$Cal_target_ID)) &
+				any(as.character(results_screen_IS_neg_cal[[1]][,1])==isolate(input$Cal_IS_ID))
+			){
+				something<-TRUE
+			}
+		}	
+		if(verbose){cat(something)}
+		if(
+			(isolate(init$a)=="TRUE") & 
+			(something) & 
+			(isolate(input$Cal_IS_ID)!="none") & 
+			(isolate(input$Cal_target_ID)!="none") &  
+			(isolate(input$Cal_file_set)!="none")
+		){	
+			# POSITIVE ##################################################################
+			if(isolate(input$Ion_mode_Cal)=="positive"){	
+				if(verbose){cat("\n in K_1")}
+				IS_ID<-isolate(input$Cal_IS_ID)
+				target_ID<-isolate(input$Cal_target_ID)
+				at_Cal<-isolate(input$Cal_file_set)
+				#target_ID<-"4"; IS_ID<-"693";at_Cal<-"A"			
+				# extract IS peaks ######################################################
+				IS_adduct<-intstand[intstand[,1]==IS_ID,19]
+				IS_peak<-as.numeric(intstand[intstand[,1]==IS_ID,20])
+				at_entry<-FALSE
+				for(i in 1:length(names(res_IS_pos_screen_cal))){ # where?
+					if(
+						(strsplit(names(res_IS_pos_screen_cal)[i],"_")[[1]][1]==IS_ID) &
+						(strsplit(names(res_IS_pos_screen_cal)[i],"_")[[1]][2]==IS_adduct)
+					){
+						at_entry<-i;break;
+					}
+				}
+				IS_in_file<-c()
+				IS_with_peak<-c()
+				IS_with_score<-c()
+				if(length(res_IS_pos_screen_cal[[at_entry]])>0){
+					for(j in 1:length(res_IS_pos_screen_cal[[at_entry]])){
+						if(length(res_IS_pos_screen_cal[[at_entry]][[j]])>0){						
+							if(measurements[measurements[,1]==res_IS_pos_screen_cal[[at_entry]][[j]][[1]]$file_ID,]$tag2==at_Cal){
+								for(k in 1:length(res_IS_pos_screen_cal[[at_entry]][[j]])){
+									if(any(res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==IS_peak)){
+										that<-which(res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==IS_peak)
+										IS_in_file<-c(IS_in_file,res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$file_ID)
+										IS_with_peak<-c(IS_with_peak,res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[that,2])
+										IS_with_score<-c(IS_with_score,res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$score_1)	
+									}
 								}
 							}
 						}
 					}
 				}
-			}
-			if(verbose){cat("\n in K_2")}
-			# extract target peaks ##################################################
-			target_adduct<-targets[targets[,1]==target_ID,20]
-			target_peak<-as.numeric(targets[targets[,1]==target_ID,21])
-			at_entry<-FALSE
-			for(i in 1:length(names(res_target_pos_screen_cal))){ # where?
-				if(
-					(strsplit(names(res_target_pos_screen_cal)[i],"_")[[1]][1]==target_ID) &
-					(strsplit(names(res_target_pos_screen_cal)[i],"_")[[1]][2]==target_adduct)
-				){
-					at_entry<-i;break;
+				if(verbose){cat("\n in K_2")}
+				# extract target peaks ##################################################
+				target_adduct<-targets[targets[,1]==target_ID,20]
+				target_peak<-as.numeric(targets[targets[,1]==target_ID,21])
+				at_entry<-FALSE
+				for(i in 1:length(names(res_target_pos_screen_cal))){ # where?
+					if(
+						(strsplit(names(res_target_pos_screen_cal)[i],"_")[[1]][1]==target_ID) &
+						(strsplit(names(res_target_pos_screen_cal)[i],"_")[[1]][2]==target_adduct)
+					){
+						at_entry<-i;break;
+					}
 				}
-			}
-			if(verbose){cat("\n in K_2_1")}
-			target_in_file<-c()
-			target_with_peak<-c()
-			target_with_score<-c()
-			if(length(res_target_pos_screen_cal[[at_entry]])>0){
-				for(j in 1:length(res_target_pos_screen_cal[[at_entry]])){
-					if(length(res_target_pos_screen_cal[[at_entry]][[j]])>0){						
-						if(measurements[measurements[,1]==res_target_pos_screen_cal[[at_entry]][[j]][[1]]$file_ID,]$tag2==at_Cal){
-							for(k in 1:length(res_target_pos_screen_cal[[at_entry]][[j]])){
-								if(any(res_target_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==target_peak)){
-									that<-which(res_target_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==target_peak)
-									target_in_file<-c(target_in_file,res_target_pos_screen_cal[[at_entry]][[j]][[k]]$file_ID)
-									target_with_peak<-c(target_with_peak,res_target_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[that,2])
-									target_with_score<-c(target_with_score,res_target_pos_screen_cal[[at_entry]][[j]][[k]]$score_1)
+				if(verbose){cat("\n in K_2_1")}
+				target_in_file<-c()
+				target_with_peak<-c()
+				target_with_score<-c()
+				if(length(res_target_pos_screen_cal[[at_entry]])>0){
+					for(j in 1:length(res_target_pos_screen_cal[[at_entry]])){
+						if(length(res_target_pos_screen_cal[[at_entry]][[j]])>0){						
+							if(measurements[measurements[,1]==res_target_pos_screen_cal[[at_entry]][[j]][[1]]$file_ID,]$tag2==at_Cal){
+								for(k in 1:length(res_target_pos_screen_cal[[at_entry]][[j]])){
+									if(any(res_target_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==target_peak)){
+										that<-which(res_target_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==target_peak)
+										target_in_file<-c(target_in_file,res_target_pos_screen_cal[[at_entry]][[j]][[k]]$file_ID)
+										target_with_peak<-c(target_with_peak,res_target_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[that,2])
+										target_with_score<-c(target_with_score,res_target_pos_screen_cal[[at_entry]][[j]][[k]]$score_1)
+									}
 								}
 							}
 						}
 					}
 				}
+				if(verbose){cat("\n in K_3")}
+				# derive pairs ##########################################################
+				mat_cal<-matrix(nrow=0,ncol=13)
+				colnames(mat_cal)<-c("Pair #","Target intensity","IS intensity","Intensity ratio","Concentration","Target score","IS score","Used?",
+					"Target RT [s]","IS RT [s]","Target peak ID","IS peak ID","File ID")
+				if(	(length(target_in_file)>0) & (length(IS_in_file)>0)	){
+					for(i in 1:length(target_in_file)){
+						if(any(IS_in_file==target_in_file[i])){
+							those<-which(IS_in_file==target_in_file[i])
+							mat_cal<-rbind(mat_cal,
+								cbind(
+									rep(1,length(those)),
+									round(rep(profileList_pos_cal[[2]][target_with_peak[i],2],length(those)),digits=0), # intensity target
+									round(profileList_pos_cal[[2]][IS_with_peak[those],2],digits=0), 					# intensity IS
+									round((profileList_pos_cal[[2]][target_with_peak[i],2]/(profileList_pos_cal[[2]][IS_with_peak[those],2])),digits=3), # ratio									
+									rep(as.numeric(
+										measurements[measurements[,1]==target_in_file[i],]$tag1	
+									),length(those)), # concentration
+									rep(target_with_score[i],length(those)), # score target
+									IS_with_score[those],
+									rep(1,length(those)), # used?
+									round(rep(profileList_pos_cal[[2]][target_with_peak[i],3],length(those)),digits=2), # Target RT
+									round(rep(profileList_pos_cal[[2]][IS_with_peak[those],3],length(those)),digits=2),	# IS RT
+									round(rep(profileList_pos_cal[[2]][target_with_peak[i],4],length(those)),digits=0),	# Target peak ID
+									round(rep(profileList_pos_cal[[2]][IS_with_peak[those],4],length(those)),digits=0),	# IS peak ID
+									round(rep(profileList_pos_cal[[2]][target_with_peak[i],6],length(those)),digits=0)	# File ID
+								,deparse.level = 0),
+							deparse.level = 0)
+						}
+					}
+				}
+				rownames(mat_cal)<-NULL
+				if(verbose){cat("\n in K_4")}
+				# filter ################################################################
+				mat_cal<-mat_cal[!duplicated(mat_cal),,drop=FALSE] # same peaks in different combinations - remove
+				mat_cal[,1]<-(1:length(mat_cal[,1]))
+				min_int<-as.numeric(intstand[intstand[,1]==IS_ID,17])
+				if(min_int!=0){min_int<-10^min_int}
+				max_int<-as.numeric(intstand[intstand[,1]==IS_ID,18])
+				max_int<-(max_int^10)
+				mat_cal[mat_cal[,3]<min_int,8]<-0
+				mat_cal[mat_cal[,3]>max_int,8]<-0
+				mat_cal<<-mat_cal
+				isolate(dd$d<-mat_cal)
 			}
-			if(verbose){cat("\n in K_3")}
-			# derive pairs ##########################################################
-			mat_cal<-matrix(nrow=0,ncol=13)
-			colnames(mat_cal)<-c("Pair #","Target intensity","IS intensity","Intensity ratio","Concentration","Target score","IS score","Used?",
+			# NEGATIVE ##################################################################
+			if(isolate(input$Ion_mode_Cal)=="negative"){	
+				if(verbose){cat("\n in K_negative_1")}
+				IS_ID<-isolate(input$Cal_IS_ID)
+				target_ID<-isolate(input$Cal_target_ID)
+				at_Cal<-isolate(input$Cal_file_set)
+				#target_ID<-"4"; IS_ID<-"693";at_Cal<-"A"			
+				if(verbose){cat("\n in K_negative_1_2")}
+				# extract IS peaks ######################################################
+				IS_adduct<-intstand[intstand[,1]==IS_ID,19]
+				IS_peak<-as.numeric(intstand[intstand[,1]==IS_ID,20])
+				at_entry<-FALSE
+				for(i in 1:length(names(res_IS_neg_screen_cal))){ # where?
+					if(
+						(strsplit(names(res_IS_neg_screen_cal)[i],"_")[[1]][1]==IS_ID) &
+						(strsplit(names(res_IS_neg_screen_cal)[i],"_")[[1]][2]==IS_adduct)
+					){
+						at_entry<-i;break;
+					}
+				}
+				if(verbose){cat("\n in K_negative_1_3")}
+				IS_in_file<-c()
+				IS_with_peak<-c()
+				IS_with_score<-c()
+				if(length(res_IS_neg_screen_cal[[at_entry]])>0){
+					for(j in 1:length(res_IS_neg_screen_cal[[at_entry]])){
+						if(length(res_IS_neg_screen_cal[[at_entry]][[j]])>0){						
+							if(measurements[measurements[,1]==res_IS_neg_screen_cal[[at_entry]][[j]][[1]]$file_ID,]$tag2==at_Cal){
+								for(k in 1:length(res_IS_neg_screen_cal[[at_entry]][[j]])){
+									if(any(res_IS_neg_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==IS_peak)){
+										that<-which(res_IS_neg_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==IS_peak)
+										IS_in_file<-c(IS_in_file,res_IS_neg_screen_cal[[at_entry]][[j]][[k]]$file_ID)
+										IS_with_peak<-c(IS_with_peak,res_IS_neg_screen_cal[[at_entry]][[j]][[k]]$Peaks[that,2])
+										IS_with_score<-c(IS_with_score,res_IS_neg_screen_cal[[at_entry]][[j]][[k]]$score_1)	
+									}
+								}
+							}
+						}
+					}
+				}
+				if(verbose){cat("\n in K_negative_5")}
+				# extract target peaks ##################################################
+				target_adduct<-targets[targets[,1]==target_ID,20]
+				target_peak<-as.numeric(targets[targets[,1]==target_ID,21])
+				at_entry<-FALSE
+				for(i in 1:length(names(res_target_neg_screen_cal))){ # where?
+					if(
+						(strsplit(names(res_target_neg_screen_cal)[i],"_")[[1]][1]==target_ID) &
+						(strsplit(names(res_target_neg_screen_cal)[i],"_")[[1]][2]==target_adduct)
+					){
+						at_entry<-i;break;
+					}
+				}
+				if(verbose){cat("\n in K_negative_5_1")}
+				target_in_file<-c()
+				target_with_peak<-c()
+				target_with_score<-c()
+				if(length(res_target_neg_screen_cal[[at_entry]])>0){
+					for(j in 1:length(res_target_neg_screen_cal[[at_entry]])){
+						if(length(res_target_neg_screen_cal[[at_entry]][[j]])>0){						
+							if(measurements[measurements[,1]==res_target_neg_screen_cal[[at_entry]][[j]][[1]]$file_ID,]$tag2==at_Cal){
+								for(k in 1:length(res_target_neg_screen_cal[[at_entry]][[j]])){
+									if(any(res_target_neg_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==target_peak)){
+										that<-which(res_target_neg_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==target_peak)
+										target_in_file<-c(target_in_file,res_target_neg_screen_cal[[at_entry]][[j]][[k]]$file_ID)
+										target_with_peak<-c(target_with_peak,res_target_neg_screen_cal[[at_entry]][[j]][[k]]$Peaks[that,2])
+										target_with_score<-c(target_with_score,res_target_neg_screen_cal[[at_entry]][[j]][[k]]$score_1)
+									}
+								}
+							}
+						}
+					}
+				}
+				if(verbose){cat("\n in K_negative_6")}
+				# derive pairs ##########################################################
+				mat_cal<-matrix(nrow=0,ncol=13)
+				colnames(mat_cal)<-c("Pair #","Target intensity","IS intensity","Intensity ratio","Concentration","Target score","IS score","Used?",
 				"Target RT [s]","IS RT [s]","Target peak ID","IS peak ID","File ID")
-			if(	(length(target_in_file)>0) & (length(IS_in_file)>0)	){
-				for(i in 1:length(target_in_file)){
-					if(any(IS_in_file==target_in_file[i])){
-						those<-which(IS_in_file==target_in_file[i])
-						mat_cal<-rbind(mat_cal,
-							cbind(
-								rep(1,length(those)),
-								round(rep(profileList_pos_cal[[2]][target_with_peak[i],2],length(those)),digits=0), # intensity target
-								round(profileList_pos_cal[[2]][IS_with_peak[those],2],digits=0), 					# intensity IS
-								round((profileList_pos_cal[[2]][target_with_peak[i],2]/(profileList_pos_cal[[2]][IS_with_peak[those],2])),digits=3), # ratio									
-								rep(as.numeric(
-									measurements[measurements[,1]==target_in_file[i],]$tag1	
-								),length(those)), # concentration
-								rep(target_with_score[i],length(those)), # score target
-								IS_with_score[those],
-								rep(1,length(those)), # used?
-								round(rep(profileList_pos_cal[[2]][target_with_peak[i],3],length(those)),digits=2), # Target RT
-								round(rep(profileList_pos_cal[[2]][IS_with_peak[those],3],length(those)),digits=2),	# IS RT
-								round(rep(profileList_pos_cal[[2]][target_with_peak[i],4],length(those)),digits=0),	# Target peak ID
-								round(rep(profileList_pos_cal[[2]][IS_with_peak[those],4],length(those)),digits=0),	# IS peak ID
-								round(rep(profileList_pos_cal[[2]][target_with_peak[i],6],length(those)),digits=0)	# File ID
-							,deparse.level = 0),
-						deparse.level = 0)
-					}
-				}
-			}
-			rownames(mat_cal)<-NULL
-			if(verbose){cat("\n in K_4")}
-			# filter ################################################################
-			mat_cal<-mat_cal[!duplicated(mat_cal),,drop=FALSE] # same peaks in different combinations - remove
-			mat_cal[,1]<-(1:length(mat_cal[,1]))
-			min_int<-as.numeric(intstand[intstand[,1]==IS_ID,17])
-			if(min_int!=0){min_int<-10^min_int}
-			max_int<-as.numeric(intstand[intstand[,1]==IS_ID,18])
-			max_int<-(max_int^10)
-			mat_cal[mat_cal[,3]<min_int,8]<-0
-			mat_cal[mat_cal[,3]>max_int,8]<-0
-			mat_cal<<-mat_cal
-			isolate(dd$d<-mat_cal)
-		}
-		# NEGATIVE ##################################################################
-		if(isolate(input$Ion_mode_Cal)=="negative"){	
-			if(verbose){cat("\n in K_negative_1")}
-			IS_ID<-isolate(input$Cal_IS_ID)
-			target_ID<-isolate(input$Cal_target_ID)
-			at_Cal<-isolate(input$Cal_file_set)
-			#target_ID<-"4"; IS_ID<-"693";at_Cal<-"A"			
-			if(verbose){cat("\n in K_negative_1_2")}
-			# extract IS peaks ######################################################
-			IS_adduct<-intstand[intstand[,1]==IS_ID,19]
-			IS_peak<-as.numeric(intstand[intstand[,1]==IS_ID,20])
-			at_entry<-FALSE
-			for(i in 1:length(names(res_IS_neg_screen_cal))){ # where?
-				if(
-					(strsplit(names(res_IS_neg_screen_cal)[i],"_")[[1]][1]==IS_ID) &
-					(strsplit(names(res_IS_neg_screen_cal)[i],"_")[[1]][2]==IS_adduct)
-				){
-					at_entry<-i;break;
-				}
-			}
-			if(verbose){cat("\n in K_negative_1_3")}
-			IS_in_file<-c()
-			IS_with_peak<-c()
-			IS_with_score<-c()
-			if(length(res_IS_neg_screen_cal[[at_entry]])>0){
-				for(j in 1:length(res_IS_neg_screen_cal[[at_entry]])){
-					if(length(res_IS_neg_screen_cal[[at_entry]][[j]])>0){						
-						if(measurements[measurements[,1]==res_IS_neg_screen_cal[[at_entry]][[j]][[1]]$file_ID,]$tag2==at_Cal){
-							for(k in 1:length(res_IS_neg_screen_cal[[at_entry]][[j]])){
-								if(any(res_IS_neg_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==IS_peak)){
-									that<-which(res_IS_neg_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==IS_peak)
-									IS_in_file<-c(IS_in_file,res_IS_neg_screen_cal[[at_entry]][[j]][[k]]$file_ID)
-									IS_with_peak<-c(IS_with_peak,res_IS_neg_screen_cal[[at_entry]][[j]][[k]]$Peaks[that,2])
-									IS_with_score<-c(IS_with_score,res_IS_neg_screen_cal[[at_entry]][[j]][[k]]$score_1)	
-								}
-							}
+				if(	(length(target_in_file)>0) & (length(IS_in_file)>0)	){
+					for(i in 1:length(target_in_file)){
+						if(any(IS_in_file==target_in_file[i])){
+							those<-which(IS_in_file==target_in_file[i])
+							mat_cal<-rbind(mat_cal,
+								cbind(
+									rep(1,length(those)),
+									round(rep(profileList_neg_cal[[2]][target_with_peak[i],2],length(those)),digits=0), # intensity target
+									round(profileList_neg_cal[[2]][IS_with_peak[those],2],digits=0), 					# intensity IS
+									round((profileList_neg_cal[[2]][target_with_peak[i],2]/(profileList_neg_cal[[2]][IS_with_peak[those],2])),digits=2), # ratio									
+									rep(as.numeric(
+										measurements[measurements[,1]==target_in_file[i],]$tag1	
+									),length(those)), # concentration
+									rep(target_with_score[i],length(those)), # score target
+									IS_with_score[those],
+									rep(1,length(those)), # used?
+									round(rep(profileList_neg_cal[[2]][target_with_peak[i],3],length(those)),digits=2), # Target RT
+									round(rep(profileList_neg_cal[[2]][IS_with_peak[those],3],length(those)),digits=2),	# IS RT
+									round(rep(profileList_neg_cal[[2]][target_with_peak[i],4],length(those)),digits=0),	# Target peak ID
+									round(rep(profileList_neg_cal[[2]][IS_with_peak[those],4],length(those)),digits=0),	# IS peak ID
+									round(rep(profileList_neg_cal[[2]][target_with_peak[i],6],length(those)),digits=0)	# File ID
+								,deparse.level = 0),
+							deparse.level = 0)
 						}
 					}
 				}
+				rownames(mat_cal)<-NULL
+				if(verbose){cat("\n in K_negative_7")}
+				# filter ################################################################
+				mat_cal<-mat_cal[!duplicated(mat_cal),,drop=FALSE] # same peaks in different combinations - remove
+				mat_cal[,1]<-(1:length(mat_cal[,1]))
+				min_int<-as.numeric(intstand[intstand[,1]==IS_ID,17])
+				if(min_int!=0){min_int<-10^min_int}
+				max_int<-as.numeric(intstand[intstand[,1]==IS_ID,18])
+				max_int<-(max_int^10)
+				mat_cal[mat_cal[,3]<min_int,8]<-0
+				mat_cal[mat_cal[,3]>max_int,8]<-0
+				mat_cal<<-mat_cal
+				isolate(dd$d<-mat_cal)
 			}
-			if(verbose){cat("\n in K_negative_5")}
-			# extract target peaks ##################################################
-			target_adduct<-targets[targets[,1]==target_ID,20]
-			target_peak<-as.numeric(targets[targets[,1]==target_ID,21])
-			at_entry<-FALSE
-			for(i in 1:length(names(res_target_neg_screen_cal))){ # where?
-				if(
-					(strsplit(names(res_target_neg_screen_cal)[i],"_")[[1]][1]==target_ID) &
-					(strsplit(names(res_target_neg_screen_cal)[i],"_")[[1]][2]==target_adduct)
-				){
-					at_entry<-i;break;
-				}
-			}
-			if(verbose){cat("\n in K_negative_5_1")}
-			target_in_file<-c()
-			target_with_peak<-c()
-			target_with_score<-c()
-			if(length(res_target_neg_screen_cal[[at_entry]])>0){
-				for(j in 1:length(res_target_neg_screen_cal[[at_entry]])){
-					if(length(res_target_neg_screen_cal[[at_entry]][[j]])>0){						
-						if(measurements[measurements[,1]==res_target_neg_screen_cal[[at_entry]][[j]][[1]]$file_ID,]$tag2==at_Cal){
-							for(k in 1:length(res_target_neg_screen_cal[[at_entry]][[j]])){
-								if(any(res_target_neg_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==target_peak)){
-									that<-which(res_target_neg_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==target_peak)
-									target_in_file<-c(target_in_file,res_target_neg_screen_cal[[at_entry]][[j]][[k]]$file_ID)
-									target_with_peak<-c(target_with_peak,res_target_neg_screen_cal[[at_entry]][[j]][[k]]$Peaks[that,2])
-									target_with_score<-c(target_with_score,res_target_neg_screen_cal[[at_entry]][[j]][[k]]$score_1)
-								}
-							}
-						}
-					}
-				}
-			}
-			if(verbose){cat("\n in K_negative_6")}
-			# derive pairs ##########################################################
-			mat_cal<-matrix(nrow=0,ncol=13)
-			colnames(mat_cal)<-c("Pair #","Target intensity","IS intensity","Intensity ratio","Concentration","Target score","IS score","Used?",
-			"Target RT [s]","IS RT [s]","Target peak ID","IS peak ID","File ID")
-			if(	(length(target_in_file)>0) & (length(IS_in_file)>0)	){
-				for(i in 1:length(target_in_file)){
-					if(any(IS_in_file==target_in_file[i])){
-						those<-which(IS_in_file==target_in_file[i])
-						mat_cal<-rbind(mat_cal,
-							cbind(
-								rep(1,length(those)),
-								round(rep(profileList_neg_cal[[2]][target_with_peak[i],2],length(those)),digits=0), # intensity target
-								round(profileList_neg_cal[[2]][IS_with_peak[those],2],digits=0), 					# intensity IS
-								round((profileList_neg_cal[[2]][target_with_peak[i],2]/(profileList_neg_cal[[2]][IS_with_peak[those],2])),digits=2), # ratio									
-								rep(as.numeric(
-									measurements[measurements[,1]==target_in_file[i],]$tag1	
-								),length(those)), # concentration
-								rep(target_with_score[i],length(those)), # score target
-								IS_with_score[those],
-								rep(1,length(those)), # used?
-								round(rep(profileList_neg_cal[[2]][target_with_peak[i],3],length(those)),digits=2), # Target RT
-								round(rep(profileList_neg_cal[[2]][IS_with_peak[those],3],length(those)),digits=2),	# IS RT
-								round(rep(profileList_neg_cal[[2]][target_with_peak[i],4],length(those)),digits=0),	# Target peak ID
-								round(rep(profileList_neg_cal[[2]][IS_with_peak[those],4],length(those)),digits=0),	# IS peak ID
-								round(rep(profileList_neg_cal[[2]][target_with_peak[i],6],length(those)),digits=0)	# File ID
-							,deparse.level = 0),
-						deparse.level = 0)
-					}
-				}
-			}
-			rownames(mat_cal)<-NULL
-			if(verbose){cat("\n in K_negative_7")}
-			# filter ################################################################
-			mat_cal<-mat_cal[!duplicated(mat_cal),,drop=FALSE] # same peaks in different combinations - remove
-			mat_cal[,1]<-(1:length(mat_cal[,1]))
-			min_int<-as.numeric(intstand[intstand[,1]==IS_ID,17])
-			if(min_int!=0){min_int<-10^min_int}
-			max_int<-as.numeric(intstand[intstand[,1]==IS_ID,18])
-			max_int<-(max_int^10)
-			mat_cal[mat_cal[,3]<min_int,8]<-0
-			mat_cal[mat_cal[,3]>max_int,8]<-0
-			mat_cal<<-mat_cal
-			isolate(dd$d<-mat_cal)
-		}
-	}else{
-		isolate(dd$d<-matrix(ncol=2,nrow=0,0))
-	}	
+		}else{
+			isolate(dd$d<-matrix(ncol=2,nrow=0,0))
+		}	
+	}
 })				
 ###########################################################################################################				
 
 ###########################################################################################################
 # PLOT SETS, MAKE MODELS & OUTPUT TABLE ###################################################################
 observe({ # - L
-	input$Cal_IS_ID
-	#input$Cal_IS_name
-	input$Cal_target_ID
-	#input$Cal_target_name
 	redo_cal$a
 	dd$d
 	if(verbose){cat("\n in L")}
@@ -676,10 +665,6 @@ observe({ # - L
 })
 
 observe({ # - M
-	input$Cal_IS_ID
-	#input$Cal_IS_name
-	input$Cal_target_ID
-	#input$Cal_target_name
 	input$cal_model
 	input$cal_model_0intercept
 	redo_cal$a
