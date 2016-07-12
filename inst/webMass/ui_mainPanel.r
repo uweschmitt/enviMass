@@ -822,6 +822,7 @@
 							HTML('<h1 align="center"> &#x21e9; </h1> '),
 							bsButton("save_Cal","Save/replace model",style="success"),
 							bsButton("remove_Cal","Remove model",style="danger"),
+							bsButton("reload_Cal","Reload data",style="info"),							
 							conditionalPanel(
 								condition = "input.Cal_file_set != 'none' & input.Ion_mode_Cal != 'none' & input.Cal_target_ID != 'none' & input.Cal_target_name != 'none' & input.Cal_IS_ID != 'none' & input.Cal_IS_name != 'none'  ", 
 								HTML('<hr noshade="noshade" />'),

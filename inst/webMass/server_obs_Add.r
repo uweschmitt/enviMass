@@ -792,8 +792,9 @@ observe({
 	if(isolate(input$Load_cal)){
 		measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 		measurements3<-measurements3[measurements3[,4]==isolate(input$Modif_cal_mode),,drop=FALSE]
+		#measurements3<-measurements3[measurements3[,4]=="positive",,drop=FALSE]		
 		measurements3<-measurements3[measurements3[,3]=="calibration",,drop=FALSE]
-		measurements3<-measurements3[measurements3$tag2==isolate(input$Modif_cal_group),,drop=FALSE]		
+		measurements3<-measurements3[measurements3$tag2==isolate(input$Modif_cal_group),,drop=FALSE]
 		if(length(measurements3[,1])>0){
 			updateDateInput(session, "Modif_calgroup_date1", value = as.character(measurements3[1,6]))
 			updateTextInput(session, "Modif_calgroup_time1",value = as.character(measurements3[1,7]))
@@ -880,7 +881,15 @@ observe({
 			itsok<-FALSE
 			cat(" invalid.")
 			output$Modif_cal_text_load<-renderText({"New specification cannot be saved. The chosen group name already exists!"})
-		}else{cat(" ok.")}
+		}else{
+			if(grepl("_",isolate(input$Copy_cal_group))){
+				output$Modif_cal_text_load<-renderText({"New specification cannot be saved; no underscores permitted."})
+				itsok<-FALSE
+				cat(" invalid.")			
+			}else{
+				cat(" ok.")
+			}
+		}
 		for_those<-which( 
 			(measurements3$tag2==isolate(input$Modif_cal_group)) &
 			(measurements3$Mode==isolate(input$Modif_cal_mode))
