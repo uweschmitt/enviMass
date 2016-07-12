@@ -59,7 +59,8 @@ startprofiles<-function(
 	if(selective=="TRUE"){
 		measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
 	}
-	measurements<-measurements[measurements[,4]==ion_mode,]
+	measurements<-measurements[measurements[,4]==ion_mode,]	
+	# adjust time period, sort #################################################
     dated<-measurements[,6]
     timed<-measurements[,7]
     datetime<-c()
@@ -76,10 +77,22 @@ startprofiles<-function(
 	sampleID<-sampleID[ord];
 	locus<-locus[ord];
 	typus<-typus[ord];
+	# filter by types ##########################################################
+	if(types[1]!="FALSE"){
+		remain<-rep(TRUE,length(sampleID))
+		remain[is.na(match(typus,types))]<-FALSE
+		datetime<-datetime[remain]
+		sampleID<-sampleID[remain]
+		locus<-locus[remain]		
+		typus<-typus[remain]	
+		atPOSIX<-atPOSIX[remain]
+	}
+	# filter by latest & counts ################################################
 	if(until!="FALSE" & any(sampleID==until)){
 		untilPOSIX<-atPOSIX[sampleID==until]
 		from<-(1:length(sampleID))[atPOSIX<=untilPOSIX][1]
 	}else{
+		if(until!="FALSE"){warning("\n problem in startprofiles: until used in conjunction with a removed sampleID. revise or debug?")}
 		from<-1
 	}
 	if(sets!=FALSE){
@@ -95,6 +108,7 @@ startprofiles<-function(
 	sampleID<-sampleID[from:to];
 	locus<-locus[from:to];		
 	typus<-typus[from:to];	
+	# save to list #############################################################
     profiles[[3]]<-datetime;
     profiles[[4]]<-sampleID;
     profiles[[5]]<-locus;

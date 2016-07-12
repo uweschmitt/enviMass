@@ -801,7 +801,7 @@
 						HTML('<h1 align="center"> &#x21e9; </h1> '),
 						conditionalPanel(
 							condition = "input.Cal_file_set != 'none' & input.Ion_mode_Cal != 'none'", 
-							helpText("Select compounds which are linked to an internal standard (column 6 of the compound table) to (resume) work on their individual calibration models below. The screened compounds can also be viewed in the Results/Compound screening tab, choosing the calibration files."),
+							helpText("Select compounds which are linked to an internal standard (column 6 of the target compound table) to (resume) work on their individual calibration models below. The screened compounds can also be viewed in the Results/Compound screening tab, choosing the calibration files."),
 							fluidRow(
 								column(3, selectInput(inputId="Cal_target_name",label="Target name",choices=c("none"),selected = "none", multiple = FALSE)),							
 								column(3, selectInput(inputId="Cal_target_ID",label="Target ID",choices=c("none"),selected = "none", multiple = FALSE))
