@@ -764,6 +764,7 @@
 					tags$h5("Debug tools"),
 					selectInput("progressbar", "Show progress bars (Windows OS only)", choices = c("TRUE","FALSE"), selected="FALSE"),
 					selectInput("do_project_check", "Skip the project check before calculations?", choices = c("TRUE","FALSE"), selected="FALSE"),					
+					selectInput("ignore_large_files", "Ignore .mzXML and MSlist files during check?", choices = c("TRUE","FALSE"), selected="FALSE"),					
 					textInput("upto_file", "Up to file with ID:", value = "FALSE"),
 					tags$h6("Reset project without peak picking:"),
 					bsButton("reset_1","Reset",style="danger"),

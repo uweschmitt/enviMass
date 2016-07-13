@@ -6,20 +6,21 @@
 #' @param isotopes Isotope list
 #' @param adducts Adducts list from package enviPat
 #' @param skipcheck Logical. Should project check be skipped?
+#' @param ignorefiles Logical. Skip checks involving .mzXML or MSlist files
 #'
 #' @return Character string with either specific error message or a "Project consistent" message.
 #' 
 #' @details enviMass workflow function; run before further calculations are started in the workflow.
 #' 
 
-checkproject<-function(isotopes,adducts,skipcheck=FALSE,...){
+checkproject<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,...){
   say<-"Project consistent"
   if(skipcheck){
 	return(say);
   }
   if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in check_project.r!")}
   ###############################################################################
-  # wrong upstream "must" executions? ###########################################
+  # wrong upstream "must not" executions? #######################################
   must<-logfile[[12]]
   for(i in 1:length(must[1,])){
 	for(j in 1:length(must[,i])){	

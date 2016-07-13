@@ -1,7 +1,7 @@
 mainchecked<-reactive({
     input$Check
     if(input$Check){
-		say<-enviMass:::checkproject(isotopes,adducts,skipcheck=isolate(input$do_project_check));
+		say<-enviMass:::checkproject(isotopes,adducts,skipcheck=isolate(input$do_project_check),ignorefiles=isolate(input$ignore_large_files));
 		output$dowhat<<-renderText(say)
 		if(say=="Project consistent"){
 			cat("Project consistent\n");
@@ -28,7 +28,7 @@ maincalc<-reactive({
     input$Calc
     if(input$Calc){
 
-	  say<-enviMass:::checkproject(isotopes,adducts,skipcheck=isolate(input$do_project_check));
+	  say<-enviMass:::checkproject(isotopes,adducts,skipcheck=isolate(input$do_project_check),ignorefiles=isolate(input$ignore_large_files));
 	  output$dowhat<<-renderText(say)
       if(say=="Project consistent"){
 	  

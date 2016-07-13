@@ -686,25 +686,32 @@ observe({ # - M
 					mtext("Now zoomed in",side=3,col="gray")
 				}
 				if(sum(isolate(dd$d[,8]))>=2){ # at least two data points!
-					lin<-(isolate(dd$d[dd$d[,8]==1,5]))
-					resp<-(isolate(dd$d[dd$d[,8]==1,4]))
+					resp<-(isolate(dd$d[dd$d[,8]==1,5]))	# concentration
+					lin<-(isolate(dd$d[dd$d[,8]==1,4])) 	# Intensity ratio target/IS
 					if(isolate(input$cal_model)=="linear"){
 						if(isolate(input$cal_model_0intercept)){
 							cal_model<<-lm(resp~0+lin)
+							abline(
+								a=0,
+								b=(1/cal_model$coefficients[1]),
+								col="red",lwd=2)
 						}else{
 							cal_model<<-lm(resp~lin)
+							abline(
+								a=(-1*cal_model$coefficients[1]/cal_model$coefficients[2]),
+								b=(1/cal_model$coefficients[2]),
+								col="red",lwd=2)
 						}
-						abline(cal_model,col="red",lwd=2)
 					}else{
-						quad<-((isolate(dd$d[dd$d[,8]==1,5]))^2)
+						quad<-(lin^2)
 						if(isolate(input$cal_model_0intercept)){
 							cal_model<<-lm(resp~0+lin+quad)					
 						}else{
 							cal_model<<-lm(resp~lin+quad)							
 						}
-						for_x<-seq(from=0,to=(max(isolate(dd$d[,5]))*2),length.out=100)
-						for_x2<-(for_x^2)
-						for_y<-predict(cal_model,list(lin=for_x,quad=for_x2))
+						for_y<-seq(from=0,to=(max(lin)*2),length.out=100)
+						for_y2<-(for_y^2)
+						for_x<-predict(cal_model,list(lin=for_y,quad=for_y2))
 						lines(for_x,for_y,col="red",lwd=2)
 					}
 				}else{
@@ -726,37 +733,37 @@ observe({ # - M
 						if(cal_models_pos[[use_cal]][[use_entry]]$call=="resp ~ 0 + lin"){ # linear, 0-intercept
 							abline(
 								a=0,
-								b=cal_models_pos[[use_cal]][[use_entry]]$coefficients,
+								b=(1/cal_models_pos[[use_cal]][[use_entry]]$coefficients[1]),
 								col="gray",lwd=1,lty=2)
 						}
 						if(cal_models_pos[[use_cal]][[use_entry]]$call=="resp ~ lin"){ # linear, with intercept
 							abline(
-								a=cal_models_pos[[use_cal]][[use_entry]]$coefficients[1],
-								b=cal_models_pos[[use_cal]][[use_entry]]$coefficients[2],
+								a=(-1*cal_models_pos[[use_cal]][[use_entry]]$coefficients[1]/cal_models_pos[[use_cal]][[use_entry]]$coefficients[2]),
+								b=(1/cal_models_pos[[use_cal]][[use_entry]]$coefficients[2]),
 								col="gray",lwd=1,lty=2)						
 						}
 						if(cal_models_pos[[use_cal]][[use_entry]]$call=="resp ~ 0 + lin + quad"){ # quadratic, 0-intercept
-							for_x<-seq(from=0,to=(max(isolate(dd$d[,5])*2)),length.out=100)
-							for_x2<-(for_x^2)							
-							for_y<-(
-								(cal_models_pos[[use_cal]][[use_entry]]$coefficients[1]*for_x)+
-								(cal_models_pos[[use_cal]][[use_entry]]$coefficients[2]*for_x2)
+							for_y<-seq(from=0,to=(max(isolate(dd$d[,4])*2)),length.out=100)
+							for_y2<-(for_y^2)							
+							for_x<-(
+								(cal_models_pos[[use_cal]][[use_entry]]$coefficients[1]*for_y)+
+								(cal_models_pos[[use_cal]][[use_entry]]$coefficients[2]*for_y2)
 							)
 							lines(for_x,for_y,col="gray",lwd=1,lty=2)						
 						}
 						if(cal_models_pos[[use_cal]][[use_entry]]$call=="resp ~ lin + quad"){ # quadratic, 0-intercept
-							for_x<-seq(from=0,to=(max(isolate(dd$d[,5])*2)),length.out=100)
-							for_x2<-(for_x^2)							
-							for_y<-(
+							for_y<-seq(from=0,to=(max(isolate(dd$d[,4])*2)),length.out=100)
+							for_y2<-(for_y^2)							
+							for_x<-(
 								(cal_models_pos[[use_cal]][[use_entry]]$coefficients[1]) +
-								(cal_models_pos[[use_cal]][[use_entry]]$coefficients[2]*for_x)+
-								(cal_models_pos[[use_cal]][[use_entry]]$coefficients[3]*for_x2)
+								(cal_models_pos[[use_cal]][[use_entry]]$coefficients[2]*for_y)+
+								(cal_models_pos[[use_cal]][[use_entry]]$coefficients[3]*for_y2)
 							)
 							lines(for_x,for_y,col="gray",lwd=1,lty=2)						
 						}
 						points(
-							cal_models_pos[[use_cal]][[use_entry]]$data[,2],
 							cal_models_pos[[use_cal]][[use_entry]]$data[,1],
+							cal_models_pos[[use_cal]][[use_entry]]$data[,2],
 							pch=0,col="gray",cex=2.5
 						)
 						mtext("Saved calibration model available",side=3,col="gray",line=-1)
@@ -774,37 +781,37 @@ observe({ # - M
 						if(cal_models_neg[[use_cal]][[use_entry]]$call=="resp ~ 0 + lin"){ # linear, 0-intercept
 							abline(
 								a=0,
-								b=cal_models_neg[[use_cal]][[use_entry]]$coefficients,
+								b=(1/cal_models_neg[[use_cal]][[use_entry]]$coefficients[1]),
 								col="gray",lwd=1,lty=2)
 						}
 						if(cal_models_neg[[use_cal]][[use_entry]]$call=="resp ~ lin"){ # linear, with intercept
 							abline(
-								a=cal_models_neg[[use_cal]][[use_entry]]$coefficients[1],
-								b=cal_models_neg[[use_cal]][[use_entry]]$coefficients[2],
+								a=(-1*cal_models_neg[[use_cal]][[use_entry]]$coefficients[1]/cal_models_neg[[use_cal]][[use_entry]]$coefficients[2]),
+								b=(1/cal_models_neg[[use_cal]][[use_entry]]$coefficients[2]),
 								col="gray",lwd=1,lty=2)						
 						}
 						if(cal_models_neg[[use_cal]][[use_entry]]$call=="resp ~ 0 + lin + quad"){ # quadratic, 0-intercept
-							for_x<-seq(from=0,to=(max(isolate(dd$d[,5])*2)),length.out=100)
-							for_x2<-(for_x^2)							
-							for_y<-(
-								(cal_models_neg[[use_cal]][[use_entry]]$coefficients[1]*for_x)+
-								(cal_models_neg[[use_cal]][[use_entry]]$coefficients[2]*for_x2)
+							for_y<-seq(from=0,to=(max(isolate(dd$d[,4])*2)),length.out=100)
+							for_y2<-(for_y^2)							
+							for_x<-(
+								(cal_models_neg[[use_cal]][[use_entry]]$coefficients[1]*for_y)+
+								(cal_models_neg[[use_cal]][[use_entry]]$coefficients[2]*for_y2)
 							)
 							lines(for_x,for_y,col="gray",lwd=1,lty=2)						
 						}
 						if(cal_models_neg[[use_cal]][[use_entry]]$call=="resp ~ lin + quad"){ # quadratic, 0-intercept
-							for_x<-seq(from=0,to=(max(isolate(dd$d[,5])*2)),length.out=100)
-							for_x2<-(for_x^2)							
-							for_y<-(
+							for_y<-seq(from=0,to=(max(isolate(dd$d[,4])*2)),length.out=100)
+							for_y2<-(for_y^2)							
+							for_x<-(
 								(cal_models_neg[[use_cal]][[use_entry]]$coefficients[1]) +
-								(cal_models_neg[[use_cal]][[use_entry]]$coefficients[2]*for_x)+
-								(cal_models_neg[[use_cal]][[use_entry]]$coefficients[3]*for_x2)
+								(cal_models_neg[[use_cal]][[use_entry]]$coefficients[2]*for_y)+
+								(cal_models_neg[[use_cal]][[use_entry]]$coefficients[3]*for_y2)
 							)
 							lines(for_x,for_y,col="gray",lwd=1,lty=2)						
 						}
 						points(
-							cal_models_neg[[use_cal]][[use_entry]]$data[,2],
 							cal_models_neg[[use_cal]][[use_entry]]$data[,1],
+							cal_models_neg[[use_cal]][[use_entry]]$data[,2],
 							pch=0,col="gray",cex=2.5
 						)
 						mtext("Saved calibration model available",side=3,col="gray",line=-1)
@@ -817,27 +824,27 @@ observe({ # - M
 				if(verbose){cat("\n in M_text_output")}
 				if(cal_model$call[[2]]=="resp ~ 0 + lin"){ # linear, 0-intercept
 					coefi<-cal_model$coefficient
-					printthis<-paste("Ratio = ",as.character(round(coefi[[1]],digits=5)),"*Concentration",sep="")
+					printthis<-paste("Concentration = ",as.character(round(coefi[[1]],digits=5)),"*Ratio",sep="")
 					if(verbose){cat("\n in M_text_1")}
 				}
 				if(cal_model$call[[2]]=="resp ~ lin"){ # linear, with intercept
 					coefi<-cal_model$coefficient
-					printthis<-paste("Ratio = ",as.character(round(coefi[[1]],digits=5))," + ",as.character(round(coefi[[2]],digits=5)),"*Concentration",sep="")
+					printthis<-paste("Concentration = ",as.character(round(coefi[[1]],digits=5))," + ",as.character(round(coefi[[2]],digits=5)),"*Ratio",sep="")
 					if(verbose){cat("\n in M_text_2")}
 				}
 				if(cal_model$call[[2]]=="resp ~ 0 + lin + quad"){ # linear, 0-intercept
 					coefi<-cal_model$coefficient
-					printthis<-paste("Ratio = ",
-						as.character(round(coefi[[1]],digits=5)),"*Concentration + ",
-						as.character(round(coefi[[2]],digits=5)),"*Concentration^2",					
+					printthis<-paste("Concentration = ",
+						as.character(round(coefi[[1]],digits=5)),"*Ratio + ",
+						as.character(round(coefi[[2]],digits=5)),"*Ratio^2",					
 					sep="")
 				}
 				if(cal_model$call[[2]]=="resp ~ lin + quad"){ # linear, 0-intercept
 					coefi<-cal_model$coefficient
-					printthis<-paste("Ratio = ",
+					printthis<-paste("Concentration = ",
 						as.character(round(coefi[[1]],digits=5))," + ",
-						as.character(round(coefi[[2]],digits=5)),"*Concentration + ",
-						as.character(round(coefi[[3]],digits=5)),"*Concentration^2",					
+						as.character(round(coefi[[2]],digits=5)),"*Ratio + ",
+						as.character(round(coefi[[3]],digits=5)),"*Ratio^2",					
 					sep="")
 				}				
 				return(printthis)			

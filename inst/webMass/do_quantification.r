@@ -8,11 +8,12 @@
 		(file.exists(file=file.path(logfile$project_folder,"quantification","cal_models_pos")))		
 	){
 if(FALSE){	
+
+
 		# LOAD DATA ########################################################################
 		load(file=file.path(logfile$project_folder,"results","screening","res_target_pos_screen"))		
 		load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos")) # requires new entries to [[1]] and [[2]]
 		load(file=file.path(logfile$project_folder,"results","screening","res_IS_pos_screen"))
-		load(file=file.path(logfile$project_folder,"quantification","cal_models_pos"))
 		target_table<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");	
 		IS_table<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -34,35 +35,52 @@ if(FALSE){
 					cal_files[(numuse>=numstart) & (numuse<=numend),1]
 				)
 			}else{
-				use_group<-c(use_group,"FALSE"
-				)
+				use_group<-c(use_group,"FALSE")
 			}
 		}		
-		# QUANTIFY #########################################################################
-		#system.time({
-		res_IS_names<-rep("",length(res_IS_pos_screen))
-		res_IS_adduct<-rep("",length(res_IS_pos_screen))
-		for(i in 1:length(res_IS_pos_screen)){
-			res_IS_names[i]<-strsplit(names(res_IS_pos_screen)[i],"_")[[1]][1]
-			res_IS_adduct[i]<-strsplit(names(res_IS_pos_screen)[i],"_")[[1]][2]
+		# load available calibration models into a single list - check availability ########
+		cal_models_pos_used<-list()
+		use_group_names<-unique(use_group)
+		use_group_names<-use_group_names[use_group_names!="FALSE"]
+		if(length(use_group_names)>0){	
+			cat("\nLoading calibration models ...")
+			for(i in 1:length(use_group_names)){
+				if(file.exists(file.path(logfile[[1]],"quantification",paste("cal_models_pos",use_group_names[i],sep="_")))){
+					load(file=file.path(logfile[[1]],"quantification",paste("cal_models_pos",use_group_names[i],sep="_")))
+					at<-(length(cal_models_pos_used)+1)
+					cal_models_pos_used[[at]]<-cal_models_pos[[1]]
+					names(cal_models_pos_used)[at]<-names(cal_models_pos)
+					rm(cal_models_pos)
+				}
+			}
+			cat(" done.")
 		}
-		found_which<-list() # save indices to write faster into summary table
-		if(length(res_target_pos_screen)>0){
-			for(i in 1:length(res_target_pos_screen)){
-				if(length(res_target_pos_screen[[i]])>0){ # anything screened?
-					at_ID<-strsplit(names(res_target_pos_screen)[i],"_")[[1]][1]
-					if(target_table[target_table[,1]==at_ID,6]!="FALSE"){ # target linked to an IS compound?
-						at_adduct_target<-strsplit(names(res_target_pos_screen)[i],"_")[[1]][2]
-						if(target_table[target_table[,1]==at_ID,20]==at_adduct_target){ # relevant quantification adduct?
+		# QUANTIFY #########################################################################
+		system.time({
+		if(length(cal_models_pos_used)>0){ # no calibration models? 
+			res_IS_names<-rep("",length(res_IS_pos_screen))
+			res_IS_adduct<-rep("",length(res_IS_pos_screen))
+			for(i in 1:length(res_IS_pos_screen)){
+				res_IS_names[i]<-strsplit(names(res_IS_pos_screen)[i],"_")[[1]][1]
+				res_IS_adduct[i]<-strsplit(names(res_IS_pos_screen)[i],"_")[[1]][2]
+			}
+			found_which<-list() # save indices to write faster into summary table
+			if(length(res_target_pos_screen)>0){
+				for(i in 1:length(res_target_pos_screen)){
+					if(length(res_target_pos_screen[[i]])>0){ # anything screened?
+						at_ID<-strsplit(names(res_target_pos_screen)[i],"_")[[1]][1]
+						if(target_table[target_table[,1]==at_ID,6]!="FALSE"){ # target linked to an IS compound?
+							at_adduct_target<-strsplit(names(res_target_pos_screen)[i],"_")[[1]][2]
+							if(target_table[target_table[,1]==at_ID,20]!=at_adduct_target){next} # relevant quantification adduct?
 							at_IS<-target_table[target_table[,1]==at_ID,6]
 							at_peak_target<-as.numeric(target_table[target_table[,1]==at_ID,21])
 							for(j in 1:length(res_target_pos_screen[[i]])){ # over files
 								if(length(res_target_pos_screen[[i]][[j]])>0){ # at this file, target
 									at_sample<-res_target_pos_screen[[i]][[j]][[1]]$file_ID
 									# check: does a calibration model exist?		
-									at_group<-which(names(cal_models_pos)==use_group[use_files[,1]==at_sample])
+									at_group<-which(names(cal_models_pos_used)==use_group[use_files[,1]==at_sample])
 									if(length(at_group)==0){next} # calibration group available?
-									at_group_model<-which(names(cal_models_pos[[at_group]])==paste(at_IS,at_ID,sep="_"))					
+									at_group_model<-which(names(cal_models_pos_used[[at_group]])==paste(at_IS,at_ID,sep="_"))					
 									if(length(at_group_model)==0){next} # model in that group available?
 									at_adduct_IS<-IS_table[IS_table[,1]==at_IS,19] 	# get relevant IS adduct
 									at_peak_IS<-IS_table[IS_table[,1]==at_IS,20] 	# get relevant IS peak
@@ -76,7 +94,9 @@ if(FALSE){
 											if(length(at_IS_entry_sample)==0){next}
 											# get IS intensity bounds
 											low_bound<-as.numeric(IS_table[IS_table[,1]==at_IS,17])
+											if(low_bound!=0){low_bound<-(10^low_bound)}
 											high_bound<-as.numeric(IS_table[IS_table[,1]==at_IS,18])
+											if(high_bound!=0){high_bound<-(10^high_bound)}
 											for(w in 1:length(res_IS_pos_screen[[at_IS_entry]][[at_IS_entry_sample]])){
 												# check IS peak
 												use_IS_peak<-which(res_IS_pos_screen[[at_IS_entry]][[at_IS_entry_sample]][[w]]$Peaks[,1]==at_peak_IS)
@@ -86,16 +106,33 @@ if(FALSE){
 												int_IS<-(res_IS_pos_screen[[at_IS_entry]][[at_IS_entry_sample]][[w]]$Peaks[use_IS_peak,2])
 												int_target<-(res_target_pos_screen[[i]][[j]][[k]]$Peaks[use_target_peak,2])
 												int_rat<-(int_target/int_IS)
-												if(length(cal_models_pos[[at_group]][[at_group_model]][[1]])==2){ # for the linear model
-													new_conc<-predict(cal_models_pos[[at_group]][[at_group_model]],list(lin=int_rat))
-												}																				
-												if(length(cal_models_pos[[at_group]][[at_group_model]][[1]])==3){ # for the quadratic model
-													int_rat2<-(int_rat^2)
-													new_conc<-predict(cal_models_pos[[at_group]][[at_group_model]],list(lin=int_rat,quad=int_rat2))
+												new_conc<-c()
+												if(cal_models_pos_used[[at_group]][[at_group_model]]$call=="resp ~ 0 + lin"){ # linear, 0-intercept
+													new_conc<-(
+														cal_models_pos_used[[at_group]][[at_group_model]]$coefficients[[1]]*int_rat
+													)
+												}
+												if(cal_models_pos_used[[at_group]][[at_group_model]]$call=="resp ~ lin"){ # linear, with intercept
+													new_conc<-(
+														cal_models_pos_used[[at_group]][[at_group_model]]$coefficients[[1]]+(cal_models_pos_used[[at_group]][[at_group_model]]$coefficients[[2]]*int_rat)
+													)
+												}
+												if(cal_models_pos_used[[at_group]][[at_group_model]]$call=="resp ~ 0 + lin + quad"){ # quadratic, 0-intercept
+													new_conc<-(
+														(cal_models_pos_used[[at_group]][[at_group_model]]$coefficients[[1]]*int_rat)+(cal_models_pos_used[[at_group]][[at_group_model]]$coefficients[[2]]*(int_rat^2))
+													)
+												}
+												if(cal_models_pos_used[[at_group]][[at_group_model]]$call=="resp ~ lin + quad"){ # quadratic, 0-intercept
+													new_conc<-(
+														(cal_models_pos_used[[at_group]][[at_group_model]]$coefficients[[1]])+
+														(cal_models_pos_used[[at_group]][[at_group_model]]$coefficients[[2]]*int_rat)+
+														(cal_models_pos_used[[at_group]][[at_group_model]]$coefficients[[3]]*(int_rat^2))														
+													)
 												}
 												cat(".")							
-												get_conc<-c(get_conc,new_conc)#stop("HALTED")
+												get_conc<-c(get_conc,new_conc)				
 											}
+											if(length(get_conc)==0){get_conc<-NA}
 											res_target_pos_screen[[i]][[j]][[k]]$conc<-get_conc
 											found_which[[length(found_which)+1]]<-c(i,j,k)
 										}	
@@ -103,23 +140,26 @@ if(FALSE){
 								}						
 							}
 						}
-					}
-				}		
+					}		
+				}
 			}
-		}
-		#})	
+		}	
+		})
 		# MAKE ENTRY INTO SUMMARY TABLE ####################################################
 		if(length(found_which)>0){
+			for(i in 1:length(found_which)){
+
+			
 		
-# BAUSTELLE		
 		
-		
-		
+			}
 		}
 		# INSERT & SAVE RESULTS ############################################################
 		save(res_target_pos_screen,file=file.path(logfile$project_folder,"results","screening","res_target_pos_screen"))
 		save(results_screen_target_pos,file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))
-	}
+
+
+	} # if FALSE
 	
 }	
 	
