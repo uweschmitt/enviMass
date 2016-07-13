@@ -844,18 +844,14 @@ observe({
 			rm(measurements3)
 			any_calibrated<-FALSE
 			if(isolate(input$Modif_cal_mode)=="positive"){ # check occurence in positive calibration models
-				load(file=file.path(logfile[[1]],"quantification","cal_models_pos"),envir=as.environment(".GlobalEnv"));	
-				if(any(names(cal_models_pos)==isolate(input$Modif_cal_mode))){ # make an entry for this calibration set, always at end
+				if(file.exists(file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Modif_cal_group),sep="")))){
 					any_calibrated<-TRUE;
 				}
-				rm(cal_model_pos)
 			}
 			if(isolate(input$Modif_cal_mode)=="negative"){ # check occurence in negative calibration models
-				load(file=file.path(logfile[[1]],"quantification","cal_models_neg"),envir=as.environment(".GlobalEnv"));	
-				if(any(names(cal_models_neg)==isolate(input$Modif_cal_mode))){ # make an entry for this calibration set, always at end
+				if(file.exists(file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Modif_cal_group),sep="")))){
 					any_calibrated<-TRUE;
 				}
-				rm(cal_model_neg)
 			}			
 			if( any_include & any_calibrated ){ # included & calibration models exist? Changed time period only affects quantification, calibration models remain the same
 				enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE)					
@@ -977,7 +973,7 @@ observe({
 					load(file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Modif_cal_group),sep="")),envir=as.environment(".GlobalEnv"));					
 					names(cal_models_pos)<<-isolate(input$Copy_cal_group) # rename!
 					save(cal_models_pos,file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Copy_cal_group),sep="")),envir=as.environment(".GlobalEnv"));					
-					rm(cal_models_pos)
+					rm(cal_models_pos,envir=as.environment(".GlobalEnv"))
 				}
 			}
 			if(isolate(input$Modif_cal_mode)=="negative"){ # negative
@@ -985,7 +981,7 @@ observe({
 					load(file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Modif_cal_group),sep="")),envir=as.environment(".GlobalEnv"));					
 					names(cal_models_neg)<<-isolate(input$Copy_cal_group) # rename!
 					save(cal_models_neg,file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Copy_cal_group),sep="")),envir=as.environment(".GlobalEnv"));					
-					rm(cal_models_neg)
+					rm(cal_models_neg,envir=as.environment(".GlobalEnv"))
 				}
 			}
 			enviMass:::workflow_set(down="LOD",check_node=TRUE,single_file=TRUE)
@@ -1010,8 +1006,8 @@ observe({
 		)
 		if(length(for_those)>0){
 			cat(for_those)
+			any_include<-any(measurements3[for_those,8]=="TRUE")
 			rem_IDs<-measurements3[for_those,1]
-			any_include<-any(measurements3[rem_IDs,8]=="TRUE")
 			measurements3<-measurements3[-for_those,]
 			write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 			rm(measurements3)
@@ -1039,6 +1035,7 @@ observe({
 				if(file.exists(file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",rem_IDs[i],".png",sep="")))){
 					file.remove(file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",rem_IDs[i],".png",sep="")))
 				}				
+				cat("\n file removed")
 			}
 			if(isolate(input$Modif_cal_mode)=="positive"){ # positive
 				if(file.exists(file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Modif_cal_group),sep="")))){
