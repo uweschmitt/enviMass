@@ -1,11 +1,18 @@
 
-	# 
 	
+		
 	# POSITIVE IONIZATION ##################################################################
+	# check if any calibration files are available at all ##################################
+	all_files<-list.files(file.path(logfile$project_folder,"quantification"))
+	got_models_pos<-FALSE
+	got_models_neg<-FALSE	
+	if(any(grepl("cal_models_pos_",all_files))){got_models_pos<-TRUE}
+	if(any(grepl("cal_models_neg_",all_files))){got_models_neg<-TRUE}
+	
 	if(
 		(file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))) &	# the summary screening table for targets
 		(file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos"))) &		# the summary screening table for IS compounds	
-		(file.exists(file=file.path(logfile$project_folder,"quantification","cal_models_pos")))		
+		got_models_pos
 	){
 if(FALSE){	
 
@@ -19,6 +26,7 @@ if(FALSE){
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 		# WHICH measurements belongs to which calibration set, if at all? ##################
 		measurements<-measurements[measurements[,4]=="positive",,drop=FALSE]
+		latest_ID<-get_latestID(measurements)
 		cal_files<-measurements[measurements[,3]=="calibration",,drop=FALSE]
 		cal_files<-unique(cal_files[,c(20,6,7,22,23),drop=FALSE])
 		starttime<-as.difftime(cal_files[,3]);startdate<-as.Date(cal_files[,2]);
@@ -132,9 +140,12 @@ if(FALSE){
 												cat(".")							
 												get_conc<-c(get_conc,new_conc)				
 											}
-											if(length(get_conc)==0){get_conc<-NA}
+											if(length(get_conc)==0){next}
 											res_target_pos_screen[[i]][[j]][[k]]$conc<-get_conc
 											found_which[[length(found_which)+1]]<-c(i,j,k)
+											# i = target/addduct: names(res_target_pos_screen)[i]
+											# j = file: res_target_pos_screen[[i]][[j]][[k]]$file_ID
+											# k = all matches: res_target_pos_screen[[i]][[j]][[k]]
 										}	
 									}
 								}						
@@ -144,16 +155,76 @@ if(FALSE){
 				}
 			}
 		}	
-		})
 		# MAKE ENTRY INTO SUMMARY TABLE ####################################################
 		if(length(found_which)>0){
 			for(m in 1:length(found_which)){
-
-			found_which[[m]]
-		
-		
+				at_ID<-strsplit(names(res_target_pos_screen)[found_which[[m]][1]],"_")[[1]][1]
+				at_adduct<-strsplit(names(res_target_pos_screen)[found_which[[m]][1]],"_")[[1]][2]
+				for(n in 1:length(res_target_pos_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc)){ # over the different concentration values found per target
+					# on results_screen_target_pos[[1]] - each adduct itemized #############
+					at_entry<-which((results_screen_target_pos[[1]][,1]==at_ID) & (results_screen_target_pos[[1]][,3]==at_adduct))
+					if( is.na(results_screen_target_pos[[1]][at_entry,11]) ){
+						results_screen_target_pos[[1]][at_entry,11]<-round(
+							res_target_pos_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n],
+							digits=2)
+					}else{
+						if(
+							results_screen_target_pos[[1]][at_entry,11]<
+							res_target_pos_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n]
+						){
+							results_screen_target_pos[[1]][at_entry,11]<-
+							res_target_pos_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n]					
+						}
+					}	
+					if(res_target_pos_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$file_ID==latest_ID){ # update latest conc.
+						if( is.na(results_screen_target_pos[[1]][at_entry,12]) ){
+							results_screen_target_pos[[1]][at_entry,12]<-round(
+								res_target_pos_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n],
+								digits=2)
+						}else{
+							if(
+								results_screen_target_pos[[1]][at_entry,12]<
+								res_target_pos_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n]
+							){
+								results_screen_target_pos[[1]][at_entry,12]<-
+								res_target_pos_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n]					
+							}
+						}	
+					}
+					# on results_screen_target_pos[[2]] - adducts per compound summarized #	
+					at_entry<-which((results_screen_target_pos[[2]][,1]==at_ID))
+					if( is.na(results_screen_target_pos[[2]][at_entry,8]) ){
+						results_screen_target_pos[[2]][at_entry,8]<-round(
+							res_target_pos_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n],
+							digits=2)
+					}else{
+						if(
+							results_screen_target_pos[[2]][at_entry,8]<
+							res_target_pos_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n]
+						){
+							results_screen_target_pos[[2]][at_entry,8]<-
+							res_target_pos_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n]					
+						}
+					}	
+					if(res_target_pos_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$file_ID==latest_ID){ # update latest conc.
+						if( is.na(results_screen_target_pos[[2]][at_entry,9]) ){
+							results_screen_target_pos[[2]][at_entry,9]<-round(
+								res_target_pos_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n],
+								digits=2)
+						}else{
+							if(
+								results_screen_target_pos[[2]][at_entry,9]<
+								res_target_pos_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n]
+							){
+								results_screen_target_pos[[2]][at_entry,9]<-
+								res_target_pos_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n]					
+							}
+						}	
+					}
+				}	
 			}
 		}
+		})
 		# INSERT & SAVE RESULTS ############################################################
 		save(res_target_pos_screen,file=file.path(logfile$project_folder,"results","screening","res_target_pos_screen"))
 		save(results_screen_target_pos,file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))

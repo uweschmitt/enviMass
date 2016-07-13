@@ -35,7 +35,7 @@
 		named<-rep("")
 		adducted<-rep("")	
 		at_len<-1		
-		max_len<-10000
+		max_len<-1000
 		at_matrix<-matrix(nrow=10000,ncol=9,0)
 		min_ID<-(min(as.numeric(profileList[[4]]))-1) # adjust to lowest file ID; otherwise too many empty list entries will be caused
 		colnames(at_matrix)<-c("m/z","log Intensity","Measured RT","m/z deviation [ppm]","RT deviation within","above_cutscore",
@@ -182,6 +182,8 @@
 			round(max_score_blank_all,digits=2),
 			num_peaks_blank_all,
 			round(mean_int_ratio,digits=1),
+			rep(NA,length(mean_int_ratio)),
+			rep(NA,length(mean_int_ratio)),
 			stringsAsFactors=FALSE
 		)
 		names(results_table_1)<-c(
@@ -192,7 +194,9 @@
 			"Blank matches",
 			"Max. blank score",
 			"Max. blank peaks",
-			"Int. ratio sample/blank"
+			"Int. ratio sample/blank",
+			"Max. conc.",
+			"Latest conc."
 		)		
 		##########################################################################################
 		# Table with adducts per compound summarized #############################################		
@@ -223,14 +227,19 @@
 			max_score_sample_all_sum,
 			num_peaks_sample_all_sum,
 			max_score_blank_all_sum,
-			num_peaks_blank_all_sum
+			num_peaks_blank_all_sum,
+			rep(NA,length(num_peaks_blank_all_sum)),
+			rep(NA,length(num_peaks_blank_all_sum)),	
+			stringsAsFactors=FALSE			
 		)
 		names(results_table_2)<-c(		
 			"ID","compound","adducts",
 			"Max. sample score",
 			"Max. sample peaks",
 			"Max. blank score",
-			"Max. blank peaks"
+			"Max. blank peaks",
+			"Max. conc.",
+			"Latest conc."
 		)
 		##########################################################################################
 		results<-list()

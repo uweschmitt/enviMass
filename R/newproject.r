@@ -222,7 +222,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	################################################################################################
 	# define matrix of downstream workflow dependencies and ########################################
 	# recalculations of previous steps if their results are overwritten, e.g. IS_subtr or ##########
-	# target_subtr #################################################################################
+	# target_subtr or target screening result tables/lists for quantification ######################
 	# requires only a definition of direct ones - inderect ones will be in workflow_set.r ##########
 	# below specified in a row-wise fashion (but stored columnwise): ###############################
 	# define workflow order of logfile$Tasks_to_redo by server.calculation.r #######################
@@ -247,7 +247,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	depend[,colnames(depend)=="trendblind"]<-		c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,				0,		0,			0,			0,				0,			0,				0,		0)
 	depend[,colnames(depend)=="LOD"]<-				c(0,			0,	0,		0,		0,		0,			0,			0,			0,			1,			1,				0,		1,			0,				0,		1,			1,			1,				0,			0,				0,		0)
 	depend[,colnames(depend)=="calibration"]<-		c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,				0,		0,			0,			0,				0,			0,				0,		0)
-	depend[,colnames(depend)=="quantification"]<-	c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,				0,		0,			0,			0,				0,			0,				0,		0)
+	depend[,colnames(depend)=="quantification"]<-	c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			1,				0,		0,			0,				0,		0,			0,			0,				0,			0,				0,		0)
 	depend[,colnames(depend)=="IS_subtr"]<-			c(0,			0,	0,		0,		0,		1,			1,			0,			0,			0,			0,				0,		0,			0,				0,		0,			0,			0,				1,			0,				0,		0)
 	depend[,colnames(depend)=="target_subtr"]<-		c(0,			0,	0,		0,		0,		1,			1,			0,			0,			0,			0,				0,		0,			0,				0,		0,			0,			0,				1,			0,				0,		0)
 	depend[,colnames(depend)=="blind_subtr"]<-		c(0,			0,	0,		0,		0,		1,			1,			0,			0,			0,			0,				0,		0,			0,				0,		0,			0,			0,				0,			0,				0,		0)
