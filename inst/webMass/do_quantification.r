@@ -147,9 +147,9 @@ if(FALSE){
 		})
 		# MAKE ENTRY INTO SUMMARY TABLE ####################################################
 		if(length(found_which)>0){
-			for(i in 1:length(found_which)){
+			for(m in 1:length(found_which)){
 
-			
+			found_which[[m]]
 		
 		
 			}
