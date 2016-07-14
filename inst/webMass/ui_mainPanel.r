@@ -934,11 +934,11 @@
 					imageOutput("EIC3", height="auto")
                 ),
 				######################################################################################################################
-				tabPanel("Compound screening",
+				tabPanel("Screening & quantification",
 					tabsetPanel(
 						tabPanel("Positive ionization",
 							fluidRow(
-								column(3, selectInput(inputId="Pos_compound_select",label="",choices=c("Choose","Target compounds","Internal standards","File-wise counts"), 
+								column(3, selectInput(inputId="Pos_compound_select",label="",choices=c("Choose","Target compounds","Internal standards","Quantification","File-wise counts"), 
 									selected = "Choose", multiple = FALSE)),
 								conditionalPanel(			
 									condition = "input.Pos_compound_select == 'Internal standards' || input.Pos_compound_select == 'Target compounds'",										
@@ -1016,6 +1016,11 @@
 									)
 								)	
 							),		
+							conditionalPanel(			
+								condition = "input.Pos_compound_select == 'Quantification'",							
+								HTML('<hr noshade="noshade" />'),
+								DT::dataTableOutput('target_quant_table_pos')
+							),								
 							conditionalPanel(			
 								condition = "input.Pos_compound_select == 'File-wise counts'",	
 								tags$p(align="justify","The below table lists the number of compounds which have been positively screened above the cutoff score per file. Matches for different adducts of the same compound are counted separately."),

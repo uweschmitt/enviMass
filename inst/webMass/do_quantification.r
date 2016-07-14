@@ -16,14 +16,13 @@
 	){
 if(FALSE){	
 
-
 		# LOAD DATA ########################################################################
 		load(file=file.path(logfile$project_folder,"results","screening","res_target_pos_screen"))		
-		load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos")) # requires new entries to [[1]] and [[2]]
+		load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos")) # requires to fill entries in [[1]] and [[2]]
 		load(file=file.path(logfile$project_folder,"results","screening","res_IS_pos_screen"))
 		target_table<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");	
 		IS_table<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
-		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");		
 		# WHICH measurements belongs to which calibration set, if at all? ##################
 		measurements<-measurements[measurements[,4]=="positive",,drop=FALSE]
 		latest_ID<-get_latestID(measurements)
@@ -63,8 +62,28 @@ if(FALSE){
 			}
 			cat(" done.")
 		}
+		# REMOVE PREVIOUS RESULTS & RE-INITIATE P ##########################################
+		if(file.exists(file.path(logfile[[1]],"quantification","target_quant_table_pos"))){
+			file.remove(file.path(logfile[[1]],"quantification","target_quant_table_pos"))
+		}
+		those_files<-use_files[use_group!="FALSE",]
+		if(length(those_files[,1])==0){
+			stop("\nNothing to be quantified? Check your calibration and quantification settings; consider removing the quantificcation step from your workflow!")
+		}
+		# sort those files by decreasing date!
+		atdate<-those_files[,6]
+		atdate<-as.Date(atdate);
+		attime<-those_files[,7]
+		attime<-as.difftime(attime);
+		ord<-order(as.numeric(atdate),as.numeric(attime),as.numeric(those_files[,1]),decreasing=TRUE);
+		those_files<-those_files[ord,]	
+		those_files<-those_files[,1]
+		those_targets<-target_table[target_table[,6]!="FALSE",,drop=FALSE]
+		target_quant_table_pos<-matrix(nrow=(length(those_targets[,1])),ncol=(length(those_files)+1),"")
+		colnames(target_quant_table_pos)<-c("Target name",those_files)
+		rownames(target_quant_table_pos)<-those_targets[,1]
+		target_quant_table_pos[,1]<-those_targets[,2]
 		# QUANTIFY #########################################################################
-		system.time({
 		if(length(cal_models_pos_used)>0){ # no calibration models? 
 			res_IS_names<-rep("",length(res_IS_pos_screen))
 			res_IS_adduct<-rep("",length(res_IS_pos_screen))
@@ -148,6 +167,16 @@ if(FALSE){
 											# k = all matches: res_target_pos_screen[[i]][[j]][[k]]
 										}	
 									}
+									if(length(get_conc)==0){next}
+									#if(length(get_conc)>1){stop()}
+									get_conc<-round(get_conc,digits=1)
+									get_conc<-unique(get_conc)
+									get_conc<-as.character(get_conc)
+									get_conc<-paste(get_conc,collapse=", ")
+									target_quant_table_pos[
+										rownames(target_quant_table_pos)==at_ID,
+										colnames(target_quant_table_pos)==at_sample
+									]<-get_conc
 								}						
 							}
 						}
@@ -224,13 +253,12 @@ if(FALSE){
 				}	
 			}
 		}
-		})
 		# INSERT & SAVE RESULTS ############################################################
 		save(res_target_pos_screen,file=file.path(logfile$project_folder,"results","screening","res_target_pos_screen"))
 		save(results_screen_target_pos,file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))
+		save(target_quant_table_pos,file=file.path(logfile[[1]],"quantification","target_quant_table_pos"))
 
-
-	} # if FALSE
+} # if FALSE
 	
 }	
 	

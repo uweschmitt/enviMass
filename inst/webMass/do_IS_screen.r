@@ -225,6 +225,8 @@
 				compound_table=intstand,
 				cut_score=cut_score
 			)		
+			results_screen_IS_pos[[1]]<-results_screen_IS_pos[[1]][,-c(11,12)]
+			results_screen_IS_pos[[2]]<-results_screen_IS_pos[[2]][,-c(8,9)]
 			# create links in link_list_pos for peaks in profileList_pos = used for tracing back ###########
 			use_entries<-find_empty(links_peaks_pos)
 			for(i in 1:length(res_IS_pos_screen)){
@@ -496,6 +498,8 @@
 				compound_table=intstand,
 				cut_score=cut_score
 			)		
+			results_screen_IS_neg[[1]]<-results_screen_IS_neg[[1]][,-c(11,12)]
+			results_screen_IS_neg[[2]]<-results_screen_IS_neg[[2]][,-c(8,9)]
 			# create links in link_list_neg for peaks in profileList_neg = used for tracing back ###########
 			use_entries<-find_empty(links_peaks_neg)
 			for(i in 1:length(res_IS_neg_screen)){

@@ -610,6 +610,33 @@ observe({
 			}
 			rm(measurements);
 		}
+		if(isolate(input$Pos_compound_select=="Quantification")){
+			if(file.exists(file.path(logfile[[1]],"quantification","target_quant_table_pos"))){
+				load(file.path(logfile[[1]],"quantification","target_quant_table_pos"))
+				if((dim(target_quant_table_pos)[1]>0)&(dim(target_quant_table_pos)[2]>0)){
+					output$target_quant_table_pos<-DT::renderDataTable({
+						DT::datatable(
+							as.data.frame(target_quant_table_pos), 
+							extensions = 'Buttons',
+							class = 'cell-border stripe',
+							caption = 'Quantification table: concentrations of targets for which calibration models were established',
+							options = list(
+								dom = 'Bfrtip',
+								buttons = c('copy', 'csv', 'excel')
+							) 
+						)
+					})
+				}else{
+					output$target_quant_table_pos <- DT::renderDataTable({
+						DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No quantification results available")
+					},server = TRUE)					
+				}
+			}else{
+				output$target_quant_table_pos <- DT::renderDataTable({
+					DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No quantification results available")
+				},server = TRUE)	
+			}
+		}
 	} # if init$a
 })  
 ##############################################################################
