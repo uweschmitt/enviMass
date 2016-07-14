@@ -617,13 +617,13 @@ observe({
 					output$target_quant_table_pos<-DT::renderDataTable({
 						DT::datatable(
 							as.data.frame(target_quant_table_pos), 
-							extensions = 'Buttons',
+							#extensions = 'Buttons',
 							class = 'cell-border stripe',
 							caption = 'Quantification table: concentrations of targets for which calibration models were established',
-							options = list(
-								dom = 'Bfrtip',
-								buttons = c('copy', 'csv', 'excel')
-							) 
+							#options = list(
+							#	dom = 'Bfrtip',
+							#	buttons = c('copy', 'csv', 'excel')
+							#) 
 						)
 					})
 				}else{
