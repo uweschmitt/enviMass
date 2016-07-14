@@ -28,7 +28,9 @@ observe({
 			output$IS<-DT:::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 			output$targets<-DT:::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      
 			measurements<-read.csv(file=file.path(logfile$project_folder,"dataframes","measurements"),colClasses = "character")
-			output$measurements<-DT:::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"))      		
+			output$measurements<-DT:::renderDataTable(
+				read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top'
+			)      		
 			# SET DUMMY RESULTS ####################################################
 			# (1) Peak picking #####################################################
 			path=file.path(logfile$project_folder,"pics","EIC1");
@@ -196,7 +198,7 @@ maincalc2<-reactive({
 			output$IS<-DT::renderDataTable(read.table(file=file.path(logfile$project_folder,"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 			output$targets<-DT::renderDataTable(read.table(file=file.path(logfile$project_folder,"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));              
 			measurements<-read.csv(file=file.path(logfile$project_folder,"dataframes","measurements"),colClasses = "character")
-			output$measurements<-DT::renderDataTable(measurements)        
+			output$measurements<-DT::renderDataTable(measurements,filter = 'top')        
 			# RETRIEVE RESULTS #####################################################
 			# (1) Peak picking & preprocessing #####################################
 			path=file.path(logfile$project_folder,"pics","EIC1");

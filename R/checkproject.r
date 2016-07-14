@@ -35,8 +35,8 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,...){
   }
   ##############################################################################
   # directories available? ##################################################### 
-  if(!file.exists(file.path(logfile[[1]],"files"))){say<-"files directory missing!"}
-  if(!file.exists(file.path(logfile[[1]],"MSlist"))){say<-"MSlist directory missing!"}  
+  if(!file.exists(file.path(logfile[[1]],"files"))& ignorefiles=="FALSE"){say<-"files directory missing!"}
+  if(!file.exists(file.path(logfile[[1]],"MSlist"))& ignorefiles=="FALSE"){say<-"MSlist directory missing!"}  
   if(!file.exists(file.path(logfile[[1]],"features"))){say<-"features directory missing!"}
   if(!file.exists(file.path(logfile[[1]],"results"))){say<-"results directory missing!"}
 	if(!file.exists(file.path(logfile[[1]],"results","screening"))){say<-"results/screening directory missing!"} 
@@ -219,9 +219,6 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,...){
 			measurements<-measurements[measurements[,3]=="calibration",,drop=FALSE]
 			measurements_pos<-measurements[measurements[,4]=="positive",,drop=FALSE]
 			measurements_pos<-unique(measurements_pos[,c(20,6,7,22,23),drop=FALSE])
-			if(any(duplicated(measurements_pos$tag2))){
-				say<-"Calibration file specification violation (positive mode). Have you used different time period specifications for the same group? Please revise."
-			}
 			# no temporal overlaps of calibration file groups?
 			if(length(measurements_pos[,1])>1){
 				for(i in 1:(length(measurements_pos[,1])-1)){
@@ -242,11 +239,11 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,...){
 					}
 				}
 			}			
+			if(any(duplicated(measurements_pos$tag2))){
+				say<-"Calibration file specification violation (positive mode). Have you used different time period specifications for the same group? Please revise."
+			}
 			measurements_neg<-measurements[measurements[,4]=="negative",,drop=FALSE]
 			measurements_neg<-unique(measurements_neg[,c(20,6,7,22,23),drop=FALSE])
-			if(any(duplicated(measurements_neg$tag2))){
-				say<-"Calibration file specification violation (negative mode). Have you used different time period specifications for the same group? Please revise."
-			}
 			# no temporal overlaps of calibration file groups?
 			if(length(measurements_neg[,1])>1){
 				for(i in 1:(length(measurements_neg[,1])-1)){
@@ -265,11 +262,14 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,...){
 						if(
 							(numstart_i<=numend_j)&(numstart_j<=numend_i)
 						){
-							say<-paste("Problem with calibration files, negative mode: time periods of calibration groups",measurements_pos$tag2[i],"and",measurements_pos$tag2[j],"overlap. They must not. Please revise!")
+							say<-paste("Problem with calibration files, negative mode: time periods of calibration groups",measurements_neg$tag2[i],"and",measurements_neg$tag2[j],"overlap. They must not. Please revise!")
 						}
 					}
 				}
 			}
+			if(any(duplicated(measurements_neg$tag2))){
+				say<-"Calibration file specification violation (negative mode). Have you used different time period specifications for the same group? Please revise."
+			}			
 		}
 	}
   # enough compounds for recalibration available? ##############################
@@ -329,14 +329,20 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,...){
   }
   # data sets ok? ##############################################################
   filed<-list.files(file.path(logfile[[1]],"files"))
-  if(!length(filed)){say<-"No measurements available!"}
+  if(!length(filed) & ignorefiles=="FALSE"){say<-"No files available!"}
   measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
-  if(!all(!duplicated(measurements[,1]))){say<-paste("Duplicated measurements IDs.",measurements[duplicated(measurements[,1]),1],"Revise!")}
+  if(!all(!duplicated(measurements[,1]))){say<-paste("Duplicated file IDs.",measurements[duplicated(measurements[,1]),1],"Revise!")}
   #measurements<-measurements[!duplicated(measurements[,1]),]
-  if(any(is.na(as.numeric(measurements[,1])))){say<-"Non-numeric measurements IDs. Revise!"}  
+  if(any(is.na(as.numeric(measurements[,1])))){
+	these<-which(is.na(as.numeric(measurements[,1])))
+	say<-paste("Non-numeric file IDs (",measurements[these,1],"). Revise entry in or delete entry from the enviMass file table!",sep="")
+  }  
   measurements_ID<-measurements[,1]
   measurements_ID<-paste(measurements_ID,".mzXML",sep="")
-  if(any(match(measurements_ID,filed,nomatch=0)==0)){say<-paste("Missing mzXML file - file corrupted? Compare project file folder for consistency!",sep="")}
+  if(any(match(measurements_ID,filed,nomatch=0)==0) & ignorefiles=="FALSE"){
+	these<-which(match(measurements_ID,filed,nomatch=0)==0)
+	say<-paste("Missing mzXML file for files with ID: ", paste(these,collapse=", "),". Revise - best delete the concerned file from enviMass file table and reload it.",sep="")
+  }
   ##############################################################################
   # progress bar? ##############################################################
   if(interactive() && !.Platform$OS.type == "windows" && .Platform$GUI == "Rgui" && logfile[[5]][21]=="TRUE"){

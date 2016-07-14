@@ -268,7 +268,9 @@ addmeasu<-reactive({
 						measurements3[,22]<-enviMass:::convDate(measurements3[,22]);
 						write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 						rm(measurements1,measurements2,measurements3);
-						output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
+						output$measurements<<-DT::renderDataTable(
+							read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top'
+						); 
 						#############################################################################
 						# adjust task/workflow settings #############################################
 						doit<-as.character(isolate(input$Measadd_incl))
@@ -356,7 +358,7 @@ addmeasu<-reactive({
 						}						
 					}
 					#############################################################################			
-					output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"));
+					output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top');
 					save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 					output$dowhat<-renderText("Measurement added");
 					cat("Measurement added\n")
@@ -518,7 +520,7 @@ observe({
 		#############################################################################
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
         #############################################################################			
-        output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"));
+        output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top');
         save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
         output$dowhat<-renderText("Measurement deleted");
       }else{
@@ -590,7 +592,7 @@ impproj<-reactive({
 				measurements_1<-measurements_1[measurements_1[,1]!="-",]
 			}
 			write.csv(measurements_1,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
-			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
+			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top'); 
 			rm(measurements_1,measurements_2);
 			enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE) 
 			#########################################################################			
@@ -724,7 +726,7 @@ observe({
 			output$dowhat<-renderText("Specifications saved to file table.");
 			cat("\n specifications exported from mask to file table")
 			rm(measurements3)
-			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
+			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top'); 
 			######################################################################			
 			# subtraction files, positive: #######################################
 			measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -856,7 +858,7 @@ observe({
 			if( any_include & any_calibrated ){ # included & calibration models exist? Changed time period only affects quantification, calibration models remain the same
 				enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE)					
 			}	
-			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 			
+			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top'); 			
 			output$Modif_cal_text_load<-renderText({"Modified specifications saved."})
 			cat("\n Changed calibration group specifications.")
 		}else{
@@ -985,7 +987,7 @@ observe({
 				}
 			}
 			enviMass:::workflow_set(down="LOD",check_node=TRUE,single_file=TRUE)
-			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 	
+			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top'); 	
 			cat("Calibration file set copied.")
 			output$Modif_cal_text_load<-renderText({"Calibration file set copied."})
 		}else{
@@ -1052,7 +1054,7 @@ observe({
 				enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE)	
 				updateSelectInput(session,"Ion_mode_Cal",selected = "none") # stops, in combination with Tasks_to_redo, invalid selections in the calibration tab!
 			}	
-			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")); 
+			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top'); 
 			output$Modif_cal_text_load<-renderText({"Calibration group deleted."})
 			cat("\n Calibration group deleted.")
 		}else{
@@ -1140,7 +1142,7 @@ impfolder<-reactive({
 							write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 							rm(measurements1,measurements2,measurements3);
 							#############################################################################			
-							output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"));
+							output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top');
 							save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 							output$dowhat<-renderText("Files copied");
 							cat(" - file copied")
@@ -1196,7 +1198,7 @@ impfolder<-reactive({
 								write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 								rm(measurements1,measurements2,measurements3);
 								#############################################################################			
-								output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"));
+								output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top');
 								save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 								output$dowhat<-renderText("Files copied");
 								cat(" - file copied")
