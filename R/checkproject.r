@@ -332,7 +332,6 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,...){
   if(!length(filed) & ignorefiles=="FALSE"){say<-"No files available!"}
   measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
   if(!all(!duplicated(measurements[,1]))){say<-paste("Duplicated file IDs.",measurements[duplicated(measurements[,1]),1],"Revise!")}
-  #measurements<-measurements[!duplicated(measurements[,1]),]
   if(any(is.na(as.numeric(measurements[,1])))){
 	these<-which(is.na(as.numeric(measurements[,1])))
 	say<-paste("Non-numeric file IDs (",measurements[these,1],"). Revise entry in or delete entry from the enviMass file table!",sep="")
@@ -342,6 +341,38 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,...){
   if(any(match(measurements_ID,filed,nomatch=0)==0) & ignorefiles=="FALSE"){
 	these<-which(match(measurements_ID,filed,nomatch=0)==0)
 	say<-paste("Missing mzXML file for files with ID: ", paste(these,collapse=", "),". Revise - best delete the concerned file from enviMass file table and reload it.",sep="")
+  }
+  # check date  & time formats
+  a<-try({as.Date(measurements[,6])},silent=TRUE)
+  if(any(class(a)=="try-error" | is.na(a))){
+		these<-which(any(class(a)=="try-error" | is.na(a)))
+		these<-measurements[these,1]
+		say<-paste("Invalid date format found for file(s) with ID(s) ",
+		paste(these,collapse=", "),". Please revise concerned file(s) in the files tab!",sep="")
+  }
+  b<-try({as.Date(paste("2014-03-13",measurements[,7]),format= "%Y-%m-%d %H:%M:%S")},silent=TRUE)  
+  if(any(class(b)=="try-error" | is.na(b))){
+		these<-which(any(class(b)=="try-error" | is.na(b)))
+		these<-measurements[these,1]
+		say<-paste("Invalid time format found for file(s) with ID(s) ",
+		paste(these,collapse=", "),". Please revise concerned file(s) in the files tab!",sep="")
+  }
+  measurements_cal<-measurements[measurements[,3]=="calibration",,drop=FALSE] 
+  if(length(measurements_cal[,1])>0){
+	  a<-try({as.Date(c(measurements_cal[,22]))},silent=TRUE)
+	  if(any(class(a)=="try-error" | is.na(a))){
+			these<-which(any(class(a)=="try-error" | is.na(a)))
+			these<-measurements_cal[these,1]
+			say<-paste("Invalid end date format found for calibration file(s) with ID(s) ",
+			paste(these,collapse=", "),". Please revise concerned calibration file(s) in the files tab!",sep="")
+	  }
+	  b<-try({as.Date(paste("2014-03-13",measurements_cal[,23]),format= "%Y-%m-%d %H:%M:%S")},silent=TRUE)  
+	  if(any(class(b)=="try-error" | is.na(b))){
+			these<-which(any(class(b)=="try-error" | is.na(b)))
+			these<-measurements_cal[these,1]
+			say<-paste("Invalid time format found for calibration file(s) with ID(s) ",
+			paste(these,collapse=", "),". Please revise concerned calibration file(s) in the files tab!",sep="")
+	  }
   }
   ##############################################################################
   # progress bar? ##############################################################
