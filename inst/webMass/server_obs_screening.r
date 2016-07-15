@@ -618,8 +618,8 @@ observe({
 						DT::datatable(
 							as.data.frame(target_quant_table_pos), 
 							#extensions = 'Buttons',
-							class = 'cell-border stripe',
-							caption = 'Quantification table: concentrations of targets for which calibration models were established'#,
+							#class = 'cell-border stripe',
+							#caption = 'Quantification table: concentrations of targets for which calibration models were established'#,
 							#options = list(
 							#	dom = 'Bfrtip',
 							#	buttons = c('copy', 'csv', 'excel')
