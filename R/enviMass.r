@@ -106,25 +106,7 @@ NULL
 #' @useDynLib enviMass getProfiles neighbour agglom indexed fill_timeset meandel intdiff plotit_prof binRT_prof binmz_prof
 #'
 #'
-#'
-#'
-#'
-#'
-#'
 
-.onLoad<- function(libname, pkgname){
-
-	cat("\nChecking for missing packages ...")
-
-
-
-
-
-
-
-	cat("\n done,")
-	
-}
 
 .onAttach <- function(lib, pkg)
 {
