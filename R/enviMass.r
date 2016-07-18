@@ -112,6 +112,20 @@ NULL
 #'
 #'
 
+.onAttach<- function(libname, pkgname){
+
+	cat("\nChecking for missing packages ...")
+
+
+
+
+
+
+
+	cat("\n done,")
+	
+}
+
 .onAttach <- function(lib, pkg)
 {
 	packageStartupMessage("\n \n Welcome to enviMass version 3.1 \n Run webMass() to start the enviMass browser UI \n\n");
