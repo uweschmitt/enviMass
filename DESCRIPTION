@@ -32,4 +32,4 @@ Imports:
 	XML,
 	base64enc,
 	stringr,
-	htmltools
+	stringi
