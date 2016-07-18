@@ -166,8 +166,8 @@ updateRadioButtons(session, "subtr_IS", label = "Subtract internal standards?", 
 updateRadioButtons(session, "subtr_target", label = "Subtract targets / suspects?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="target_subtr"]) )
 updateRadioButtons(session, "subtr_blind", label = "Subtract?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="blind_subtr"]) )
 
-updateRadioButtons(session, "calib", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="quantification"]) )
-updateRadioButtons(session, "quantif", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="calibration"]) )
+updateRadioButtons(session, "calib", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="calibration"]) )
+updateRadioButtons(session, "quantif", label = "Include?", choices =  c("yes"="yes","no"="no"), selected = as.character(logfile$workflow[names(logfile$workflow)=="quantification"]) )
 
 
 ################################################################################

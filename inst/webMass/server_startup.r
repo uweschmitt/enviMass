@@ -19,138 +19,147 @@ observe({
 		##########################################################################
 		if(!exists("IS",envir=as.environment(".GlobalEnv"))){data(IS,package="enviMass")}
 		if(!exists("targets",envir=as.environment(".GlobalEnv"))){data(targets,package="enviMass")}
-		logfile_path<-enviMass:::newproject(isolate(input$pro_name),isolate(input$pro_dir),IS,targets);
-		if(logfile_path!="FALSE"){
-			output$textit<-renderText(as.character(logfile_path));
-			load(logfile_path,envir=as.environment(".GlobalEnv"));
-			output$summa_html<-renderText(enviMass:::summary_html(logfile$summary));
-			output$dowhat<-renderText("Started new project");
-			output$IS<-DT:::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
-			output$targets<-DT:::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      
-			measurements<-read.csv(file=file.path(logfile$project_folder,"dataframes","measurements"),colClasses = "character")
-			output$measurements<-DT:::renderDataTable(
-				read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top'
-			)      		
-			# SET DUMMY RESULTS ####################################################
-			# (1) Peak picking #####################################################
-			path=file.path(logfile$project_folder,"pics","EIC1");
-				png(filename = path, bg = "white", width = 1100, height= 300)
-				plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=2)
-				dev.off();
-				expr_peak<-list(src=file.path(logfile[[1]],"pics","EIC1"));
-				output$EIC1<-renderImage(expr_peak, deleteFile = FALSE);
-				output$EIC2<-renderImage(expr_peak, deleteFile = FALSE);
-			# (1) QC ###############################################################
-			path=file.path(logfile$project_folder,"pics","plotQCa_pos")
-				png(filename = path, bg = "white")
-				plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
-				dev.off()
-				expr1p<-list(src=path)
-				output$plotQCa_pos<-renderImage(expr1p, deleteFile = FALSE)	
-			path=file.path(logfile$project_folder,"pics","plotQCb_pos")
-				png(filename = path, bg = "white")
-				plot.new();plot.window(xlim=c(1,1),ylim=c(1,1));#box();text(1,1,label="not available",cex=1.5,col="darkred")
-				dev.off()
-				expr2p<-list(src=path)
-				output$plotQCb_pos<-renderImage(expr2p, deleteFile = FALSE)
-			path=file.path(logfile$project_folder,"pics","plotQCa_neg")
-				png(filename = path, bg = "white")
-				plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
-				dev.off()
-				expr1n<-list(src=path)
-				output$plotQCa_neg<-renderImage(expr1n, deleteFile = FALSE)	
-			path=file.path(logfile$project_folder,"pics","plotQCb_neg")
-				png(filename = path, bg = "white")
-				plot.new();plot.window(xlim=c(1,1),ylim=c(1,1));#box();text(1,1,label="not available",cex=1.5,col="darkred")
-				dev.off()
-				expr2n<-list(src=path)
-				output$plotQCb_neg<-renderImage(expr2n, deleteFile = FALSE)
-			# (3) Normalization ####################################################
-			path=file.path(logfile$project_folder,"pics","int_distr_pos")
-				png(filename = path, bg = "white")
-				plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
-				dev.off()
-				expr3p<-list(src=path)
-				output$pic_int_distr_pos<-renderImage(expr3p, deleteFile = FALSE)
-			path=file.path(logfile$project_folder,"pics","int_distr_neg")
-				png(filename = path, bg = "white")
-				plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
-				dev.off()
-				expr3n<-list(src=path)
-				output$pic_int_distr_neg<-renderImage(expr3n, deleteFile = FALSE)
-			# (4) Recalibration ####################################################
-			path=file.path(logfile[[1]],"pics","recal_none")
-				png(filename = path, bg = "white")
-				plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
-				dev.off()
-				exprrec<-list(src=path)
-				output$recal_pic<-renderImage(exprrec, deleteFile = FALSE);		
-				output$peakhist_pic<-renderImage(exprrec, deleteFile = FALSE);
-				output$peakmzRT_pic<-renderImage(exprrec, deleteFile = FALSE);	
-			# (Y) IS normalization #################################################
-			path=file.path(logfile$project_folder,"pics","profnorm_pos")
-				png(filename = path, bg = "white")
-				plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
-				dev.off()
-				expr30p<-list(src=path)
-				output$profnorm_pos<-renderImage(expr30p, deleteFile = FALSE)		
-			path=file.path(logfile$project_folder,"pics","profcount_pos")
-				png(filename = path, bg = "white")
-				plot.new();plot.window(xlim=c(1,1),ylim=c(1,1));#box();text(1,1,label="not available",cex=1.5,col="darkred")
-				dev.off()
-				expr31p<-list(src=path)
-				output$profcount_pos<-renderImage(expr31p, deleteFile = FALSE)
-			path=file.path(logfile$project_folder,"pics","profnorm_neg")
-				png(filename = path, bg = "white")
-				plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
-				dev.off()
-				expr30n<-list(src=path)
-				output$profnorm_neg<-renderImage(expr30n, deleteFile = FALSE)		
-			path=file.path(logfile$project_folder,"pics","profcount_neg")
-				png(filename = path, bg = "white")
-				plot.new();plot.window(xlim=c(1,1),ylim=c(1,1));#box();text(1,1,label="not available",cex=1.5,col="darkred")
-				dev.off()
-				expr31n<-list(src=path)
-				output$profcount_neg<-renderImage(expr31n, deleteFile = FALSE)		
-			 
-
-			# (X) Profiling, trends, blind ########################################
-			path=file.path(logfile$project_folder,"pics","boxprofile_pos")
-				png(filename = path, bg = "white")
-				plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
-				dev.off()
-				expr4p<-list(src=path)
-				output$boxprofile<-renderImage(expr4p, deleteFile = FALSE)
-			path=file.path(logfile$project_folder,"pics","boxprofile_neg")
-				png(filename = path, bg = "white")
-				plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
-				dev.off()
-				expr4n<-list(src=path)
-				output$boxprofile<-renderImage(expr4n, deleteFile = FALSE)
-
-			# Parse selectable isotopes ###########################################
-			elements<-unique(as.character(isotopes[1:295,1]))
-			elements<-elements[order(elements)]
-			isotopos<-c()
-			for(k in 1:length(elements)){
-				if(length(isotopes[isotopes[,1]==elements[k],1])>1){
-					elem_isos<-isotopes[isotopes[,1]==elements[k],]
-					elem_isos<-as.character(elem_isos[-1,2])
-					isotopos<-c(isotopos,elem_isos)
-				}
-			}
-			#updateCheckboxGroupInput(session, "isos", "Select relevant isotopes:", choices = as.character(isotopos),selected=c("13C","34S","81Br","37Cl"))               
-			########################################################################
-			if(any(ls()=="logfile")){stop("\n illegal logfile detected #1b in server_startup.r!")}
-			source("server_variables_in.R", local=TRUE)
-			########################################################################
-			isolate(init$a<-"TRUE")
-			cat("Started a new project\n");
-		}else{
+		say_path<-check_path(file.path(isolate(input$pro_dir),isolate(input$pro_name)))
+		if(say_path!="Project path ok"){
 			createAlert(session, anchorId="failed_new", alertId = "failed_new_id", title = "Invalid project path", 
-				content = "Project already exists or the specified path is invalid.", 
+				content = "Project already exists, the specified path is invalid or you lack permissions.", 
 				style = "danger", dismiss = TRUE, append = FALSE)
 			cat("Invalid - project already exists or path invalid \n")
+			shinyjs:::info(say_path)
+		}else{
+			logfile_path<-enviMass:::newproject(isolate(input$pro_name),isolate(input$pro_dir),IS,targets);
+			if(logfile_path!="FALSE"){
+				output$textit<-renderText(as.character(logfile_path));
+				load(logfile_path,envir=as.environment(".GlobalEnv"));
+				output$summa_html<-renderText(enviMass:::summary_html(logfile$summary));
+				output$dowhat<-renderText("Started new project");
+				output$IS<-DT:::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
+				output$targets<-DT:::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      
+				measurements<-read.csv(file=file.path(logfile$project_folder,"dataframes","measurements"),colClasses = "character")
+				output$measurements<-DT:::renderDataTable(
+					read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top'
+				)      		
+				# SET DUMMY RESULTS ####################################################
+				# (1) Peak picking #####################################################
+				path=file.path(logfile$project_folder,"pics","EIC1");
+					png(filename = path, bg = "white", width = 1100, height= 300)
+					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=2)
+					dev.off();
+					expr_peak<-list(src=file.path(logfile[[1]],"pics","EIC1"));
+					output$EIC1<-renderImage(expr_peak, deleteFile = FALSE);
+					output$EIC2<-renderImage(expr_peak, deleteFile = FALSE);
+				# (1) QC ###############################################################
+				path=file.path(logfile$project_folder,"pics","plotQCa_pos")
+					png(filename = path, bg = "white")
+					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
+					dev.off()
+					expr1p<-list(src=path)
+					output$plotQCa_pos<-renderImage(expr1p, deleteFile = FALSE)	
+				path=file.path(logfile$project_folder,"pics","plotQCb_pos")
+					png(filename = path, bg = "white")
+					plot.new();plot.window(xlim=c(1,1),ylim=c(1,1));#box();text(1,1,label="not available",cex=1.5,col="darkred")
+					dev.off()
+					expr2p<-list(src=path)
+					output$plotQCb_pos<-renderImage(expr2p, deleteFile = FALSE)
+				path=file.path(logfile$project_folder,"pics","plotQCa_neg")
+					png(filename = path, bg = "white")
+					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
+					dev.off()
+					expr1n<-list(src=path)
+					output$plotQCa_neg<-renderImage(expr1n, deleteFile = FALSE)	
+				path=file.path(logfile$project_folder,"pics","plotQCb_neg")
+					png(filename = path, bg = "white")
+					plot.new();plot.window(xlim=c(1,1),ylim=c(1,1));#box();text(1,1,label="not available",cex=1.5,col="darkred")
+					dev.off()
+					expr2n<-list(src=path)
+					output$plotQCb_neg<-renderImage(expr2n, deleteFile = FALSE)
+				# (3) Normalization ####################################################
+				path=file.path(logfile$project_folder,"pics","int_distr_pos")
+					png(filename = path, bg = "white")
+					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
+					dev.off()
+					expr3p<-list(src=path)
+					output$pic_int_distr_pos<-renderImage(expr3p, deleteFile = FALSE)
+				path=file.path(logfile$project_folder,"pics","int_distr_neg")
+					png(filename = path, bg = "white")
+					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
+					dev.off()
+					expr3n<-list(src=path)
+					output$pic_int_distr_neg<-renderImage(expr3n, deleteFile = FALSE)
+				# (4) Recalibration ####################################################
+				path=file.path(logfile[[1]],"pics","recal_none")
+					png(filename = path, bg = "white")
+					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
+					dev.off()
+					exprrec<-list(src=path)
+					output$recal_pic<-renderImage(exprrec, deleteFile = FALSE);		
+					output$peakhist_pic<-renderImage(exprrec, deleteFile = FALSE);
+					output$peakmzRT_pic<-renderImage(exprrec, deleteFile = FALSE);	
+				# (Y) IS normalization #################################################
+				path=file.path(logfile$project_folder,"pics","profnorm_pos")
+					png(filename = path, bg = "white")
+					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
+					dev.off()
+					expr30p<-list(src=path)
+					output$profnorm_pos<-renderImage(expr30p, deleteFile = FALSE)		
+				path=file.path(logfile$project_folder,"pics","profcount_pos")
+					png(filename = path, bg = "white")
+					plot.new();plot.window(xlim=c(1,1),ylim=c(1,1));#box();text(1,1,label="not available",cex=1.5,col="darkred")
+					dev.off()
+					expr31p<-list(src=path)
+					output$profcount_pos<-renderImage(expr31p, deleteFile = FALSE)
+				path=file.path(logfile$project_folder,"pics","profnorm_neg")
+					png(filename = path, bg = "white")
+					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
+					dev.off()
+					expr30n<-list(src=path)
+					output$profnorm_neg<-renderImage(expr30n, deleteFile = FALSE)		
+				path=file.path(logfile$project_folder,"pics","profcount_neg")
+					png(filename = path, bg = "white")
+					plot.new();plot.window(xlim=c(1,1),ylim=c(1,1));#box();text(1,1,label="not available",cex=1.5,col="darkred")
+					dev.off()
+					expr31n<-list(src=path)
+					output$profcount_neg<-renderImage(expr31n, deleteFile = FALSE)		
+				 
+
+				# (X) Profiling, trends, blind ########################################
+				path=file.path(logfile$project_folder,"pics","boxprofile_pos")
+					png(filename = path, bg = "white")
+					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
+					dev.off()
+					expr4p<-list(src=path)
+					output$boxprofile<-renderImage(expr4p, deleteFile = FALSE)
+				path=file.path(logfile$project_folder,"pics","boxprofile_neg")
+					png(filename = path, bg = "white")
+					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
+					dev.off()
+					expr4n<-list(src=path)
+					output$boxprofile<-renderImage(expr4n, deleteFile = FALSE)
+
+				# Parse selectable isotopes ###########################################
+				elements<-unique(as.character(isotopes[1:295,1]))
+				elements<-elements[order(elements)]
+				isotopos<-c()
+				for(k in 1:length(elements)){
+					if(length(isotopes[isotopes[,1]==elements[k],1])>1){
+						elem_isos<-isotopes[isotopes[,1]==elements[k],]
+						elem_isos<-as.character(elem_isos[-1,2])
+						isotopos<-c(isotopos,elem_isos)
+					}
+				}
+				#updateCheckboxGroupInput(session, "isos", "Select relevant isotopes:", choices = as.character(isotopos),selected=c("13C","34S","81Br","37Cl"))               
+				########################################################################
+				if(any(ls()=="logfile")){stop("\n illegal logfile detected #1b in server_startup.r!")}
+				source("server_variables_in.R", local=TRUE)
+				########################################################################
+				isolate(init$a<-"TRUE")
+				cat("Started a new project\n");
+			}else{
+				createAlert(session, anchorId="failed_new", alertId = "failed_new_id", title = "Invalid project path", 
+					content = "Project already exists or the specified path is invalid.", 
+					style = "danger", dismiss = TRUE, append = FALSE)
+				cat("Invalid - project already exists or path invalid \n")
+			}
 		}
     }
 	if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_startup.r!")}

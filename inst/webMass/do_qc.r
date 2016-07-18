@@ -1,7 +1,7 @@
 
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 	# positive #################################################################
-	if(any(measurements[,4]=="positive")){
+	if(any(measurements[,4]=="positive") & (length(measurements[,4])>1)){
 		filed<-list.files(file.path(logfile[[1]],"peaklist"))
 		iles<-c(0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1)
 		quant<-matrix(ncol=length(iles),nrow=length(filed),0)
@@ -95,7 +95,7 @@
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 	}
 	# negative #################################################################
-	if(any(measurements[,4]=="negative")){
+	if(any(measurements[,4]=="negative") & (length(measurements[,4])>1)){
 		filed<-list.files(file.path(logfile[[1]],"peaklist"))
 		iles<-c(0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1)
 		quant<-matrix(ncol=length(iles),nrow=length(filed),0)

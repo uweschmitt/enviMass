@@ -471,7 +471,7 @@
 							radioButtons("screen_IS", "Screen internal standards?", c("yes"="yes","no"="no"))
 						),
 						column(width = 3, 
-							radioButtons("screen_target", "Screen targets/suspects?", c("yes"="yes","no"="no"))
+							radioButtons("screen_target", "Screen target compounds?", c("yes"="yes","no"="no"))
 						),						
 						column(width = 6, offset = 0.3,
 							tags$p(align="justify","Uses the LOD thresholds estimated in the above step. If the LOD interpolation is not run, a fixed intensity threshold as specified in the
@@ -532,7 +532,7 @@
 							radioButtons("subtr_IS", "Subtract internal standards?", c("yes"="yes","no"="no"))
 						),
 						column(width = 3, 
-							radioButtons("subtr_target", "Subtract targets/suspects?", c("yes"="yes","no"="no"))
+							radioButtons("subtr_target", "Subtract targets compounds?", c("yes"="yes","no"="no"))
 						),						
 						column(width = 6, offset = 0.3,
 							tags$p(align="justify","Run a profile recalculation omitting compound peaks belonging to matches >= the cutoff score defined in the Settings/Screening Tab.

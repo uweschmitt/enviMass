@@ -215,7 +215,8 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,...){
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 		if(!any(measurements[,3]=="calibration") & (logfile$workflow[names(logfile$workflow)=="calibration"]=="yes")){
 			say<-"No calibration files available, although calibration is enabled in the workflow. Please revise: either remove this workflow option or include calibration files!"
-		}else{
+		}
+		if(length(measurements[measurements[,1]!="-",1,drop=FALSE])>0){
 			measurements<-measurements[measurements[,3]=="calibration",,drop=FALSE]
 			measurements_pos<-measurements[measurements[,4]=="positive",,drop=FALSE]
 			measurements_pos<-unique(measurements_pos[,c(20,6,7,22,23),drop=FALSE])
@@ -270,6 +271,8 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,...){
 			if(any(duplicated(measurements_neg$tag2))){
 				say<-"Calibration file specification violation (negative mode). Have you used different time period specifications for the same group? Please revise."
 			}			
+		}else{
+			say<-"No files available."
 		}
 	}
   # enough compounds for recalibration available? ##############################
@@ -345,14 +348,14 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,...){
   # check date  & time formats
   a<-try({as.Date(measurements[,6])},silent=TRUE)
   if(any(class(a)=="try-error" | is.na(a))){
-		these<-which(any(class(a)=="try-error" | is.na(a)))
+		these<-which(class(a)=="try-error" | is.na(a))
 		these<-measurements[these,1]
 		say<-paste("Invalid date format found for file(s) with ID(s) ",
 		paste(these,collapse=", "),". Please revise concerned file(s) in the files tab!",sep="")
   }
   b<-try({as.Date(paste("2014-03-13",measurements[,7]),format= "%Y-%m-%d %H:%M:%S")},silent=TRUE)  
   if(any(class(b)=="try-error" | is.na(b))){
-		these<-which(any(class(b)=="try-error" | is.na(b)))
+		these<-which(class(b)=="try-error" | is.na(b))
 		these<-measurements[these,1]
 		say<-paste("Invalid time format found for file(s) with ID(s) ",
 		paste(these,collapse=", "),". Please revise concerned file(s) in the files tab!",sep="")
@@ -361,18 +364,21 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,...){
   if(length(measurements_cal[,1])>0){
 	  a<-try({as.Date(c(measurements_cal[,22]))},silent=TRUE)
 	  if(any(class(a)=="try-error" | is.na(a))){
-			these<-which(any(class(a)=="try-error" | is.na(a)))
+			these<-which(class(a)=="try-error" | is.na(a))
 			these<-measurements_cal[these,1]
 			say<-paste("Invalid end date format found for calibration file(s) with ID(s) ",
 			paste(these,collapse=", "),". Please revise concerned calibration file(s) in the files tab!",sep="")
 	  }
 	  b<-try({as.Date(paste("2014-03-13",measurements_cal[,23]),format= "%Y-%m-%d %H:%M:%S")},silent=TRUE)  
 	  if(any(class(b)=="try-error" | is.na(b))){
-			these<-which(any(class(b)=="try-error" | is.na(b)))
+			these<-which(class(b)=="try-error" | is.na(b))
 			these<-measurements_cal[these,1]
 			say<-paste("Invalid time format found for calibration file(s) with ID(s) ",
 			paste(these,collapse=", "),". Please revise concerned calibration file(s) in the files tab!",sep="")
 	  }
+  }
+  if(length(measurements[measurements[,1]!="-",1,drop=FALSE])==0){
+	say<-"No files available."
   }
   ##############################################################################
   # progress bar? ##############################################################

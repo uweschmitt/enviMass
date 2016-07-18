@@ -316,6 +316,15 @@ observe({
 			enviMass:::workflow_set(down="LOD",check_node=FALSE)		
 		}			
 		if(do_debug){cat("\n at_22")}
+		# calibration ###########################################################
+		at1<-logfile$workflow[names(logfile$workflow)=="calibration"];
+		logfile$workflow[names(logfile$workflow)=="calibration"]<<-as.character(isolate(input$calib));
+		at2<-logfile$workflow[names(logfile$workflow)=="calibration"];
+		if(any(is.na(at2))){stop("\nThere was an issue reading out the new settings - maybe comma / dot separation was not fullfilled?")}		
+		if(at1!=at2){
+			enviMass:::workflow_set(down="calibration",check_node=FALSE)		
+		}		
+		if(do_debug){cat("\n at_23_1")}
 		# quantification #######################################################
 		at1<-logfile$workflow[names(logfile$workflow)=="quantification"];
 		logfile$workflow[names(logfile$workflow)=="quantification"]<<-as.character(isolate(input$quantif));
@@ -324,7 +333,7 @@ observe({
 		if(at1!=at2){
 			enviMass:::workflow_set(down="quantification",check_node=FALSE)		
 		}		
-		if(do_debug){cat("\n at_23")}
+		if(do_debug){cat("\n at_23_2")}
 		# IS subtraction #########################################################
 		at1<-logfile$workflow[names(logfile$workflow)=="IS_subtr"];
 		logfile$workflow[names(logfile$workflow)=="IS_subtr"]<<-as.character(isolate(input$subtr_IS));
