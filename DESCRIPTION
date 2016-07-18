@@ -16,4 +16,13 @@ Imports:
 	mgcv,
 	tcltk,
 	htmlTable,
-	networkD3
+	networkD3,
+	Rcpp,
+	httpuv,
+	xtable,
+	RJSONIO,
+	miniUI,
+	readMzXmlData,
+	nontargetData,
+	knitr,
+	igraph
