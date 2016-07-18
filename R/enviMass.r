@@ -112,7 +112,7 @@ NULL
 #'
 #'
 
-.onAttach<- function(libname, pkgname){
+.onLoad<- function(libname, pkgname){
 
 	cat("\nChecking for missing packages ...")
 
