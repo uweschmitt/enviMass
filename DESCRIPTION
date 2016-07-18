@@ -25,4 +25,11 @@ Imports:
 	readMzXmlData,
 	nontargetData,
 	knitr,
-	igraph
+	igraph,
+	htmltools,
+	htmlwidgets,
+	magrittr,
+	XML,
+	base64enc,
+	stringr,
+	htmltools
