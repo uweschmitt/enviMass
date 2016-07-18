@@ -14,7 +14,7 @@ observe({ # - A
 	input$Ion_mode_Cal 
 	if(verbose){cat("\n in A")}
 	if(isolate(init$a)=="TRUE"){
-	if(logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="calibration"]!="TRUE"){ # e.g., if files were changed / added / ...
+	if(logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="calibration"]=="FALSE"){ # e.g., if files were changed / added / ...
 		if(verbose){cat("\n in A_1")}
 		if(isolate(input$Ion_mode_Cal)=="positive"){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -105,9 +105,9 @@ observe({ # - B
 					cal_models_pos<<-list()
 					cal_models_pos[[1]]<<-list()
 					names(cal_models_pos)<<-isolate(input$Cal_file_set)
-					save(cal_models_pos,file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));			
+					dump("cal_models_pos",file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));			
 				}
-				load(file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));	
+				source(file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")),local=as.environment(".GlobalEnv"));	
 			}else{ # not available
 				if((isolate(input$Ion_mode_Cal)!="negative")){
 					updateSelectInput(session,inputId="Cal_IS_name",choices="none",selected = "none")
@@ -162,9 +162,9 @@ observe({ # - B
 					cal_models_neg<<-list()
 					cal_models_neg[[1]]<<-list()
 					names(cal_models_neg)<<-isolate(input$Cal_file_set)
-					save(cal_models_neg,file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));			
+					dump("cal_models_neg",file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));			
 				}
-				load(file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));	
+				source(file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")),local=as.environment(".GlobalEnv"));	
 			}else{ # not available
 				if((isolate(input$Ion_mode_Cal)!="positive")){
 					updateSelectInput(session,inputId="Cal_IS_name",choices="none",selected = "none")
@@ -929,7 +929,7 @@ observe({ # - P
 				cal_models_pos[[use_cal]][[make_entry]]$coefficients<<-cal_model$coefficients
 				cal_models_pos[[use_cal]][[make_entry]]$data<<-cal_model$model
 				names(cal_models_pos[[use_cal]])[make_entry]<<-use_name	
-				save(cal_models_pos,file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));					
+				dump("cal_models_pos",file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));					
 				cat("\n Calibration model saved")
 			}
 			if(isolate(input$Ion_mode_Cal)=="negative"){
@@ -960,7 +960,7 @@ observe({ # - P
 				cal_models_neg[[use_cal]][[make_entry]]$coefficients<<-cal_model$coefficients
 				cal_models_neg[[use_cal]][[make_entry]]$data<<-cal_model$model
 				names(cal_models_neg[[use_cal]])[make_entry]<<-use_name
-				save(cal_models_neg,file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));					
+				dump("cal_models_neg",file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));					
 				cat("\n Calibration model saved")
 			}
 			enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE)	
@@ -988,7 +988,7 @@ observe({ # - Q
 						stop("\n Calibration model delete fucked up. Debug me")
 					}
 				}
-				save(cal_models_pos,file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));					
+				dump("cal_models_pos",file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));					
 			}else{
 				cat("\n Nothing to remove ...")
 			}
@@ -1008,7 +1008,7 @@ observe({ # - Q
 						stop("\n Calibration model delete fucked up. Debug me")
 					}
 				}
-				save(cal_models_neg,file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));					
+				dump("cal_models_neg",file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));					
 			}else{
 				cat("\n Nothing to remove ...")
 			}			

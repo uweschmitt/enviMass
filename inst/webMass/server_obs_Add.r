@@ -269,7 +269,7 @@ addmeasu<-reactive({
 						write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 						rm(measurements1,measurements2,measurements3);
 						output$measurements<<-DT::renderDataTable(
-							read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top'
+							read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top',rownames= FALSE
 						); 
 						#############################################################################
 						# adjust task/workflow settings #############################################
@@ -281,6 +281,7 @@ addmeasu<-reactive({
 							}
 							if( isolate(input$Measadd_type)=="calibration" ){ # still, do everything
 								enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
+								enviMass:::workflow_set(logfile,down="calibration",single_file=TRUE)									
 							}						
 						}
 						#############################################################################			
@@ -355,10 +356,11 @@ addmeasu<-reactive({
 						}
 						if( isolate(input$Measadd_type)=="calibration" ){ # still, do everything
 							enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
+							enviMass:::workflow_set(logfile,down="calibration",single_file=TRUE)
 						}						
 					}
 					#############################################################################			
-					output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top');
+					output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top',rownames= FALSE);
 					save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 					output$dowhat<-renderText("Measurement added");
 					cat("Measurement added\n")
@@ -456,6 +458,7 @@ observe({
 			}
 			if(delete_type=="calibration"){ # still, do everything
 				enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)
+				enviMass:::workflow_set(logfile,down="calibration",single_file=TRUE)
 			}
 		}	
 		#########################################################################			
@@ -520,7 +523,7 @@ observe({
 		#############################################################################
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
         #############################################################################			
-        output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top');
+        output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top',rownames= FALSE);
         save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
         output$dowhat<-renderText("Measurement deleted");
       }else{
@@ -592,9 +595,9 @@ impproj<-reactive({
 				measurements_1<-measurements_1[measurements_1[,1]!="-",]
 			}
 			write.csv(measurements_1,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
-			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top'); 
+			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top',rownames= FALSE); 
 			rm(measurements_1,measurements_2);
-			enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE) 
+			enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)			
 			#########################################################################			
 			# subtraction files, positive: ##########################################
 			measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -719,14 +722,11 @@ observe({
 			measurements3[measurements3[,1]==atID,22]<-as.character(isolate(input$Modif_cal_date2))
 			measurements3[measurements3[,1]==atID,22]<-enviMass:::convDate(measurements3[measurements3[,1]==atID,22]);
 			measurements3[measurements3[,1]==atID,23]<-as.character(isolate(input$Modif_cal_time2))
-			if(measurements3[measurements3[,1]==atID,8]){ # included?
-				enviMass:::workflow_set(down="peakpicking",check_node=TRUE,single_file=TRUE)
-			}
 			write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 			output$dowhat<-renderText("Specifications saved to file table.");
 			cat("\n specifications exported from mask to file table")
 			rm(measurements3)
-			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top'); 
+			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top',rownames= FALSE); 
 			######################################################################			
 			# subtraction files, positive: #######################################
 			measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -776,6 +776,7 @@ observe({
 			}
 			if( isolate(input$Modif_type)=="calibration" ){ # still, do everything
 				enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
+				enviMass:::workflow_set(logfile,down="calibration",single_file=TRUE)
 			}							
 			######################################################################
 			output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
@@ -856,9 +857,10 @@ observe({
 				}
 			}			
 			if( any_include & any_calibrated ){ # included & calibration models exist? Changed time period only affects quantification, calibration models remain the same
-				enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE)					
+				enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE)	
+				enviMass:::workflow_set(logfile,down="calibration",single_file=TRUE)				
 			}	
-			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top'); 			
+			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top',rownames= FALSE); 			
 			output$Modif_cal_text_load<-renderText({"Modified specifications saved."})
 			cat("\n Changed calibration group specifications.")
 		}else{
@@ -987,7 +989,8 @@ observe({
 				}
 			}
 			enviMass:::workflow_set(down="LOD",check_node=TRUE,single_file=TRUE)
-			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top'); 	
+			enviMass:::workflow_set(logfile,down="calibration",single_file=TRUE)
+			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top',rownames= FALSE); 	
 			cat("Calibration file set copied.")
 			output$Modif_cal_text_load<-renderText({"Calibration file set copied."})
 		}else{
@@ -1054,7 +1057,7 @@ observe({
 				enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE)	
 				updateSelectInput(session,"Ion_mode_Cal",selected = "none") # stops, in combination with Tasks_to_redo, invalid selections in the calibration tab!
 			}	
-			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top'); 
+			output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top',rownames= FALSE); 
 			output$Modif_cal_text_load<-renderText({"Calibration group deleted."})
 			cat("\n Calibration group deleted.")
 		}else{
@@ -1142,7 +1145,7 @@ impfolder<-reactive({
 							write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 							rm(measurements1,measurements2,measurements3);
 							#############################################################################			
-							output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top');
+							output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top',rownames= FALSE);
 							save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 							output$dowhat<-renderText("Files copied");
 							cat(" - file copied")
@@ -1198,7 +1201,7 @@ impfolder<-reactive({
 								write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 								rm(measurements1,measurements2,measurements3);
 								#############################################################################			
-								output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top');
+								output$measurements<<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top',rownames= FALSE);
 								save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 								output$dowhat<-renderText("Files copied");
 								cat(" - file copied")

@@ -616,10 +616,12 @@ observe({
 				if((dim(target_quant_table_pos)[1]>0)&(dim(target_quant_table_pos)[2]>0)){
 					output$target_quant_table_pos<-DT::renderDataTable({
 						DT::datatable(
-							as.data.frame(target_quant_table_pos), 
+							as.data.frame(target_quant_table_pos,row.names =FALSE,stringsAsFactors=FALSE), 
 							#extensions = 'Buttons',
-							#class = 'cell-border stripe',
-							#caption = 'Quantification table: concentrations of targets for which calibration models were established'#,
+							class = 'cell-border stripe',
+							rownames= FALSE,
+							options = list(lengthMenu = c(100,200,400)),
+							caption = 'Quantification table: concentrations shown for targets with available calibration models and screening matches.'#,
 							#options = list(
 							#	dom = 'Bfrtip',
 							#	buttons = c('copy', 'csv', 'excel')
@@ -1248,6 +1250,35 @@ observe({
 				},server = TRUE)	
 			}
 			rm(measurements);
+		}
+		if(isolate(input$Neg_compound_select=="Quantification")){
+			if(file.exists(file.path(logfile[[1]],"quantification","target_quant_table_neg"))){
+				load(file.path(logfile[[1]],"quantification","target_quant_table_neg"))
+				if((dim(target_quant_table_neg)[1]>0)&(dim(target_quant_table_neg)[2]>0)){
+					output$target_quant_table_neg<-DT::renderDataTable({
+						DT::datatable(
+							as.data.frame(target_quant_table_neg,row.names =FALSE,stringsAsFactors=FALSE), 
+							#extensions = 'Buttons',
+							class = 'cell-border stripe',
+							rownames= FALSE,
+							options = list(lengthMenu = c(100,200,400)),
+							caption = 'Quantification table: concentrations shown for targets with available calibration models and screening matches.'#,
+							#options = list(
+							#	dom = 'Bfrtip',
+							#	buttons = c('copy', 'csv', 'excel')
+							#) 
+						)
+					})
+				}else{
+					output$target_quant_table_neg <- DT::renderDataTable({
+						DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No quantification results available")
+					},server = TRUE)					
+				}
+			}else{
+				output$target_quant_table_neg <- DT::renderDataTable({
+					DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No quantification results available")
+				},server = TRUE)	
+			}
 		}
 	} # if init$a
 })  

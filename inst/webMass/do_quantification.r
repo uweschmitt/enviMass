@@ -53,7 +53,7 @@ if(FALSE){
 			cat("\nLoading calibration models ...")
 			for(i in 1:length(use_group_names)){
 				if(file.exists(file.path(logfile[[1]],"quantification",paste("cal_models_pos",use_group_names[i],sep="_")))){
-					load(file=file.path(logfile[[1]],"quantification",paste("cal_models_pos",use_group_names[i],sep="_")))
+					source(file=file.path(logfile[[1]],"quantification",paste("cal_models_pos",use_group_names[i],sep="_")),local=as.environment(".GlobalEnv"))
 					at<-(length(cal_models_pos_used)+1)
 					cal_models_pos_used[[at]]<-cal_models_pos[[1]]
 					names(cal_models_pos_used)[at]<-names(cal_models_pos)
@@ -62,7 +62,7 @@ if(FALSE){
 			}
 			cat(" done.")
 		}
-		# REMOVE PREVIOUS RESULTS & RE-INITIATE P ##########################################
+		# REMOVE PREVIOUS RESULTS & RE-INITIATE ############################################
 		if(file.exists(file.path(logfile[[1]],"quantification","target_quant_table_pos"))){
 			file.remove(file.path(logfile[[1]],"quantification","target_quant_table_pos"))
 		}
@@ -77,12 +77,15 @@ if(FALSE){
 		attime<-as.difftime(attime);
 		ord<-order(as.numeric(atdate),as.numeric(attime),as.numeric(those_files[,1]),decreasing=TRUE);
 		those_files<-those_files[ord,]	
-		those_files<-those_files[,1]
 		those_targets<-target_table[target_table[,6]!="FALSE",,drop=FALSE]
-		target_quant_table_pos<-matrix(nrow=(length(those_targets[,1])),ncol=(length(those_files)+1),"")
-		colnames(target_quant_table_pos)<-c("Target name",those_files)
-		rownames(target_quant_table_pos)<-those_targets[,1]
-		target_quant_table_pos[,1]<-those_targets[,2]
+		target_quant_table_pos<-matrix(nrow=(length(those_targets[,1])+3),ncol=(length(those_files[,1])+2),"")
+		colnames(target_quant_table_pos)<-c("Target ID","Target name",those_files[,1])
+		rownames(target_quant_table_pos)<-c("Type","Date","Time",those_targets[,1])
+		target_quant_table_pos[1,]<-c("","",as.character(those_files[,3]))
+		target_quant_table_pos[2,]<-c("","",as.character(those_files[,6]))
+		target_quant_table_pos[3,]<-c("","",as.character(those_files[,7]))
+		target_quant_table_pos[,1]<-c("","","",those_targets[,1])
+		target_quant_table_pos[,2]<-c("","","",those_targets[,2])
 		# QUANTIFY #########################################################################
 		if(length(cal_models_pos_used)>0){ # no calibration models? 
 			res_IS_names<-rep("",length(res_IS_pos_screen))
