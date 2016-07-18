@@ -45,7 +45,7 @@ observe({ # - A
 			}
 		}
 	}else{
-		info("Calibration files have been added or modified or copied. Workflow recalculation including the calibration required.");
+		shinyjs:::info("Calibration files have been added or modified or copied. Workflow recalculation including the calibration required.");
 		cat("\n Calibration files have been added or modified or copied. Recalculation required!")
 	}	
 	}

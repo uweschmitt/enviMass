@@ -845,7 +845,7 @@
 								HTML('<hr noshade="noshade" />'),
 								helpText("Click into the below table rows to select and deselect data points for the above calibration model (red line):"),
 								fluidRow(
-									column(12,dataTableOutput('cal_table'))
+									column(12,DT::dataTableOutput('cal_table'))
 								)							
 							)
 						)

@@ -8,7 +8,7 @@ mainchecked<-reactive({
 			return("Project consistent\n");
 		}else{
 			cat("Project inconsistent\n");
-			info(say);
+			shinyjs:::info(say);
 			return("Project inconsistent\n");		
 		}
 	}
@@ -267,7 +267,7 @@ maincalc<-reactive({
         ########################################################################
       }else{
         cat("Project inconsistent\n");
-		info(say);
+		shinyjs:::info(say);
 		return("Project inconsistent\n");
       }
     }
