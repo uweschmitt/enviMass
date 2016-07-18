@@ -8,12 +8,12 @@ Maintainer: Martin Loos <Martin.Loos@eawag.ch>
 Description: Utilities and workflow to process high resolution mass
     spectrometry (LC-HRMS) data for environmental trend analysis
 License: GPL (>= 3)
-Depends: R,shiny(>= 0.13.2),shinyFiles(>= 0.4.0),shinyBS(>= 0.20),DT(>= 0.1),shinyjs(>= 0.6)
+Depends: R(>= 3.3.0),shiny,shinyFiles,shinyBS,DT,shinyjs
 Imports: 
 	enviPick(>= 1.0),
 	enviPat(>= 1.9),
 	nontarget(>= 1.3),
-	mgcv(>= 1.7-22),
-	tcltk(>= 3.0.2),
-	htmlTable(>= 1.5),
-	networkD3(>= 0.2.8)
+	mgcv,
+	tcltk,
+	htmlTable,
+	networkD3
