@@ -50,11 +50,6 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 			depend[rownames(depend)==added[i],colnames(depend)==down]<-1
 		}
 	}
-	if(!is.logical(except)){
-		for(i in 1:length(except)){
-			depend[rownames(depend)==except[i],colnames(depend)==down]<-0
-		}
-	}
 	# direct dependencies:
 	work_stream<-rownames(depend)[depend[,colnames(depend)==down]==1]
 	# collect indirect downstream dependencies
@@ -71,6 +66,13 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 			}
 		}
 		work_stream<-unique(new_stream)
+	}
+	# explicitly excluded dependencies:
+	if(!is.logical(except)){
+		if(any(work_stream==except)){
+			those<-match(work_stream,except)	
+			work_stream<-work_stream[is.na(those)]
+		}
 	}
 	########################################################################################
 	# update Tasks_to_redo #################################################################

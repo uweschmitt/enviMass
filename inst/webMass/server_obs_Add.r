@@ -974,17 +974,17 @@ observe({
 			# copy existing calibration models
 			if(isolate(input$Modif_cal_mode)=="positive"){ # positive
 				if(file.exists(file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Modif_cal_group),sep="")))){
-					load(file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Modif_cal_group),sep="")),envir=as.environment(".GlobalEnv"));					
+					source(file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Modif_cal_group),sep="")),local=as.environment(".GlobalEnv"));					
 					names(cal_models_pos)<<-isolate(input$Copy_cal_group) # rename!
-					save(cal_models_pos,file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Copy_cal_group),sep="")),envir=as.environment(".GlobalEnv"));					
+					dump("cal_models_pos",file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Copy_cal_group),sep="")),envir=as.environment(".GlobalEnv"));					
 					rm(cal_models_pos,envir=as.environment(".GlobalEnv"))
 				}
 			}
 			if(isolate(input$Modif_cal_mode)=="negative"){ # negative
-				if(file.exists(file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Modif_cal_group),sep="")))){
-					load(file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Modif_cal_group),sep="")),envir=as.environment(".GlobalEnv"));					
+				if(file.exists(file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Modif_cal_group),sep="")))){		
+					source(file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Modif_cal_group),sep="")),local=as.environment(".GlobalEnv"));
 					names(cal_models_neg)<<-isolate(input$Copy_cal_group) # rename!
-					save(cal_models_neg,file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Copy_cal_group),sep="")),envir=as.environment(".GlobalEnv"));					
+					dump("cal_models_neg",file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Copy_cal_group),sep="")),envir=as.environment(".GlobalEnv"));					
 					rm(cal_models_neg,envir=as.environment(".GlobalEnv"))
 				}
 			}

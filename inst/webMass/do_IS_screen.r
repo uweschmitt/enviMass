@@ -420,6 +420,7 @@
 				IS_neg_screen_listed[[i]]<-numeric(0)	
 			}
 		}	
+		names(IS_neg_screen_listed)<-names(pattern)
 		# decompose ###########################################################################		
 		if( logfile$parameters$screen_IS_cutit=="TRUE" ){
 			use_score_cut<-TRUE;
