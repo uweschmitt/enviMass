@@ -963,7 +963,7 @@ observe({ # - P
 				dump("cal_models_neg",file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));					
 				cat("\n Calibration model saved")
 			}
-			enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE)	
+			enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE,except="calibration")	
 			isolate(redo_cal$a<-(redo_cal$a+1))
 		}	
 	}
@@ -1013,7 +1013,7 @@ observe({ # - Q
 				cat("\n Nothing to remove ...")
 			}			
 		}
-		enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE)	
+		enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE,except="calibration")	
 		isolate(redo_cal$a<-(redo_cal$a+1))
 	}
 })
