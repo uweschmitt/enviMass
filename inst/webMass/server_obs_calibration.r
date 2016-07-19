@@ -191,12 +191,16 @@ observe({ # Update target name & IS_ID - C
 			if(verbose){cat(" - ");cat(new_IS_ID)}
 			if(length(new_IS_ID)>0){ # just in case ...
 				if(new_IS_ID!="FALSE"){
-					updateSelectInput(session,inputId="Cal_IS_ID",selected = as.character(new_IS_ID))
+					if(new_IS_ID!=isolate(input$Cal_IS_ID)){
+						updateSelectInput(session,inputId="Cal_IS_ID",selected = as.character(new_IS_ID))
+					}else{ # if IS_ID the same; update on dd$d must be made here, not in observer for input$Cal_IS_ID which would remain unresponise (no value change)
+						isolate(dd$entry<-paste(input$Cal_IS_ID,input$Cal_target_ID,sep="_"))
+					}	
 				}
 			}
-			if(isolate(dd$entry)!=paste(input$Cal_IS_ID,input$Cal_target_ID,sep="_")){
-				isolate(dd$entry<-paste(input$Cal_IS_ID,input$Cal_target_ID,sep="_"))
-			}
+			#if(isolate(dd$entry!=paste(input$Cal_IS_ID,input$Cal_target_ID,sep="_"))){ #redundant: is also run in E for the IS_ID
+				#isolate(dd$entry<-paste(input$Cal_IS_ID,input$Cal_target_ID,sep="_"))
+			#}			
 		}else{	
 			updateSelectInput(session,inputId="Cal_target_name",selected="none")
 		}
@@ -219,7 +223,7 @@ observe({ # Update IS name - E
 		if(isolate(input$Cal_IS_ID)!="none"){
 			use_this_name<-intstand[intstand[,1]==isolate(input$Cal_IS_ID),2]
 			updateSelectInput(session,inputId="Cal_IS_name",selected = as.character(use_this_name))
-			if(isolate(dd$entry)!=paste(input$Cal_IS_ID,input$Cal_target_ID,sep="_")){
+			if(isolate(dd$entry!=paste(input$Cal_IS_ID,input$Cal_target_ID,sep="_"))){
 				isolate(dd$entry<-paste(input$Cal_IS_ID,input$Cal_target_ID,sep="_"))
 			}
 		}else{
@@ -643,7 +647,7 @@ observe({ # - K
 
 ###########################################################################################################
 # PLOT SETS, MAKE MODELS & OUTPUT TABLE ###################################################################
-observe({ # - L
+observe({ # - L output table
 	redo_cal$a
 	dd$d
 	if(verbose){cat("\n in L")}
@@ -664,7 +668,7 @@ observe({ # - L
 	}	
 })
 
-observe({ # - M
+observe({ # - M plot
 	input$cal_model
 	input$cal_model_0intercept
 	redo_cal$a

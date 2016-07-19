@@ -720,7 +720,7 @@
             # PROFILING ########################################################
             tabPanel("Profiling",
 				tags$h5("Profile extraction"),
-				sliderInput("prof_sets", "Maximum number of newest samples to be processed", min = 50, max = 3000, value = 100, step= 1),
+				sliderInput("prof_sets", "Maximum number of newest files to be processed (by date/time) ", min = 50, max = 3000, value = 100, step= 1),
 				numericInput("prof_dmz", "Peak deviation within profiles: m/z tolerance ...", 3),                
                 selectInput("prof_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),
                 numericInput("prof_drt", "Peak deviation within profiles: RT tolerance [s]", 60),     
