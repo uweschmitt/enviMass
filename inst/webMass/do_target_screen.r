@@ -194,6 +194,7 @@
 								names(combination_matches[[k]])[10]<-"file_ID"
 							}
 							res_target_pos_screen[[i]][[at_ID]]<-combination_matches
+							names(res_target_pos_screen[[i]])[[at_ID]]<-combination_matches[[k]][[10]]
 							if(length(combination_matches)>1){many_unamb<-(many_unamb+1)}
 							many<-(many+1)
 						}
@@ -202,7 +203,6 @@
 					res_target_pos_screen[[i]]<-numeric(0)
 				}
 			}
-# SINGLE LIST
 			names(res_target_pos_screen)<-names(target_pos_screen_listed)
 		}
 		# save list ########################################################################################
@@ -215,7 +215,6 @@
 				measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
 			}
 			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
-# SUMMARY TABLE
 			results_screen_target_pos<-enviMass:::get_screening_results(
 				screened_listed=res_target_pos_screen,
 				pattern=pattern,
@@ -372,9 +371,7 @@
 		}
 		# resort to a full result list: pattern x sample x (centroids,matches) ( = peak index in profileList_neg)
 		target_neg_screen_listed<-list()  # default: no match at all
-# NEW +		
-		set_ID<-seq(1:length(profileList_neg[[4]]))
-# NEW -		
+		set_ID<-seq(1:length(profileList_neg[[4]]))	
 		for(i in 1:length(screen_list)){ # over compound x adduct = i
 			if(any(is.na(screen_list[[i]]==FALSE))){
 				target_neg_screen_listed[[i]]<-list() # m-level		
@@ -390,7 +387,6 @@
 								}else{
 									if(delmass*1E6/pattern[[i]][j,1]>mztol){next}
 								}
-# NEW +	
 								at_ID<-set_ID[profileList_neg[[4]]==as.character(profileList_neg[[2]][m,6])]								
 								if(length(target_neg_screen_listed[[i]])<at_ID){							
 									target_neg_screen_listed[[i]][[at_ID]]<-matrix(ncol=2,nrow=0)	
@@ -403,7 +399,6 @@
 									target_neg_screen_listed[[i]][[at_ID]],c(j,m)
 								)					
 								colnames(target_neg_screen_listed[[i]][[at_ID]])<-c(as.character(profileList_neg[[4]][at_ID]),"")
-# NEW -					
 							}							
 						}
 					}
@@ -428,15 +423,11 @@
 			for(i in 1:length(target_neg_screen_listed)){ # i - on compound_adduct
 				if(length(target_neg_screen_listed[[i]])>0){	
 					res_target_neg_screen[[i]]<-list()
-					for(m in 1:length(target_neg_screen_listed[[i]])){ # m - sample
-# NEW +						
-						at_ID<-set_ID[profileList_neg[[4]]==colnames(target_neg_screen_listed[[i]][[m]])[1]]
-# NEW -	
+					for(m in 1:length(target_neg_screen_listed[[i]])){ # m - sample				
+						at_ID<-set_ID[profileList_neg[[4]]==colnames(target_neg_screen_listed[[i]][[m]])[1]]	
 						if(length(target_neg_screen_listed[[i]][[m]])>0){
-							if(do_LOD){
-# NEW +								
-								with_model<-which(names(LOD_splined)==paste("LOD_",colnames(target_neg_screen_listed[[i]][[m]])[1],sep=""))
-# NEW -							
+							if(do_LOD){							
+								with_model<-which(names(LOD_splined)==paste("LOD_",colnames(target_neg_screen_listed[[i]][[m]])[1],sep=""))						
 								if(length(with_model)>0){						
 									use_cutint<-10^(predict(LOD_splined[[with_model]],pattern_RT[i])$y)
 								}else{
@@ -445,8 +436,7 @@
 								}
 							}else{
 								use_cutint<-cutint
-							}
-# NEW +								
+							}						
 							combination_matches<-recomb_score(
 								cent_peak_mat=target_neg_screen_listed[[i]][[m]],
 								pattern_compound=pattern[[i]],
@@ -464,7 +454,7 @@
 								names(combination_matches[[k]])[10]<-"file_ID"
 							}
 							res_target_neg_screen[[i]][[at_ID]]<-combination_matches
-# NEW -	
+							names(res_target_neg_screen[[i]])[[at_ID]]<-combination_matches[[k]][[10]]
 							if(length(combination_matches)>1){many_unamb<-(many_unamb+1)}
 							many<-(many+1)
 						}
@@ -485,7 +475,6 @@
 				measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
 			}
 			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
-# NEW +	
 			results_screen_target_neg<-enviMass:::get_screening_results(
 				screened_listed=res_target_neg_screen,
 				pattern=pattern,
@@ -495,7 +484,6 @@
 				compound_table=intstand,
 				cut_score=cut_score
 			)
-# NEW -
 			# create links in link_list_neg for peaks in profileList_neg = used for tracing back ###########
 			use_entries<-find_empty(links_peaks_neg)
 			for(i in 1:length(res_target_neg_screen)){

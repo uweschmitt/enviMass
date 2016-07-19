@@ -56,7 +56,7 @@ if(TRUE){
 					at<-(length(cal_models_pos_used)+1)
 					cal_models_pos_used[[at]]<-cal_models_pos[[1]]
 					names(cal_models_pos_used)[at]<-names(cal_models_pos)
-					rm(cal_models_pos)
+					rm(cal_models_pos,envir=as.environment(".GlobalEnv"))
 				}
 			}
 			cat(" done.\n")
@@ -77,6 +77,7 @@ if(TRUE){
 		ord<-order(as.numeric(atdate),as.numeric(attime),as.numeric(those_files[,1]),decreasing=TRUE);
 		those_files<-those_files[ord,]	
 		those_targets<-target_table[target_table[,6]!="FALSE",,drop=FALSE]
+		those_targets<-those_targets[those_targets[,8]=="positive",,drop=FALSE]
 		target_quant_table_pos<-matrix(nrow=(length(those_targets[,1])+3),ncol=(length(those_files[,1])+2),"")
 		colnames(target_quant_table_pos)<-c("Target ID","Target name",those_files[,1])
 		rownames(target_quant_table_pos)<-c("Type","Date","Time",those_targets[,1])
@@ -108,9 +109,9 @@ if(TRUE){
 									at_sample<-res_target_pos_screen[[i]][[j]][[1]]$file_ID
 									# check: does a calibration model exist?		
 									at_group<-which(names(cal_models_pos_used)==use_group[use_files[,1]==at_sample])
-									if(length(at_group)==0){next} # calibration group available?
+									if(length(at_group)==0){next} # calibration group available?							
 									at_group_model<-which(names(cal_models_pos_used[[at_group]])==paste(at_IS,at_ID,sep="_"))					
-									if(length(at_group_model)==0){next} # model in that group available?
+									if(length(at_group_model)==0){next} # model in that group available?										
 									at_adduct_IS<-IS_table[IS_table[,1]==at_IS,19] 	# get relevant IS adduct
 									at_peak_IS<-IS_table[IS_table[,1]==at_IS,20] 	# get relevant IS peak
 									get_conc<-c()
@@ -125,15 +126,15 @@ if(TRUE){
 											low_bound<-as.numeric(IS_table[IS_table[,1]==at_IS,17])
 											if(low_bound!=0){low_bound<-(10^low_bound)}
 											high_bound<-as.numeric(IS_table[IS_table[,1]==at_IS,18])
-											if(high_bound!=0){high_bound<-(10^high_bound)}
+											if(high_bound!=0){high_bound<-(10^high_bound)}	
 											for(w in 1:length(res_IS_pos_screen[[at_IS_entry]][[at_IS_entry_sample]])){
 												# check IS peak
 												use_IS_peak<-which(res_IS_pos_screen[[at_IS_entry]][[at_IS_entry_sample]][[w]]$Peaks[,1]==at_peak_IS)
 												if(length(use_IS_peak)==0){next}
-												if(res_IS_pos_screen[[at_IS_entry]][[at_IS_entry_sample]][[w]]$Peaks[use_IS_peak,2]>high_bound){next} # out of intensity bounds?
-												if(res_IS_pos_screen[[at_IS_entry]][[at_IS_entry_sample]][[w]]$Peaks[use_IS_peak,2]<low_bound){next}  # out of intensity bounds?
-												int_IS<-(res_IS_pos_screen[[at_IS_entry]][[at_IS_entry_sample]][[w]]$Peaks[use_IS_peak,2])
-												int_target<-(res_target_pos_screen[[i]][[j]][[k]]$Peaks[use_target_peak,2])
+												if(res_IS_pos_screen[[at_IS_entry]][[at_IS_entry_sample]][[w]]$Intensity[use_IS_peak]>high_bound){next} # out of intensity bounds?
+												if(res_IS_pos_screen[[at_IS_entry]][[at_IS_entry_sample]][[w]]$Intensity[use_IS_peak]<low_bound){next}  # out of intensity bounds?
+												int_IS<-(res_IS_pos_screen[[at_IS_entry]][[at_IS_entry_sample]][[w]]$Intensity[use_IS_peak])
+												int_target<-(res_target_pos_screen[[i]][[j]][[k]]$Intensity[use_target_peak])
 												int_rat<-(int_target/int_IS)
 												new_conc<-c()
 												if(cal_models_pos_used[[at_group]][[at_group_model]]$call=="resp ~ 0 + lin"){ # linear, 0-intercept
@@ -160,7 +161,7 @@ if(TRUE){
 												}
 												cat(".")							
 												get_conc<-c(get_conc,new_conc)				
-											}
+											}										
 											if(length(get_conc)==0){next}
 											res_target_pos_screen[[i]][[j]][[k]]$conc<-get_conc
 											found_which[[length(found_which)+1]]<-c(i,j,k)
@@ -186,9 +187,23 @@ if(TRUE){
 				}
 			}
 		}	
-		# sort target_quant_pos
-		
-		
+		# sort target_quant_table_pos
+		if(length(target_quant_table_pos[,1])>4){
+			this<-which(target_quant_table_pos[1,]=="sample")[1]
+			if(is.na(this)){this<-3}
+			splitted<-strsplit(target_quant_table_pos[-c(1,2,3),this],",")
+			splitted<-lapply(splitted,"as.numeric")
+			for(i in 1:length(splitted)){
+				if(identical(splitted[[i]],numeric(0))){
+					splitted[[i]]<-0
+				}else{
+					splitted[[i]]<-max(splitted[[i]])
+				}
+			}
+			splitted<-unlist(splitted)
+			ord<-order(splitted,decreasing=TRUE)
+			target_quant_table_pos[4:length(target_quant_table_pos[,1]),]<-(target_quant_table_pos[4:length(target_quant_table_pos[,1]),][ord,])
+		}
 		# MAKE ENTRY INTO SUMMARY TABLE ####################################################
 		if(length(found_which)>0){
 			for(m in 1:length(found_which)){
@@ -317,7 +332,7 @@ if(TRUE){
 					at<-(length(cal_models_neg_used)+1)
 					cal_models_neg_used[[at]]<-cal_models_neg[[1]]
 					names(cal_models_neg_used)[at]<-names(cal_models_neg)
-					rm(cal_models_neg)
+					rm(cal_models_neg,envir=as.environment(".GlobalEnv"))
 				}
 			}
 			cat(" done.\n")
@@ -338,6 +353,7 @@ if(TRUE){
 		ord<-order(as.numeric(atdate),as.numeric(attime),as.numeric(those_files[,1]),decreasing=TRUE);
 		those_files<-those_files[ord,]	
 		those_targets<-target_table[target_table[,6]!="FALSE",,drop=FALSE]
+		those_targets<-those_targets[those_targets[,8]=="negative",,drop=FALSE]
 		target_quant_table_neg<-matrix(nrow=(length(those_targets[,1])+3),ncol=(length(those_files[,1])+2),"")
 		colnames(target_quant_table_neg)<-c("Target ID","Target name",those_files[,1])
 		rownames(target_quant_table_neg)<-c("Type","Date","Time",those_targets[,1])
@@ -380,7 +396,7 @@ if(TRUE){
 										if(length(use_target_peak)>0){
 											# find IS results for this target
 											at_IS_entry<-which((res_IS_names==at_IS)&(res_IS_adduct==at_adduct_IS))
-											at_IS_entry_sample<-which(names(res_IS_neg_screen[[at_IS_entry]])==at_sample)
+											at_IS_entry_sample<-which(names(res_IS_neg_screen[[at_IS_entry]])==at_sample)	
 											if(length(at_IS_entry_sample)==0){next}
 											# get IS intensity bounds
 											low_bound<-as.numeric(IS_table[IS_table[,1]==at_IS,17])
@@ -391,10 +407,10 @@ if(TRUE){
 												# check IS peak
 												use_IS_peak<-which(res_IS_neg_screen[[at_IS_entry]][[at_IS_entry_sample]][[w]]$Peaks[,1]==at_peak_IS)
 												if(length(use_IS_peak)==0){next}
-												if(res_IS_neg_screen[[at_IS_entry]][[at_IS_entry_sample]][[w]]$Peaks[use_IS_peak,2]>high_bound){next} # out of intensity bounds?
-												if(res_IS_neg_screen[[at_IS_entry]][[at_IS_entry_sample]][[w]]$Peaks[use_IS_peak,2]<low_bound){next}  # out of intensity bounds?
-												int_IS<-(res_IS_neg_screen[[at_IS_entry]][[at_IS_entry_sample]][[w]]$Peaks[use_IS_peak,2])
-												int_target<-(res_target_neg_screen[[i]][[j]][[k]]$Peaks[use_target_peak,2])
+												if(res_IS_neg_screen[[at_IS_entry]][[at_IS_entry_sample]][[w]]$Intensity[use_IS_peak]>high_bound){next} # out of intensity bounds?
+												if(res_IS_neg_screen[[at_IS_entry]][[at_IS_entry_sample]][[w]]$Intensity[use_IS_peak]<low_bound){next}  # out of intensity bounds?
+												int_IS<-(res_IS_neg_screen[[at_IS_entry]][[at_IS_entry_sample]][[w]]$Intensity[use_IS_peak])
+												int_target<-(res_target_neg_screen[[i]][[j]][[k]]$Intensity[use_target_peak])
 												int_rat<-(int_target/int_IS)
 												new_conc<-c()
 												if(cal_models_neg_used[[at_group]][[at_group_model]]$call=="resp ~ 0 + lin"){ # linear, 0-intercept
@@ -447,6 +463,23 @@ if(TRUE){
 				}
 			}
 		}	
+		# sort target_quant_table_neg
+		if(length(target_quant_table_neg[,1])>4){
+			this<-which(target_quant_table_neg[1,]=="sample")[1]
+			if(is.na(this)){this<-3}
+			splitted<-strsplit(target_quant_table_neg[-c(1,2,3),this],",")
+			splitted<-lapply(splitted,"as.numeric")
+			for(i in 1:length(splitted)){
+				if(identical(splitted[[i]],numeric(0))){
+					splitted[[i]]<-0
+				}else{
+					splitted[[i]]<-max(splitted[[i]])
+				}
+			}
+			splitted<-unlist(splitted)
+			ord<-order(splitted,decreasing=TRUE)
+			target_quant_table_neg[4:length(target_quant_table_neg[,1]),]<-(target_quant_table_neg[4:length(target_quant_table_neg[,1]),][ord,])
+		}
 		# MAKE ENTRY INTO SUMMARY TABLE ####################################################
 		if(length(found_which)>0){
 			for(m in 1:length(found_which)){
