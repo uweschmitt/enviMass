@@ -82,7 +82,7 @@
 							replicates=FALSE
 						)
 		profileList_pos_cal<<-profileList_pos_cal
-		save(profileList_pos_cal,file=file.path(as.character(logfile[[1]]),"quantification","profileList_pos_cal"));
+		save(profileList_pos_cal,file=file.path(as.character(logfile[[1]]),"quantification","profileList_pos_cal"),compress=FALSE);
 		##################################################################################################################
 		# IS SCREENING ###################################################################################################
 		#load(file=file.path(as.character(logfile[[1]]),"quantification","profileList_pos_cal"),envir=as.environment(".GlobalEnv"));
@@ -517,7 +517,7 @@
 							replicates=FALSE
 						)
 		profileList_neg_cal<<-profileList_neg_cal
-		save(profileList_neg_cal,file=file.path(as.character(logfile[[1]]),"quantification","profileList_neg_cal"));
+		save(profileList_neg_cal,file=file.path(as.character(logfile[[1]]),"quantification","profileList_neg_cal"),compress=FALSE);
 		##################################################################################################################
 		# IS SCREENING ###################################################################################################
 		#load(file=file.path(as.character(logfile[[1]]),"quantification","profileList_neg_cal"),envir=as.environment(".GlobalEnv"));
