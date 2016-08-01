@@ -7,6 +7,8 @@
 #' @details enviMass workflow function
 #' 
 
+project_path<-"F:/MS/Projects/Package_enviMass"
+
 check_path<-function(project_path){
 	
 	say_path<-"Project path ok"
@@ -26,15 +28,17 @@ check_path<-function(project_path){
 		say_path<-paste("Not allowed to read from ",project_path,". Revise user permissions?")
 	}	
 	# try to write into folder #######################################
-	a<-try({
-		dir.create(
-			file.path(project_path,"delete_this_trial_folder")
-		)
-	},silent=TRUE)
-	if((a==FALSE) || (class(a)=="try-error" )){
-		say_path<-paste("Cannot create ",project_path,". Revise user permissions, path validity, ... ?")	
-	}else{
-		file.remove(project_path,"delete_this_trial_folder")
+	if(FALSE){ # windows fuck yourself
+		a<-try({
+			dir.create(
+				file.path(project_path,"delete_this_trial_folder")
+			)
+		},silent=TRUE)
+		if((a==FALSE) || (class(a)=="try-error" )){
+			say_path<-paste("Cannot create ",project_path,". Revise user permissions, path validity, ... ?")	
+		}else{
+			file.remove(file.path(project_path,"delete_this_trial_folder"))
+		}
 	}
 	##################################################################
 	return(say_path);
