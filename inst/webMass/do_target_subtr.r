@@ -67,14 +67,14 @@ if(
 							)
 		}
 		profileList_pos<<-enviMass:::in_blind(profileList_pos)
-		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"));
+		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),compress=FALSE);
 		profpeaks_pos<<-enviMass:::profiletopeak(profileList_pos,progbar=logfile$parameters[21])		
 		profpeaks_pos<<-profpeaks_pos[order(profpeaks_pos[,13],decreasing=TRUE),];
 		save(profpeaks_pos,file=file.path(as.character(logfile[[1]]),"results","profpeaks_pos"));
 		save(links_peaks_pos,file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"));	
 		cat(paste("\nTarget subtraction: ",round((sum(!keep_peaks)/length(keep_peaks)*100),digits=3),"% of peaks removed\n",sep=""))
 		###############################################################################################
-		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"))
+
 	}
 }
 #######################################################################################################
@@ -147,14 +147,14 @@ if(
 							)
 		}
 		profileList_neg<<-enviMass:::in_blind(profileList_neg)
-		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"));
+		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),compress=FALSE);
 		profpeaks_neg<<-enviMass:::profiletopeak(profileList_neg,progbar=logfile$parameters[21])		
 		profpeaks_neg<<-profpeaks_neg[order(profpeaks_neg[,13],decreasing=TRUE),];
 		save(profpeaks_neg,file=file.path(as.character(logfile[[1]]),"results","profpeaks_neg"));
 		save(links_peaks_neg,file=file.path(as.character(logfile[[1]]),"results","links_peaks_neg"));	
 		cat(paste("\nTarget subtraction: ",round((sum(!keep_peaks)/length(keep_peaks)*100),digits=3),"% of peaks removed\n",sep=""))
 		###############################################################################################
-		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"))
+
 	}
 }
 #######################################################################################################

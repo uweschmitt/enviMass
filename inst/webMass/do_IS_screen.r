@@ -272,7 +272,7 @@
 					}
 				}
 			}
-			save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"))
+			save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),compress=FALSE)
 			save(links_peaks_pos,file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"))
 			################################################################################################
 			save(results_screen_IS_pos,file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos"))
@@ -547,7 +547,7 @@
 					}
 				}
 			}
-			save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"))
+			save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),compress=FALSE)
 			save(links_peaks_neg,file=file.path(as.character(logfile[[1]]),"results","links_peaks_neg"))
 			################################################################################################
 			save(results_screen_IS_neg,file=file.path(logfile$project_folder,"results","screening","results_screen_IS_neg"))

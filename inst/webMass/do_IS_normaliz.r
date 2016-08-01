@@ -232,7 +232,7 @@
 		for(k in 1:length(profileList_pos[[7]][,8])){
 			profileList_pos[[7]][k,16]<-mean(profileList_pos[[2]][(profileList_pos[[7]][k,1]:profileList_pos[[7]][k,2]),2])
 		}
-		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"));	
+		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),compress=FALSE);	
 		# derive plots #####################################################################
 		path=file.path(logfile[[1]],"pics","profnorm_pos")
 		png(filename = path, bg = "white", width = 2000, height = 480)    	
@@ -617,7 +617,7 @@
 		for(k in 1:length(profileList_neg[[7]][,8])){
 			profileList_neg[[7]][k,16]<-mean(profileList_neg[[2]][(profileList_neg[[7]][k,1]:profileList_neg[[7]][k,2]),2])
 		}
-		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"));	
+		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),compress=FALSE);	
 		# derive plots #####################################################################
 		path=file.path(logfile[[1]],"pics","profnorm_neg")
 		png(filename = path, bg = "white", width = 2000, height = 480)    	

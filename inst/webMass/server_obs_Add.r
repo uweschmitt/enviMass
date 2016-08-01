@@ -240,10 +240,12 @@ addmeasu<-reactive({
 							use_profiling<-"FALSE"
 							start_date<-as.character(isolate(input$Measadd_cal_date1))
 							start_time<-as.character(isolate(input$Measadd_cal_time1))
+							tag2<-as.character(isolate(input$Measadd_tag2))
 						}else{
 							use_profiling<-as.character(isolate(input$Measadd_profiled))
 							start_date<-as.character(isolate(input$Measadd_date))
-							start_time<-as.character(isolate(input$Measadd_time))							
+							start_time<-as.character(isolate(input$Measadd_time))		
+							tag2<-"FALSE"
 						}
 						measurements2<-c(
 							as.character(newID),
@@ -257,7 +259,7 @@ addmeasu<-reactive({
 							use_profiling,
 							"FALSE","FALSE","FALSE",
 							as.character(isolate(input$Measadd_tag1)),	
-							as.character(isolate(input$Measadd_tag2)),
+							tag2,
 							as.character(isolate(input$Measadd_tag3)),
 							as.character(isolate(input$Measadd_cal_date2)),							
 							as.character(isolate(input$Measadd_cal_time2))							
@@ -318,10 +320,12 @@ addmeasu<-reactive({
 						use_profiling<-"FALSE"
 						start_date<-as.character(isolate(input$Measadd_cal_date1))
 						start_time<-as.character(isolate(input$Measadd_cal_time1))
+						tag2<-as.character(isolate(input$Measadd_tag2))
 					}else{
 						use_profiling<-as.character(isolate(input$Measadd_profiled))	
 						start_date<-as.character(isolate(input$Measadd_date))
-						start_time<-as.character(isolate(input$Measadd_time))							
+						start_time<-as.character(isolate(input$Measadd_time))
+						tag2<-"FALSE"						
 					}
 					measurements2<-c(
 						as.character(newID),
@@ -335,7 +339,7 @@ addmeasu<-reactive({
 						use_profiling,
 						"FALSE","FALSE","FALSE",
 						as.character(isolate(input$Measadd_tag1)),	
-						as.character(isolate(input$Measadd_tag2)),
+						tag2,
 						as.character(isolate(input$Measadd_tag3)),
 						as.character(isolate(input$Measadd_cal_date2)),							
 						as.character(isolate(input$Measadd_cal_time2))	

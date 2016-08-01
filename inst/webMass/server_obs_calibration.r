@@ -1012,13 +1012,34 @@ observe({ # - Q
 						stop("\n Calibration model delete fucked up. Debug me")
 					}
 				}
-				dump("cal_models_neg",file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));					
+				dump("cal_models_neg",file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")));					
 			}else{
 				cat("\n Nothing to remove ...")
 			}			
 		}
 		enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE,except="calibration")	
 		isolate(redo_cal$a<-(redo_cal$a+1))
+	}
+})
+###########################################################################################################
+
+###########################################################################################################
+# SET NEW IS AS DEFAULT FOR QUANTIFICATION ################################################################
+observe({
+	input$use_Cal
+	if(verbose){cat("\n in R")}
+	if(
+		isolate(input$Cal_IS_ID!="none") & isolate(input$Cal_target_ID!="none") & 
+		isolate(input$Cal_IS_name!="none") & isolate(input$Cal_target_name!="none") 					
+	){
+		change_IS_target_ID<-isolate(input$Cal_target_ID)
+		change_IS_IS_ID<-isolate(input$Cal_IS_ID)
+		this<-targets[targets[,1]==change_IS_target_ID,]
+stop("Complete below entry in target table - which column?")		
+		targets[this,]<-as.character(change_IS_IS_ID)
+		targets[this,]<<-as.character(change_IS_IS_ID)
+		write.table(targets,file=file.path(logfile[[1]],"dataframes","targets.txt"),row.names=FALSE,sep="\t",quote=FALSE)
+		cat("\n Changed/set default IS to be used in quantification for the selected target.")
 	}
 })
 ###########################################################################################################

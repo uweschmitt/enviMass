@@ -61,7 +61,7 @@
 				font-size:1.6em;
 				z-index:30;
 				color: grey'>
-				<p> Loading project ... please wait</p>
+				<p> Loading and updating project ... please wait</p>
 				<div id='logobusy2' class='shiny-image-output'></div>	
 			</div>
 			</body>

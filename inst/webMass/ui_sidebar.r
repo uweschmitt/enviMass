@@ -79,4 +79,4 @@ sidebarPanel(
       actionButton("Exit","Exit")
     ),
 	HTML('<font color="white">')
-)
+, width = 3)

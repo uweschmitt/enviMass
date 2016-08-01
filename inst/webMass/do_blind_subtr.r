@@ -56,13 +56,12 @@ if(
 							)
 		}
 		profileList_pos<<-enviMass:::in_blind(profileList_pos) # mark profile if from a blank/blind file
-		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"));
+		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),compress=FALSE);
 		profpeaks_pos<<-enviMass:::profiletopeak(profileList_pos,progbar=logfile$parameters[21])		
 		profpeaks_pos<<-profpeaks_pos[order(profpeaks_pos[,13],decreasing=TRUE),];
 		save(profpeaks_pos,file=file.path(as.character(logfile[[1]]),"results","profpeaks_pos"));
 		cat(paste("\nBlind in profile subtraction, positive: ",round((sum(!keep_peaks)/length(keep_peaks)*100),digits=3),"% of peaks removed\n",sep=""))
 		###############################################################################################
-		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"))
 	}else{
 		cat("\n do_blind_subtr: nothing to subtract, positive ioniz.")
 	}
@@ -137,13 +136,12 @@ if(
 							)
 		}
 		profileList_neg<<-enviMass:::in_blind(profileList_neg) # mark profile if from a blank/blind file
-		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"));
+		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),compress=FALSE);
 		profpeaks_neg<<-enviMass:::profiletopeak(profileList_neg,progbar=logfile$parameters[21])		
 		profpeaks_neg<<-profpeaks_neg[order(profpeaks_neg[,13],decreasing=TRUE),];
 		save(profpeaks_neg,file=file.path(as.character(logfile[[1]]),"results","profpeaks_neg"));
 		cat(paste("\nBlind in profile subtraction, negative: ",round((sum(!keep_peaks)/length(keep_peaks)*100),digits=3),"% of peaks removed\n",sep=""))
 		###############################################################################################
-		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"))
 	}else{
 		cat("\n do_blind_subtr: nothing to subtract, negative ioniz.")
 	}
