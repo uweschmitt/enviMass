@@ -7,8 +7,6 @@
 #' @details enviMass workflow function
 #' 
 
-project_path<-"F:/MS/Projects/Package_enviMass"
-
 check_path<-function(project_path){
 	
 	say_path<-"Project path ok"
