@@ -614,20 +614,39 @@ observe({
 			if(file.exists(file.path(logfile[[1]],"quantification","target_quant_table_pos"))){
 				load(file.path(logfile[[1]],"quantification","target_quant_table_pos"))
 				if((dim(target_quant_table_pos)[1]>0)&(dim(target_quant_table_pos)[2]>0)){
+					dim1<-dim(target_quant_table_pos)[1]
+					dim2<-dim(target_quant_table_pos)[2]
+					sketch = htmltools::withTags(table(
+						class = 'cell-border stripe',
+						thead(
+							tr(
+								th(rowspan = 4, 'Target ID'),
+								th(rowspan = 4, 'Target name'),
+								th(colspan = 1, 'Files'),	  
+								th(colspan = (dim2-3), '')
+							),
+							tr(lapply(target_quant_table_pos[1,3:dim2], th)),
+							tr(lapply(target_quant_table_pos[2,3:dim2], th)),
+							tr(lapply(target_quant_table_pos[3,3:dim2], th))
+						)
+					))
 					output$target_quant_table_pos<-DT::renderDataTable({
 						DT::datatable(
-							as.data.frame(target_quant_table_pos,row.names =FALSE,stringsAsFactors=FALSE), 
-							#extensions = 'Buttons',
-							class = 'cell-border stripe',
-							rownames= FALSE,
-							options = list(lengthMenu = c(100,200,400)),
+							as.data.frame(target_quant_table_pos[5:dim1,],row.names =FALSE,stringsAsFactors=FALSE), 
+							rownames=FALSE,
+							container = sketch,
+							#extensions = list('Buttons'),
+							options = list(	
+								lengthMenu = c(100,200,400),
+								ordering=F
+								#,dom = 'Bfrtip',
+								#buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+							),
+							selection = 'single',
+							#selection = list(target = 'column'),
 							caption = 'Quantification table: concentrations shown for targets with available calibration models and screening matches.'#,
-							#options = list(
-							#	dom = 'Bfrtip',
-							#	buttons = c('copy', 'csv', 'excel')
-							#) 
 						)
-					})
+					})						
 				}else{
 					output$target_quant_table_pos <- DT::renderDataTable({
 						DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No quantification results available")
@@ -642,6 +661,7 @@ observe({
 	} # if init$a
 })  
 ##############################################################################
+
 
 ##############################################################################
 # NEGATIVE IONIZATION ########################################################
@@ -1255,20 +1275,35 @@ observe({
 			if(file.exists(file.path(logfile[[1]],"quantification","target_quant_table_neg"))){
 				load(file.path(logfile[[1]],"quantification","target_quant_table_neg"))
 				if((dim(target_quant_table_neg)[1]>0)&(dim(target_quant_table_neg)[2]>0)){
+					dim1<-dim(target_quant_table_neg)[1]
+					dim2<-dim(target_quant_table_neg)[2]
+					sketch = htmltools::withTags(table(
+						class = 'cell-border stripe',
+						thead(
+							tr(
+								th(rowspan = 4, 'Target ID'),
+								th(rowspan = 4, 'Target name'),
+								th(colspan = 1, 'Files'),	  
+								th(colspan = (dim2-3), '')
+							),
+							tr(lapply(target_quant_table_neg[1,3:dim2], th)),
+							tr(lapply(target_quant_table_neg[2,3:dim2], th)),
+							tr(lapply(target_quant_table_neg[3,3:dim2], th))
+						)
+					))
 					output$target_quant_table_neg<-DT::renderDataTable({
 						DT::datatable(
-							as.data.frame(target_quant_table_neg,row.names =FALSE,stringsAsFactors=FALSE), 
-							#extensions = 'Buttons',
-							class = 'cell-border stripe',
-							rownames= FALSE,
-							options = list(lengthMenu = c(100,200,400)),
+							as.data.frame(target_quant_table_neg[5:dim1,],row.names =FALSE,stringsAsFactors=FALSE), 
+							rownames=FALSE,
+							container = sketch,
+							options = list(	
+								lengthMenu = c(100,200,400),
+								ordering=F,
+								target = 'column'
+							),
 							caption = 'Quantification table: concentrations shown for targets with available calibration models and screening matches.'#,
-							#options = list(
-							#	dom = 'Bfrtip',
-							#	buttons = c('copy', 'csv', 'excel')
-							#) 
 						)
-					})
+					})						
 				}else{
 					output$target_quant_table_neg <- DT::renderDataTable({
 						DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No quantification results available")

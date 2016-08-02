@@ -240,12 +240,25 @@ addmeasu<-reactive({
 							use_profiling<-"FALSE"
 							start_date<-as.character(isolate(input$Measadd_cal_date1))
 							start_time<-as.character(isolate(input$Measadd_cal_time1))
+							tag1<-as.character(isolate(input$Measadd_tag1))
 							tag2<-as.character(isolate(input$Measadd_tag2))
-						}else{
+							tag3<-as.character(isolate(input$Measadd_tag1))
+						}
+						if(isolate(input$Measadd_type)=="sample" || isolate(input$Measadd_type)=="blank"){
 							use_profiling<-as.character(isolate(input$Measadd_profiled))
 							start_date<-as.character(isolate(input$Measadd_date))
 							start_time<-as.character(isolate(input$Measadd_time))		
+							tag1<-as.character(isolate(input$Measadd_tag1))						
 							tag2<-"FALSE"
+							tag3<-as.character(isolate(input$Measadd_tag1))
+						}
+						if(isolate(input$Measadd_type)=="spiked"){
+							use_profiling<-"FALSE"
+							start_date<-as.character(isolate(input$Measadd_date)) # anything
+							start_time<-as.character(isolate(input$Measadd_time)) # anything	
+							tag1<-FALSE
+							tag2<-as.character(isolate(input$Measadd_spiked_tag2))
+							tag3<-FALSE
 						}
 						measurements2<-c(
 							as.character(newID),
@@ -258,9 +271,7 @@ addmeasu<-reactive({
 							"TRUE","FALSE","FALSE","FALSE","FALSE","FALSE",
 							use_profiling,
 							"FALSE","FALSE","FALSE",
-							as.character(isolate(input$Measadd_tag1)),	
-							tag2,
-							as.character(isolate(input$Measadd_tag3)),
+							tag1,tag2,tag3,
 							as.character(isolate(input$Measadd_cal_date2)),							
 							as.character(isolate(input$Measadd_cal_time2))							
 						)
@@ -320,12 +331,25 @@ addmeasu<-reactive({
 						use_profiling<-"FALSE"
 						start_date<-as.character(isolate(input$Measadd_cal_date1))
 						start_time<-as.character(isolate(input$Measadd_cal_time1))
+						tag1<-as.character(isolate(input$Measadd_tag1))
 						tag2<-as.character(isolate(input$Measadd_tag2))
-					}else{
-						use_profiling<-as.character(isolate(input$Measadd_profiled))	
+						tag3<-as.character(isolate(input$Measadd_tag1))
+					}
+					if(isolate(input$Measadd_type)=="sample" || isolate(input$Measadd_type)=="blank"){
+						use_profiling<-as.character(isolate(input$Measadd_profiled))
 						start_date<-as.character(isolate(input$Measadd_date))
 						start_time<-as.character(isolate(input$Measadd_time))
-						tag2<-"FALSE"						
+						tag1<-as.character(isolate(input$Measadd_tag1))						
+						tag2<-"FALSE"
+						tag3<-as.character(isolate(input$Measadd_tag1))
+					}
+					if(isolate(input$Measadd_type)=="spiked"){
+						use_profiling<-"FALSE"
+						start_date<-as.character(isolate(input$Measadd_date)) # anything
+						start_time<-as.character(isolate(input$Measadd_time)) # anything	
+						tag1<-FALSE
+						tag2<-as.character(isolate(input$Measadd_spiked_tag2))
+						tag3<-FALSE
 					}
 					measurements2<-c(
 						as.character(newID),
@@ -338,9 +362,7 @@ addmeasu<-reactive({
 						"TRUE","FALSE","FALSE","FALSE","FALSE","FALSE",
 						use_profiling,
 						"FALSE","FALSE","FALSE",
-						as.character(isolate(input$Measadd_tag1)),	
-						tag2,
-						as.character(isolate(input$Measadd_tag3)),
+						tag1,tag2,tag3,
 						as.character(isolate(input$Measadd_cal_date2)),							
 						as.character(isolate(input$Measadd_cal_time2))	
 					)
@@ -671,13 +693,14 @@ observe({
 		atID<-as.character(isolate(input$Modif_ID))
 		if(any(measurements3[,1]==atID)){
 			updateTextInput(session, "Modif_name",value = as.character(measurements3[measurements3[,1]==atID,2]))
-			updateSelectInput(session,"Modif_type","Type:", choices = c("sample", "blank", "calibration", "doted", "other"), selected = as.character(measurements3[measurements3[,1]==atID,3]))	
+			updateSelectInput(session,"Modif_type","Type:", choices = c("sample", "blank", "calibration", "spiked"), selected = as.character(measurements3[measurements3[,1]==atID,3]))	
 			updateSelectInput(session, "Modif_mode", selected = as.character(measurements3[measurements3[,1]==atID,4]))
 			updateTextInput(session, "Modif_place",value = as.character(measurements3[measurements3[,1]==atID,5]))
 			updateDateInput(session, "Modif_date", value = as.character(measurements3[measurements3[,1]==atID,6]))
 			updateTextInput(session, "Modif_time",value = as.character(measurements3[measurements3[,1]==atID,7]))
 			updateTextInput(session, "Modif_tag1",value = as.character(measurements3[measurements3[,1]==atID,19]))
 			updateTextInput(session, "Modif_tag2",value = as.character(measurements3[measurements3[,1]==atID,20]))
+			updateTextInput(session, "Modif_spiked_tag2",value = as.character(measurements3[measurements3[,1]==atID,20]))			
 			updateTextInput(session, "Modif_tag3",value = as.character(measurements3[measurements3[,1]==atID,21]))
 			updateSelectInput(session, "Modif_include", selected = as.character(measurements3[measurements3[,1]==atID,8]))
 			updateSelectInput(session, "Modif_profiled", selected = as.character(measurements3[measurements3[,1]==atID,15]))
@@ -706,11 +729,20 @@ observe({
 				use_profiling<-"FALSE"
 				start_date<-as.character(isolate(input$Modif_cal_date1))
 				start_time<-as.character(isolate(input$Modif_cal_time1))
-			}else{
+				tag2<-as.character(isolate(input$Modif_tag2))
+			}
+			if(isolate(input$Modif_type)=="sample" || isolate(input$Modif_type)=="blank"){
 				use_profiling<-as.character(isolate(input$Modif_profiled))
 				start_date<-as.character(isolate(input$Modif_date))
-				start_time<-as.character(isolate(input$Modif_time))				
+				start_time<-as.character(isolate(input$Modif_time))	
+				tag2<-as.character(isolate(input$Modif_tag2))				
 			}
+			if(isolate(input$Modif_type)=="spiked"){ 
+				use_profiling<-"FALSE"
+				start_date<-as.character(isolate(input$Modif_cal_date1))
+				start_time<-as.character(isolate(input$Modif_cal_time1))
+				tag2<-as.character(isolate(input$Modif_spiked_tag2))
+			}			
 			measurements3[measurements3[,1]==atID,2]<-as.character(isolate(input$Modif_name))
 			measurements3[measurements3[,1]==atID,3]<-as.character(isolate(input$Modif_type))
 			measurements3[measurements3[,1]==atID,4]<-as.character(isolate(input$Modif_mode))
@@ -719,7 +751,7 @@ observe({
 			measurements3[measurements3[,1]==atID,6]<-enviMass:::convDate(measurements3[measurements3[,1]==atID,6]);
 			measurements3[measurements3[,1]==atID,7]<-start_time	
 			measurements3[measurements3[,1]==atID,19]<-as.character(isolate(input$Modif_tag1))
-			measurements3[measurements3[,1]==atID,20]<-as.character(isolate(input$Modif_tag2))
+			measurements3[measurements3[,1]==atID,20]<-tag2
 			measurements3[measurements3[,1]==atID,21]<-as.character(isolate(input$Modif_tag3))	
 			measurements3[measurements3[,1]==atID,8]<-as.character(isolate(input$Modif_include))				
 			measurements3[measurements3[,1]==atID,15]<-use_profiling	

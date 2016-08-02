@@ -21,13 +21,13 @@
 						#),
 						HTML('<hr noshade="noshade" />'),
 						fluidRow(
-							column(width = 5, textInput("Measadd_name", "Name:", value = "Sample 1")),
-							column(width = 5, selectInput("Measadd_type", "Type:", choices = c("sample", "blank", "calibration", "doted", "other"))),
+							column(width = 5, textInput("Measadd_name", "Name:", value = "File XY")),
+							column(width = 5, selectInput("Measadd_type", "Type:", choices = c("sample", "blank", "calibration", "spiked"))),
 							column(width = 5, selectInput("Measadd_incl", "Include?", choices = c("TRUE","FALSE"))),
 							column(width = 5, selectInput("Measadd_mode", "Choose ionization mode:", choices = c("positive", "negative")))	
 						),
 						conditionalPanel(
-							condition = "input.Measadd_type != 'calibration'",						
+							condition = "input.Measadd_type != 'calibration' & input.Measadd_type != 'spiked'",						
 							HTML('<hr noshade="noshade" />'),
 							fluidRow(
 								column(width = 5,textInput("Measadd_place", "Place:", value = "Rhine")),		
@@ -49,6 +49,13 @@
 								column(width = 5,textInput("Measadd_cal_time2", "Time end (HH:MM:SS)", value = "12:00:00"))							
 							)
 						),
+						conditionalPanel(
+							condition = "input.Measadd_type == 'spiked'", 
+							HTML('<hr noshade="noshade" />'),
+							fluidRow(
+								column(width = 5,textInput("Measadd_spiked_tag2", "ID of file to subtract from (tag2)", value = "FALSE"))						
+							)
+						),						
 						HTML('<hr noshade="noshade" />'),
 						div(style = widget_style,
 							fileInput("Measadd_path", "Upload centroided .mzXML file:", multiple = FALSE, accept = c(".mzXML",".raw")),
@@ -75,12 +82,12 @@
 						HTML('<hr noshade="noshade" />'),
 						fluidRow(
 							column(width = 5, textInput("Modif_name", "Name:", value = "Sample 1")),
-							column(width = 5, selectInput("Modif_type", "Type:", choices = c("sample", "blank", "calibration", "doted", "other"))),
+							column(width = 5, selectInput("Modif_type", "Type:", choices = c("sample", "blank", "calibration", "spiked"))),
 							column(width = 5, selectInput("Modif_include","Include in workflow?",choices = c("TRUE","FALSE"),selected="TRUE")),
 							column(width = 5, selectInput("Modif_mode", "Choose ionization mode:", choices = c("positive", "negative")))	
 						),
 						conditionalPanel(
-							condition = "input.Modif_type != 'calibration'", 						
+							condition = "input.Modif_type == 'sample' | input.Modif_type == 'blank'", 						
 							HTML('<hr noshade="noshade" />'),
 							fluidRow(
 								column(width = 5,textInput("Modif_place", "Place:", value = "Rhine")),		
@@ -102,6 +109,13 @@
 								column(width = 5,textInput("Modif_cal_time2", "Time end (HH:MM:SS)", value = "12:00:00"))							
 							)
 						),
+						conditionalPanel(
+							condition = "input.Modif_type == 'spiked'", 
+							HTML('<hr noshade="noshade" />'),
+							fluidRow(
+								column(width = 5,textInput("Modif_spiked_tag2", "ID of file to subtract from (tag2)", value = "FALSE"))
+							)
+						),						
 						HTML('<hr noshade="noshade" />'),
 						bsButton("Modif_export","Save",style="primary")
 					),

@@ -360,6 +360,7 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,...){
 		say<-paste("Invalid time format found for file(s) with ID(s) ",
 		paste(these,collapse=", "),". Please revise concerned file(s) in the files tab!",sep="")
   }
+  # check calibration files
   measurements_cal<-measurements[measurements[,3]=="calibration",,drop=FALSE] 
   if(length(measurements_cal[,1])>0){
 	  a<-try({as.Date(c(measurements_cal[,22]))},silent=TRUE)
@@ -376,6 +377,15 @@ checkproject<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,...){
 			say<-paste("Invalid time format found for calibration file(s) with ID(s) ",
 			paste(these,collapse=", "),". Please revise concerned calibration file(s) in the files tab!",sep="")
 	  }
+  }
+  # check spiked files
+  measurements_spiked<-measurements[measurements[,3]=="spiked",,drop=FALSE]   
+  if(length(measurements_spiked[,1])>0){  
+	these<-which(is.na(match(measurements_spiked$tag2,measurements[,1])))
+	if(length(these)>0){
+			say<-paste("Invalid file IDs (tag2) to subtract from for spiked file(s) with ID(s) ",
+			paste(these,collapse=", "),". Please revise concerned spiked file(s) in the files tab!",sep="")	
+	}
   }
   if(length(measurements[measurements[,1]!="-",1,drop=FALSE])==0){
 	say<-"No files available."

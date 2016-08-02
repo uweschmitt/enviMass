@@ -78,14 +78,15 @@ if(TRUE){
 		those_files<-those_files[ord,]	
 		those_targets<-target_table[target_table[,6]!="FALSE",,drop=FALSE]
 		those_targets<-those_targets[those_targets[,8]=="positive",,drop=FALSE]
-		target_quant_table_pos<-matrix(nrow=(length(those_targets[,1])+3),ncol=(length(those_files[,1])+2),"")
+		target_quant_table_pos<-matrix(nrow=(length(those_targets[,1])+4),ncol=(length(those_files[,1])+2),"")
 		colnames(target_quant_table_pos)<-c("Target ID","Target name",those_files[,1])
-		rownames(target_quant_table_pos)<-c("Type","Date","Time",those_targets[,1])
-		target_quant_table_pos[1,]<-c("","",as.character(those_files[,3]))
-		target_quant_table_pos[2,]<-c("","",as.character(those_files[,6]))
-		target_quant_table_pos[3,]<-c("","",as.character(those_files[,7]))
-		target_quant_table_pos[,1]<-c("","","",those_targets[,1])
-		target_quant_table_pos[,2]<-c("","","",those_targets[,2])
+		rownames(target_quant_table_pos)<-c("Name","Type","Date","Time",those_targets[,1])
+		target_quant_table_pos[1,]<-c("","",as.character(those_files[,2]))
+		target_quant_table_pos[2,]<-c("","",as.character(those_files[,3]))
+		target_quant_table_pos[3,]<-c("","",as.character(those_files[,6]))
+		target_quant_table_pos[4,]<-c("","",as.character(those_files[,7]))		
+		target_quant_table_pos[,1]<-c("","","","",those_targets[,1])
+		target_quant_table_pos[,2]<-c("","","","",those_targets[,2])
 		# QUANTIFY #########################################################################
 		if(length(cal_models_pos_used)>0){ # no calibration models? 
 			res_IS_names<-rep("",length(res_IS_pos_screen))
@@ -189,9 +190,9 @@ if(TRUE){
 		}	
 		# sort target_quant_table_pos
 		if(length(target_quant_table_pos[,1])>4){
-			this<-which(target_quant_table_pos[1,]=="sample")[1]
+			this<-which(target_quant_table_pos[2,]=="sample")[1]
 			if(is.na(this)){this<-3}
-			splitted<-strsplit(target_quant_table_pos[-c(1,2,3),this],",")
+			splitted<-strsplit(target_quant_table_pos[-c(1:4),this],",")
 			splitted<-lapply(splitted,"as.numeric")
 			for(i in 1:length(splitted)){
 				if(identical(splitted[[i]],numeric(0))){
@@ -202,7 +203,7 @@ if(TRUE){
 			}
 			splitted<-unlist(splitted)
 			ord<-order(splitted,decreasing=TRUE)
-			target_quant_table_pos[4:length(target_quant_table_pos[,1]),]<-(target_quant_table_pos[4:length(target_quant_table_pos[,1]),][ord,])
+			target_quant_table_pos[5:length(target_quant_table_pos[,1]),]<-(target_quant_table_pos[5:length(target_quant_table_pos[,1]),][ord,])
 		}
 		# MAKE ENTRY INTO SUMMARY TABLE ####################################################
 		if(length(found_which)>0){
@@ -354,14 +355,15 @@ if(TRUE){
 		those_files<-those_files[ord,]	
 		those_targets<-target_table[target_table[,6]!="FALSE",,drop=FALSE]
 		those_targets<-those_targets[those_targets[,8]=="negative",,drop=FALSE]
-		target_quant_table_neg<-matrix(nrow=(length(those_targets[,1])+3),ncol=(length(those_files[,1])+2),"")
+		target_quant_table_neg<-matrix(nrow=(length(those_targets[,1])+4),ncol=(length(those_files[,1])+2),"")
 		colnames(target_quant_table_neg)<-c("Target ID","Target name",those_files[,1])
-		rownames(target_quant_table_neg)<-c("Type","Date","Time",those_targets[,1])
-		target_quant_table_neg[1,]<-c("","",as.character(those_files[,3]))
-		target_quant_table_neg[2,]<-c("","",as.character(those_files[,6]))
-		target_quant_table_neg[3,]<-c("","",as.character(those_files[,7]))
-		target_quant_table_neg[,1]<-c("","","",those_targets[,1])
-		target_quant_table_neg[,2]<-c("","","",those_targets[,2])
+		rownames(target_quant_table_neg)<-c("Name","Type","Date","Time",those_targets[,1])
+		target_quant_table_neg[1,]<-c("","",as.character(those_files[,2]))
+		target_quant_table_neg[2,]<-c("","",as.character(those_files[,3]))
+		target_quant_table_neg[3,]<-c("","",as.character(those_files[,6]))
+		target_quant_table_neg[4,]<-c("","",as.character(those_files[,7]))
+		target_quant_table_neg[,1]<-c("","","","",those_targets[,1])
+		target_quant_table_neg[,2]<-c("","","","",those_targets[,2])
 		# QUANTIFY #########################################################################
 		if(length(cal_models_neg_used)>0){ # no calibration models? 
 			res_IS_names<-rep("",length(res_IS_neg_screen))
@@ -465,9 +467,9 @@ if(TRUE){
 		}	
 		# sort target_quant_table_neg
 		if(length(target_quant_table_neg[,1])>4){
-			this<-which(target_quant_table_neg[1,]=="sample")[1]
+			this<-which(target_quant_table_neg[2,]=="sample")[1]
 			if(is.na(this)){this<-3}
-			splitted<-strsplit(target_quant_table_neg[-c(1,2,3),this],",")
+			splitted<-strsplit(target_quant_table_neg[-c(1:4),this],",")
 			splitted<-lapply(splitted,"as.numeric")
 			for(i in 1:length(splitted)){
 				if(identical(splitted[[i]],numeric(0))){
@@ -478,7 +480,7 @@ if(TRUE){
 			}
 			splitted<-unlist(splitted)
 			ord<-order(splitted,decreasing=TRUE)
-			target_quant_table_neg[4:length(target_quant_table_neg[,1]),]<-(target_quant_table_neg[4:length(target_quant_table_neg[,1]),][ord,])
+			target_quant_table_neg[5:length(target_quant_table_neg[,1]),]<-(target_quant_table_neg[5:length(target_quant_table_neg[,1]),][ord,])
 		}
 		# MAKE ENTRY INTO SUMMARY TABLE ####################################################
 		if(length(found_which)>0){

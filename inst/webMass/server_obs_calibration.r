@@ -1034,11 +1034,11 @@ observe({
 	){
 		change_IS_target_ID<-isolate(input$Cal_target_ID)
 		change_IS_IS_ID<-isolate(input$Cal_IS_ID)
-		this<-targets[targets[,1]==change_IS_target_ID,]
-stop("Complete below entry in target table - which column?")		
-		targets[this,]<-as.character(change_IS_IS_ID)
-		targets[this,]<<-as.character(change_IS_IS_ID)
+		this<-which(targets[,1]==change_IS_target_ID)
+		targets[this,6]<-as.character(change_IS_IS_ID)
+		targets[this,6]<<-as.character(change_IS_IS_ID)
 		write.table(targets,file=file.path(logfile[[1]],"dataframes","targets.txt"),row.names=FALSE,sep="\t",quote=FALSE)
+		output$targets<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      
 		cat("\n Changed/set default IS to be used in quantification for the selected target.")
 	}
 })
