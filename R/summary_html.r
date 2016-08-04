@@ -11,7 +11,7 @@
 
 summary_html<-function(in_logfile_summary){
 	
-	use_summary<-in_logfile_summary[c(1,2,3,4,5,16,11,7,8,14,12,13,20,15,9,17,18,19,10,21,22,23),]
+	use_summary<-in_logfile_summary[c(1,2,3,4,5,16,11,7,8,14,12,13,20,24,15,9,17,18,19,10,21,23),]
 	use_summary[,1]<-as.character(use_summary[,1])
 	use_summary[,2]<-as.character(use_summary[,2])			
 	mat<-matrix(ncol=2,nrow=length(use_summary[,1]),"")
@@ -46,6 +46,7 @@ summary_html<-function(in_logfile_summary){
 	use_summary[use_summary[,1]=="isotopologues",1]<-"Isotopol. grouping"	
 	use_summary[use_summary[,1]=="adducts",1]<-"Adduct grouping"	
 	use_summary[use_summary[,1]=="homologues",1]<-"Homologue detection"		
+	use_summary[use_summary[,1]=="recovery",1]<-"Recovery"		
 	for(i in 1:length(mat[,1])){
 		if(i%%2==0){
 			mat[i,1]<-c("background-color: lightgrey")

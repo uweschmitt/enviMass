@@ -19,7 +19,7 @@ observe({
 		##########################################################################
 		if(!exists("IS",envir=as.environment(".GlobalEnv"))){data(IS,package="enviMass")}
 		if(!exists("targets",envir=as.environment(".GlobalEnv"))){data(targets,package="enviMass")}
-		say_path<-enviMass:::check_path(file.path(isolate(input$pro_dir)))
+		say_path<-enviMass:::check_path(isolate(input$pro_name),isolate(input$pro_dir))
 		if(say_path!="Project path ok"){
 			createAlert(session, anchorId="failed_new", alertId = "failed_new_id", title = "Invalid project path", 
 				content = "Project already exists, the specified path is invalid or you lack permissions.", 

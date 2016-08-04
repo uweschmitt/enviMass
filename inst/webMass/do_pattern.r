@@ -1,4 +1,27 @@
+            ######################################################################
+			# remove old results #################################################
+			those<-list(0)
+			those[[1]]<-file.path(logfile[[1]],"results","pattern_pos_IS")
+			those[[2]]<-file.path(logfile[[1]],"results","patternRT_pos_IS")
+			those[[3]]<-file.path(logfile[[1]],"results","patternDelRT_pos_IS")			
+			those[[4]]<-file.path(logfile[[1]],"results","pattern_neg_IS")			
+			those[[5]]<-file.path(logfile[[1]],"results","patternRT_neg_IS")
+			those[[6]]<-file.path(logfile[[1]],"results","patternDelRT_neg_IS")	
+			those[[7]]<-file.path(logfile[[1]],"results","pattern_pos_target")
+			those[[8]]<-file.path(logfile[[1]],"results","patternRT_pos_target")
+			those[[9]]<-file.path(logfile[[1]],"results","patternDelRT_pos_target")
+			those[[10]]<-file.path(logfile[[1]],"results","pattern_neg_target")
+			those[[11]]<-file.path(logfile[[1]],"results","patternRT_neg_target")
+			those[[12]]<-file.path(logfile[[1]],"results","patternDelRT_neg_target")		
+			for(n in 1:length(those)){
+				if(file.exists(those[[n]])){
+					file.remove(those[[n]])
+				}
+			}	
+			rm(those)
+		    ######################################################################
 
+            ######################################################################
             measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements<-measurements[measurements[,8]=="TRUE",]
             ######################################################################
@@ -420,7 +443,7 @@
 				###################################################################
 				
 				##################################################################
-				if(any(measurements[,4]=="negative")  & any(targets[,8]=="negative")  ){
+				if( any(measurements[,4]=="negative")  & any(targets[,8]=="negative")  ){
 					pattern_neg_target<-list(0);
 					counter<-c(1);
 					finform<-c();

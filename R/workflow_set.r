@@ -244,6 +244,15 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 		}		
 	}	
 	########################################################################################
+	if(any(work_stream=="recovery")){
+		if(logfile$workflow[names(logfile$workflow)=="recovery"]=="yes"){
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="recovery"]<<-TRUE;
+		}	
+		if(!check_node){
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="recovery"]<<-TRUE;		
+		}		
+	}	
+	########################################################################################
 	if(any(work_stream=="quantification")){
 		if(logfile$workflow[names(logfile$workflow)=="quantification"]=="yes"){
 			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="quantification"]<<-TRUE;

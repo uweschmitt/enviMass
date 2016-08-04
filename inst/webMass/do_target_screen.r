@@ -214,14 +214,14 @@
 			if(logfile$parameters$prof_select=="TRUE"){
 				measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
 			}
-			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
+			targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
 			results_screen_target_pos<-enviMass:::get_screening_results(
 				screened_listed=res_target_pos_screen,
 				pattern=pattern,
 				at_RT=pattern_RT,
 				profileList=profileList_pos,
 				measurements_table=measurements,
-				compound_table=intstand,
+				compound_table=targets,
 				cut_score=cut_score
 			)
 			# create links in link_list_pos for peaks in profileList_pos = used for tracing back ###########
@@ -273,7 +273,7 @@
 			save(links_peaks_pos,file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"))
 			################################################################################################
 			save(results_screen_target_pos,file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))
-			rm(measurements,intstand,results_screen_target_pos);		
+			rm(measurements,targets,results_screen_target_pos);		
 		}
 		####################################################################################################
 		rm(getit,target_pos_screen_listed,res_target_pos_screen)
@@ -474,14 +474,14 @@
 			if(logfile$parameters$prof_select=="TRUE"){
 				measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
 			}
-			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
+			targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
 			results_screen_target_neg<-enviMass:::get_screening_results(
 				screened_listed=res_target_neg_screen,
 				pattern=pattern,
 				at_RT=pattern_RT,
 				profileList=profileList_neg,
 				measurements_table=measurements,
-				compound_table=intstand,
+				compound_table=targets,
 				cut_score=cut_score
 			)
 			# create links in link_list_neg for peaks in profileList_neg = used for tracing back ###########
@@ -533,7 +533,7 @@
 			save(links_peaks_neg,file=file.path(as.character(logfile[[1]]),"results","links_peaks_neg"))
 			################################################################################################
 			save(results_screen_target_neg,file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg"))
-			rm(measurements,intstand,results_screen_target_neg);		
+			rm(measurements,targets,results_screen_target_neg);		
 		}
 		####################################################################################################
 		rm(getit,target_neg_screen_listed,res_target_neg_screen)

@@ -488,7 +488,7 @@
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),  					
 				# block 4 ######################################################					
-				HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Calibration </font></p> '),
+				HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Calibration & Recovery </font></p> '),
 					fluidRow(
 						column(width = 2, radioButtons("calib", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
@@ -496,14 +496,23 @@
 							the provided calibration files. The sets can be used in the Calibration tab to establish specific calibration models (curves)
 							for quantification. If selected, the extraction of these calibration peaks will be affected by the above mass recalibration, 
 							replicate intersection, blind subtraction and LOD interpolation steps. Once you have established the desired calibration models,
-							you can (should) again deselect this step, unless new calibration files are added.")
+							you can deselect this step, until new calibration files have been added.")
+						)
+					),
+				HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Recovery </font></p> '),
+					fluidRow(
+						column(width = 2, radioButtons("recovery", "Include? ", c("yes"="yes","no"="no")) ),
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","Using the calibration models from the above step, a concentration recovery of spiked compounds is calculated.
+							Requires upload of spiked files; affected by the above mass recalibration, replicate intersection, blind subtraction and LOD interpolation steps.")
 						)
 					),
 				HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Quantification </font></p> '),
 					fluidRow(
 						column(width = 2, radioButtons("quantif", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","Under construction")
+							tags$p(align="justify","Based on the calibration models established and evaluated in the above steps, an estimation of target compound concentrations
+							from their intensity ratios to their individual internal standard compounds is derived.")
 						)
 					),
 				HTML('<hr noshade="noshade" />'),

@@ -17,7 +17,11 @@
 	
 	
 	# POSITIVE ###########################################################################################################
-	if(any(measurements[,4]=="positive" & measurements[,3]=="calibration")){
+	if(
+		any(measurements[,4]=="positive" & measurements[,3]=="calibration") &
+		file.exists(file.path(logfile[[1]],"results","pattern_pos_target")) &
+		file.exists(file.path(logfile[[1]],"results","pattern_pos_IS"))		
+	){
 
 		##################################################################################################################	
 		# CLEAN ALL PREVIOUS RESULTS #####################################################################################
@@ -452,7 +456,11 @@
 
 	
 	# NEGATIVE ###########################################################################################################
-	if(any(measurements[,4]=="negative" & measurements[,3]=="calibration")){
+	if(
+		any(measurements[,4]=="negative" & measurements[,3]=="calibration") &
+		file.exists(file.path(logfile[[1]],"results","pattern_neg_target")) &
+		file.exists(file.path(logfile[[1]],"results","pattern_neg_IS"))	
+	){
 
 		##################################################################################################################	
 		# CLEAN ALL PREVIOUS RESULTS #####################################################################################
