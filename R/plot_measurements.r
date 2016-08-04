@@ -56,12 +56,12 @@ plot_measurements<-function(
 	text(min(atPOSIX),6,labels="Negative ionization",pos=4,cex=.8,col="black")
 	abline(h=7,col="black")
 	mtext("other",side=2,at=1,las=1,col="darkgrey",cex=1)
-	mtext("doted",side=2,at=2,las=1,col="blue",cex=1)
+	mtext("spiked",side=2,at=2,las=1,col="blue",cex=1)
 	mtext("calibration",side=2,at=3,las=1,col="red",cex=1)
 	mtext("blank/blind",side=2,at=4,las=1,col="orange",cex=1)
 	mtext("sample",side=2,at=5,las=1,col="darkgreen",cex=1)
 	mtext("other",side=2,at=8,las=1,col="darkgrey",cex=1)
-	mtext("doted",side=2,at=9,las=1,col="blue",cex=1)
+	mtext("spiked",side=2,at=9,las=1,col="blue",cex=1)
 	mtext("calibration",side=2,at=10,las=1,col="red",cex=1)
 	mtext("blank/blind",side=2,at=11,las=1,col="orange",cex=1)
 	mtext("sample",side=2,at=12,las=1,col="darkgreen",cex=1)	
@@ -114,13 +114,13 @@ plot_measurements<-function(
 			if(measurements[i,]$Type=="sample"){at_y<-12;use_col<-"darkgreen";with_pch<-15}
 			if(measurements[i,]$Type=="blank"){at_y<-11;use_col<-"orange";with_pch<-15}		
 			if(measurements[i,]$Type=="calibration"){at_y<-10;use_col<-"black";with_pch<-0}		
-			if(measurements[i,]$Type=="doted"){at_y<-9;use_col<-"blue";with_pch<-15}	
+			if(measurements[i,]$Type=="spiked"){at_y<-9;use_col<-"blue";with_pch<-15}	
 			if(measurements[i,]$Type=="other"){at_y<-8;use_col<-"black";with_pch<-15}				
 		}else{
 			if(measurements[i,]$Type=="sample"){at_y<-5;use_col<-"darkgreen";with_pch<-15}		
 			if(measurements[i,]$Type=="blank"){at_y<-4;use_col<-"orange";with_pch<-15}	
 			if(measurements[i,]$Type=="calibration"){at_y<-3;use_col<-"black";with_pch<-0}			
-			if(measurements[i,]$Type=="doted"){at_y<-2;use_col<-"blue";with_pch<-15}		
+			if(measurements[i,]$Type=="spiked"){at_y<-2;use_col<-"blue";with_pch<-15}		
 			if(measurements[i,]$Type=="other"){at_y<-1;use_col<-"black";with_pch<-15}			
 		}
 		if(measurements[i,]$include=="FALSE"){
