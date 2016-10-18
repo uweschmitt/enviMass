@@ -117,7 +117,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		# show progbar? ########################################################
 		logfile$parameters[[21]]<-"FALSE";	names(logfile$parameters)[21]<-"progressBar"    
 		# isotope patterns #####################################################
-		logfile$parameters[[22]]<-"Elite/R240000@400";names(logfile$parameters)[22]<-"resolution"
+		logfile$parameters[[22]]<-"Elite_R240000@400";names(logfile$parameters)[22]<-"resolution"
 		# recalibration ########################################################
 		logfile$parameters[[30]]<-"Internal standards"; 	names(logfile$parameters)[30]<-"recal_use" 
 		logfile$parameters[[31]]<-"3"; 						names(logfile$parameters)[31]<-"recal_dmz" 
