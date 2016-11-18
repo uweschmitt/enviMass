@@ -1638,7 +1638,7 @@
 				Loos, M., Ruff, M., Singer, H., 2013. enviMass v3.1 - Software workflow for the monitoring of temporal micropollutant dynamics using LC-HRMS data
 			</p> '),
 			HTML('<hr noshade="noshade" />'),	
-			tags$h4("Contact, maintainer:"),
+			tags$h4("Contact, author, maintainer:"),
 			helpText( a("Martin Loos, mloos@looscomputing.ch", href="http://looscomputing.ch/eng/contact.htm",target="_blank") ),
 			HTML('<hr noshade="noshade" />'),	
 			tags$h4("License enviMass version 3.117 :"),
