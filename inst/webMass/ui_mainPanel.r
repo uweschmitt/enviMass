@@ -947,8 +947,6 @@
 				numericInput("prof_dmz", "Peak deviation within profiles: m/z tolerance ...", 3),                
                 selectInput("prof_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),
                 numericInput("prof_drt", "Peak deviation within profiles: RT tolerance [s]", 60),     
-				HTML('<hr noshade="noshade" />'),
-				selectInput("peak_which_intensity", "Use peak intensities set as:", choices = c("maximum"="maximum","sum"="sum"), "maximum"),
 				HTML('<hr noshade="noshade" />'),				
 				selectInput("prof_select", "Omit files with table entry profiled=FALSE from profiling?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), selected="FALSE")			
 			),
