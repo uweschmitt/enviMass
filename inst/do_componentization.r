@@ -1016,7 +1016,7 @@ if(FALSE){
 	plot_it<-FALSE
 #############################
 	
-	verbose<-FALSE # DELETE LATER !!!!!! DEFINED IN SERVER:R
+
 
 #############################
 	with_test<-FALSE

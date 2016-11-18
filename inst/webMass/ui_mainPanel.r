@@ -836,7 +836,7 @@
             ),
 			# RESOLUTION #######################################################
             tabPanel("Resolution",
-                  div(style = widget_style3,selectInput("resolution", "Instrument resolution:", "none",width='600px')),
+                  div(style = widget_style3,selectInput("resolution", label="Instrument resolution:", choices="none", selected="none", width='600px')),
 				  imageOutput("plot_resolution", height="auto")	  
             ),	
             # RECALIBRATION ####################################################

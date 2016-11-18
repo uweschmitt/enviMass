@@ -1309,8 +1309,8 @@ observe({
 ##############################################################################
 observe({
     input$resolution
-	init$a
-    if( (isolate(init$a)=="TRUE") & (isolate(input$resolution)!="none") ){
+	#init$a
+    if( (isolate(init$a)=="TRUE") & (isolate(input$resolution)!="none")  & (isolate(input$resolution)!="") ){
 		#cat(input$resolution);cat("\n")
 		path=file.path(logfile[[1]],"pics","resolution")
 		png(filename = path, bg = "white")
