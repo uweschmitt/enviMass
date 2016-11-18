@@ -13,6 +13,9 @@ shinyServer(function(input, output, session){
   if(!any(objects(envir=as.environment(".GlobalEnv"))=="isotopes")){data(isotopes,package="enviPat",envir=as.environment(".GlobalEnv"))}
   if(!any(objects(envir=as.environment(".GlobalEnv"))=="adducts")){data(adducts,package="enviPat",envir=as.environment(".GlobalEnv"))}
   if(!any(objects(envir=as.environment(".GlobalEnv"))=="resolution_list")){data(resolution_list,package="enviPat",envir=as.environment(".GlobalEnv"))}
+  if(any(names(resolution_list)=="Elite/R240000@400")){
+	shinyjs:::info("library enviPat is not up to date - or you have loaded an old workspace containing old enviPat resolution data lists. Update enviPat and clean your workspace before continuing with enviMass!");
+  }	
   ##############################################################################
   # define variables, inputs, outputs - if not in server.startup.R #############
   tried<-try(getVolumes()(),silent=FALSE)
