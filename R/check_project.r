@@ -145,7 +145,7 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 		these<-which(class(b)=="try-error" | is.na(b))
 		these<-measurements[these,1]
 		say<-paste("Invalid time format found for file(s) with ID(s) ",
-		paste(these,collapse=", "),". Please revise concerned file(s) in the files tab!",sep="")
+		paste(these,collapse=", "),". Please revise concerned file(s) in the files tab (- if there are any loaded so far)!",sep="")
 	}
   # check calibration files
   measurements_cal<-measurements[measurements[,"Type"]=="calibration",,drop=FALSE] 
