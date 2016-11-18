@@ -29,6 +29,7 @@ maincalc<-reactive({
     if(input$Calc){
 
 		if(do_flow==0){	# check only once, initially at do_flow==0! really?
+			enviMass:::reset_selections(session)
 			say<-enviMass:::check_project(isotopes,adducts,skipcheck=isolate(input$do_project_check),ignorefiles=isolate(input$ignore_large_files),write_tables=FALSE); # because of write_tables=TRUE only here, this check must remain here!
 			output$dowhat<<-renderText(say)
 			updateSelectInput(session,inputId="Ion_mode_Cal",selected = "none")			
