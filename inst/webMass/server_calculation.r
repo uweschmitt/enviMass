@@ -1,7 +1,7 @@
 mainchecked<-reactive({
     input$Check
     if(input$Check){
-		say<-enviMass:::checkproject(isotopes,adducts,skipcheck=isolate(input$do_project_check),ignorefiles=isolate(input$ignore_large_files));
+		say<-enviMass:::check_project(isotopes,adducts,skipcheck=isolate(input$do_project_check),ignorefiles=isolate(input$ignore_large_files),write_tables=FALSE);
 		output$dowhat<<-renderText(say)
 		if(say=="Project consistent"){
 			cat("Project consistent\n");
@@ -18,7 +18,7 @@ output$had_checked<-renderText(paste(mainchecked()))
 observe({ # Set calculation counter "do_flow"
     input$Calc
     if(input$Calc){
-      do_flow<<-1
+      do_flow<<-0
 	  time_start<<-Sys.time()
     }
 })
@@ -28,18 +28,25 @@ maincalc<-reactive({
     input$Calc
     if(input$Calc){
 
-	  say<-enviMass:::checkproject(isotopes,adducts,skipcheck=isolate(input$do_project_check),ignorefiles=isolate(input$ignore_large_files));
-	  output$dowhat<<-renderText(say)
+		if(do_flow==0){	# check only once, initially at do_flow==0! really?
+			say<-enviMass:::check_project(isotopes,adducts,skipcheck=isolate(input$do_project_check),ignorefiles=isolate(input$ignore_large_files),write_tables=FALSE); # because of write_tables=TRUE only here, this check must remain here!
+			output$dowhat<<-renderText(say)
+			updateSelectInput(session,inputId="Ion_mode_Cal",selected = "none")			
+			updateSelectInput(session,inputId="Cal_file_set",selected = "none")
+			updateSelectInput(session,inputId="Pos_compound_select",selected = "Choose")
+			updateSelectInput(session,inputId="Neg_compound_select",selected = "Choose")
+		}else{
+			say<-"Project consistent"
+		}
       if(say=="Project consistent"){
 	  
 		if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_calculation.r!")}
         ########################################################################
         # restart logfile[[3]] & mark data availability ########################        
-        if(do_flow==1){
+        if(do_flow==0){
 			####################################################################
 			# erase all previous results #######################################
-		  
-			
+
 			# adapt upstream requirements if set to "no" #######################
 			must<-logfile[[12]]
 			for(i in 1:length(must[1,])){
@@ -60,177 +67,31 @@ maincalc<-reactive({
 			logfile$summary[1,2]<<-c(TRUE);
 			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 			summa<<-logfile$summary
-			summa[1,2]<<-"ok"
-			summa[-1,2]<<-"..."
+			summa[,2]<<-"..."
 			output$summa_html<-renderText(enviMass:::summary_html(summa));
         }
-        ########################################################################
-        # peak picking - always run ############################################
-        if(do_flow==2){
+		########################################################################
+		# run calculations #####################################################
+        if(do_flow>0 & do_flow<=length(logfile$summary[,1])){	
+			at_node<-logfile$summary[do_flow,1]
+			at_script_do<-paste("do_",at_node,".R",sep="")
+			if(!file.exists(at_script_do)){
+				at_script_do<-FALSE
+			}
+			at_script_dont<-paste("dont_",at_node,".R",sep="")
+			if(!file.exists(at_script_dont)){
+				at_script_dont<-FALSE
+			}
 			enviMass:::workflow_node(
-				name_workflow="peakpicking",
-				name_summary="peakpicking",
-				name_redo="peakpicking",
-				"Peak picking",
-				path_do="do_peakpicking.R",path_undo=FALSE,session,output,input
-			)  
-        }
-        ########################################################################
-        # quality check ########################################################
-        if(do_flow==3){           
-          	enviMass:::workflow_node(
-				"qc","qc","qc","Quality control",
-				path_do="do_qc.R",path_undo="dont_qc.R",session,output,input
-			)   
-        }
-        ########################################################################
-        # isotope pattern calculation ##########################################
-        if(do_flow==4){
-		    enviMass:::workflow_node(
-				"pattern","pattern","pattern","Compound isotope patterns",
-				path_do="do_pattern.R",path_undo=FALSE,session,output,input
-			)  		            
-        }
-        ########################################################################
-        # m/z recalibration ####################################################
-        if(do_flow==5){
-			enviMass:::workflow_node(
-				"recal","recal","recal","Mass recalibration",
-				path_do="do_recal.R",path_undo="dont_recal.R",session,output,input
-			)     
-        }
-        ########################################################################
-        # RT alignment #########################################################
-        if(do_flow==6){
-		  cat("Alignment skipped \n");
-          output$dowhat<<-renderText("Alignment skipped ... wait");
-        }
-        ########################################################################
-		# Blind peaks ##########################################################
-        if(do_flow==7){
-			enviMass:::workflow_node(
-				"blinds","blinds","blinds","Blind peak detection",
-				path_do="do_blind.R",path_undo="dont_blind.R",session,output,input
-			)  	
-		}			
-        ########################################################################
-		# Replicates ###########################################################
-        if(do_flow==8){
-			enviMass:::workflow_node(
-				"replicates","replicates","replicates","Replicate filter",
-				path_do="do_replicates.R",path_undo="dont_replicates.R",session,output,input
-			)  	
-		}			
-        ########################################################################
-        # intensity normalization ##############################################
-        if(do_flow==9){
-			enviMass:::workflow_node(
-				"norm","norm","norm","Median intensity normalization",
-				path_do="do_norm.R",path_undo="dont_norm.R",session,output,input
-			)  
-        }
-        ########################################################################
-        # Profiling ############################################################
-        if(do_flow==10){
-			enviMass:::workflow_node(
-				"profiling","profiling","profiling","Profile extraction",
-				path_do="do_profiling.R",path_undo="dont_profiling.R",session,output,input
-			)  
-        }
-        ########################################################################
-		# LOD ##################################################################
-        if(do_flow==11){
-			enviMass:::workflow_node(
-				"LOD","LOD","LOD","LOD interpolation",
-				path_do="do_LOD.R",path_undo="dont_LOD.R",session,output,input
-			)  	
-		}				
-        ########################################################################
-		# IS screening #########################################################
-        if(do_flow==12){
-			enviMass:::workflow_node(
-				"IS_screen","IS_screen","IS_screen","IS screening",
-				path_do="do_IS_screen.R",path_undo="dont_IS_screen.R",session,output,input
-			)  	
-		}		
-        ########################################################################
-		# target screening #####################################################
-        if(do_flow==13){
-			enviMass:::workflow_node(
-				"target_screen","target_screen","target_screen","Target screening",
-				path_do="do_target_screen.R",path_undo="dont_target_screen.R",session,output,input
+				at_node,at_node,at_node,at_node,
+				path_do=at_script_do,
+				path_undo=at_script_dont,
+				session,output,input
 			)  		
-		}			
-		########################################################################
-		# Calibration ##########################################################
-        if(do_flow==14){
-			enviMass:::workflow_node(
-				"calibration","calibration","calibration","Calibration",
-				path_do="do_calibration.R",path_undo="dont_calibration.R",session,output,input
-			)  	
 		}
 		########################################################################
-		# Recovery #############################################################
-        if(do_flow==15){
-			enviMass:::workflow_node(
-				"recovery","recovery","recovery","recovery",
-				path_do="do_recovery.R",path_undo="dont_recovery.R",session,output,input
-			)  	
-		}
-		########################################################################
-		# Quantification #######################################################
-        if(do_flow==16){
-			enviMass:::workflow_node(
-				"quantification","quantification","quantification","Quantification",
-				path_do="do_quantification.R",path_undo="dont_quantification.R",session,output,input
-			)  	
-		}
-		########################################################################
-		# IS-normalization #####################################################
-        if(do_flow==17){
-			enviMass:::workflow_node(
-				"IS_normaliz","IS_normaliz","IS_normaliz","IS-based intensity normalization",
-				path_do="do_IS_normaliz.R",path_undo="dont_IS_normaliz.R",session,output,input
-			)  
-		}
-        ########################################################################
-        # IS peak subtraction from profiles  ###################################
-        if(do_flow==18){
-			enviMass:::workflow_node(
-				"IS_subtr","IS_subtr","IS_subtr","IS peak subtraction from profiles ",
-				path_do="do_IS_subtr.R",path_undo="dont_IS_subtr.R",session,output,input
-			)  	
-        }
-        ########################################################################
-        # target peak subtraction from profiles  ###############################
-        if(do_flow==19){
-			enviMass:::workflow_node(
-				"target_subtr","target_subtr","target_subtr","Target peak subtraction from profiles ",
-				path_do="do_target_subtr.R",path_undo="dont_target_subtr.R",session,output,input
-			)  	
-        }		
-        ########################################################################
-        # blind peak subtraction from profiles #################################
-        if(do_flow==20){
-			enviMass:::workflow_node(
-				"blind_subtr","blind_subtr","blind_subtr","Blind peak subtraction from profiles ",
-				path_do="do_blind_subtr.R",path_undo="dont_blind_subtr.R",session,output,input
-			)  	
-        }		
-        ########################################################################
-        # trend / blind ########################################################
-        if(do_flow==21){
-			enviMass:::workflow_node(
-				"trendblind","trendblind","trendblind","Trend detection and blind subtraction",
-				path_do="do_trendblind.R",path_undo="dont_trendblind.R",session,output,input
-			)  	
-        }
-        ########################################################################
-		
-		
-        ########################################################################
         # make function reiterate ##############################################
-        if(do_flow==22){
+        if(do_flow==(length(logfile$summary[,1])+1)){
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="profileList_pos")){rm(profileList_pos)}
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
@@ -255,10 +116,14 @@ maincalc<-reactive({
 			}
         }
         do_flow<<-(do_flow+1);
-		if(do_flow==23){
+		if(do_flow==(length(logfile$summary[,1])+2)){
 			output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
+			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
+			output$measurements<<-DT::renderDataTable( # in case a node deletes "measurements" and the table output is still waiting
+				measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
+			); 	
 		}
-        if(do_flow<24){
+        if(do_flow<(length(logfile$summary[,1])+3)){
 			invalidateLater(1, session=NULL)
 			cat("Calculating...");
 			return("Calculating...")

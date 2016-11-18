@@ -1,10 +1,10 @@
 
 	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-	measurements<-measurements[measurements[,8]=="TRUE",]
-	ppm<-logfile$parameters[[16]]
-	mz_tol<-as.numeric(logfile$parameters[[15]])
-	rt_tol<-as.numeric(logfile$parameters[[18]])
-	int_tol<-10^(as.numeric(logfile$parameters[[19]]))
+	measurements<-measurements[measurements[,"include"]=="TRUE",]
+	ppm<-logfile$parameters$replicate_ppm
+	mz_tol<-as.numeric(logfile$parameters$replicate_dmz)
+	rt_tol<-as.numeric(logfile$parameters$replicate_delRT)
+	int_tol<-10^(as.numeric(logfile$parameters$replicate_IS_dInt))
 	with_test<-TRUE # Run a test along!
 	replic<-(measurements$tag3[measurements$tag3!="FALSE"])
 	replic<-replic[duplicated(replic)]
@@ -15,7 +15,7 @@
 	IDs<-list.files(file.path(logfile[[1]],"peaklist"))
 	if(length(IDs)>0){
 		for(i in 1:length(IDs)){
-			if(any(measurements[,1]==IDs[i])){
+			if(any(measurements[,"ID"]==IDs[i])){
 				load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
 				keep<-rep(1,length(peaklist[,1])) # 1 == TRUE
 				peaklist[,colnames(peaklist)=="keep"]<-keep

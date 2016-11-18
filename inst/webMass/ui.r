@@ -52,11 +52,12 @@ widget_style5 <-
 widget_style6 <-
   "max-width: 600px;"  
  
+
 shinyUI(
 	fluidPage(
 	################################################################################
 	################################################################################
-	
+		useShinyjs(),
 		##############################################################################
 		conditionalPanel( 
 			condition = "output.textit == 'Waiting...'", 
@@ -84,7 +85,7 @@ shinyUI(
 							color: #FFFFFF;};	
 					"))
 				),
-				useShinyjs(),  # Set up shinyjs
+				#useShinyjs(),  # Set up shinyjs
 				HTML('</font>'),
 				source("ui_busy.R", local=TRUE)$value,  
 				HTML('</font>'),

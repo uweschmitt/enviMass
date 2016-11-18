@@ -12,9 +12,9 @@ if(length(those)>0){
 	at<-1;
 	cat(" | ")
 	for(i in 1:length(those)){
-		if(!any(measurements[,1]==those[i])){cat("\n orphaned peaklist found.");next;} # not in list of measurements?
-		if(measurements[measurements[,1]==those[i],8]=="FALSE"){next}
-		if(measurements[measurements[,1]==those[i],16]=="TRUE"){ # ONLY valid for old files! Not for newly loaded ones!
+		if(!any(measurements[,"ID"]==those[i])){cat("\n orphaned peaklist found.");next;} # not in list of measurements?
+		if(measurements[measurements[,"ID"]==those[i],"include"]=="FALSE"){next}
+		if(measurements[measurements[,"ID"]==those[i],"LOD"]=="TRUE"){ # ONLY valid for old files! Not for newly loaded ones!
 			if(any(names(LOD_splined)==paste("LOD_",those[i],sep=""))){ # copy old model, already done
 				copy_this<-which(names(LOD_splined)==paste("LOD_",those[i],sep=""))
 				LOD_splined_new[[at]]<-LOD_splined[[copy_this]]
@@ -65,7 +65,7 @@ if(length(those)>0){
 				box()
 			dev.off();cat("!")
 		}
-		measurements[measurements[,1]==those[i],16]<-"TRUE";
+		measurements[measurements[,"ID"]==those[i],"LOD"]<-"TRUE";
 	}
 	LOD_splined<-LOD_splined_new
 	save(LOD_splined,file=file.path(logfile$project_folder,"results","LOD","LOD_splined"))

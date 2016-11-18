@@ -1,7 +1,7 @@
-#' @title Trend detection in LC-HRMS data
+#' @title Trend detection in LC-MS data
 #'
 #' @description enviMass version 3 provides basic workflow functions and a webbrowser user interface for the proccessing of high resolution
-#' LC-MS data, with emphasis on trend detection in time series of LC-HRMS files. 
+#' LC-MS data, with emphasis on trend detection in time series of LC-MS files. 
 #'
 #' @details 
 #' Incorporates functions from several other packages for peak picking, adduct grouping, isotope pattern calculation and grouping, etc. 
@@ -103,28 +103,20 @@ NULL
 #' @import shinyFiles
 #' @import shinyBS
 #' @import tcltk
-#' @useDynLib enviMass getProfiles neighbour agglom indexed fill_timeset meandel intdiff plotit_prof binRT_prof binmz_prof
+#' @useDynLib enviMass extractProfiles neighbour agglom indexed fill_timeset meandel intdiff plot_prof binRT_prof binmz_prof
 #'
 #'
 
 
 .onAttach <- function(lib, pkg)
 {
-	packageStartupMessage("\n \n Welcome to enviMass version 3.1 \n Run webMass() to start the enviMass browser UI \n\n");
+	packageStartupMessage("\n \n Welcome to enviMass version 3.117 \n Run webMass() to start the enviMass browser UI \n\n");
 	# add menus for enviMass & enviPick 
 	if(interactive() && .Platform$OS.type == "windows" && .Platform$GUI == "Rgui" ){
 		winMenuAdd("enviMass");
 		winMenuAddItem("enviMass", "enviMass", "webMass()");
 		#winMenuAddItem("enviMass", "enviPick", "webpick()");		
 	}
-	# copy the enviMass manual to shiny`s localhost folder
-	file.copy(	
-			from=paste(path.package("enviMass", quiet = FALSE),"/manual.pdf",sep=""), 
-			to=paste(path.package("shiny", quiet = FALSE),"/www/manual.pdf",sep=""), 
-			overwrite = TRUE, 
-			recursive = FALSE,
-			copy.mode = TRUE
-	)
 	# copy the enviMass favicon to shiny`s localhost folder
 	file.copy(	
 			from=paste(path.package("enviMass", quiet = FALSE),"/favicon.ico",sep=""), 

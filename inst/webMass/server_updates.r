@@ -1,27 +1,41 @@
-# include updates - if older projects are reopened
+# include updates - if older projects are reopened or if packages changed
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_updates.r!")}
-#stop("\n\nMaintenance work; enviMass will be back in a couple of hours! Please update again later.")
-#if(logfile[[10]]<3.100){
-#if(logfile[[10]]<3.102){
-if(TRUE){
+#stop("\n\nMaintenance work; enviMass will be back in a couple of hours! Please update enviMass again later.")
+
+########################################################################
+# package updates
+if(!any(names(resolution_list)==logfile$parameters$resolution)){
+	shinyjs:::info("Please specifiy your resolution again (Settings tab): their specifications have changed and had to be reset.");
+	logfile$parameters$resolution<<-"Elite_R240000@400";
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	
+}	
+if(as.numeric(installed.packages()[installed.packages()[,1]=="enviPat","Version"])<2.2){
+	shinyjs:::info("Please first update enviPat (an enviMass package dependency)  to a version >=2.2. Check www.enviMass.ch installation section for how to update all dependencies. Aborting enviMass ...");
+	stop("\n package enviPat update required! Abort ...")
+}
+
+########################################################################
+
+########################################################################
+# enviMass project changes
+
+if(logfile$version<3.100){
+#if(TRUE){
 	
 	cat("\n Updating to version 3.100 ...")
 	################################################################################################
 	# create missing folder
-	if(!file.exists(file.path(logfile$project_folder,"results","screening"))
-	){
+	if(!file.exists(file.path(logfile$project_folder,"results","screening"))){
 		dir.create(file.path(logfile$project_folder,"results","screening"),recursive=TRUE)    	# subfolder  
 	}
-	if(!file.exists(file.path(logfile$project_folder,"quantification"))
-	){	
+	if(!file.exists(file.path(logfile$project_folder,"quantification"))){	
 		dir.create(file.path(logfile$project_folder,"quantification"),recursive=TRUE)   # subfolder 
 	}
-	if(!file.exists(file.path(logfile$project_folder,"results","LOD"))
-	){
+	if(!file.exists(file.path(logfile$project_folder,"results","LOD"))){
 		dir.create(file.path(logfile$project_folder,"results","LOD"),recursive=TRUE)    	# subfolder  
 	}
-	if(!file.exists(file.path(logfile$project_folder,"results","recalibration"))
-	){
+	if(!file.exists(file.path(logfile$project_folder,"results","recalibration"))){
 		dir.create(file.path(logfile$project_folder,"results","recalibration"),recursive=TRUE)    	# subfolder  
 	}
 
@@ -90,9 +104,9 @@ if(TRUE){
 		logfile$summary[,2]<<-as.character(logfile$summary[,2])
 		logfile$summary[16,1]<<-"blinds"
 		logfile$summary[16,2]<<-"FALSE"	
-		logfile$parameters[[82]]<<-"3";			names(logfile$parameters)[82]<<-"blind_dmz"
-		logfile$parameters[[83]]<<-"TRUE";		names(logfile$parameters)[83]<<-"blind_ppm"		
-		logfile$parameters[[84]]<<-"30";			names(logfile$parameters)[84]<<-"blind_drt"	
+		logfile$parameters$blind_dmz<<-"3";			
+		logfile$parameters$blind_ppm<<-"TRUE";				
+		logfile$parameters$blind_drt<<-"30";			
 		first_ext<-TRUE;
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
@@ -146,21 +160,21 @@ if(TRUE){
 	
 	# insert missing parameters
 	if(!any(names(logfile$parameters)=="replicate_dmz")){
-		logfile$parameters[[15]]<<-"3";names(logfile$parameters)[15]<<-"replicate_dmz"
-		logfile$parameters[[16]]<<-"TRUE";names(logfile$parameters)[16]<<-"replicate_ppm"		
-		logfile$parameters[[17]]<<-"FALSE";names(logfile$parameters)[17]<<-"replicate_recalib"		
-		logfile$parameters[[18]]<<-"30";names(logfile$parameters)[18]<<-"replicate_delRT"	
+		logfile$parameters$replicate_dmz<<-"3";
+		logfile$parameters$replicate_ppm<<-"TRUE";		
+		logfile$parameters$replicate_recalib<<-"FALSE";	
+		logfile$parameters$replicate_delRT<<-"30";
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 	}
 	if(!any(names(logfile$parameters)=="screen_IS_cutit")){
-		logfile$parameters[[50]]<<-"FALSE";    	names(logfile$parameters)[50]<<-"screen_IS_cutit" # Cut off match combiantions below matching score?		
-		logfile$parameters[[63]]<<-"FALSE";    	names(logfile$parameters)[63]<<-"screen_target_cutit" # Cut off match combiantions below matching score?			
+		logfile$parameters$screen_IS_cutit<<-"FALSE";    	# Cut off match combiantions below matching score?		
+		logfile$parameters$screen_target_cutit<<-"FALSE";    	# Cut off match combiantions below matching score?			
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 	}
 	if(!any(names(logfile$parameters)=="peak_perc_cut")){	
-		logfile$parameters[[92]]<<-"0"; 	names(logfile$parameters)[92]<<-"peak_perc_cut"  
+		logfile$parameters$peak_perc_cut<<-"0"; 	
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 	}
@@ -287,7 +301,7 @@ if(TRUE){
 	depend[,colnames(depend)=="trendblind"]<-		c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,			0,				0,			0,				0,		0)
 	depend[,colnames(depend)=="LOD"]<-				c(0,			0,	0,		0,		0,		0,			0,			0,			0,			1,			1,				0,		1,			0,			0,				0,		1,			1,			1,				0,			0,				0,		0)
 	depend[,colnames(depend)=="calibration"]<-		c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,			0,				0,			0,				0,		0)
-	depend[,colnames(depend)=="recovery"]<-			c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,			0,				0,			0,				0,		0)
+	depend[,colnames(depend)=="recovery"]<-			c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			1,				0,		0,			0,			0,				0,			0,				0,		0)
 	depend[,colnames(depend)=="quantification"]<-	c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			1,				0,		0,			0,			0,				0,		0,			0,			0,				0,			0,				0,		0)
 	depend[,colnames(depend)=="IS_subtr"]<-			c(0,			0,	0,		0,		0,		1,			1,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,			0,				1,			0,				0,		0)
 	depend[,colnames(depend)=="target_subtr"]<-		c(0,			0,	0,		0,		0,		1,			1,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,			0,				1,			0,				0,		0)
@@ -337,7 +351,7 @@ if(TRUE){
 
 }
 
-if(logfile[[10]]<3.101){	
+if(logfile$version<3.101){	
 
 	cat("\n Updating to version 3.101 ...")
 	################################################################################################
@@ -372,41 +386,41 @@ if(logfile[[10]]<3.101){
 	################################################################################################
 	# insert missing parameters ####################################################################
 	if(!any(names(logfile$parameters)=="subtract_pos_bydate")){
-		logfile$parameters[[85]]<<-"FALSE";		names(logfile$parameters)[85]<<-"subtract_pos_bydate"
-		logfile$parameters[[86]]<<-"FALSE";		names(logfile$parameters)[86]<<-"subtract_pos_byfile"
-		logfile$parameters[[87]]<<-"FALSE";		names(logfile$parameters)[87]<<-"subtract_neg_bydate"
-		logfile$parameters[[88]]<<-"FALSE";		names(logfile$parameters)[88]<<-"subtract_neg_byfile"	
+		logfile$parameters$subtract_pos_bydate<<-"FALSE";		
+		logfile$parameters$subtract_pos_byfile<<-"FALSE";	
+		logfile$parameters$subtract_neg_bydate<<-"FALSE";	
+		logfile$parameters$subtract_neg_byfile<<-"FALSE";		
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 	}
 	if(!any(names(logfile$parameters)=="blind_omit")){
-		logfile$parameters[[89]]<<-"no"; 		names(logfile$parameters)[89]<<-"blind_omit"	
+		logfile$parameters$blind_omit<<-"no"; 		
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 	}		
 	if(!any(names(logfile$parameters)=="prof_select")){
-		logfile$parameters[[90]]<<-"FALSE"; 	names(logfile$parameters)[90]<<-"prof_select"
+		logfile$parameters$prof_select<<-"FALSE"; 	
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 	}	
 	if(!any(names(logfile$parameters)=="trend_blind")){	
-		logfile$parameters[[36]]<<-"yes"; 		names(logfile$parameters)[36]<<-"trend_blind"		
+		logfile$parameters$trend_blind<<-"yes"; 				
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	
 	}
 	if(!any(names(logfile$parameters)=="replicate_IS_dInt")){	
-		logfile$parameters[[19]]<<-"5";		names(logfile$parameters)[19]<<-"replicate_IS_dInt"	
+		logfile$parameters$replicate_IS_dInt<<-"5";		
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	
 	}				
 	if(!any(names(logfile$parameters)=="replicates_prof")){	
-		logfile$parameters[[91]]<<-"yes";		names(logfile$parameters)[91]<<-"replicates_prof"
+		logfile$parameters$replicates_prof<<-"yes";	
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	
 	}
 	if(!any(names(logfile$parameters)=="screen_IS_maxonly")){	
-		logfile$parameters[[64]]<<-"FALSE";    	names(logfile$parameters)[64]<<-"screen_target_maxonly" # Screen only most intense isotopologue peak?	
-		logfile$parameters[[51]]<<-"FALSE";    	names(logfile$parameters)[51]<<-"screen_IS_maxonly" # Screen only most intense isotopologue peak?		
+		logfile$parameters$screen_target_maxonly<<-"FALSE";    	# Screen only most intense isotopologue peak?	
+		logfile$parameters$screen_IS_maxonly<<-"FALSE";    # Screen only most intense isotopologue peak?		
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	
 	}
@@ -471,7 +485,7 @@ if(logfile[[10]]<3.101){
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
 }
 
-if(logfile[[10]]<3.102){
+if(logfile$version<3.102){
 
 	cat("\n Updating to version 3.102 ...")
 	################################################################################################
@@ -502,7 +516,7 @@ if(logfile[[10]]<3.102){
 	rm(targets)
 	################################################################################################
 	if(!any(names(logfile$parameters)=="recal_maxdmz")){	
-		logfile$parameters[[79]]<<-"30";		names(logfile$parameters)[79]<<-"recal_maxdmz"	
+		logfile$parameters$recal_maxdmz<<-"30";		
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	
 	}				
@@ -558,8 +572,8 @@ if(logfile[[10]]<3.102){
 	if( !any(names(measurements)=="date_end") ){
 		measurements<-cbind(
 			measurements,
-			rep("2019-06-08",length(measurements[,1])),
-			rep("12:00:00",length(measurements[,1]))
+			rep("2019-06-08",length(measurements[,"ID"])),
+			rep("12:00:00",length(measurements[,"ID"]))
 		)
 	}
 	if( any(names(measurements)=="feat.") ){
@@ -579,24 +593,653 @@ if(logfile[[10]]<3.102){
 
 }
 
+if(logfile$version<3.103){
+
+		cat("\n Updating to version 3.103 ...")
+	################################################################################################
+	# update Tasks_to_redo #########################################################################
+	old_Tasks_to_redo<-logfile$Tasks_to_redo
+	logfile[[2]]<<-rep(FALSE,21);
+	names(logfile[[2]])<<-c(
+		"peakpicking","qc","recal","norm","align","profiled","trendblind","pattern",
+		"replicates","IS_screen","target_screen","LOD","calibration","recovery","quantification","blind",
+		"IS_normaliz","subtr","isotopologues","adducts","homologues"
+	)	
+    names(logfile)[2]<<-c("Tasks_to_redo"); 
+	for(i in 1:length(old_Tasks_to_redo)){
+		if(any(names(logfile$Tasks_to_redo)==names(old_Tasks_to_redo)[i])){
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)==names(old_Tasks_to_redo)[i]]<<-old_Tasks_to_redo[i]
+		}
+	}
+	################################################################################################
+	# update workflow ##############################################################################
+	old_workflow<-logfile$workflow
+    logfile$workflow<<-0    # based on above Tasks_to_redo
+    names(logfile)[6]<<-c("workflow")
+	for(i in 1:length(names(logfile[[2]]))){
+		logfile$workflow[i]<<-"yes"; 
+		names(logfile$workflow)[i]<<-names(logfile[[2]])[i]
+	}
+	for(i in 1:length(old_workflow)){
+		if(any(names(logfile$workflow)==names(old_workflow)[i])){
+			logfile$workflow[names(logfile$workflow)==names(old_workflow)[i]]<<-old_workflow[i]
+		}
+	}	
+	################################################################################################
+	# update summary ###############################################################################
+	old_summary<-logfile$summary
+    tasks<-names(logfile[[2]]) # based on above Tasks_to_redo
+    doneit<-rep(FALSE,length(tasks))
+    summar<-data.frame(tasks,doneit,stringsAsFactors = FALSE)
+    names(summar)<-c("Tasks","Done?")
+    logfile[[3]]<<-summar
+    names(logfile)[3]<<-c("summary")
+	for(i in 1:length(old_summary[,1])){	
+		if(any(logfile$summary[,1]==as.character(old_summary[i,1]))){
+			logfile$summary[logfile$summary[,1]==as.character(old_summary[i,1]),2]<<-as.character(old_summary[i,2])
+		}
+	}
+	################################################################################################
+	# update parameters
+	if(!any(names(logfile$parameters)=="subtr_IS")){	
+		logfile$parameters$subtr_IS<<-"yes"; 	
+		logfile$parameters$subtr_target<<-"yes"; 	
+		logfile$parameters$subtr_blind<<-"yes"; 		
+		logfile$parameters$subtr_spiked<<-"yes"; 	
+		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	
+	}				
+	################################################################################################
+	# define matrix of downstream workflow dependencies (==1) and ##################################
+	# recalculations of previous steps if their results are overwritten (==2), e.g. IS_subtr or ####
+	# target_subtr or target screening result tables/lists for quantification ######################
+	# requires only a definition of direct ones - indirect ones will be in workflow_set.r ##########
+	# below specified in a row-wise fashion (but stored columnwise): ###############################
+	# define workflow order of logfile$Tasks_to_redo by server.calculation.r #######################
+	# dependencies must simply go after their parent node ########################################## 
+	# order here actually irrelevant, because calculation order set in server_calculation  #########	
+	work_names<-names(logfile$Tasks_to_redo)[1:21]
+	depend<-matrix(ncol=length(work_names),nrow=length(work_names),0)
+	colnames(depend)<-work_names
+	rownames(depend)<-work_names					# peakpicking	qc	recal	norm	align	profiled	trendblind	pattern		replicates	IS_screen	target_screeen	LOD		calibration	recovery	quantification	blind IS_normaliz	subtr	isotopologues	adducts homologues
+	depend[,colnames(depend)=="peakpicking"]<-		c(0,			1,	1,		1,		1,		1,			1,			0,			1,			1,			1,				1,		1,			1,			1,				1,		1,			1,		0,				0,		0)
+	depend[,colnames(depend)=="qc"]<-				c(0,			0,	1,		1,		1,		1,			1,			0,			1,			1,			1,				1,		1,			0,			1,				1,		1,			1,		0,				0,		0)
+	depend[,colnames(depend)=="pattern"]<-			c(0,			0,	1,		0,		0,		0,			0,			0,			0,			1,			1,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	depend[,colnames(depend)=="recal"]<-			c(0,			0,	0,		0,		0,		1,			1,			0,			1,			1,			1,				0,		0,			0,			0,				0,		1,			0,		0,				1,		1)
+	depend[,colnames(depend)=="align"]<-			c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	depend[,colnames(depend)=="norm"]<-				c(0,			0,	0,		0,		0,		1,			1,			0,			1,			1,			1,				1,		0,			0,			0,				1,		1,			0,		0,				0,		0)
+	depend[,colnames(depend)=="blind"]<-			c(0,			0,	0,		0,		0,		1,			1,			0,			0,			1,			1,				0,		0,			0,			0,				0,		1,			1,		1,				1,		1)
+	depend[,colnames(depend)=="replicates"]<-		c(0,			0,	0,		0,		0,		1,			1,			0,			0,			1,			1,				1,		0,			0,			0,				0,		1,			1,		1,				1,		1)
+	depend[,colnames(depend)=="profiled"]<-			c(0,			0,	0,		0,		0,		0,			1,			0,			0,			1,			1,				0,		0,			0,			0,				0,		1,			0,		0,				0,		0)
+	depend[,colnames(depend)=="IS_screen"]<-		c(0,			0,	0,		0,		0,		2,			0,			0,			0,			0,			0,				0,		0,			0,			1,				0,		1,			1,		0,				0,		0)
+	depend[,colnames(depend)=="target_screen"]<-	c(0,			0,	0,		0,		0,		2,			0,			0,			0,			0,			0,				0,		1,			0,			1,				0,		1,			1,		0,				0,		0)
+	depend[,colnames(depend)=="IS_normaliz"]<-		c(0,			0,	0,		0,		0,		0,			1,			0,			0,			0,			0,				0,		1,			0,			0,				0,		0,			0,		0,				0,		0)
+	depend[,colnames(depend)=="trendblind"]<-		c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	depend[,colnames(depend)=="LOD"]<-				c(0,			0,	0,		0,		0,		0,			0,			0,			0,			1,			1,				0,		1,			0,			0,				0,		1,			1,		0,				0,		0)
+	depend[,colnames(depend)=="calibration"]<-		c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			1,			1,				0,		0,			0,		0,				0,		0)
+	depend[,colnames(depend)=="recovery"]<-			c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	depend[,colnames(depend)=="quantification"]<-	c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			2,				0,		0,			1,			0,				0,		0,			0,		0,				0,		0)
+	depend[,colnames(depend)=="subtr"]<-			c(0,			0,	0,		0,		0,		2,			1,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	depend[,colnames(depend)=="isotopologues"]<-	c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	depend[,colnames(depend)=="adducts"]<-			c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	depend[,colnames(depend)=="homologues"]<-		c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	logfile[[11]]<<-depend
+	names(logfile)[11]<<-"workflow_depend"
+	################################################################################################
+	# define upstream workflow "musts", i.e., upstream nodes on which`s execution a node ###########
+	# depends. 0 = not dependent. 1 = dependent. -1 = MUST NOT be executed (not yet further implemented)  
+	must<-matrix(ncol=length(work_names),nrow=length(work_names),0)
+	colnames(must)<-work_names
+	rownames(must)<-work_names					# peakpicking	qc	recal	norm	align	profiled	trendblind	pattern		replicates	IS_screen	target_screeen	LOD		calibration	recovery	quantification	blind IS_normaliz	subtr	isotopologues	adducts homologues
+	must[,colnames(must)=="peakpicking"]<-		c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="qc"]<-				c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="pattern"]<-			c(0,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="recal"]<-			c(1,			0,	0,		0,		0,		0,			0,			1,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="align"]<-			c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="norm"]<-				c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="blind"]<-			c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="replicates"]<-		c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="profiled"]<-			c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="IS_screen"]<-		c(1,			0,	0,		0,		0,		0,			0,			1,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="target_screen"]<-	c(1,			0,	0,		0,		0,		0,			0,			1,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="IS_normaliz"]<-		c(1,			0,	0,		0,		0,		0,			0,			1,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="trendblind"]<-		c(1,			0,	0,		0,		0,		1,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="LOD"]<-				c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="calibration"]<-		c(1,			0,	0,		0,		0,		0,			0,			1,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="recovery"]<-			c(1,			0,	0,		0,		0,		0,			0,			1,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="quantification"]<-	c(1,			0,	0,		0,		0,		0,			0,			1,			0,			1,			1,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="subtr"]<-			c(1,			0,	0,		0,		0,		1,			0,			1,			0,			1,			1,				0,		0,			0,			0,				1,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="isotopologues"]<-	c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="adducts"]<-			c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	must[,colnames(must)=="homologues"]<-		c(1,			0,	0,		0,		0,		0,			0,			0,			0,			0,			0,				0,		0,			0,			0,				0,		0,			0,		0,				0,		0)
+	logfile[[12]]<<-must
+	names(logfile)[12]<<-"workflow_must"	
+	################################################################################################	
+	# reorder summary into workflow ################################################################
+	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+	set_order<-match(schedule[,1],logfile$summary[,1])
+	logfile$summary<<-logfile$summary[set_order,]
+	################################################################################################	
+	################################################################################################	
+	logfile[[10]]<<-3.103
+	names(logfile)[10]<<-"version"
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################	
+
+}
+
+if(logfile$version<3.104){
+
+		cat("\n Updating to version 3.104 ...")
+	################################################################################################	
+	# make some table names equal to node names ####################################################
+	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+	names(measurements)[names(measurements)=="picked"]<-"peakpicking"
+	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);	
+	rm(measurements);
+	################################################################################################	
+	logfile[[10]]<<-3.104
+	names(logfile)[10]<<-"version"
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################	
+
+}
+
+if(logfile$version<3.105){
+
+	cat("\n Updating to version 3.105 ...")
+	################################################################################################	
+	# create missing folder
+	if(!file.exists(file.path(logfile$project_folder,"results","componentization"))){
+		dir.create(file.path(logfile$project_folder,"results","componentization"),recursive=TRUE)   # subfolder     	
+	}
+	if(!file.exists(file.path(logfile$project_folder,"results","componentization","adducts"))){
+		dir.create(file.path(logfile$project_folder,"results","componentization","adducts"),recursive=TRUE)   # subfolder  	
+	}
+	if(!file.exists(file.path(logfile$project_folder,"results","componentization","isotopologues"))){
+		dir.create(file.path(logfile$project_folder,"results","componentization","isotopologues"),recursive=TRUE)     	
+	}
+	if(!file.exists(file.path(logfile$project_folder,"results","componentization","EIC_corr"))){
+		dir.create(file.path(logfile$project_folder,"results","componentization","EIC_corr"),recursive=TRUE)    	
+	}
+	################################################################################################	
+	# add missing measurements columns #############################################################
+	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+	if( !any(names(measurements)=="isotopologues") ){
+		measurements<-cbind(
+			measurements,
+			rep("FALSE",length(measurements[,"ID"])),
+			rep("FALSE",length(measurements[,"ID"])),
+			rep("FALSE",length(measurements[,"ID"])),
+			rep("FALSE",length(measurements[,"ID"]))			
+		)
+	}		
+	names(measurements)<-c("ID","Name","Type","Mode","Place","Date","Time","include","copied","peakpicking",
+	"checked","recal","align","norm","profiled","LOD","IS_screen","tar_screen","tag1","tag2","tag3","date_end","time_end",
+	"isotopologues","adducts","homologues","EIC_correlation");
+	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);	
+	rm(measurements);
+	################################################################################################	
+	# update workflow ##############################################################################		
+	workflow_depend<-read.table(
+		file="workflow_depend"		
+	)
+	workflow_depend<-as.matrix(workflow_depend)
+	workflow_must<-read.table(
+		file="workflow_must"			
+	)
+	workflow_must<-as.matrix(workflow_must)
+	logfile[[11]]<<-workflow_depend
+	names(logfile)[11]<<-"workflow_depend"	
+	logfile[[12]]<<-workflow_must
+	names(logfile)[12]<<-"workflow_must"	
+	# update logfile$Tasks_to_redo #################################################################
+	old_Tasks_to_redo<-logfile$Tasks_to_redo
+	logfile[[2]]<<-rep(FALSE,length(colnames(workflow_must)));
+	names(logfile[[2]])<<-colnames(workflow_must)
+	names(logfile)[2]<<-c("Tasks_to_redo");    
+	for(i in 1:length(old_Tasks_to_redo)){
+		if(any(names(logfile$Tasks_to_redo)==names(old_Tasks_to_redo)[i])){
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)==names(old_Tasks_to_redo)[i]]<<-old_Tasks_to_redo[i]
+		}
+	}
+	# update workflow ##############################################################################
+	old_workflow<-logfile$workflow
+    logfile$workflow<<-0    # based on above Tasks_to_redo
+    names(logfile)[6]<<-c("workflow")
+	for(i in 1:length(names(logfile[[2]]))){
+		logfile$workflow[i]<<-"yes"; 
+		names(logfile$workflow)[i]<<-names(logfile[[2]])[i]
+	}
+	for(i in 1:length(old_workflow)){
+		if(any(names(logfile$workflow)==names(old_workflow)[i])){
+			logfile$workflow[names(logfile$workflow)==names(old_workflow)[i]]<<-old_workflow[i]
+		}
+	}	
+	# update summary ###############################################################################
+	old_summary<-logfile$summary
+    tasks<-names(logfile[[2]]) # based on above Tasks_to_redo
+    doneit<-rep(FALSE,length(tasks))
+    summar<-data.frame(tasks,doneit,stringsAsFactors = FALSE)
+    names(summar)<-c("Tasks","Done?")
+    logfile[[3]]<<-summar
+    names(logfile)[3]<<-c("summary")
+	for(i in 1:length(old_summary[,1])){	
+		if(any(logfile$summary[,1]==as.character(old_summary[i,1]))){
+			logfile$summary[logfile$summary[,1]==as.character(old_summary[i,1]),2]<<-as.character(old_summary[i,2])
+		}
+	}
+	################################################################################################	
+	# reorder summary into workflow ################################################################
+	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+	set_order<-match(schedule[,1],logfile$summary[,1])
+	logfile$summary<<-logfile$summary[set_order,]
+	################################################################################################	
+	# update parameters ############################################################################
+	if(!any(names(logfile$parameters)=="external")){
+		logfile$parameters$external<<-list()
+	}
+	################################################################################################	
+	logfile[[10]]<<-3.105
+	names(logfile)[10]<<-"version"
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################	
+
+}
+
+if(logfile$version<3.106){
+
+
+	cat("\n Updating to version 3.106 ...")
+	################################################################################################	
+	# update workflow ##############################################################################		
+	workflow_depend<-read.table(
+		file="workflow_depend"		
+	)
+	workflow_depend<-as.matrix(workflow_depend)
+	workflow_must<-read.table(
+		file="workflow_must"			
+	)
+	workflow_must<-as.matrix(workflow_must)
+	logfile[[11]]<<-workflow_depend
+	names(logfile)[11]<<-"workflow_depend"	
+	logfile[[12]]<<-workflow_must
+	names(logfile)[12]<<-"workflow_must"	
+	# update logfile$Tasks_to_redo #################################################################
+	old_Tasks_to_redo<-logfile$Tasks_to_redo
+	logfile[[2]]<<-rep(FALSE,length(colnames(workflow_must)));
+	names(logfile[[2]])<<-colnames(workflow_must)
+	names(logfile)[2]<<-c("Tasks_to_redo");    
+	for(i in 1:length(old_Tasks_to_redo)){
+		if(any(names(logfile$Tasks_to_redo)==names(old_Tasks_to_redo)[i])){
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)==names(old_Tasks_to_redo)[i]]<<-old_Tasks_to_redo[i]
+		}
+	}
+	# update workflow ##############################################################################
+	old_workflow<-logfile$workflow
+    logfile$workflow<<-0    # based on above Tasks_to_redo
+    names(logfile)[6]<<-c("workflow")
+	for(i in 1:length(names(logfile[[2]]))){
+		logfile$workflow[i]<<-"yes"; 
+		names(logfile$workflow)[i]<<-names(logfile[[2]])[i]
+	}
+	for(i in 1:length(old_workflow)){
+		if(any(names(logfile$workflow)==names(old_workflow)[i])){
+			logfile$workflow[names(logfile$workflow)==names(old_workflow)[i]]<<-old_workflow[i]
+		}
+	}	
+	# update summary ###############################################################################
+	old_summary<-logfile$summary
+    tasks<-names(logfile[[2]]) # based on above Tasks_to_redo
+    doneit<-rep(FALSE,length(tasks))
+    summar<-data.frame(tasks,doneit,stringsAsFactors = FALSE)
+    names(summar)<-c("Tasks","Done?")
+    logfile[[3]]<<-summar
+    names(logfile)[3]<<-c("summary")
+	for(i in 1:length(old_summary[,1])){	
+		if(any(logfile$summary[,1]==as.character(old_summary[i,1]))){
+			logfile$summary[logfile$summary[,1]==as.character(old_summary[i,1]),2]<<-as.character(old_summary[i,2])
+		}
+	}
+	################################################################################################	
+	# reorder summary into workflow ################################################################
+	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+	set_order<-match(schedule[,1],logfile$summary[,1])
+	logfile$summary<<-logfile$summary[set_order,]
+	################################################################################################	
+	logfile[[10]]<<-3.106
+	names(logfile)[10]<<-"version"
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################	
+
+}
+
+if(logfile$version<3.107){
+
+	cat("\n Updating to version 3.107 ...")
+	################################################################################################	
+	# update parameters ############################################################################
+	logfile$parameters$external$EICor_delRT<<-8 	# [s] RT window for candidate peak pairs
+	logfile$parameters$external$EICor_minpeaks<<-7 	# min. number of data points per EIC & shared in EIC pair
+	logfile$parameters$external$EICor_mincor<<-.9 	# minimum correlation
+	################################################################################################	
+	logfile$version<<-3.107
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################	
+}
+
+if(logfile$version<3.108){
+
+	cat("\n Updating to version 3.108 ...")
+	################################################################################################	
+	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");	
+	if( !any(names(measurements)=="blind") ){
+		measurements<-cbind(
+			measurements,
+			rep("FALSE",length(measurements[,"ID"]))			
+		)		
+		names(measurements)<-c("ID","Name","Type","Mode","Place","Date","Time","include","copied","peakpicking",
+		"checked","recal","align","norm","profiled","LOD","IS_screen","tar_screen","tag1","tag2","tag3","date_end","time_end",
+		"isotopologues","adducts","homologues","EIC_correlation","blind")
+	}
+	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);	
+	################################################################################################	
+	logfile$version<<-3.108
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################	
+}
+
+if(logfile$version<3.109){
+
+	cat("\n Updating to version 3.109 ...")
+	################################################################################################	
+	# Parameters for Isotopologue grouping
+	if(!any(names(logfile$parameters$external)=="isotop_rttol")){
+		logfile$parameters$external$isotop_mztol<<-3
+		logfile$parameters$external$isotop_ppm<<-TRUE
+		logfile$parameters$external$isotop_inttol<<-0.5
+		logfile$parameters$external$isotop_rttol<<-15
+		logfile$parameters$external$isotop_use_charges<<-c(1,2)
+	}
+	################################################################################################	
+	logfile$version<<-3.109
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################	
+}
+
+if(logfile$version<3.111){ # redone 3.110 -> 3.111
+
+	cat("\n Updating to version 3.111 ...")
+	################################################################################################	
+	# update workflow ##############################################################################		
+	workflow_depend<-read.table(
+		file="workflow_depend"		
+	)
+	workflow_depend<-as.matrix(workflow_depend)
+	workflow_must<-read.table(
+		file="workflow_must"			
+	)
+	workflow_must<-as.matrix(workflow_must)
+	logfile[[11]]<<-workflow_depend
+	names(logfile)[11]<<-"workflow_depend"	
+	logfile[[12]]<<-workflow_must
+	names(logfile)[12]<<-"workflow_must"	
+	# update logfile$Tasks_to_redo #################################################################
+	old_Tasks_to_redo<-logfile$Tasks_to_redo
+	logfile[[2]]<<-rep(FALSE,length(colnames(workflow_must)));
+	names(logfile[[2]])<<-colnames(workflow_must)
+	names(logfile)[2]<<-c("Tasks_to_redo");    
+	for(i in 1:length(old_Tasks_to_redo)){
+		if(any(names(logfile$Tasks_to_redo)==names(old_Tasks_to_redo)[i])){
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)==names(old_Tasks_to_redo)[i]]<<-old_Tasks_to_redo[i]
+		}
+	}
+	# update workflow ##############################################################################
+	old_workflow<-logfile$workflow
+    logfile$workflow<<-0    # based on above Tasks_to_redo
+    names(logfile)[6]<<-c("workflow")
+	for(i in 1:length(names(logfile[[2]]))){
+		logfile$workflow[i]<<-"yes"; 
+		names(logfile$workflow)[i]<<-names(logfile[[2]])[i]
+	}
+	for(i in 1:length(old_workflow)){
+		if(any(names(logfile$workflow)==names(old_workflow)[i])){
+			logfile$workflow[names(logfile$workflow)==names(old_workflow)[i]]<<-old_workflow[i]
+		}
+	}	
+	# update summary ###############################################################################
+	old_summary<-logfile$summary
+    tasks<-names(logfile[[2]]) # based on above Tasks_to_redo
+    doneit<-rep(FALSE,length(tasks))
+    summar<-data.frame(tasks,doneit,stringsAsFactors = FALSE)
+    names(summar)<-c("Tasks","Done?")
+    logfile[[3]]<<-summar
+    names(logfile)[3]<<-c("summary")
+	for(i in 1:length(old_summary[,1])){	
+		if(any(logfile$summary[,1]==as.character(old_summary[i,1]))){
+			logfile$summary[logfile$summary[,1]==as.character(old_summary[i,1]),2]<<-as.character(old_summary[i,2])
+		}
+	}
+	################################################################################################	
+	# reorder summary into workflow ################################################################
+	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+	set_order<-match(schedule[,1],logfile$summary[,1])
+	logfile$summary<<-logfile$summary[set_order,]
+	################################################################################################	
+	# Parameters for adduct grouping
+	logfile$parameters$external$adducts_rttol<<-10
+	logfile$parameters$external$adducts_mztol<<-3
+	logfile$parameters$external$adducts_ppm<<-TRUE
+	logfile$parameters$external$adducts_pos<<-c("M+H","M+Na","M+K","M+NH4")
+	logfile$parameters$external$adducts_neg<<-c("M-H","M-","2M-H")
+	################################################################################################	
+	logfile$version<<-3.111
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################	
+	
+}
+
+if(logfile$version<3.112){
+
+	cat("\n Updating to version 3.112 ...")
+	################################################################################################	
+	# create missing folder
+	if(!file.exists(file.path(logfile$project_folder,"results","componentization","homologues"))){
+		dir.create(file.path(logfile$project_folder,"results","componentization","homologues"),recursive=TRUE)   # subfolder     	
+	}
+	################################################################################################	
+	logfile$version<<-3.112
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################	
+
+}
+
+if(logfile$version<3.114){ # redone 3.113 -> 3.114
+
+	cat("\n Updating to version 3.114 ...")
+	################################################################################################	
+	# update workflow ##############################################################################		
+	workflow_depend<-read.table(
+		file="workflow_depend"		
+	)
+	workflow_depend<-as.matrix(workflow_depend)
+	workflow_must<-read.table(
+		file="workflow_must"			
+	)
+	workflow_must<-as.matrix(workflow_must)
+	logfile[[11]]<<-workflow_depend
+	names(logfile)[11]<<-"workflow_depend"	
+	logfile[[12]]<<-workflow_must
+	names(logfile)[12]<<-"workflow_must"	
+	# update logfile$Tasks_to_redo #################################################################
+	old_Tasks_to_redo<-logfile$Tasks_to_redo
+	logfile[[2]]<<-rep(FALSE,length(colnames(workflow_must)));
+	names(logfile[[2]])<<-colnames(workflow_must)
+	names(logfile)[2]<<-c("Tasks_to_redo");    
+	for(i in 1:length(old_Tasks_to_redo)){
+		if(any(names(logfile$Tasks_to_redo)==names(old_Tasks_to_redo)[i])){
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)==names(old_Tasks_to_redo)[i]]<<-old_Tasks_to_redo[i]
+		}
+	}
+	# update workflow ##############################################################################
+	old_workflow<-logfile$workflow
+    logfile$workflow<<-0    # based on above Tasks_to_redo
+    names(logfile)[6]<<-c("workflow")
+	for(i in 1:length(names(logfile[[2]]))){
+		logfile$workflow[i]<<-"yes"; 
+		names(logfile$workflow)[i]<<-names(logfile[[2]])[i]
+	}
+	for(i in 1:length(old_workflow)){
+		if(any(names(logfile$workflow)==names(old_workflow)[i])){
+			logfile$workflow[names(logfile$workflow)==names(old_workflow)[i]]<<-old_workflow[i]
+		}
+	}	
+	# update summary ###############################################################################
+	old_summary<-logfile$summary
+    tasks<-names(logfile[[2]]) # based on above Tasks_to_redo
+    doneit<-rep(FALSE,length(tasks))
+    summar<-data.frame(tasks,doneit,stringsAsFactors = FALSE)
+    names(summar)<-c("Tasks","Done?")
+    logfile[[3]]<<-summar
+    names(logfile)[3]<<-c("summary")
+	for(i in 1:length(old_summary[,1])){	
+		if(any(logfile$summary[,1]==as.character(old_summary[i,1]))){
+			logfile$summary[logfile$summary[,1]==as.character(old_summary[i,1]),2]<<-as.character(old_summary[i,2])
+		}
+	}
+	################################################################################################	
+	# reorder summary into workflow ################################################################
+	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+	set_order<-match(schedule[,1],logfile$summary[,1])
+	logfile$summary<<-logfile$summary[set_order,]
+	################################################################################################	
+	# Parameters for homologues ####################################################################
+	logfile$parameters$external$homol_units<<-c("CH2","CH2O","CF2")
+	logfile$parameters$external$homol_charges<<-c(1,2,3)
+	logfile$parameters$external$homol_minmz<<-10
+	logfile$parameters$external$homol_maxmz<<-120
+	logfile$parameters$external$homol_minrt<<-60
+	logfile$parameters$external$homol_maxrt<<-60
+	logfile$parameters$external$homol_ppm<<-TRUE
+	logfile$parameters$external$homol_mztol<<-3
+	logfile$parameters$external$homol_rttol<<-15
+	logfile$parameters$external$homol_minlength<<-5
+	logfile$parameters$external$homol_vec_size<<-1E7
+	################################################################################################	
+	logfile$version<<-3.114
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################	
+
+}
+
+if(logfile$version<3.115){
+
+	################################################################################################
+	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");	
+	if( !any(names(measurements)=="ID_2") ){
+		measurements<-cbind(
+			measurements,
+			rep("FALSE",length(measurements[,"ID"]))			
+		)		
+		names(measurements)<-c("ID","Name","Type","Mode","Place","Date","Time","include","copied","peakpicking",
+		"checked","recal","align","norm","profiled","LOD","IS_screen","tar_screen","tag1","tag2","tag3","date_end","time_end",
+		"isotopologues","adducts","homologues","EIC_correlation","blind","ID_2")
+	}
+	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);	
+	################################################################################################	
+	logfile$version<<-3.115
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
+	
+}
+
+if(logfile$version<3.116){
+
+	################################################################################################
+	if(!any(names(logfile$parameters)=="quant_files_included")){
+		logfile$parameters$quant_files_included<<-20
+	}
+	if(!any(names(logfile$parameters)=="recov_files_included")){
+		logfile$parameters$recov_files_included<<-20
+	}	
+	################################################################################################
+	# updating columns in target compound table ####################################################
+	targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
+	if(!any(names(targets)=="Quant_rule")){
+		names_1<-names(targets)
+		targets<-cbind(targets,rep("most intense peak",length(targets[,1])))
+		names(targets)<-c(names_1,"Quant_rule")
+	}		
+	write.table(targets,file=file.path(logfile[[1]],"dataframes","targets.txt"),row.names=FALSE,sep="\t",quote=FALSE)
+	rm(targets)
+	################################################################################################
+	# updating columns in ISTD table ###############################################################
+	intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
+	if(!any(names(intstand)=="Quant_rule")){
+		names_1<-names(intstand)
+		intstand<-cbind(intstand,rep("most intense peak",length(intstand[,1])))
+		names(intstand)<-c(names_1,"Quant_rule")
+	}		
+	write.table(intstand,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)
+	rm(intstand)
+	################################################################################################	
+	logfile$version<<-3.116
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
+
+}
+
+if(logfile$version<3.117){ 
+
+	################################################################################################
+	# peak intensity updates #######################################################################
+	if(!any(names(logfile$parameters)=="peak_which_intensity")){
+		logfile$parameters$peak_which_intensity<<-"maximum"	
+		these_files<-list.files(file.path(logfile[[1]],"peaklist"))
+		for(i in 1:length(these_files)){
+			load(file=file.path(logfile[[1]],"peaklist",these_files[i]),envir=as.environment(".GlobalEnv"),verbose=FALSE);
+			colnames(peaklist)[13]<<-"int_corr";
+			save(peaklist,file=file.path(logfile[[1]],"peaklist",these_files[i]))
+		}
+	}		
+	################################################################################################	
+	logfile$version<<-3.117
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
+
+}
+
+if(logfile$version<3.118){
+
+	# -> make adduct node dependent on EIC_correlation
+
+}
+########################################################################
+
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_updates.r!")}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

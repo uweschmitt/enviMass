@@ -36,18 +36,18 @@ observe({
 				output$IS<-DT:::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 				output$targets<-DT:::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      
 				measurements<-read.csv(file=file.path(logfile$project_folder,"dataframes","measurements"),colClasses = "character")
-				output$measurements<-DT:::renderDataTable(
-					read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),filter = 'top',rownames= FALSE
-				)      		
+				output$measurements<<-DT::renderDataTable(
+					measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
+				); 
 				# SET DUMMY RESULTS ####################################################
 				# (1) Peak picking #####################################################
-				path=file.path(logfile$project_folder,"pics","EIC1");
-					png(filename = path, bg = "white", width = 1100, height= 300)
-					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=2)
-					dev.off();
-					expr_peak<-list(src=file.path(logfile[[1]],"pics","EIC1"));
-					output$EIC1<-renderImage(expr_peak, deleteFile = FALSE);
-					output$EIC2<-renderImage(expr_peak, deleteFile = FALSE);
+				#path=file.path(logfile$project_folder,"pics","EIC1");
+				#	png(filename = path, bg = "white", width = 1100, height= 300)
+				#	plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=2)
+				#	dev.off();
+				#	expr_peak<-list(src=file.path(logfile[[1]],"pics","EIC1"));
+				#	output$EIC1<-renderImage(expr_peak, deleteFile = FALSE);
+				#	output$EIC2<-renderImage(expr_peak, deleteFile = FALSE);
 				# (1) QC ###############################################################
 				path=file.path(logfile$project_folder,"pics","plotQCa_pos")
 					png(filename = path, bg = "white")
@@ -93,8 +93,7 @@ observe({
 					dev.off()
 					exprrec<-list(src=path)
 					output$recal_pic<-renderImage(exprrec, deleteFile = FALSE);		
-					output$peakhist_pic<-renderImage(exprrec, deleteFile = FALSE);
-					output$peakmzRT_pic<-renderImage(exprrec, deleteFile = FALSE);	
+					output$peakhist_pic<-renderImage(exprrec, deleteFile = FALSE);	
 				# (Y) IS normalization #################################################
 				path=file.path(logfile$project_folder,"pics","profnorm_pos")
 					png(filename = path, bg = "white")
@@ -207,18 +206,20 @@ maincalc2<-reactive({
 			output$IS<-DT::renderDataTable(read.table(file=file.path(logfile$project_folder,"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 			output$targets<-DT::renderDataTable(read.table(file=file.path(logfile$project_folder,"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));              
 			measurements<-read.csv(file=file.path(logfile$project_folder,"dataframes","measurements"),colClasses = "character")
-			output$measurements<-DT::renderDataTable(measurements,filter = 'top',rownames= FALSE)        
+			output$measurements<<-DT::renderDataTable(
+				measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
+			); 
 			# RETRIEVE RESULTS #####################################################
 			# (1) Peak picking & preprocessing #####################################
-			path=file.path(logfile$project_folder,"pics","EIC1");
-				png(filename = path, bg = "white", width = 1100, height= 300)
-				plot.new()
-				plot.window(xlim=c(0,1),ylim=c(0,1))
-				text(0.5,0.5,"nothing selected \n or not available",cex=2)
-				dev.off();
-				expr_peak<-list(src=file.path(logfile$project_folder,"pics","EIC1",sep=""));
-				output$EIC1<-renderImage(expr_peak, deleteFile = FALSE);
-				output$EIC2<-renderImage(expr_peak, deleteFile = FALSE);
+			#path=file.path(logfile$project_folder,"pics","EIC1");
+			#	png(filename = path, bg = "white", width = 1100, height= 300)
+			#	plot.new()
+			#	plot.window(xlim=c(0,1),ylim=c(0,1))
+			#	text(0.5,0.5,"nothing selected \n or not available",cex=2)
+			#	dev.off();
+			#	expr_peak<-list(src=file.path(logfile$project_folder,"pics","EIC1",sep=""));
+			#	output$EIC1<-renderImage(expr_peak, deleteFile = FALSE);
+			#	output$EIC2<-renderImage(expr_peak, deleteFile = FALSE);
 			# (2) QC ###############################################################		
 			if(file.exists(file.path(logfile$project_folder,"pics","plotQCa_pos"))){
 			  expr1p<-list(src=file.path(logfile$project_folder,"pics","plotQCa_pos"))
@@ -253,8 +254,7 @@ maincalc2<-reactive({
 				exprrec<-list(src=path)
 				output$recal_pic<-renderImage(exprrec, deleteFile = FALSE);		
 				output$peakhist_pic<-renderImage(exprrec, deleteFile = FALSE);
-				output$peakmzRT_pic<-renderImage(exprrec, deleteFile = FALSE);
-			
+
 			
 			# (4) Available measurements ###########################################	
 			# SelectInput - bad: only 999 possible choices	

@@ -13,7 +13,7 @@
 							$('div.busy2').show()
 						}
 					}	
-					},1000)	
+					},2000)	
 				  } else {
 					$('div.busy1').hide()
 					$('div.busy2').hide()

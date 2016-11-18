@@ -186,7 +186,7 @@
 								int_tol=int_tol,
 								use_score_cut=use_score_cut,
 								score_cut=score_cut,
-								plotit=FALSE,
+								plot_it=FALSE,
 								verbose=FALSE
 							)
 							for(k in 1:length(combination_matches)){ # add file ID
@@ -210,7 +210,7 @@
 		# assemble output table of length(list) ############################################################
 		if(length(target_pos_screen_listed)>0){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-			measurements<-measurements[measurements[,8]=="TRUE",]
+			measurements<-measurements[measurements[,"include"]=="TRUE",]
 			if(logfile$parameters$prof_select=="TRUE"){
 				measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
 			}
@@ -245,22 +245,25 @@
 										# no entry for this peak in profileList<->links_peaks_pos exists yet
 										if(profileList_pos[[2]][res_target_pos_screen[[i]][[m]][[k]]$Peaks[a,2],5]==0){ 
 											if(length(use_entries)>0){
-												at_entry<-use_entries
+												at_entry<-use_entries[1]
 												use_entries<-use_entries[-1]
 											}else{
 												at_entry<-(length(links_peaks_pos)+1)
 											}
 											links_peaks_pos[[at_entry]]<-list()
-											links_peaks_pos[[at_entry]][[1]]<-list()
-											links_peaks_pos[[at_entry]][[2]]<-list()
-											links_peaks_pos[[at_entry]][[3]]<-list()
+											links_peaks_pos[[at_entry]][[1]]<-list() 	# target
+											links_peaks_pos[[at_entry]][[2]]<-list()	# IS
+											links_peaks_pos[[at_entry]][[3]]<-list()	# EIC_correl
+											links_peaks_pos[[at_entry]][[4]]<-list()	# isotop
+											links_peaks_pos[[at_entry]][[5]]<-list()	# adducts
+											links_peaks_pos[[at_entry]][[6]]<-list()	# homol	
 											profileList_pos[[2]][res_target_pos_screen[[i]][[m]][[k]]$Peaks[a,2],5]<<-at_entry
-											links_peaks_pos[[at_entry]][[2]][[1]]<-names(pattern)[i]
+											links_peaks_pos[[at_entry]][[1]][[1]]<-names(pattern)[i]
 										# or expand existing entry
 										}else{
 											at_entry<-profileList_pos[[2]][res_target_pos_screen[[i]][[m]][[k]]$Peaks[a,2],5]
-											at_list<-(length(links_peaks_pos[[at_entry]][[2]])+1)
-											links_peaks_pos[[at_entry]][[2]][[at_list]]<-names(pattern)[i]
+											at_list<-(length(links_peaks_pos[[at_entry]][[1]])+1)
+											links_peaks_pos[[at_entry]][[1]][[at_list]]<-names(pattern)[i]
 										}
 									}
 								}
@@ -446,7 +449,7 @@
 								int_tol=int_tol,
 								use_score_cut=use_score_cut,
 								score_cut=score_cut,
-								plotit=FALSE,
+								plot_it=FALSE,
 								verbose=FALSE
 							)
 							for(k in 1:length(combination_matches)){ # add file ID
@@ -470,7 +473,7 @@
 		# assemble output table of length(list) ############################################################
 		if(length(target_neg_screen_listed)>0){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-			measurements<-measurements[measurements[,8]=="TRUE",]
+			measurements<-measurements[measurements[,"include"]=="TRUE",]
 			if(logfile$parameters$prof_select=="TRUE"){
 				measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
 			}
@@ -505,22 +508,25 @@
 										# no entry for this peak in profileList<->links_peaks_neg exists yet
 										if(profileList_neg[[2]][res_target_neg_screen[[i]][[m]][[k]]$Peaks[a,2],5]==0){ 
 											if(length(use_entries)>0){
-												at_entry<-use_entries
+												at_entry<-use_entries[1]
 												use_entries<-use_entries[-1]
 											}else{
 												at_entry<-(length(links_peaks_neg)+1)
 											}
 											links_peaks_neg[[at_entry]]<-list()
-											links_peaks_neg[[at_entry]][[1]]<-list()
-											links_peaks_neg[[at_entry]][[2]]<-list()
-											links_peaks_neg[[at_entry]][[3]]<-list()
+											links_peaks_neg[[at_entry]][[1]]<-list()	# target
+											links_peaks_neg[[at_entry]][[2]]<-list()	# IS
+											links_peaks_neg[[at_entry]][[3]]<-list()	# EIC_correl
+											links_peaks_neg[[at_entry]][[4]]<-list()	# isotop
+											links_peaks_neg[[at_entry]][[5]]<-list()	# adducts
+											links_peaks_neg[[at_entry]][[6]]<-list()	# homol	
 											profileList_neg[[2]][res_target_neg_screen[[i]][[m]][[k]]$Peaks[a,2],5]<<-at_entry
-											links_peaks_neg[[at_entry]][[2]][[1]]<-names(pattern)[i]
+											links_peaks_neg[[at_entry]][[1]][[1]]<-names(pattern)[i]
 										# or expand existing entry
 										}else{
 											at_entry<-profileList_neg[[2]][res_target_neg_screen[[i]][[m]][[k]]$Peaks[a,2],5]
-											at_list<-(length(links_peaks_neg[[at_entry]][[2]])+1)
-											links_peaks_neg[[at_entry]][[2]][[at_list]]<-names(pattern)[i]
+											at_list<-(length(links_peaks_neg[[at_entry]][[1]])+1)
+											links_peaks_neg[[at_entry]][[1]][[at_list]]<-names(pattern)[i]
 										}
 									}
 								}

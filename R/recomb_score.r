@@ -10,7 +10,7 @@
 #' @param int_tol
 #' @param use_score_cut Logical.
 #' @param score_cut Numeric.
-#' @param plotit Logical.
+#' @param plot_it Logical.
 #' @param verbose Logical.
 #' @param RT_seperate Logical.
 #' 
@@ -26,7 +26,7 @@ recomb_score<-function(
 		int_tol,
 		use_score_cut=FALSE,
 		score_cut=0,		
-		plotit=FALSE,
+		plot_it=FALSE,
 		verbose=FALSE,
 		RT_seperate=FALSE
 	){
@@ -79,7 +79,7 @@ recomb_score<-function(
 		checked<-FALSE
 		for(k in 1:length(check_nodes)){
 			if(verbose){cat("\n  :: "); cat(paste(check_nodes[[k]][,2],collapse=","))}
-			if(plotit){	
+			if(plot_it){	
 				rescale<-weighted.mean(
 					x=(pattern_compound[check_nodes[[k]][,1],2]/profileList[[2]][check_nodes[[k]][,2],2]),
 				    w=(profileList[[2]][check_nodes[[k]][,2],2] / (int_tol/100*profileList[[2]][check_nodes[[k]][,2],2]) )
@@ -179,7 +179,7 @@ recomb_score<-function(
 				results[[at_results]][[9]]<-profileList[[2]][check_nodes[[k]][,2],3]
 				names(results[[at_results]])<-c("Peaks","score_1","score_2","ppm deviation","RT deviation from mean","rescale factor","m/z","Intensity","RT")
 				at_results<-(at_results+1)
-				if(plotit){box(col="green",lwd=5);title(main=paste(score1,score2,k,sep=" - "));Sys.sleep(3);}
+				if(plot_it){box(col="green",lwd=5);title(main=paste(score1,score2,k,sep=" - "));Sys.sleep(3);}
 			}else{
 				if(verbose){cat("-FALSE")}
 				# maker smaller combinations by omission of one (centroid,peak)
@@ -199,7 +199,7 @@ recomb_score<-function(
 					}
 					checked<-TRUE
 				}
-				if(plotit){box(col="red",lwd=5);title(main=k);Sys.sleep(2);}
+				if(plot_it){box(col="red",lwd=5);title(main=k);Sys.sleep(2);}
 			}
 		}
 		check_nodes<-new_nodes

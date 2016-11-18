@@ -5,7 +5,7 @@
 \title{Extract profiles from peak set partitions}
 \usage{
 partcluster(profileList, dmass = 3, ppm = TRUE, dret = 60, from = FALSE,
-  to = FALSE, progbar = FALSE, plotit = FALSE)
+  to = FALSE, progbar = FALSE, plot_it = FALSE)
 }
 \arguments{
 \item{profileList}{A profile list.}
@@ -22,7 +22,7 @@ partcluster(profileList, dmass = 3, ppm = TRUE, dret = 60, from = FALSE,
 
 \item{progbar}{Logical. Should a progress bar be shown? Only for Windows.}
 
-\item{plotit}{Logical. Plot profile extraction? For debugging.}
+\item{plot_it}{Logical. Plot profile extraction? For debugging.}
 }
 \value{
 Updated profile list

@@ -1,7 +1,7 @@
 
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 	# positive #################################################################
-	if(any(measurements[,4]=="positive") & (length(measurements[,4])>1)){
+	if(any(measurements[,"Mode"]=="positive") & (length(measurements[,"Mode"])>1)){
 		filed<-list.files(file.path(logfile[[1]],"peaklist"))
 		iles<-c(0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1)
 		quant<-matrix(ncol=length(iles),nrow=length(filed),0)
@@ -11,8 +11,8 @@
 		colnames(quant)<-as.character(iles)
 		colorit<-sample(colors(),length(filed),replace=TRUE)
 		for(i in 1:length(filed)){
-			if(any(measurements[,1]==filed[i])){
-				if(  measurements[measurements[,1]==filed[i],4]=="positive" ){
+			if(any(measurements[,"ID"]==filed[i])){
+				if(  measurements[measurements[,"ID"]==filed[i],"Mode"]=="positive" ){
 					if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 					if(any(objects()=="peaklist")){rm(peaklist)}
 					load(file.path(logfile[[1]],"peaklist",filed[i]),envir=as.environment(".GlobalEnv"))
@@ -83,19 +83,19 @@
 		save(qc_pos,file=file.path(logfile[[1]],"results","qc_pos"))
 		# (2) mark measurements
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-		measurements[,11]<-"TRUE";
+		measurements[,"checked"]<-"TRUE";
 		filedcut<-filed[maxit1>cut2 & maxit2>cut1]
 		if(length(filedcut)>0){
 		  for(i in 1:length(filedcut)){
-			measurements[measurements[,1]==filedcut[i],11]<-"FALSE";
-			measurements[measurements[,1]==filedcut[i],8]<-"FALSE";
+			measurements[measurements[,"ID"]==filedcut[i],"checked"]<-"FALSE";
+			measurements[measurements[,"ID"]==filedcut[i],"include"]<-"FALSE";
 		  }
 		}
 		write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 	}
 	# negative #################################################################
-	if(any(measurements[,4]=="negative") & (length(measurements[,4])>1)){
+	if(any(measurements[,"Mode"]=="negative") & (length(measurements[,"Mode"])>1)){
 		filed<-list.files(file.path(logfile[[1]],"peaklist"))
 		iles<-c(0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1)
 		quant<-matrix(ncol=length(iles),nrow=length(filed),0)
@@ -105,8 +105,8 @@
 		colnames(quant)<-as.character(iles)
 		colorit<-sample(colors(),length(filed),replace=TRUE)
 		for(i in 1:length(filed)){
-			if(any(measurements[,1]==filed[i])){
-				if(  measurements[measurements[,1]==filed[i],4]=="negative" ){
+			if(any(measurements[,"ID"]==filed[i])){
+				if(  measurements[measurements[,"ID"]==filed[i],"Mode"]=="negative" ){
 					if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 					if(any(objects()=="peaklist")){rm(peaklist)}
 					load(file.path(logfile[[1]],"peaklist","",filed[i]),envir=as.environment(".GlobalEnv"))
@@ -164,12 +164,12 @@
 		save(qc_neg,file=file.path(logfile[[1]],"results","qc_neg"))
 		# (2) mark measurements
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-		measurements[,11]<-"TRUE";
+		measurements[,"checked"]<-"TRUE";
 		filedcut<-filed[maxit1>cut2 & maxit2>cut1]
 		if(length(filedcut)>0){
 		  for(i in 1:length(filedcut)){
-			measurements[measurements[,1]==filedcut[i],11]<-"FALSE";
-			measurements[measurements[,1]==filedcut[i],8]<-"FALSE";
+			measurements[measurements[,"ID"]==filedcut[i],"checked"]<-"FALSE";
+			measurements[measurements[,"ID"]==filedcut[i],"include"]<-"FALSE";
 		  }
 		}
 		write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);

@@ -1,8 +1,13 @@
 
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-	measurements<-measurements[measurements[,8]=="TRUE",]
-	if( (any(measurements[,4]=="positive") & file.exists(file.path(as.character(logfile[[1]]),"results","pattern_pos_IS"))) ){
-		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
+	measurements<-measurements[measurements[,"include"]=="TRUE",]
+	if( 
+		any(measurements[,"Mode"]=="positive") & 
+		file.exists(file.path(as.character(logfile[[1]]),"results","pattern_pos_IS"))  &
+		file.exists(file.path(as.character(logfile[[1]]),"results","profileList_pos"))		
+	){
+	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="peaklist")){rm(peaklist)}
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="profileList_pos")){rm(profileList_pos)}
@@ -18,21 +23,21 @@
 		load(file=file.path(logfile[[1]],"results","patternDelRT_pos_IS"),envir=as.environment(".GlobalEnv"));
 		peaks<-profileList_pos[[7]];
 		peaklist<-peaks[,c(14,16,15)];
-		treshscore<-as.numeric(logfile$parameters[78])
-		we1=(1-as.numeric(logfile$parameters[49]))
+		treshscore<-as.numeric(logfile$parameters$ISnorm_score)
+		we1=(1-as.numeric(logfile$parameters$IS_w1))
 		we2=(1-we1)
 		cat("- screening:");
 		screened<-screening(	peaklist, 
 								blanklist=FALSE, 
 								pattern_pos_IS, 
 								RT = patternRT_pos_IS,
-								dmz = as.numeric(logfile$parameters[45]), 
-								ppm = logfile$parameters[46], 
+								dmz = as.numeric(logfile$parameters$IS_dmz), 
+								ppm = logfile$parameters$IS_ppm, 
 								dRT = patternDelRT_pos_IS, 
-								dRTwithin = as.numeric(logfile$parameters[43]), 
+								dRTwithin = as.numeric(logfile$parameters$IS_drt2), 
 								dRTblank = FALSE, 
-								dInt = as.numeric(logfile$parameters[47]), 
-								Intcut = as.numeric(logfile$parameters[48]), 
+								dInt = as.numeric(logfile$parameters$IS_inttol), 
+								Intcut = as.numeric(logfile$parameters$IS_intcut), 
 								w1=we1, 
 								w2=we2, 	
 								w3=0	
@@ -41,6 +46,12 @@
 		atPOSIX<-profileList_pos[[3]];
 		sampletype<-profileList_pos[[9]];
 		sampleID<-profileList_pos[[4]];
+		# filter out other file types such as spiked ones
+		keep<-((sampletype=="sample")|(sampletype=="blank"))
+		atPOSIX<-atPOSIX[keep]
+		sampletype<-sampletype[keep]
+		sampleID<-sampleID[keep]
+		#
 		atdate<-c();
 		attime<-c();
 		for(i in 1:length(atPOSIX)){
@@ -67,7 +78,7 @@
 		}
 		# screen IS intensity profiles #####################################################
 		cat("- on IS profiles");
-		min_count<-floor(length(profileList_pos[[4]])*as.numeric(logfile$parameters[[70]])/100);
+		min_count<-floor(length(profileList_pos[[4]])*as.numeric(logfile$parameters$ISnorm_percfiles)/100);
 		lis_delint_IS<-list(0)
 		lis_median_IS<-list(0)
 		stillin<-rep(TRUE,length(peaks[,1]))
@@ -118,14 +129,14 @@
 			}
 		}
 		# screen other profiles ###############################################################
-		if( (logfile$parameters[72]=="TRUE" || logfile$parameters[75]=="TRUE") ){
+		if( (logfile$parameters$ISnorm_medblank=="TRUE" || logfile$parameters$ISnorm_medsam=="TRUE") ){
 			cat("- on blank / non-blank profiles");
 			peaks<-peaks[stillin,];
 			peaks<-peaks[sample(1:length(peaks[,1]),length(peaks[,1]), replace = FALSE),];
-			if(logfile$parameters[72]=="TRUE"){ # use blank
+			if(logfile$parameters$ISnorm_medblank=="TRUE"){ # use blank
 				count_b<-0
-				if( logfile$parameters[73]=="TRUE" ){ # use subsampling
-					max_count_b<-as.numeric(logfile$parameters[74])
+				if( logfile$parameters$ISnorm_usesubblank=="TRUE" ){ # use subsampling
+					max_count_b<-as.numeric(logfile$parameters$ISnorm_numblank)
 				}else{
 					max_count_b<-length(peaks[,1])
 				}
@@ -133,10 +144,10 @@
 				count_b<-0
 				max_count_b<-0
 			}
-			if(logfile$parameters[75]=="TRUE"){ # use nonblank
+			if(logfile$parameters$ISnorm_medsam=="TRUE"){ # use nonblank
 				count_nb<-0
-				if( logfile$parameters[76]=="TRUE" ){ # use subsampling
-					max_count_nb<-as.numeric(logfile$parameters[77])
+				if( logfile$parameters$ISnorm_usesubsam=="TRUE" ){ # use subsampling
+					max_count_nb<-as.numeric(logfile$parameters$ISnorm_numsam)
 				}else{
 					max_count_nb<-length(peaks[,1])
 				}
@@ -166,7 +177,7 @@
 					PACKAGE="enviMass"
 				)
 				if(	 # for blind #############################################3
-					(logfile$parameters[72]=="TRUE") &&
+					(logfile$parameters$ISnorm_medblank=="TRUE") &&
 					(any(timeset[,5]>0)) &&
 					(count_b<max_count_b)
 				){ 
@@ -189,7 +200,7 @@
 					next;
 				}
 				if(	 # for non-blind ##########################################
-					(logfile$parameters[75]=="TRUE") &&
+					(logfile$parameters$ISnorm_medsam=="TRUE") &&
 					(any(timeset[,4]>0)) &&
 					(count_nb<max_count_nb)
 				){ 
@@ -215,7 +226,7 @@
 		cat("- correcting intensities");
 		corfac<-c()
 		for(k in 1:length(lis_delint_IS)){
-			if( length(lis_delint_IS[[k]])>as.numeric(logfile$parameters[71]) ){
+			if( length(lis_delint_IS[[k]])>as.numeric(logfile$parameters$ISnorm_numbIS) ){
 				corfac<-c( corfac,10^median(lis_delint_IS[[k]]) )
 			}else{			
 				corfac<-c(corfac,1)
@@ -255,7 +266,7 @@
 				if(length(lis_delint_IS[[k]])>count_IS[2]){
 					count_IS[2]<-length(lis_delint_IS[[k]])
 				}
-				if( logfile$parameters[72]=="TRUE" ){ # on blank
+				if( logfile$parameters$ISnorm_medblank=="TRUE" ){ # on blank
 					if(length(lis_delint_b[[k]])>0){ 
 						if( median(lis_delint_b[[k]])<ylimit_del[1] ){
 							ylimit_del[1]<-median(lis_delint_b[[k]])
@@ -271,7 +282,7 @@
 						count_b[2]<-length(lis_delint_b[[k]])
 					}
 				}
-				if( logfile$parameters[75]=="TRUE" ){ # on non-blank
+				if( logfile$parameters$ISnorm_medsam=="TRUE" ){ # on non-blank
 					if(length(lis_delint_nb[[k]])>0){ 
 						if( median(lis_delint_nb[[k]])<ylimit_del[1] ){
 							ylimit_del[1]<-median(lis_delint_nb[[k]])
@@ -302,14 +313,14 @@
 				}
 				points( rep(k,length(lis_delint_IS[[k]])),lis_delint_IS[[k]],pch=19,cex=0.7,col="lightgrey" )
 			}
-			if( (logfile$parameters[72]=="TRUE") ){	
+			if( (logfile$parameters$ISnorm_medblank=="TRUE") ){	
 				for(k in 1:length(lis_delint_b)){
 					if(length(lis_delint_b[[k]])>0){
 						points(k,median(lis_delint_b[[k]]),pch=21,cex=1.7,bg="blue")
 					}	
 				}
 			}
-			if( (logfile$parameters[75]=="TRUE") ){	
+			if( (logfile$parameters$ISnorm_medsam=="TRUE") ){	
 				for(k in 1:length(lis_delint_nb)){
 					if(length(lis_delint_nb[[k]])>0){ 
 						points(k,median(lis_delint_nb[[k]]),pch=21,cex=1.7,bg="green3")
@@ -358,7 +369,7 @@
 			}
 			lines(countit,col="red",lwd=2)
 			mtext("Number of IS peaks", side = 2, line =2.5, col="red",cex=1.5)			
-			if( logfile$parameters[72]=="TRUE" ){	
+			if( logfile$parameters$ISnorm_medblank=="TRUE" ){	
 				plot.window( xlim=c(-1,length(timeset[,1])+1),ylim=c(count_b[1]-1,count_b[2]+1) )	
 				countit<-c()	
 				for( k in 1:length(lis_delint_IS) ){
@@ -368,7 +379,7 @@
 				axis(4,col="blue",col.ticks="blue",col.axis="blue",cex.axis=1.3)
 				mtext("Number of blank peaks", side = 4, line =2.3, col="blue", cex=1.5)
 			}
-			if( logfile$parameters[75]=="TRUE" ){	
+			if( logfile$parameters$ISnorm_medsam=="TRUE" ){	
 				plot.window( xlim=c(-1,length(timeset[,1])+1),ylim=c(count_nb[1]-1,count_nb[2]+1) )	
 				countit<-c()	
 				for( k in 1:length(lis_delint_IS) ){
@@ -385,8 +396,13 @@
 		}
 		####################################################################################
 	}
+
 	########################################################################################
-	if( any(measurements[,4]=="negative") & file.exists(file.path(as.character(logfile[[1]]),"results","pattern_neg_IS")) ){
+	if( 
+		any(measurements[,"Mode"]=="negative") & 
+		file.exists(file.path(as.character(logfile[[1]]),"results","pattern_neg_IS")) &
+		file.exists(file.path(as.character(logfile[[1]]),"results","profileList_neg"))			
+	){
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="peaklist")){rm(peaklist)}
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
@@ -403,21 +419,21 @@
 		load(file=file.path(logfile[[1]],"results","patternDelRT_neg_IS"),envir=as.environment(".GlobalEnv"));
 		peaks<-profileList_neg[[7]];
 		peaklist<-peaks[,c(14,16,15)];
-		treshscore<-as.numeric(logfile$parameters[78])
-		we1=(1-as.numeric(logfile$parameters[49]))
+		treshscore<-as.numeric(logfile$parameters$ISnorm_score)
+		we1=(1-as.numeric(logfile$parameters$IS_w1))
 		we2=(1-we1)
 		cat("- screening:");
 		screened<-screening(	peaklist, 
 								blanklist=FALSE, 
 								pattern_neg_IS, 
 								RT = patternRT_neg_IS,
-								dmz = as.numeric(logfile$parameters[45]), 
-								ppm = logfile$parameters[46], 
+								dmz = as.numeric(logfile$parameters$IS_dmz), 
+								ppm = logfile$parameters$IS_ppm, 
 								dRT = patternDelRT_neg_IS, 
-								dRTwithin = as.numeric(logfile$parameters[43]), 
+								dRTwithin = as.numeric(logfile$parameters$IS_drt2), 
 								dRTblank = FALSE, 
-								dInt = as.numeric(logfile$parameters[47]), 
-								Intcut = as.numeric(logfile$parameters[48]), 
+								dInt = as.numeric(logfile$parameters$IS_inttol), 
+								Intcut = as.numeric(logfile$parameters$IS_intcut), 
 								w1=we1, 
 								w2=we2, 	
 								w3=0	
@@ -427,6 +443,12 @@
 		atPOSIX<-profileList_neg[[3]];
 		sampletype<-profileList_neg[[9]];
 		sampleID<-profileList_neg[[4]];
+		# filter out other file types such as spiked ones
+		keep<-((sampletype=="sample")|(sampletype=="blank"))
+		atPOSIX<-atPOSIX[keep]
+		sampletype<-sampletype[keep]
+		sampleID<-sampleID[keep]
+		#
 		atdate<-c();
 		attime<-c();
 		for(i in 1:length(atPOSIX)){
@@ -452,7 +474,7 @@
 			  }
 		}
 		# screen IS intensity profiles #####################################################
-		min_count<-floor(length(profileList_neg[[4]])*as.numeric(logfile$parameters[[70]])/100);
+		min_count<-floor(length(profileList_neg[[4]])*as.numeric(logfile$parameters$ISnorm_percfiles)/100);
 		lis_delint_IS<-list(0)
 		lis_median_IS<-list(0)
 		stillin<-rep(TRUE,length(peaks[,1]))
@@ -503,14 +525,14 @@
 			}
 		}
 		# screen other profiles ###############################################################
-		if( logfile$parameters[72]=="TRUE" || logfile$parameters[75]=="TRUE" ){
+		if( logfile$parameters$ISnorm_medblank=="TRUE" || logfile$parameters$ISnorm_medsam=="TRUE" ){
 			cat("- on blank / non-blank profiles");
 			peaks<-peaks[stillin,];
 			peaks<-peaks[sample(1:length(peaks[,1]),length(peaks[,1]), replace = FALSE),];
-			if(logfile$parameters[72]=="TRUE"){ # use blank
+			if(logfile$parameters$ISnorm_medblank=="TRUE"){ # use blank
 				count_b<-0
-				if( logfile$parameters[73]=="TRUE" ){ # use subsampling
-					max_count_b<-as.numeric(logfile$parameters[74])
+				if( logfile$parameters$ISnorm_usesubblank=="TRUE" ){ # use subsampling
+					max_count_b<-as.numeric(logfile$parameters$ISnorm_numblank)
 				}else{
 					max_count_b<-length(peaks[,1])
 				}
@@ -518,10 +540,10 @@
 				count_b<-0
 				max_count_b<-0
 			}
-			if(logfile$parameters[75]=="TRUE"){ # use nonblank
+			if(logfile$parameters$ISnorm_medsam=="TRUE"){ # use nonblank
 				count_nb<-0
-				if( logfile$parameters[76]=="TRUE" ){ # use subsampling
-					max_count_nb<-as.numeric(logfile$parameters[77])
+				if( logfile$parameters$ISnorm_usesubsam=="TRUE" ){ # use subsampling
+					max_count_nb<-as.numeric(logfile$parameters$ISnorm_numsam)
 				}else{
 					max_count_nb<-length(peaks[,1])
 				}
@@ -551,7 +573,7 @@
 					PACKAGE="enviMass"
 				)
 				if(	 # for blind #############################################3
-					(logfile$parameters[72]=="TRUE") &&
+					(logfile$parameters$ISnorm_medblank=="TRUE") &&
 					(any(timeset[,5]>0)) &&
 					(count_b<max_count_b)
 				){ 
@@ -574,7 +596,7 @@
 					next;
 				}
 				if(	 # for non-blind ##########################################
-					(logfile$parameters[75]=="TRUE") &&
+					(logfile$parameters$ISnorm_medsam=="TRUE") &&
 					(any(timeset[,4]>0)) &&
 					(count_nb<max_count_nb)
 				){ 
@@ -600,7 +622,7 @@
 		cat("- correcting intensities");
 		corfac<-c()
 		for(k in 1:length(lis_delint_IS)){
-			if( length(lis_delint_IS[[k]])>as.numeric(logfile$parameters[71]) ){
+			if( length(lis_delint_IS[[k]])>as.numeric(logfile$parameters$ISnorm_numbIS) ){
 				corfac<-c( corfac,10^median(lis_delint_IS[[k]]) )
 			}else{			
 				corfac<-c(corfac,1)
@@ -641,7 +663,7 @@
 					count_IS[2]<-length(lis_delint_IS[[k]])
 				}
 				
-				if( (logfile$parameters[72]=="TRUE") ){ # on blank
+				if( (logfile$parameters$ISnorm_medblank=="TRUE") ){ # on blank
 					if(length(lis_delint_b[[k]])>0){ 
 						if( median(lis_delint_b[[k]])<ylimit_del[1] ){
 							ylimit_del[1]<-median(lis_delint_b[[k]])
@@ -658,7 +680,7 @@
 					}
 				}
 				
-				if( (logfile$parameters[75]=="TRUE") ){ # on non-blank
+				if( (logfile$parameters$ISnorm_medsam=="TRUE") ){ # on non-blank
 					if(length(lis_delint_nb[[k]])>0){ 
 						if( median(lis_delint_nb[[k]])<ylimit_del[1] ){
 							ylimit_del[1]<-median(lis_delint_nb[[k]])
@@ -689,14 +711,14 @@
 				}
 				points( rep(k,length(lis_delint_IS[[k]])),lis_delint_IS[[k]],pch=19,cex=0.7,col="lightgrey" )
 			}
-			if( (logfile$parameters[72]=="TRUE") ){	
+			if( (logfile$parameters$ISnorm_medblank=="TRUE") ){	
 				for(k in 1:length(lis_delint_b)){
 					if(length(lis_delint_b[[k]])>0){
 						points(k,median(lis_delint_b[[k]]),pch=21,cex=1.7,bg="blue")
 					}	
 				}
 			}
-			if( (logfile$parameters[75]=="TRUE") ){	
+			if( (logfile$parameters$ISnorm_medsam=="TRUE") ){	
 				for(k in 1:length(lis_delint_nb)){
 					if(length(lis_delint_nb[[k]])>0){ 
 						points(k,median(lis_delint_nb[[k]]),pch=21,cex=1.7,bg="green3")
@@ -745,7 +767,7 @@
 			}
 			lines(countit,col="red",lwd=2)
 			mtext("Number of IS peaks", side = 2, line =2.5, col="red",cex=1.5)			
-			if( logfile$parameters[72]=="TRUE" ){	
+			if( logfile$parameters$ISnorm_medblank=="TRUE" ){	
 				plot.window( xlim=c(-1,length(timeset[,1])+1),ylim=c(count_b[1]-1,count_b[2]+1) )	
 				countit<-c()	
 				for(k in 1:length(lis_delint_IS)){
@@ -755,7 +777,7 @@
 				axis(4,col="blue",col.ticks="blue",col.axis="blue",cex.axis=1.3)
 				mtext("Number of blank peaks", side = 4, line =2.3, col="blue", cex=1.5)
 			}
-			if( logfile$parameters[75]=="TRUE" ){	
+			if( logfile$parameters$ISnorm_medsam=="TRUE" ){	
 				plot.window( xlim=c(-1,length(timeset[,1])+1),ylim=c(count_nb[1]-1,count_nb[2]+1) )	
 				countit<-c()	
 				for(k in 1:length(lis_delint_IS)){

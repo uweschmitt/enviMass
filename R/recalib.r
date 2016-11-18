@@ -13,7 +13,7 @@
 #' @param what Character strings "mass" or "ret".
 #' @param one Logical. Only use recalibration \code{mz, ret} that can be matched unambiguously.
 #' @param knot Integer. Number of spline knots.
-#' @param plotit Logical. Produce recalibration plot?
+#' @param plot_it Logical. Produce recalibration plot?
 #' @param path_1 Logical \code{FALSE} or character string. If not \code{FALSE}, filepath to output the plot
 #' @param path_2 Logical \code{FALSE} or character string. Filepath for saving GAM model.
 #' @param stopit Logical. Triggers a full R error (\code{TRUE}) or returns an error message string (\code{FALSE}) if failing. 

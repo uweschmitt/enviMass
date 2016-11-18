@@ -4,10 +4,10 @@
 \name{enviMass}
 \alias{enviMass}
 \alias{enviMass-package}
-\title{Trend detection in LC-HRMS data}
+\title{Trend detection in LC-MS data}
 \description{
 enviMass version 2 provides basic workflow functions and a webbrowser user interface for the proccessing of high resolution
-LC-MS data, with emphasis on trend detection in time series of LC-HRMS files.
+LC-MS data, with emphasis on trend detection in time series of LC-MS files.
 }
 \details{
 Incorporates functions from several other packages for peak picking, adduct grouping, isotope pattern calculation and grouping, etc.

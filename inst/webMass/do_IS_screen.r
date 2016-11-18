@@ -24,7 +24,7 @@
 
 	########################################################################################################	
 	########################################################################################################
-	# IS screening on positive ionization ##################################################################
+	# IS screening on POSITIVE ionization ##################################################################
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="peaklist")){rm(peaklist)}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
@@ -185,7 +185,7 @@
 								int_tol=int_tol,
 								use_score_cut=use_score_cut,
 								score_cut=score_cut,
-								plotit=FALSE,
+								plot_it=FALSE,
 								verbose=FALSE
 							)
 							for(k in 1:length(combination_matches)){ # add file ID
@@ -211,7 +211,7 @@
 		# must be corrected by the smallest ID in the file set used ########################################
 		if( length(IS_pos_screen_listed)>0 ){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-			measurements<-measurements[measurements[,8]=="TRUE",]
+			measurements<-measurements[measurements[,"include"]=="TRUE",]
 			if(logfile$parameters$prof_select=="TRUE"){
 				measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
 			}
@@ -248,22 +248,25 @@
 										# no entry for this peak in profileList<->links_peaks_pos exists yet
 										if(profileList_pos[[2]][res_IS_pos_screen[[i]][[m]][[k]]$Peaks[a,2],5]==0){ 
 											if(length(use_entries)>0){
-												at_entry<-use_entries
+												at_entry<-use_entries[1]
 												use_entries<-use_entries[-1]
 											}else{
 												at_entry<-(length(links_peaks_pos)+1)
 											}
 											links_peaks_pos[[at_entry]]<-list()
-											links_peaks_pos[[at_entry]][[1]]<-list()
-											links_peaks_pos[[at_entry]][[2]]<-list()
-											links_peaks_pos[[at_entry]][[3]]<-list()
+											links_peaks_pos[[at_entry]][[1]]<-list() 	# target
+											links_peaks_pos[[at_entry]][[2]]<-list()	# IS
+											links_peaks_pos[[at_entry]][[3]]<-list()	# EIC_correl
+											links_peaks_pos[[at_entry]][[4]]<-list()	# isotop
+											links_peaks_pos[[at_entry]][[5]]<-list()	# adducts
+											links_peaks_pos[[at_entry]][[6]]<-list()	# homol														
 											profileList_pos[[2]][res_IS_pos_screen[[i]][[m]][[k]]$Peaks[a,2],5]<<-at_entry
-											links_peaks_pos[[at_entry]][[1]][[1]]<-names(pattern)[i]
+											links_peaks_pos[[at_entry]][[2]][[1]]<-names(pattern)[i]
 										# or expand existing entry
 										}else{
 											at_entry<-profileList_pos[[2]][res_IS_pos_screen[[i]][[m]][[k]]$Peaks[a,2],5]
-											at_list<-(length(links_peaks_pos[[at_entry]][[1]])+1)
-											links_peaks_pos[[at_entry]][[1]][[at_list]]<-names(pattern)[i]
+											at_list<-(length(links_peaks_pos[[at_entry]][[2]])+1)
+											links_peaks_pos[[at_entry]][[2]][[at_list]]<-names(pattern)[i]
 										}
 									}
 								}
@@ -288,7 +291,7 @@
 	
 	########################################################################################################	
 	########################################################################################################
-	# IS screening on negative ionization ##################################################################
+	# IS screening on NEGATIVE ionization ##################################################################
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="peaklist")){rm(peaklist)}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
@@ -459,7 +462,7 @@
 								int_tol=int_tol,
 								use_score_cut=use_score_cut,
 								score_cut=score_cut,
-								plotit=FALSE,
+								plot_it=FALSE,
 								verbose=FALSE,
 								RT_seperate=TRUE
 							)		
@@ -486,7 +489,7 @@
 		# must be corrected by the smalles ID in the file set used #########################################
 		if( length(IS_neg_screen_listed)>0 ){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-			measurements<-measurements[measurements[,8]=="TRUE",]
+			measurements<-measurements[measurements[,"include"]=="TRUE",]
 			if(logfile$parameters$prof_select=="TRUE"){
 				measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
 			}
@@ -523,22 +526,25 @@
 										# no entry for this peak in profileList<->links_peaks_neg exists yet
 										if(profileList_neg[[2]][res_IS_neg_screen[[i]][[m]][[k]]$Peaks[a,2],5]==0){ 
 											if(length(use_entries)>0){
-												at_entry<-use_entries
+												at_entry<-use_entries[1]
 												use_entries<-use_entries[-1]
 											}else{
 												at_entry<-(length(links_peaks_neg)+1)
 											}
 											links_peaks_neg[[at_entry]]<-list()
-											links_peaks_neg[[at_entry]][[1]]<-list()
-											links_peaks_neg[[at_entry]][[2]]<-list()
-											links_peaks_neg[[at_entry]][[3]]<-list()
+											links_peaks_neg[[at_entry]][[1]]<-list()	# target
+											links_peaks_neg[[at_entry]][[2]]<-list()	# IS								
+											links_peaks_neg[[at_entry]][[3]]<-list()	# EIC_correl
+											links_peaks_neg[[at_entry]][[4]]<-list()	# isotop
+											links_peaks_neg[[at_entry]][[5]]<-list()	# adducts
+											links_peaks_neg[[at_entry]][[6]]<-list()	# homol													
 											profileList_neg[[2]][res_IS_neg_screen[[i]][[m]][[k]]$Peaks[a,2],5]<<-at_entry
-											links_peaks_neg[[at_entry]][[1]][[1]]<-names(pattern)[i]
+											links_peaks_neg[[at_entry]][[2]][[1]]<-names(pattern)[i]
 										# or expand existing entry
 										}else{
 											at_entry<-profileList_neg[[2]][res_IS_neg_screen[[i]][[m]][[k]]$Peaks[a,2],5]
-											at_list<-(length(links_peaks_neg[[at_entry]][[1]])+1)
-											links_peaks_neg[[at_entry]][[1]][[at_list]]<-names(pattern)[i]
+											at_list<-(length(links_peaks_neg[[at_entry]][[2]])+1)
+											links_peaks_neg[[at_entry]][[2]][[at_list]]<-names(pattern)[i]
 										}
 									}
 								}
@@ -552,7 +558,7 @@
 			################################################################################################
 			save(results_screen_IS_neg,file=file.path(logfile$project_folder,"results","screening","results_screen_IS_neg"))
 			rm(measurements,intstand,results_screen_IS_neg);
-		}
+		}		
 		####################################################################################################
 		rm(getit,IS_neg_screen_listed,res_IS_neg_screen)
 		rm(pattern,pattern_RT,pattern_delRT,envir=as.environment(".GlobalEnv"))

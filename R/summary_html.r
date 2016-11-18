@@ -9,22 +9,40 @@
 #' @details enviMass workflow function
 #' 
 
-summary_html<-function(in_logfile_summary){
+summary_html<-function(use_summary){
 	
-	use_summary<-in_logfile_summary[c(1,2,3,4,5,16,11,7,8,14,12,13,20,24,15,9,17,18,19,10,21,23),]
 	use_summary[,1]<-as.character(use_summary[,1])
-	use_summary[,2]<-as.character(use_summary[,2])			
+	use_summary[,2]<-as.character(use_summary[,2])		
+	len_init<-length(use_summary[,2])
+	add<-length(unique(use_summary[,2]))
+	states<-as.character(unique(use_summary[,2]))
+	states[states=="FALSE"]<-"excluded / not run"
+	states[states=="TRUE"]<-"included"
+	states[states=="ok"]<-"done before"	
+	states[states=="..."]<-"scheduled"		
+	add_tab<-as.data.frame(matrix(nrow=(add+1),ncol=2,""),col.names=c("Tasks","Done?"),stringsAsFactors=FALSE)
+	add_tab[,1]<-c("---------------------------------",states)
+	names(add_tab)<-c("Tasks","Done?")
+	use_summary<-rbind(
+		use_summary,add_tab
+	)
 	mat<-matrix(ncol=2,nrow=length(use_summary[,1]),"")
-	mat[use_summary[,2]=="FALSE",2]<-"background-color: darkred;"
-	mat[use_summary[,2]=="TRUE",2]<-"background-color: darkgreen;"	
-	if(use_summary[1,2]=="TRUE"){mat[use_summary[,1]=="Data available?",2]<-"background-color: green;"}
+	mat[use_summary[,2]=="FALSE",2]<-"background-color: grey"
+	mat[use_summary[,2]=="TRUE",2]<-"background-color: green"	
 	mat[use_summary[,2]=="ok",2]<-"background-color: lightgreen"
 	mat[use_summary[,2]=="...",2]<-"background-color: orange"
 	mat[use_summary[,2]=="done",2]<-"background-color: green"	
 	mat[use_summary[,2]=="skipped",2]<-"background-color: grey"
-	mat[use_summary[,2]=="removed",2]<-"background-color: blue"
+	mat[use_summary[,2]=="removed",2]<-"background-color: lightblue"
+	mat[use_summary[,1]=="not run",1]<-"background-color: grey"
+	mat[use_summary[,1]=="included",1]<-"background-color: green"	
+	mat[use_summary[,1]=="done before",1]<-"background-color: lightgreen"
+	mat[use_summary[,1]=="scheduled",1]<-"background-color: orange"
+	mat[use_summary[,1]=="done",1]<-"background-color: green"
+	mat[use_summary[,1]=="skipped",1]<-"background-color: grey"	
+	mat[use_summary[,1]=="removed",1]<-"background-color: lightblue"	
+	
 	use_summary[,2]<-""
-	use_summary[use_summary[,1]=="Data available?",1]<-"Files included"
 	use_summary[use_summary[,1]=="peakpicking",1]<-"Peak picking"	
 	use_summary[use_summary[,1]=="qc",1]<-"Quality control"	
 	use_summary[use_summary[,1]=="pattern",1]<-"Compound patterns"	
@@ -36,25 +54,25 @@ summary_html<-function(in_logfile_summary){
 	use_summary[use_summary[,1]=="LOD",1]<-"LOD interpolation"
 	use_summary[use_summary[,1]=="calibration",1]<-"Calibration"
 	use_summary[use_summary[,1]=="quantification",1]<-"Quantification"	
-	use_summary[use_summary[,1]=="blinds",1]<-"Blind subtraction #1"	
+	use_summary[use_summary[,1]=="blind",1]<-"Blind subtraction #1"	
 	use_summary[use_summary[,1]=="replicates",1]<-"Replicate filter"	
 	use_summary[use_summary[,1]=="IS_screen",1]<-"IS screening"
 	use_summary[use_summary[,1]=="target_screen",1]<-"Target screening"
-	use_summary[use_summary[,1]=="IS_subtr",1]<-"IS subtraction"
-	use_summary[use_summary[,1]=="target_subtr",1]<-"Target subtraction"
-	use_summary[use_summary[,1]=="blind_subtr",1]<-"Blind subtraction #2"
+	use_summary[use_summary[,1]=="subtr",1]<-"Profile filtering"
 	use_summary[use_summary[,1]=="isotopologues",1]<-"Isotopol. grouping"	
 	use_summary[use_summary[,1]=="adducts",1]<-"Adduct grouping"	
 	use_summary[use_summary[,1]=="homologues",1]<-"Homologue detection"		
 	use_summary[use_summary[,1]=="recovery",1]<-"Recovery"		
-	for(i in 1:length(mat[,1])){
+	for(i in 1:len_init){
 		if(i%%2==0){
 			mat[i,1]<-c("background-color: lightgrey")
 		}else{
 			mat[i,1]<-c("background-color: white")
 		}
 	}
-	summary_report<-htmlTable::htmlTable(use_summary,
+	#mat[(len_init+1),]<-c("background-color: white")
+	summary_report<-htmlTable::htmlTable(
+		use_summary,
 		rnames=FALSE,
 		header=c("Tasks","Status"),
 		align="left",ctable=TRUE,

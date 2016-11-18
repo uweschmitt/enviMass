@@ -1,12 +1,11 @@
-use_int<-"max_int"
-#use_int<-"sum_int"
+use_int<-logfile$parameters$peak_which_intensity
 
 
 	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-	measurements<-measurements[measurements[,8]=="TRUE",]
+	measurements<-measurements[measurements[,"include"]=="TRUE",]
 	# positive #################################################################
-	if(any(measurements[,4]=="positive")){
-		measurements_pos<-measurements[measurements[,4]=="positive",]
+	if(any(measurements[,"Mode"]=="positive")){
+		measurements_pos<-measurements[measurements[,"Mode"]=="positive",]
 		leng<-length(measurements_pos[,8])
 		meanint<-c();
 		maxint<-c();
@@ -15,7 +14,7 @@ use_int<-"max_int"
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="peaklist")){rm(peaklist)}
 			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements_pos[i,1])),envir=as.environment(".GlobalEnv"));
-			if(use_int=="max_int"){
+			if(use_int=="maximum"){
 				meanint<-c(meanint,median(peaklist[,3]));
 				maxint<-c(maxint,max(peaklist[,3]));
 				minint<-c(minint,min(peaklist[,3]));
@@ -35,7 +34,7 @@ use_int<-"max_int"
 		for(i in 1:leng){
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="peaklist")){rm(peaklist)}
-			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements_pos[i,1])),envir=as.environment(".GlobalEnv"));
+			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements_pos[i,"ID"])),envir=as.environment(".GlobalEnv"));
 			doneit<-FALSE
 			if(measurements_pos[i,3]=="sample"){
 				abline(h=log10(atmean),col="red",lty=2)
@@ -69,7 +68,7 @@ use_int<-"max_int"
 			}else{
 				peaklist[,13]<-c(peaklist[,4]/median(peaklist[,4])*atmean)			
 			}
-			save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements_pos[i,1])))
+			save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements_pos[i,"ID"])))
 			rm(peaklist,envir=as.environment(".GlobalEnv"))
 		}
 		dev.off()
@@ -77,8 +76,8 @@ use_int<-"max_int"
 		output$pic_int_distr_pos<-renderImage(expr1p, deleteFile = FALSE)
 	}	
 	# negative #################################################################	
-	if(any(measurements[,4]=="negative")){
-		measurements_neg<-measurements[measurements[,4]=="negative",]
+	if(any(measurements[,"Mode"]=="negative")){
+		measurements_neg<-measurements[measurements[,"Mode"]=="negative",]
 		leng<-length(measurements_neg[,8])
 		meanint<-c();
 		maxint<-c();
@@ -86,7 +85,7 @@ use_int<-"max_int"
 		for(i in 1:leng){
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="peaklist")){rm(peaklist)}
-			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements_neg[i,1])),envir=as.environment(".GlobalEnv"));
+			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements_neg[i,"ID"])),envir=as.environment(".GlobalEnv"));
 			if(use_int=="max_int"){
 				meanint<-c(meanint,median(peaklist[,3]));
 				maxint<-c(maxint,max(peaklist[,3]));
@@ -107,7 +106,7 @@ use_int<-"max_int"
 		for(i in 1:leng){
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="peaklist")){rm(peaklist)}
-			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements_neg[i,1])),envir=as.environment(".GlobalEnv"));
+			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements_neg[i,"ID"])),envir=as.environment(".GlobalEnv"));
 			doneit<-FALSE
 			if(measurements_neg[i,3]=="sample"){
 				abline(h=log10(atmean),col="red",lty=2)
@@ -141,7 +140,7 @@ use_int<-"max_int"
 			}else{
 				peaklist[,13]<-c(peaklist[,4]/median(peaklist[,4])*atmean)
 			}
-			save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements_neg[i,1])))
+			save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements_neg[i,"ID"])))
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="peaklist")){rm(peaklist)}
 		}

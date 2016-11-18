@@ -11,20 +11,21 @@
 	}		
 	######################################################################################################################
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-	measurements<-measurements[measurements[,8]=="TRUE",,drop=FALSE]
-	measurements<-measurements[measurements[,3]=="calibration",,drop=FALSE]	
+	measurements<-measurements[measurements[,"include"]=="TRUE",,drop=FALSE]
+	measurements<-measurements[measurements[,"Type"]=="calibration",,drop=FALSE]	
 	######################################################################################################################
 	
 	
 	# POSITIVE ###########################################################################################################
 	if(
-		any(measurements[,4]=="positive" & measurements[,3]=="calibration") &
+		any(measurements[,"Mode"]=="positive" & measurements[,"Type"]=="calibration") &
 		file.exists(file.path(logfile[[1]],"results","pattern_pos_target")) &
 		file.exists(file.path(logfile[[1]],"results","pattern_pos_IS"))		
 	){
 
 		##################################################################################################################	
 		# CLEAN ALL PREVIOUS RESULTS #####################################################################################
+		cat("\n   Cleaning ")
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="peaklist")){rm(peaklist)}
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos_cal")){rm(profileList_pos_cal,envir=as.environment(".GlobalEnv"))}
@@ -57,7 +58,8 @@
 			file.remove(file=file.path(as.character(logfile[[1]]),"quantification","results_screen_target_pos_cal"))
 		}
 		##################################################################################################################
-		# PROFILING ######################################################################################################		
+		# PROFILING ######################################################################################################	
+		cat("- Profiling ")		
 		profileList_pos_cal<-startprofiles(
 							logfile,
 							frac=FALSE,
@@ -82,13 +84,14 @@
 							from=FALSE,
 							to=FALSE,
 							progbar=logfile$parameters$progressBar,
-							plotit=FALSE,
+							plot_it=FALSE,
 							replicates=FALSE
 						)
 		profileList_pos_cal<<-profileList_pos_cal
 		save(profileList_pos_cal,file=file.path(as.character(logfile[[1]]),"quantification","profileList_pos_cal"),compress=FALSE);
 		##################################################################################################################
 		# IS SCREENING ###################################################################################################
+		cat("- IS screening ")
 		#load(file=file.path(as.character(logfile[[1]]),"quantification","profileList_pos_cal"),envir=as.environment(".GlobalEnv"));
 		load(file=file.path(logfile[[1]],"results","pattern_pos_IS"),envir=as.environment(".GlobalEnv"));
 		pattern<<-pattern_pos_IS;rm(pattern_pos_IS,envir=as.environment(".GlobalEnv"));
@@ -224,7 +227,7 @@
 								int_tol=int_tol,
 								use_score_cut=use_score_cut,
 								score_cut=score_cut,
-								plotit=FALSE,
+								plot_it=FALSE,
 								verbose=FALSE,
 								RT_seperate=TRUE
 							)
@@ -270,6 +273,7 @@
 
 		##################################################################################################################
 		# TARGET SCREENING ###############################################################################################
+		cat("- target screening.")
 		#load(file=file.path(as.character(logfile[[1]]),"quantification","profileList_pos_cal"),envir=as.environment(".GlobalEnv"));
 		load(file=file.path(logfile[[1]],"results","pattern_pos_target"),envir=as.environment(".GlobalEnv"));
 		pattern<<-pattern_pos_target;rm(pattern_pos_target,envir=as.environment(".GlobalEnv"));
@@ -408,7 +412,7 @@
 								int_tol=int_tol,
 								use_score_cut=use_score_cut,
 								score_cut=score_cut,
-								plotit=FALSE,
+								plot_it=FALSE,
 								verbose=FALSE,
 								RT_seperate=TRUE
 							)
@@ -457,13 +461,14 @@
 	
 	# NEGATIVE ###########################################################################################################
 	if(
-		any(measurements[,4]=="negative" & measurements[,3]=="calibration") &
+		any(measurements[,"Mode"]=="negative" & measurements[,"Type"]=="calibration") &
 		file.exists(file.path(logfile[[1]],"results","pattern_neg_target")) &
 		file.exists(file.path(logfile[[1]],"results","pattern_neg_IS"))	
 	){
 
 		##################################################################################################################	
 		# CLEAN ALL PREVIOUS RESULTS #####################################################################################
+		cat("\n   Cleaning ")
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="peaklist")){rm(peaklist)}
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg_cal")){rm(profileList_neg_cal,envir=as.environment(".GlobalEnv"))}
@@ -497,6 +502,7 @@
 		}
 		##################################################################################################################
 		# PROFILING ######################################################################################################
+		cat("- Profiling ")
 		profileList_neg_cal<-startprofiles(
 							logfile,
 							frac=FALSE,
@@ -521,13 +527,14 @@
 							from=FALSE,
 							to=FALSE,
 							progbar=logfile$parameters$progressBar,
-							plotit=FALSE,
+							plot_it=FALSE,
 							replicates=FALSE
 						)
 		profileList_neg_cal<<-profileList_neg_cal
 		save(profileList_neg_cal,file=file.path(as.character(logfile[[1]]),"quantification","profileList_neg_cal"),compress=FALSE);
 		##################################################################################################################
 		# IS SCREENING ###################################################################################################
+		cat(" - IS screening ")
 		#load(file=file.path(as.character(logfile[[1]]),"quantification","profileList_neg_cal"),envir=as.environment(".GlobalEnv"));
 		load(file=file.path(logfile[[1]],"results","pattern_neg_IS"),envir=as.environment(".GlobalEnv"));
 		pattern<<-pattern_neg_IS;rm(pattern_neg_IS,envir=as.environment(".GlobalEnv"));
@@ -662,7 +669,7 @@
 								int_tol=int_tol,
 								use_score_cut=use_score_cut,
 								score_cut=score_cut,
-								plotit=FALSE,
+								plot_it=FALSE,
 								verbose=FALSE,
 								RT_seperate=TRUE
 							)
@@ -709,6 +716,7 @@
 
 		##################################################################################################################
 		# TARGET SCREENING ###############################################################################################
+		cat(" - target screening ")
 		#load(file=file.path(as.character(logfile[[1]]),"quantification","profileList_neg_cal"),envir=as.environment(".GlobalEnv"));
 		load(file=file.path(logfile[[1]],"results","pattern_neg_target"),envir=as.environment(".GlobalEnv"));
 		pattern<<-pattern_neg_target;rm(pattern_neg_target,envir=as.environment(".GlobalEnv"));
@@ -847,7 +855,7 @@
 								int_tol=int_tol,
 								use_score_cut=use_score_cut,
 								score_cut=score_cut,
-								plotit=FALSE,
+								plot_it=FALSE,
 								verbose=FALSE,
 								RT_seperate=TRUE
 							)

@@ -30,7 +30,7 @@
 			if(length(intstand$Formula[intstand$Formula!="-"])>0){ # any IS formulas available?
 
 				##################################################################
-				if(any(measurements[,4]=="positive") & any(intstand[,7]=="positive") ){
+				if(any(measurements[,"Mode"]=="positive") & any(intstand[,7]=="positive") ){
 					pattern_pos_IS<-list(0);
 					counter<-c(1);
 					finform<-c();
@@ -96,15 +96,15 @@
 									algo=1
 								)
 								checked<-enviPat::check_chemform(isotopes, formelone)
-								res<-try(enviPat::getR(checked, resolution_list[names(resolution_list) == logfile$parameters[22]][[1]], nknots = 7, spar = 0.1, plotit = FALSE), silent=TRUE)
+								res<-try(enviPat::getR(checked, resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]], nknots = 7, spar = 0.1, plotit = FALSE), silent=TRUE)
 								if(grepl("Error",res)){
 									cat("\n Mass out of range of Resolution data - set to range!");
-									if(checked[[3]]<=min(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])){
-										use_this<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1]==min(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])
-										res<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][use_this,2][1]
+									if(checked[[3]]<=min(resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1])){
+										use_this<-resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1]==min(resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1])
+										res<-resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][use_this,2][1]
 									}else{
-										use_this<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1]==max(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])
-										res<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][use_this,2][1]									
+										use_this<-resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1]==max(resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1])
+										res<-resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][use_this,2][1]									
 									}
 								}
 								pattern<-enviPat::envelope(
@@ -128,7 +128,7 @@
 								if(tolrets[i]!="FALSE"){
 									patternDelRT_pos_IS<-c(patternDelRT_pos_IS,as.numeric(as.character(tolrets[i]))*60)
 								}else{
-									patternDelRT_pos_IS<-c(patternDelRT_pos_IS,isolate(input$screen_IS_delRT))
+									patternDelRT_pos_IS<-c(patternDelRT_pos_IS,isolate(input$IS_drt1))
 								}								
 								if(rec[i]=="TRUE"){
 									if(takeall){
@@ -164,7 +164,7 @@
 				###################################################################
 				
 				##################################################################
-				if(any(measurements[,4]=="negative") & any(intstand[,7]=="negative")){
+				if(any(measurements[,"Mode"]=="negative") & any(intstand[,7]=="negative")){
 					pattern_neg_IS<-list(0);
 					counter<-c(1);
 					finform<-c();
@@ -230,15 +230,15 @@
 									algo=1
 								)
 								checked<-enviPat::check_chemform(isotopes, formelone)
-								res<-try(enviPat::getR(checked, resolution_list[names(resolution_list) == logfile$parameters[22]][[1]], nknots = 7, spar = 0.1, plotit = FALSE), silent=TRUE)
+								res<-try(enviPat::getR(checked, resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]], nknots = 7, spar = 0.1, plotit = FALSE), silent=TRUE)
 								if(grepl("Error",res)){
 									cat("\n Mass out of range of Resolution data - set to range!");
-									if(checked[[3]]<=min(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])){
-										use_this<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1]==min(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])
-										res<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][use_this,2][1]
+									if(checked[[3]]<=min(resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1])){
+										use_this<-resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1]==min(resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1])
+										res<-resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][use_this,2][1]
 									}else{
-										use_this<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1]==max(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])
-										res<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][use_this,2][1]									
+										use_this<-resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1]==max(resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1])
+										res<-resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][use_this,2][1]									
 									}
 								}
 								pattern<-enviPat::envelope(
@@ -262,7 +262,7 @@
 								if(tolrets[i]!="FALSE"){
 									patternDelRT_neg_IS<-c(patternDelRT_neg_IS,as.numeric(as.character(tolrets[i]))*60)
 								}else{
-									patternDelRT_neg_IS<-c(patternDelRT_neg_IS,isolate(input$screen_IS_delRT))
+									patternDelRT_neg_IS<-c(patternDelRT_neg_IS,isolate(input$IS_drt1))
 								}
 								if(rec[i]=="TRUE"){
 									if(takeall){
@@ -309,7 +309,7 @@
 			if(length(targets$Formula[targets$Formula!="-"])>0){ # any target formulas available?
 
 				##################################################################
-				if(any(measurements[,4]=="positive") & any(targets[,8]=="positive") ){
+				if(any(measurements[,"Mode"]=="positive") & any(targets[,8]=="positive") ){
 					pattern_pos_target<-list(0);
 					counter<-c(1);
 					finform<-c();
@@ -375,15 +375,15 @@
 									algo=1
 								)
 								checked<-enviPat::check_chemform(isotopes, formelone)
-								res<-try(enviPat::getR(checked, resolution_list[names(resolution_list) == logfile$parameters[22]][[1]], nknots = 7, spar = 0.1, plotit = FALSE), silent=TRUE)
+								res<-try(enviPat::getR(checked, resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]], nknots = 7, spar = 0.1, plotit = FALSE), silent=TRUE)
 								if(grepl("Error",res)){
 									cat("\n Mass out of range of Resolution data - set to range!");
-									if(checked[[3]]<=min(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])){
-										use_this<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1]==min(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])
-										res<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][use_this,2][1]
+									if(checked[[3]]<=min(resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1])){
+										use_this<-resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1]==min(resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1])
+										res<-resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][use_this,2][1]
 									}else{
-										use_this<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1]==max(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])
-										res<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][use_this,2][1]									
+										use_this<-resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1]==max(resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1])
+										res<-resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][use_this,2][1]									
 									}
 								}
 								pattern<-enviPat::envelope(
@@ -407,7 +407,7 @@
 								if(tolrets[i]!="FALSE"){
 									patternDelRT_pos_target<-c(patternDelRT_pos_target,as.numeric(as.character(tolrets[i]))*60)
 								}else{
-									patternDelRT_pos_target<-c(patternDelRT_pos_target,isolate(input$screen_target_delRT))
+									patternDelRT_pos_target<-c(patternDelRT_pos_target,isolate(input$tar_drt1))
 								}
 								if(rec[i]=="TRUE"){
 									if(takeall){
@@ -443,7 +443,7 @@
 				###################################################################
 				
 				##################################################################
-				if( any(measurements[,4]=="negative")  & any(targets[,8]=="negative")  ){
+				if( any(measurements[,"Mode"]=="negative")  & any(targets[,8]=="negative")  ){
 					pattern_neg_target<-list(0);
 					counter<-c(1);
 					finform<-c();
@@ -509,15 +509,15 @@
 									algo=1
 								)
 								checked<-enviPat::check_chemform(isotopes, formelone)
-								res<-try(enviPat::getR(checked, resolution_list[names(resolution_list) == logfile$parameters[22]][[1]], nknots = 7, spar = 0.1, plotit = FALSE), silent=TRUE)
+								res<-try(enviPat::getR(checked, resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]], nknots = 7, spar = 0.1, plotit = FALSE), silent=TRUE)
 								if(grepl("Error",res)){
 									cat("\n Mass out of range of Resolution data - set to range!");
-									if(checked[[3]]<=min(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])){
-										use_this<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1]==min(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])
-										res<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][use_this,2][1]
+									if(checked[[3]]<=min(resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1])){
+										use_this<-resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1]==min(resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1])
+										res<-resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][use_this,2][1]
 									}else{
-										use_this<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1]==max(resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][,1])
-										res<-resolution_list[names(resolution_list) == logfile$parameters[22]][[1]][use_this,2][1]									
+										use_this<-resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1]==max(resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][,1])
+										res<-resolution_list[names(resolution_list) == logfile$parameters$resolution][[1]][use_this,2][1]									
 									}
 								}
 								pattern<-enviPat::envelope(
@@ -541,7 +541,7 @@
 								if(tolrets[i]!="FALSE"){
 									patternDelRT_neg_target<-c(patternDelRT_neg_target,as.numeric(as.character(tolrets[i]))*60)
 								}else{
-									patternDelRT_neg_target<-c(patternDelRT_neg_target,isolate(input$screen_target_delRT))
+									patternDelRT_neg_target<-c(patternDelRT_neg_target,isolate(input$tar_drt1))
 								}								
 								if(rec[i]=="TRUE"){
 									if(takeall){

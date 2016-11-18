@@ -11,7 +11,7 @@
 #' @param ion_mode Character string, either "positive" or "negative".
 #' @param until Integer, ID of file. All peaks of files up to the date of this file will be included.
 #' @param selective Logical. Should only peaklist with measurements$profiled==TRUE be inluded?
-#' @param types. File types to include in profiling, e.g., "sample", "blind" or "calibration".
+#' @param types. File types to include in profiling, e.g., "sample", "blind", "calibration" or "spiked". For "spiked", all related files to subtract from are also included.
 #'
 #' @return profile list
 #' 
@@ -55,22 +55,23 @@ startprofiles<-function(
     ############################################################################
     # read in data #############################################################
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-    measurements<-measurements[measurements[,8]=="TRUE",]
+    measurements<-measurements[measurements[,names(measurements)=="include"]=="TRUE",]
 	if(selective=="TRUE"){
 		measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
 	}
-	measurements<-measurements[measurements[,4]==ion_mode,]	
+	measurements<-measurements[measurements[,names(measurements)=="Mode"]==ion_mode,]	
 	# adjust time period, sort #################################################
-    dated<-measurements[,6]
-    timed<-measurements[,7]
+    dated<-measurements[,"Date"]
+    timed<-measurements[,"Time"]
     datetime<-c()
     for(i in 1:length(timed)){
       datetime<-c(datetime,paste(dated[i],timed[i],"CET",sep=" "))
     }
 	atPOSIX<-as.POSIXct(datetime);
-	sampleID<-measurements[,1];
-	locus<-measurements[,5];
-	typus<-measurements[,3];
+	sampleID<-measurements[,"ID"];
+	locus<-measurements[,"Place"];
+	typus<-measurements[,"Type"];
+	tag2<-
 	ord<-order(atPOSIX,decreasing=TRUE);
 	atPOSIX<-atPOSIX[ord];
 	datetime<-datetime[ord];
@@ -81,6 +82,10 @@ startprofiles<-function(
 	if(types[1]!="FALSE"){
 		remain<-rep(TRUE,length(sampleID))
 		remain[is.na(match(typus,types))]<-FALSE
+		if(any(types=="spiked") & any(measurements[,"Type"]=="spiked")){ # include subtraction files, too
+			subtr_files<-measurements[measurements[,"ID"]==sampleID[typus=="spiked"],]$tag2
+			remain[match(subtr_files,sampleID)]<-TRUE	
+		}
 		datetime<-datetime[remain]
 		sampleID<-sampleID[remain]
 		locus<-locus[remain]		
@@ -114,7 +119,7 @@ startprofiles<-function(
     profiles[[5]]<-locus;
     profiles[[8]]<-0;
     profiles[[9]]<-typus;	
-    leng<-length(measurements[,8]);
+    leng<-length(measurements[,"include"]);
     at<-c(0);
 	############################################################################
 	# get length of required matrix to store peaks #############################
@@ -190,12 +195,12 @@ startprofiles<-function(
 			}
 			da2<-c(da1+that-1)				
 			if( logfile$workflow[2]=="yes" ){ # use recalibrated data ....
-				peaks[da1:da2,]<-as.matrix(cbind( peaklist[1:that,c(12,13,14,10)],
+				peaks[da1:da2,]<-as.matrix(cbind( peaklist[1:that,c(12,13,14,10)], 	# must use the peakID as listed!
 								rep(0,that),rep(as.numeric(measurements[i,1]),that),
 								rep(0,that),rep(0,that),peaklist[1:that,colnames(peaklist)=="keep_2"])
 				);
 			}else{ # ... or not?
-				peaks[da1:da2,]<-as.matrix(cbind( peaklist[1:that,c(1,4,5,10)],
+				peaks[da1:da2,]<-as.matrix(cbind( peaklist[1:that,c(1,4,5,10)], 	# must use the peakID as listed!
 								rep(0,that),rep(as.numeric(measurements[i,1]),that),
 								rep(0,that),rep(0,that),peaklist[1:that,colnames(peaklist)=="keep_2"])
 				);			
@@ -204,10 +209,10 @@ startprofiles<-function(
 			rm(peaklist,envir=as.environment(".GlobalEnv"))
 		}
     }
+	if(progbar==TRUE){close(prog);}	
     peaks<-peaks[order(peaks[,1],decreasing=FALSE),]
     profiles[[2]]<-peaks;
     rm(peaks)
-    if(progbar==TRUE){close(prog);}		
     ############################################################################
     return(profiles)
 

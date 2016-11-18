@@ -5,7 +5,7 @@
 \title{Function for m/z and RT recalibration.}
 \usage{
 recalib(peaklist, mz, tolmz = 10, ppm = TRUE, ret, tolret, what = "mass",
-  one = TRUE, knot = 5, plotit = FALSE, path_1 = FALSE,
+  one = TRUE, knot = 5, plot_it = FALSE, path_1 = FALSE,
   path_2 = FALSE, stopit = FALSE, intermediate_results = FALSE)
 }
 \arguments{
@@ -27,7 +27,7 @@ recalib(peaklist, mz, tolmz = 10, ppm = TRUE, ret, tolret, what = "mass",
 
 \item{knot}{Integer. Number of spline knots.}
 
-\item{plotit}{Logical. Produce recalibration plot?}
+\item{plot_it}{Logical. Produce recalibration plot?}
 
 \item{path_1}{Logical \code{FALSE} or character string. If not \code{FALSE}, filepath to output the plot}
 

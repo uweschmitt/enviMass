@@ -44,6 +44,12 @@ intensup<-function(
     atPOSIX<-profileList[[3]];
     sampletype<-profileList[[9]];
     sampleID<-profileList[[4]];
+	# filter out other file types such as spiked ones
+	keep<-((sampletype=="sample")|(sampletype=="blank"))
+	atPOSIX<-atPOSIX[keep]
+	sampletype<-sampletype[keep]
+	sampleID<-sampleID[keep]
+	#
     atdate<-c();
     attime<-c();
     for(i in 1:length(atPOSIX)){

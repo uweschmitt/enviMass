@@ -43,7 +43,7 @@
 		set_ID<-seq(1:length(measurements_table[,1]))
 		for(i in 1:length(screened_listed)){
 			IDed[i]<-strsplit(names(pattern)[i],"_")[[1]][1]
-			named[i]<-compound_table[compound_table[,1]==strsplit(names(pattern)[i],"_")[[1]][1],2]
+			named[i]<-compound_table[compound_table[,"ID"]==strsplit(names(pattern)[i],"_")[[1]][1],2]
 			adducted[i]<-strsplit(names(pattern)[i],"_")[[1]][2]
 			num_samples<-(0)
 			num_blanks<-(0)
@@ -120,8 +120,8 @@
 									at_matrix[at_len:(at_len+local_len-1),6]<-1
 								}		
 								at_matrix[at_len:(at_len+local_len-1),7]<-(
-									as.numeric(as.Date(measurements_table[at_ID,6]))+
-									as.numeric(as.difftime(measurements_table[at_ID,7])/24)
+									as.numeric(as.Date(measurements_table[at_ID,"Date"]))+
+									as.numeric(as.difftime(measurements_table[at_ID,"Time"])/24)
 								)
 								at_matrix[at_len:(at_len+local_len-1),8]<-at_RT[i]							
 								at_matrix[at_len:(at_len+local_len-1),9]<-as.numeric(measurements_table[at_ID,1]);									

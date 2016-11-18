@@ -25,7 +25,7 @@ function(
 	){
 
     ############################################################################
-    if(!is.loaded("plotit_prof")){stop(".Call to plotit failed!")};
+    if(!is.loaded("plot_prof")){stop(".Call to plot_prof failed!")};
     if(!is.loaded("binRT_prof")){stop(".Call to binRT failed!")};
     if(!is.loaded("binmz_prof")){stop(".Call to binmz failed!")};
     if(mzlimit[1]==FALSE){
@@ -111,7 +111,7 @@ function(
         if(plotstate$part){whatcolor=2}
         if(plotstate$clustered){whatcolor=3}
         if(!plotstate$select){text(3,8.75,pos=4,labels="Processing, please wait ... ");}
-        out <- .Call(  "plotit_prof",
+        out <- .Call(  "plot_prof",
                         as.numeric(RTlimit[1]),
                         as.numeric(RTlimit[2]),
                         as.numeric(mzlimit[1]),

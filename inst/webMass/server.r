@@ -1,11 +1,12 @@
 options(shiny.maxRequestSize=2000*1024^2)
-
+verbose<-TRUE
 
 shinyServer(function(input, output, session){
 ################################################################################
 ################################################################################
 
   cat("\n I run in ");print(environment())
+  in_envir<<-environmentName(environment())
   if(any(ls()=="logfile")){stop("\n illegal logfile detected in server.r #1")}  
   ##############################################################################
   # load data ##################################################################  
@@ -16,7 +17,9 @@ shinyServer(function(input, output, session){
   # define variables, inputs, outputs - if not in server.startup.R #############
   tried<-try(getVolumes()(),silent=FALSE)
   if(!inherits(tried,"try-error")){
-	shinyFileChoose(input,"pro_dir3", session=session, roots=getVolumes(), filetypes=c("emp") )
+	shinyFileChoose(input, "pro_dir3", session=session, roots=getVolumes(), filetypes=c("emp"), updateFreq = 30000)
+	shinyFileSave(input, "download_IS", roots=getVolumes(), updateFreq=30000)
+	shinyFileSave(input, "download_target", roots=getVolumes(), updateFreq=30000)	
   }else{
 	createAlert(session,anchorId = "alert_4", alertId="a4", title = NULL, content="logfile select disabled, used folder path input",style = "alarm",append=FALSE,dismiss=TRUE)
   }

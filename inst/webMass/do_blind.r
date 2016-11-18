@@ -1,18 +1,23 @@
+
+
+
 measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-measurements<-measurements[measurements[,8]=="TRUE",]
+measurements<-measurements[measurements[,"include"]=="TRUE",]
 IDs<-list.files(file.path(logfile[[1]],"peaklist"))
-filetypus<-(measurements[,3])
-ionmode<-(measurements[,4])
-atdate<-(measurements[,6])
-attime<-(measurements[,7])
+filetypus<-(measurements[,"Type"])
+ionmode<-(measurements[,"Mode"])
+atdate<-(measurements[,"Date"])
+attime<-(measurements[,"Time"])
 attime2<-as.difftime(attime);
 atdate<-as.Date(atdate);
-sampleID<-(measurements[,1])
+sampleID<-(measurements[,"ID"])
+old_samplewise<-(measurements[,"blind"])
+new_samplewise<-old_samplewise
 ord<-order(as.numeric(atdate),as.numeric(attime2),sampleID);
-ppm<-logfile$parameters[[83]]
-dmz<-as.numeric(logfile$parameters[[82]])
-dRT<-as.numeric(logfile$parameters[[84]])
-int_ratio<-as.numeric(logfile$parameters[[37]])
+ppm<-logfile$parameters$blind_ppm
+dmz<-as.numeric(logfile$parameters$blind_dmz)
+dRT<-as.numeric(logfile$parameters$blind_drt)
+int_ratio<-as.numeric(logfile$parameters$blind_threshold)
 
 if(FALSE){ # debug parameters - ignore
 	ppm<-TRUE
@@ -24,8 +29,8 @@ if(FALSE){ # debug parameters - ignore
 # clean old entries #####################################################################################################
 if(length(IDs)>0){
 for(i in 1:length(IDs)){
-	if(any(measurements[,1]==IDs[i])){
-		if(filetypus[measurements[,1]==IDs[i]]=="sample"){
+	if(any(measurements[,"ID"]==IDs[i])){
+		if(filetypus[measurements[,"ID"]==IDs[i]]=="sample"){
 			load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
 			keep_2<-rep(1,length(peaklist[,1])) # 1 == TRUE
 			peaklist[,colnames(peaklist)=="keep_2"]<-keep_2
@@ -40,11 +45,12 @@ for(i in 1:length(IDs)){
 
 #######################################################################################################
 # run last blank by date & time subtraction ###########################################################
-if((logfile$parameters[[85]]=="TRUE") || (logfile$parameters[[87]]=="TRUE")){
+if((logfile$parameters$subtract_pos_bydate=="TRUE") || (logfile$parameters$subtract_neg_bydate=="TRUE")){
 	blank_ID_last<-"FALSE"
 	for(i in 2:length(ord)){ # can skip first file
-		if((logfile$parameters[[85]]=="FALSE") & (ionmode[ord[i]]=="positive")){next}
-		if((logfile$parameters[[87]]=="FALSE") & (ionmode[ord[i]]=="negative")){next}	
+		if((logfile$parameters$subtract_pos_bydate=="FALSE") & (ionmode[ord[i]]=="positive")){next}
+		if((logfile$parameters$subtract_neg_bydate=="FALSE") & (ionmode[ord[i]]=="negative")){next}	
+		if(old_samplewise[ord[i]]=="TRUE"){next}
 		if(filetypus[ord[i]]=="sample"){
 			sam_ID<-sampleID[ord[i]]
 			found_blank<-FALSE
@@ -88,6 +94,7 @@ if((logfile$parameters[[85]]=="TRUE") || (logfile$parameters[[87]]=="TRUE")){
 				sam_ID," vs. ",blank_ID,", ",ionmode[ord[i]],", by date & time)."
 			,sep=""))
 			rm(peaklist);
+			new_samplewise[ord[i]]<-"TRUE"
 		}
 	}
 }
@@ -95,13 +102,14 @@ if((logfile$parameters[[85]]=="TRUE") || (logfile$parameters[[87]]=="TRUE")){
 
 #######################################################################################################
 # run the selective subtraction #######################################################################
-# positive ############################################################################################
-if( (logfile$parameters[[86]]=="TRUE") & any(logfile$Positive_subtraction_files!="FALSE") ){
+# POSITIVE ############################################################################################
+if( (logfile$parameters$subtract_pos_byfile=="TRUE") & any(logfile$Positive_subtraction_files!="FALSE") ){
 	selec_pos<-logfile$Positive_subtraction_files
 	selec_pos<-selec_pos[selec_pos!="FALSE"]
 	for(i in 1:length(IDs)){
-		if(any(measurements[,1]==IDs[i])){
-			if( filetypus[measurements[,1]==IDs[i]]=="sample" &  ionmode[measurements[,1]==IDs[i]]=="positive" ){
+		if(any(measurements[,"ID"]==IDs[i])){ # how not though?
+			if( filetypus[measurements[,"ID"]==IDs[i]]=="sample" &  ionmode[measurements[,"ID"]==IDs[i]]=="positive" ){
+				if(old_samplewise[measurements[,"ID"]==IDs[i]]=="TRUE"){next} # done before, samplewise
 				load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),verbose=FALSE);
 				sam_peaklist<-peaklist;rm(peaklist);
 				for(j in 1:length(selec_pos)){
@@ -133,6 +141,7 @@ if( (logfile$parameters[[86]]=="TRUE") & any(logfile$Positive_subtraction_files!
 					as.character(IDs[i]),"). "
 				,sep=""))
 				rm(peaklist,sam_peaklist);
+				new_samplewise[measurements[,"ID"]==IDs[i]]<-"TRUE"
 			}
 		}else{
 			cat("\n Orphaned peaklist detected - from an older workflow run?")
@@ -143,13 +152,14 @@ if( (logfile$parameters[[86]]=="TRUE") & any(logfile$Positive_subtraction_files!
 
 #######################################################################################################
 # run the selective subtraction #######################################################################
-# negative ############################################################################################
-if( (logfile$parameters[[88]]=="TRUE") & any(logfile$Negative_subtraction_files!="FALSE") ){
+# NEGATIVE ############################################################################################
+if( (logfile$parameters$subtract_neg_byfile=="TRUE") & any(logfile$Negative_subtraction_files!="FALSE") ){
 	selec_neg<-logfile$Negative_subtraction_files
 	selec_neg<-selec_neg[selec_neg!="FALSE"]
 	for(i in 1:length(IDs)){
-		if(any(measurements[,1]==IDs[i])){	
-			if(filetypus[measurements[,1]==IDs[i]]=="sample" &  ionmode[measurements[,1]==IDs[i]]=="negative"){
+		if(any(measurements[,"ID"]==IDs[i])){	
+			if(filetypus[measurements[,"ID"]==IDs[i]]=="sample" &  ionmode[measurements[,"ID"]==IDs[i]]=="negative"){
+				if(old_samplewise[measurements[,"ID"]==IDs[i]]=="TRUE"){next} # done before, samplewise
 				load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),verbose=FALSE);
 				sam_peaklist<-peaklist;rm(peaklist);
 				for(j in 1:length(selec_neg)){
@@ -181,6 +191,7 @@ if( (logfile$parameters[[88]]=="TRUE") & any(logfile$Negative_subtraction_files!
 					as.character(IDs[i]),"). "
 				,sep=""))
 				rm(peaklist,sam_peaklist);
+				new_samplewise[measurements[,"ID"]==IDs[i]]<-"TRUE"
 			}
 		}else{
 			cat("\n Orphaned peaklist detected - from an older workflow run?")
@@ -189,7 +200,10 @@ if( (logfile$parameters[[88]]=="TRUE") & any(logfile$Negative_subtraction_files!
 }
 #######################################################################################################
 
-
-
-
+#######################################################################################################
+# update filewise switches for blind detection ########################################################
+measurements[,"blind"]<-new_samplewise
+write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);	
+rm(measurements)
+#######################################################################################################
 

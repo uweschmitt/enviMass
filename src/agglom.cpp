@@ -12,7 +12,50 @@ Copyright (c) 2013 Eawag. All rights reserved.
 #include <Rdefines.h>
 
 
+#define RMATRIX(m,i,j) (REAL(m)[ INTEGER(GET_DIM(m))[0]*(j)+(i) ])
+#define RMATRIX2(m,i,j) (INTEGER(m)[ INTEGER(GET_DIM(m))[0]*(j)+(i) ])
+#define RVECTOR(m,i) (REAL(m)[i])
+#define RRow(m) (INTEGER(GET_DIM(m))[0])
+#define RCol(m) (INTEGER(GET_DIM(m))[1])
+
+
 extern "C"{
+
+
+/******************************************************************************/
+/* compare row-wise ***********************************************************/
+/******************************************************************************/
+
+SEXP compare(
+    SEXP a,
+    SEXP b,
+    SEXP results
+){
+        PROTECT(a = AS_NUMERIC(a));
+        PROTECT(b = AS_NUMERIC(b));
+        PROTECT(results = AS_NUMERIC(results));
+        int dims, len1, len2, i=0, m=0, n=0;
+        len1=RRow(a);
+        len2=RRow(b);
+        dims=RCol(a);
+
+        for(i=0;i<len1;i++){
+            for(m=0;m<dims;m++){
+                while( RMATRIX(b,n,m)<RMATRIX(a,i,m) ){
+                    n++;
+                    if(n>=len2){break;}
+                }
+                if(n>=len2){break;}
+                if(RMATRIX(b,n,m)>RMATRIX(a,i,m)){break;}
+                if(m==(dims-1)){RMATRIX(results,i,0)=(n+1);}
+            }
+            if(n>=len2){break;}
+        }
+
+        UNPROTECT(3);
+        return(results);
+}
+
 
 /******************************************************************************/
 /* find peak intensities & correct them ***************************************/
@@ -61,7 +104,6 @@ SEXP correct_intens(
             UNPROTECT(5);
             return new_intens;
 }
-
 
 
 
@@ -236,472 +278,287 @@ SEXP correct_intens(
             return relations;
 
 }
-
-
 /******************************************************************************/
-/* retrieve profiles **********************************************************/
+/* assort profiles **********##************************************************/
 /******************************************************************************/
 
-      SEXP getProfiles(
+    SEXP extractProfiles(
                         SEXP mz,
                         SEXP RT,
                         SEXP intens,
                         SEXP sam,
                         SEXP orderedint,
-                        SEXP orderedsam,
-                        SEXP pregroup,       /* integer vector with pre-grouping of peaks >0; if used, that defines all inputs */
+                        SEXP pregroup,       /* integer vector with pre-grouping of peaks >0 */
                         SEXP dmz,
-                        SEXP ppm2,
-                        SEXP drtdens,
-                        SEXP supress,      /* 1 == do not include peaks which cannot be assigned to any existing clusters*/
+                        SEXP ppm,
+                        SEXP drt,
                         SEXP run_pregroup
-                    ){
+    ){
 
-           PROTECT(mz = AS_NUMERIC(mz));
-           PROTECT(RT = AS_NUMERIC(RT));
-           PROTECT(intens = AS_NUMERIC(intens));
-           PROTECT(sam = AS_INTEGER(sam));
-           PROTECT(orderedint = AS_INTEGER(orderedint));
-           PROTECT(orderedsam = AS_INTEGER(orderedsam));
-           PROTECT(pregroup = AS_INTEGER(pregroup));
-           PROTECT(dmz = AS_NUMERIC(dmz));
-           PROTECT(ppm2 = AS_INTEGER(ppm2));
-           PROTECT(drtdens = AS_NUMERIC(drtdens));
-           PROTECT(supress = AS_INTEGER(supress));
-           PROTECT(run_pregroup = AS_INTEGER(pregroup));
-           double *ret, *mass, *intensity;
-           mass = NUMERIC_POINTER(mz);
-           ret = NUMERIC_POINTER(RT);
-           intensity = NUMERIC_POINTER(intens);
-           int *samp, *ordint, *ordsam, *group;
-           samp = INTEGER_POINTER(sam);
-           ordint = INTEGER_POINTER(orderedint);
-           ordsam = INTEGER_POINTER(orderedsam);
-           group = INTEGER_POINTER(pregroup);
-           double dmz2 = NUMERIC_VALUE(dmz);
-           int ppm3 = INTEGER_VALUE(ppm2);
-           int supr = INTEGER_VALUE(supress);
-           int do_group = INTEGER_VALUE(run_pregroup);
-           double drtdens2 = NUMERIC_VALUE(drtdens);
-           int leng = LENGTH(RT);
-           int m,n,i,k=0,z,w,clustnumb,maxat=0,maxit=0,at_peak=0,found_group,in_group;
-           double delmz;
-           SEXP clusters;
-           PROTECT(clusters = allocMatrix(REALSXP, leng, 13));
-           double *clus;
-           clus = REAL(clusters);
-           for(m=0;m<13;m++){
-               for(n=0;n<leng;n++){
-                   clus[(m*leng)+n]=0;
-               }
-           }
-           int *at;
-           at = new int[leng];
-           int *peak;
-           peak = new int[leng];
 
-           /* initialize with most intense measurement ************************/
-           n=0;
-           clustnumb=1;
-           if(ppm3==1){delmz=((dmz2**(mass+(*(ordint+n)-1)))/1e6);}else{delmz=dmz2;}
-           clus[0]=(*(mass+(*(ordint+n)-1))-(2*delmz));       /* low mass boundary **************/
-           clus[(1*leng)]=(*(mass+(*(ordint+n)-1))+(2*delmz));/* high mass boundary *************/
-           clus[(2*leng)]=(*(ret+(*(ordint+n)-1))-drtdens2);  /* low RT boundary ****************/
-           clus[(3*leng)]=(*(ret+(*(ordint+n)-1))+drtdens2);  /* high RT boundary ***************/
-           clus[(4*leng)]=1;                                  /* number of measurements *********/
-           clus[(5*leng)]=*(mass+(*(ordint+n)-1));            /* mass sum ***********************/
-           clus[(6*leng)]=clustnumb;                          /* cluster ID *********************/
-           clus[(7*leng)]=0;                                  /* merged (1) or not (0)? *********/
-           clus[(8*leng)]=*(intensity+(*(ordint+n)-1));       /* maximum intensity in a cluster */
-           clus[(9*leng)+(*(ordint+n)-1)]=clustnumb;          /* cluster ID for measurement *****/
-           clus[(10*leng)]=0;                                 /* variance, set later if merged **/
-           clus[(11*leng)]=*(mass+(*(ordint+n)-1));           /* lowest mass in cluster *********/
-           clus[(12*leng)]=*(mass+(*(ordint+n)-1));           /* highest mass in cluster ********/
-/* extend - no further checks for this first group */
-            if((do_group==1) & (*(group+(*(ordint+n)-1))!=0)){
-                at[0]=0;
-                if((*(ordint+n)-1)>0){ /* downward check */
-                    for(z=(*(ordint+n)-2);z>=0;z--){
-                        if(*(group+(*(ordint+n)-1)) == *(group+z)){
-                            clus[(9*leng)+z]=clustnumb;
-                            if(ppm3==1){delmz=((dmz2**(mass+z))/1e6);}else{delmz=dmz2;}
-                            if(clus[(0*leng)+(at[0])]<(*(mass+z)-(2*delmz))){clus[(0*leng)+(at[0])]=(*(mass+z)-(2*delmz));}
-                            if(clus[(1*leng)+(at[0])]>(*(mass+z)+(2*delmz))){clus[(1*leng)+(at[0])]=(*(mass+z)+(2*delmz));}
-                            if(clus[(2*leng)+(at[0])]<(*(ret+z)-drtdens2)){clus[(2*leng)+(at[0])]=(*(ret+z)-drtdens2);}
-                            if(clus[(3*leng)+(at[0])]>(*(ret+z)+drtdens2)){clus[(3*leng)+(at[0])]=(*(ret+z)+drtdens2);}
-                            clus[(4*leng)+(at[0])]=(clus[(4*leng)+(at[0])]+1);
-                            clus[(5*leng)+(at[0])]=(clus[(5*leng)+(at[0])]+*(mass+z));
-                            if(*(mass+z)<clus[(11*leng)+(at[0])]){clus[(11*leng)+(at[0])]=*(mass+z);};
-                            if(*(mass+z)>clus[(12*leng)+(at[0])]){clus[(12*leng)+(at[0])]=*(mass+z);};
-                        }else{
-                            break;
-                        }
-                    }
-                }
-                if((*(ordint+n)-1)<(leng-1)){ /* upward check */
-                    for(z=(*(ordint+n));z<leng;z++){
-                        if(*(group+(*(ordint+n)-1)) == *(group+z)){
-                            clus[(9*leng)+(*(ordint+z)-1)]=clustnumb;
-                            if(ppm3==1){delmz=((dmz2**(mass+z))/1e6);}else{delmz=dmz2;}
-                            if(clus[(0*leng)+(at[0])]<(*(mass+z)-(2*delmz))){clus[(0*leng)+(at[0])]=(*(mass+z)-(2*delmz));}
-                            if(clus[(1*leng)+(at[0])]>(*(mass+z)+(2*delmz))){clus[(1*leng)+(at[0])]=(*(mass+z)+(2*delmz));}
-                            if(clus[(2*leng)+(at[0])]<(*(ret+z)-drtdens2)){clus[(2*leng)+(at[0])]=(*(ret+z)-drtdens2);}
-                            if(clus[(3*leng)+(at[0])]>(*(ret+z)+drtdens2)){clus[(3*leng)+(at[0])]=(*(ret+z)+drtdens2);}
-                            clus[(4*leng)+(at[0])]=(clus[(4*leng)+(at[0])]+1);
-                            clus[(5*leng)+(at[0])]=(clus[(5*leng)+(at[0])]+*(mass+z));
-                            if(*(mass+z)<clus[(11*leng)+(at[0])]){clus[(11*leng)+(at[0])]=*(mass+z);};
-                            if(*(mass+z)>clus[(12*leng)+(at[0])]){clus[(12*leng)+(at[0])]=*(mass+z);};
-                        }else{
-                            break;
-                        }
-                    }
-                }
+        PROTECT(mz = AS_NUMERIC(mz));
+        PROTECT(RT = AS_NUMERIC(RT));
+        PROTECT(intens = AS_NUMERIC(intens));
+        PROTECT(sam = AS_INTEGER(sam));
+        PROTECT(orderedint = AS_INTEGER(orderedint));
+        PROTECT(pregroup = AS_INTEGER(pregroup));
+        PROTECT(dmz = AS_NUMERIC(dmz));
+        PROTECT(ppm = AS_INTEGER(ppm));
+        PROTECT(drt = AS_NUMERIC(drt));
+        PROTECT(run_pregroup = AS_INTEGER(pregroup));
+        double *ret, *mass, *intensity;
+        mass = NUMERIC_POINTER(mz);
+        ret = NUMERIC_POINTER(RT);
+        intensity = NUMERIC_POINTER(intens);
+        int *samp, *ordint, *group;
+        samp = INTEGER_POINTER(sam);
+        ordint = INTEGER_POINTER(orderedint);
+        group = INTEGER_POINTER(pregroup);
+        double dmz2 = NUMERIC_VALUE(dmz);
+        int ppm2 = INTEGER_VALUE(ppm);
+        int do_group = INTEGER_VALUE(run_pregroup);
+        double drt2 = NUMERIC_VALUE(drt);
+        int leng = LENGTH(RT);
+        int n,m,k,peak_number,clustnumb=0,at_assigned_peak=0,at_cluster,found_cluster=0,reset_RT,reset_mass;
+        int verbose=0;
+        double delmz,delrt,minmz,maxmz,minrt,maxrt,summmz;
+        SEXP clusters;
+        PROTECT(clusters = allocMatrix(REALSXP, leng, 15));
+        double *clus;
+        clus = REAL(clusters);
+        for(m=0;m<15;m++){
+            for(n=0;n<leng;n++){
+                clus[(m*leng)+n]=0;
             }
-/**/
-            /* assign all other peaks ******************************************/
-            for(n=1;n<leng;n++){
-               if(clus[(9*leng)+(*(ordint+n)-1)]==0){ /* not yet in a cluster */
-                   /* check for possible fit to existing clusters *****************/
-                   maxat=0;
-                   for(m=0;m<clustnumb;m++){
-                    if(*(mass+(*(ordint+n)-1))>=clus[(0*leng)+m]){
-                       if(*(mass+(*(ordint+n)-1))<=clus[(1*leng)+m]){
-                               if(*(ret+(*(ordint+n)-1))>=clus[(2*leng)+m]){
-                                   if(*(ret+(*(ordint+n)-1))<=clus[(3*leng)+m]){
-                                        at[maxat]=m;
-                                        maxat++;
-                                   }
-                               }
-                           }
-                       }
-                   }
-                   /* (a) not assignable - create new cluster *********************/
-                   if(maxat==0){
-                        clustnumb++;
-                        clus[(9*leng)+(*(ordint+n)-1)]=clustnumb;
-                        if(ppm3==1){delmz=((dmz2**(mass+(*(ordint+n)-1)))/1e6);}else{delmz=dmz2;}
-                        clus[0+(clustnumb-1)]=(*(mass+(*(ordint+n)-1))-(2*delmz));
-                        clus[(1*leng)+(clustnumb-1)]=(*(mass+(*(ordint+n)-1))+(2*delmz));
-                        clus[(2*leng)+(clustnumb-1)]=(*(ret+(*(ordint+n)-1))-drtdens2);
-                        clus[(3*leng)+(clustnumb-1)]=(*(ret+(*(ordint+n)-1))+drtdens2);
-                        clus[(4*leng)+(clustnumb-1)]=1;
-                        clus[(5*leng)+(clustnumb-1)]=*(mass+(*(ordint+n)-1));
-                        clus[(6*leng)+(clustnumb-1)]=clustnumb;
-                        clus[(7*leng)+(clustnumb-1)]=0;
-                        clus[(8*leng)+(clustnumb-1)]=*(intensity+(*(ordint+n)-1));
-                        clus[(11*leng)+(clustnumb-1)]=*(mass+(*(ordint+n)-1));
-                        clus[(12*leng)+(clustnumb-1)]=*(mass+(*(ordint+n)-1));
-/* extend - no further checks for this group */
-                        if((do_group==1) & (*(group+(*(ordint+n)-1))!=0)){
-                            at[0]=(clustnumb-1);
-                            /* downward check*/
-                            if((*(ordint+n)-1)>0){ /* downward check */
-                                for(z=(*(ordint+n)-2);z>=0;z--){
-                                    if(*(group+(*(ordint+n)-1)) == *(group+z)){
-                                        clus[(9*leng)+z]=clustnumb;
-                                        if(ppm3==1){delmz=((dmz2**(mass+z))/1e6);}else{delmz=dmz2;}
-                                        if(clus[(0*leng)+(at[0])]<(*(mass+z)-(2*delmz))){clus[(0*leng)+(at[0])]=(*(mass+z)-(2*delmz));}
-                                        if(clus[(1*leng)+(at[0])]>(*(mass+z)+(2*delmz))){clus[(1*leng)+(at[0])]=(*(mass+z)+(2*delmz));}
-                                        if(clus[(2*leng)+(at[0])]<(*(ret+z)-drtdens2)){clus[(2*leng)+(at[0])]=(*(ret+z)-drtdens2);}
-                                        if(clus[(3*leng)+(at[0])]>(*(ret+z)+drtdens2)){clus[(3*leng)+(at[0])]=(*(ret+z)+drtdens2);}
-                                        clus[(4*leng)+(at[0])]=(clus[(4*leng)+(at[0])]+1);
-                                        clus[(5*leng)+(at[0])]=(clus[(5*leng)+(at[0])]+*(mass+z));
-                                        if(*(mass+z)<clus[(11*leng)+(at[0])]){clus[(11*leng)+(at[0])]=*(mass+z);};
-                                        if(*(mass+z)>clus[(12*leng)+(at[0])]){clus[(12*leng)+(at[0])]=*(mass+z);};
-                                    }else{
-                                        break;
-                                    }
-                                }
-                            }
-                            if((*(ordint+n)-1)<(leng-1)){ /* upward check */
-                                for(z=(*(ordint+n));z<leng;z++){
-                                    if(*(group+(*(ordint+n)-1)) == *(group+z)){
-                                        clus[(9*leng)+(*(ordint+z)-1)]=clustnumb;
-                                        if(ppm3==1){delmz=((dmz2**(mass+z))/1e6);}else{delmz=dmz2;}
-                                        if(clus[(0*leng)+(at[0])]<(*(mass+z)-(2*delmz))){clus[(0*leng)+(at[0])]=(*(mass+z)-(2*delmz));}
-                                        if(clus[(1*leng)+(at[0])]>(*(mass+z)+(2*delmz))){clus[(1*leng)+(at[0])]=(*(mass+z)+(2*delmz));}
-                                        if(clus[(2*leng)+(at[0])]<(*(ret+z)-drtdens2)){clus[(2*leng)+(at[0])]=(*(ret+z)-drtdens2);}
-                                        if(clus[(3*leng)+(at[0])]>(*(ret+z)+drtdens2)){clus[(3*leng)+(at[0])]=(*(ret+z)+drtdens2);}
-                                        clus[(4*leng)+(at[0])]=(clus[(4*leng)+(at[0])]+1);
-                                        clus[(5*leng)+(at[0])]=(clus[(5*leng)+(at[0])]+*(mass+z));
-                                        if(*(mass+z)<clus[(11*leng)+(at[0])]){clus[(11*leng)+(at[0])]=*(mass+z);};
-                                        if(*(mass+z)>clus[(12*leng)+(at[0])]){clus[(12*leng)+(at[0])]=*(mass+z);};
-                                    }else{
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-/**/
-                        continue;
-                   }
-                   /* check for other peaks in same sample ****************************/
-                   maxit=maxat;
-                   for(i=0;i<leng;i++){ /* find sample-order index */
-                       if(*(ordint+n)==*(ordsam+i)){
-                           k=i;
-                           break;
-                       }
-                   }
-                   if(k>0){ /* backward over sample-order */
-                       for(i=(k-1);i>=0;i--){
-                           if(  *(samp+(*(ordsam+k)-1))==*(samp+(*(ordsam+i)-1))  ){
-                               if((clus[(9*leng)+(*(ordsam+i)-1)])==0){
-                                   continue;
-                               }else{
-                                   for(m=0;m<maxat;m++){
-                                       if(clus[(9*leng)+(*(ordsam+i)-1)]==(at[m]+1)){
-                                           at[m]=-9999;
-                                           maxit--;
-                                           break;
-                                       }
-                                   }
-                               }
-                           }else{
-                               break;
-                           }
-                       }
-                   }
-                   if(k<(leng-1)){ /* forward over sample-order */
-                       for(i=(k+1);i<leng;i++){
-                           if(*(samp+(*(ordsam+k)-1))==*(samp+(*(ordsam+i)-1))){
-                               if((clus[(9*leng)+(*(ordsam+i)-1)])==0){
-                                   continue;
-                               }else{
-                                   for(m=0;m<maxat;m++){
-                                       if(clus[(9*leng)+(*(ordsam+i)-1)]==(at[m]+1)){
-                                           at[m]=-9999;
-                                           maxit--;
-                                           break;
-                                       }
-                                   }
-                               }
-                           }else{
-                               break;
-                           }
-                       }
-                   }
-                   if(maxit<maxat){ /* rewrite vector with candidate cluster indices */
-                       i=maxat;
-                       k=0;
-                       for(m=0;m<i;m++){
-                           if(at[m]==-9999){
-                               k++;
-                               maxat--;
-                           }else{
-                               at[m-k]=at[m];
-                           }
-                       }
-                   }
-                   /* (a) not assignable - create new cluster *********************/
-                   if((maxit==0) & (supr!=1)){
-                        clustnumb++;
-                        clus[(9*leng)+(*(ordint+n)-1)]=clustnumb;
-                        if(ppm3==1){delmz=((dmz2**(mass+(*(ordint+n)-1)))/1e6);}else{delmz=dmz2;}
-                        clus[0+(clustnumb-1)]=(*(mass+(*(ordint+n)-1))-(2*delmz));
-                        clus[(1*leng)+(clustnumb-1)]=(*(mass+(*(ordint+n)-1))+(2*delmz));
-                        clus[(2*leng)+(clustnumb-1)]=(*(ret+(*(ordint+n)-1))-drtdens2);
-                        clus[(3*leng)+(clustnumb-1)]=(*(ret+(*(ordint+n)-1))+drtdens2);
-                        clus[(4*leng)+(clustnumb-1)]=1;
-                        clus[(5*leng)+(clustnumb-1)]=*(mass+(*(ordint+n)-1));
-                        clus[(6*leng)+(clustnumb-1)]=clustnumb;
-                        clus[(7*leng)+(clustnumb-1)]=0;
-                        clus[(8*leng)+(clustnumb-1)]=*(intensity+(*(ordint+n)-1));
-                        clus[(11*leng)+(clustnumb-1)]=*(mass+(*(ordint+n)-1));
-                        clus[(12*leng)+(clustnumb-1)]=*(mass+(*(ordint+n)-1));
-/* extend - no further checks for this group */
-                        if((do_group==1) & (*(group+(*(ordint+n)-1))!=0)){
-                            at[0]=(clustnumb-1);
-                            if((*(ordint+n)-1)>0){ /* downward check */
-                                for(z=(*(ordint+n)-2);z>=0;z--){
-                                    if(*(group+(*(ordint+n)-1)) == *(group+z)){
-                                        clus[(9*leng)+z]=clustnumb;
-                                        if(ppm3==1){delmz=((dmz2**(mass+z))/1e6);}else{delmz=dmz2;}
-                                        if(clus[(0*leng)+(at[0])]<(*(mass+z)-(2*delmz))){clus[(0*leng)+(at[0])]=(*(mass+z)-(2*delmz));}
-                                        if(clus[(1*leng)+(at[0])]>(*(mass+z)+(2*delmz))){clus[(1*leng)+(at[0])]=(*(mass+z)+(2*delmz));}
-                                        if(clus[(2*leng)+(at[0])]<(*(ret+z)-drtdens2)){clus[(2*leng)+(at[0])]=(*(ret+z)-drtdens2);}
-                                        if(clus[(3*leng)+(at[0])]>(*(ret+z)+drtdens2)){clus[(3*leng)+(at[0])]=(*(ret+z)+drtdens2);}
-                                        clus[(4*leng)+(at[0])]=(clus[(4*leng)+(at[0])]+1);
-                                        clus[(5*leng)+(at[0])]=(clus[(5*leng)+(at[0])]+*(mass+z));
-                                        if(*(mass+z)<clus[(11*leng)+(at[0])]){clus[(11*leng)+(at[0])]=*(mass+z);};
-                                        if(*(mass+z)>clus[(12*leng)+(at[0])]){clus[(12*leng)+(at[0])]=*(mass+z);};
-                                    }else{
-                                        break;
-                                    }
-                                }
-                            }
-                            if((*(ordint+n)-1)<(leng-1)){ /* upward check */
-                                for(z=(*(ordint+n));z<leng;z++){
-                                    if(*(group+(*(ordint+n)-1)) == *(group+z)){
-                                        clus[(9*leng)+(*(ordint+z)-1)]=clustnumb;
-                                        if(ppm3==1){delmz=((dmz2**(mass+z))/1e6);}else{delmz=dmz2;}
-                                        if(clus[(0*leng)+(at[0])]<(*(mass+z)-(2*delmz))){clus[(0*leng)+(at[0])]=(*(mass+z)-(2*delmz));}
-                                        if(clus[(1*leng)+(at[0])]>(*(mass+z)+(2*delmz))){clus[(1*leng)+(at[0])]=(*(mass+z)+(2*delmz));}
-                                        if(clus[(2*leng)+(at[0])]<(*(ret+z)-drtdens2)){clus[(2*leng)+(at[0])]=(*(ret+z)-drtdens2);}
-                                        if(clus[(3*leng)+(at[0])]>(*(ret+z)+drtdens2)){clus[(3*leng)+(at[0])]=(*(ret+z)+drtdens2);}
-                                        clus[(4*leng)+(at[0])]=(clus[(4*leng)+(at[0])]+1);
-                                        clus[(5*leng)+(at[0])]=(clus[(5*leng)+(at[0])]+*(mass+z));
-                                        if(*(mass+z)<clus[(11*leng)+(at[0])]){clus[(11*leng)+(at[0])]=*(mass+z);};
-                                        if(*(mass+z)>clus[(12*leng)+(at[0])]){clus[(12*leng)+(at[0])]=*(mass+z);};
-                                    }else{
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-/**/
-                       continue;
-                   }
-                   /* (b) fits to one or several cluster **************************/
-                   /* always assign to the most intense cluster at[0] *************/
-                   if(maxat>0){
-                        if(!((do_group==1) & (*(group+(*(ordint+n)-1))!=0))){
-                            clus[(9*leng)+(*(ordint+n)-1)]=(at[0]+1);
-                            if(ppm3==1){delmz=((dmz2**(mass+(*(ordint+n)-1)))/1e6);}else{delmz=dmz2;}
-                            if(clus[(0*leng)+(at[0])]<(*(mass+(*(ordint+n)-1))-(2*delmz))){clus[(0*leng)+(at[0])]=(*(mass+(*(ordint+n)-1))-(2*delmz));}
-                            if(clus[(1*leng)+(at[0])]>(*(mass+(*(ordint+n)-1))+(2*delmz))){clus[(1*leng)+(at[0])]=(*(mass+(*(ordint+n)-1))+(2*delmz));}
-                            if(clus[(2*leng)+(at[0])]<(*(ret+(*(ordint+n)-1))-drtdens2)){clus[(2*leng)+(at[0])]=(*(ret+(*(ordint+n)-1))-drtdens2);}
-                            if(clus[(3*leng)+(at[0])]>(*(ret+(*(ordint+n)-1))+drtdens2)){clus[(3*leng)+(at[0])]=(*(ret+(*(ordint+n)-1))+drtdens2);}
-                            clus[(4*leng)+(at[0])]=clus[(4*leng)+(at[0])]+1;
-                            clus[(5*leng)+(at[0])]=clus[(5*leng)+(at[0])]+*(mass+(*(ordint+n)-1));
-                            if(*(mass+(*(ordint+n)-1))<clus[(11*leng)+(at[0])]){clus[(11*leng)+(at[0])]=*(mass+(*(ordint+n)-1));};
-                            if(*(mass+(*(ordint+n)-1))>clus[(12*leng)+(at[0])]){clus[(12*leng)+(at[0])]=*(mass+(*(ordint+n)-1));};
-                        }else{ /* with grouping */
-                            /* (1) collect all other peaks */
-                            at_peak=0;
-                            if((*(ordint+n)-1)>0){ /* downward check*/
-                                for(z=(*(ordint+n)-2);z>=0;z--){
-                                    if(*(group+(*(ordint+n)-1)) == *(group+z)){
-                                        peak[at_peak]=z;
-                                        at_peak++;
-                                    }
-                                }
-                            }
-                            if((*(ordint+n)-1)<(leng-1)){
-                                for(z=(*(ordint+n));z<leng;z++){
-                                    if(*(group+(*(ordint+n)-1)) == *(group+z)){
-                                        peak[at_peak]=z;
-                                        at_peak++;
-                                    }
-                                }
-                            }
-                            if(at_peak==0){ /* no other peaks found in that group = thus, just assign the single peak to the most intense cluster */
-                                clus[(9*leng)+(*(ordint+n)-1)]=(at[0]+1);
-                                if(ppm3==1){delmz=((dmz2**(mass+(*(ordint+n)-1)))/1e6);}else{delmz=dmz2;}
-                                if(clus[(0*leng)+(at[0])]<(*(mass+(*(ordint+n)-1))-(2*delmz))){clus[(0*leng)+(at[0])]=(*(mass+(*(ordint+n)-1))-(2*delmz));}
-                                if(clus[(1*leng)+(at[0])]>(*(mass+(*(ordint+n)-1))+(2*delmz))){clus[(1*leng)+(at[0])]=(*(mass+(*(ordint+n)-1))+(2*delmz));}
-                                if(clus[(2*leng)+(at[0])]<(*(ret+(*(ordint+n)-1))-drtdens2)){clus[(2*leng)+(at[0])]=(*(ret+(*(ordint+n)-1))-drtdens2);}
-                                if(clus[(3*leng)+(at[0])]>(*(ret+(*(ordint+n)-1))+drtdens2)){clus[(3*leng)+(at[0])]=(*(ret+(*(ordint+n)-1))+drtdens2);}
-                                clus[(4*leng)+(at[0])]=clus[(4*leng)+(at[0])]+1;
-                                clus[(5*leng)+(at[0])]=clus[(5*leng)+(at[0])]+*(mass+(*(ordint+n)-1));
-                                if(*(mass+(*(ordint+n)-1))<clus[(11*leng)+(at[0])]){clus[(11*leng)+(at[0])]=*(mass+(*(ordint+n)-1));};
-                                if(*(mass+(*(ordint+n)-1))>clus[(12*leng)+(at[0])]){clus[(12*leng)+(at[0])]=*(mass+(*(ordint+n)-1));};
-                            }else{
-                                found_group=0;
-                                for(z=0;z<maxat;z++){ /* over the candidate cluster by their decreasing intensity */
-                                    in_group=1;
-                                    for(w=0;w<at_peak;w++){ /* check for each peak if it could belong to that candidate cluster */
-                                        if(*(mass+peak[w])<clus[(0*leng)+(at[z])]){in_group=0;break;} /* check mass */
-                                        if(*(mass+peak[w])>clus[(1*leng)+(at[z])]){in_group=0;break;} /* check mass */
-                                        if(*(ret+peak[w])<clus[(2*leng)+(at[z])]){in_group=0;break;}  /* check RT */
-                                        if(*(ret+peak[w])>clus[(3*leng)+(at[z])]){in_group=0;break;}  /* check RT */
-                                        for(i=0;i<leng;i++){ /* find sample-order index */
-                                            if(*(ordsam+i)==(peak[w]+1)){
-                                                k=i;
-                                                break;
-                                            }
-                                        }
-                                        if(k>0){ /* backward over sample-order */
-                                           for(i=(k-1);i>=0;i--){
-                                               if( *(samp+(*(ordsam+k)-1))==*(samp+(*(ordsam+i)-1)) ){
-                                                   if((clus[(9*leng)+(*(ordsam+i)-1)])==0){
-                                                       continue;
-                                                   }else{
-                                                        if((clus[(9*leng)+(*(ordsam+i)-1)])== (at[z]+1)  ){
-                                                            in_group=0;break;
-                                                        }
-                                                   }
-                                               }else{
-                                                   break;
-                                               }
-                                            }
-                                        }
-                                        if(in_group==0){
-                                            break;
-                                        }
+        }
+        int *find_group;
+        find_group = new int[leng];
+        int *check_cluster;
+        check_cluster = new int[leng];
+        int *assigned_peaks;
+        assigned_peaks = new int[leng];
 
-                                        if(k<(leng-1)){ /* forward over sample-order */
-                                           for(i=(k+1);i<leng;i++){
-                                               if(*(samp+(*(ordsam+k)-1))==*(samp+(*(ordsam+i)-1))){
-                                                   if((clus[(9*leng)+(*(ordsam+i)-1)])==0){
-                                                       continue;
-                                                   }else{
-                                                        if((clus[(9*leng)+(*(ordsam+i)-1)])== (at[z]+1)  ){
-                                                            in_group=0;break;
-                                                        }
-                                                   }
-                                               }else{
-                                                   break;
-                                               }
-                                           }
-                                        }
-                                        if(in_group==0){
-                                            break;
-                                        }
-                                    }
-                                    if(in_group==1){ /* group is valid, assign all group-peaks to it */
-                                        peak[at_peak]=(*(ordint+n)-1);
-                                        at_peak++;
-                                        for(w=0;w<at_peak;w++){
-                                            clus[(9*leng)+peak[w]]=(at[z]+1);
-                                            if(ppm3==1){delmz=((dmz2**(mass+peak[w]))/1e6);}else{delmz=dmz2;}
-                                            if(clus[(0*leng)+(at[z])]<(*(mass+peak[w])-(2*delmz))){clus[(0*leng)+(at[z])]=(*(mass+peak[w])-(2*delmz));}
-                                            if(clus[(1*leng)+(at[z])]>(*(mass+peak[w])+(2*delmz))){clus[(1*leng)+(at[z])]=(*(mass+peak[w])+(2*delmz));}
-                                            if(clus[(2*leng)+(at[z])]<(*(ret+peak[w])-drtdens2)){clus[(2*leng)+(at[z])]=(*(ret+peak[w])-drtdens2);}
-                                            if(clus[(3*leng)+(at[z])]>(*(ret+peak[w])+drtdens2)){clus[(3*leng)+(at[z])]=(*(ret+peak[w])+drtdens2);}
-                                            clus[(4*leng)+(at[z])]=clus[(4*leng)+(at[z])]+1;
-                                            clus[(5*leng)+(at[z])]=clus[(5*leng)+(at[z])]+*(mass+peak[w]);
-                                            if(*(mass+peak[w])<clus[(11*leng)+(at[z])]){clus[(11*leng)+(at[z])]=*(mass+peak[w]);};
-                                            if(*(mass+peak[w])>clus[(12*leng)+(at[z])]){clus[(12*leng)+(at[z])]=*(mass+peak[w]);};
-                                        }
-                                        found_group=1;
-                                        break;
-                                    }
+        /* OVER PEAKS */
+        if(verbose==1){Rprintf("\n\nStart clustering: ");};
+        for(n=0;n<leng;n++){ /* function not called for smaller sets! */
+
+            if(verbose==1){Rprintf("\n next peak: ");};
+            if(clus[(9*leng)+(*(ordint+n)-1)]==0){
+
+                if(verbose==1){Rprintf("not yet assigned: ");};
+
+                peak_number=0;
+                find_group[peak_number]=(*(ordint+n)-1);
+                minmz=*(mass+(*(ordint+n)-1));
+                maxmz=*(mass+(*(ordint+n)-1));
+                summmz=*(mass+(*(ordint+n)-1));
+                minrt=*(ret+(*(ordint+n)-1));
+                maxrt=*(ret+(*(ordint+n)-1));
+                peak_number++;
+
+                /* FIND OTHER PEAK BELONGING TO THIS GROUP */
+                if( (do_group==1) & (*(group+(*(ordint+n)-1))!=0) & (n<(leng-1)) ){
+                    if(verbose==1){Rprintf("find other peaks: ");};
+                    for(m=(n+1);m<leng;m++){ /* over remaining peaks */
+                        if( ((*(group+(*(ordint+m)-1)))!=0) & ((*(group+(*(ordint+n)-1))) == (*(group+(*(ordint+m)-1)))) ){
+                            if( (verbose==1) & (clus[(9*leng)+(*(ordint+m)-1)]!=0) ){Rprintf("\n \n DEBUG ME _1 !");}
+                            if( verbose==1 ){Rprintf("* ");};
+                            find_group[peak_number]=(*(ordint+m)-1);
+                            if( (verbose==1) & (*(samp+(*(ordint+n)-1))==*(samp+(*(ordint+m)-1))) ){Rprintf("\n \n DEBUG ME _2 !");}
+                            if( *(mass+(*(ordint+m)-1))<minmz ){
+                                minmz=*(mass+(*(ordint+m)-1));
+                            }/*else{*/
+                                if( *(mass+(*(ordint+m)-1))>maxmz ){
+                                    maxmz=*(mass+(*(ordint+m)-1));
                                 }
-                                if(found_group==0){ /* could not be assigned to any candidate cluster = make a new one!*/
-                                    clustnumb++;
-                                    peak[at_peak]=(*(ordint+n)-1);
-                                    at_peak++;
-                                    for(w=0;w<at_peak;w++){
-                                        clus[(9*leng)+peak[w]]=clustnumb;
-                                        if(ppm3==1){delmz=((dmz2**(mass+peak[w]))/1e6);}else{delmz=dmz2;}
-                                        clus[0+(clustnumb-1)]=(*(mass+peak[w])-(2*delmz));
-                                        clus[(1*leng)+(clustnumb-1)]=(*(mass+peak[w])+(2*delmz));
-                                        clus[(2*leng)+(clustnumb-1)]=(*(ret+peak[w])-drtdens2);
-                                        clus[(3*leng)+(clustnumb-1)]=(*(ret+peak[w])+drtdens2);
-                                        clus[(4*leng)+(clustnumb-1)]=1;
-                                        clus[(5*leng)+(clustnumb-1)]=*(mass+peak[w]);
-                                        clus[(6*leng)+(clustnumb-1)]=clustnumb;
-                                        clus[(7*leng)+(clustnumb-1)]=0;
-                                        clus[(8*leng)+(clustnumb-1)]=*(intensity+peak[w]);
-                                        clus[(11*leng)+(clustnumb-1)]=*(mass+peak[w]);
-                                        clus[(12*leng)+(clustnumb-1)]=*(mass+peak[w]);
-                                    }
+                            /*}*/
+                            summmz=(summmz+*(mass+(*(ordint+m)-1)));
+                            if( *(ret+(*(ordint+m)-1))<minrt ){
+                                minrt=*(ret+(*(ordint+m)-1));
+                            }/*else{*/
+                                if( *(ret+(*(ordint+m)-1))>maxrt ){
+                                    maxrt=*(ret+(*(ordint+m)-1));
+                                }
+                            /*}*/
+                            peak_number++;
+                        }
+                    }
+                }
+
+                /* INITIALIZE FIRST CLUSTER */
+                if(clustnumb==0){
+                    if(verbose==1){Rprintf(" made first cluster.");};
+                    if(ppm2==1){
+                        delmz=(dmz2*minmz/1e6);
+                    }else{
+                        delmz=dmz2;
+                    }
+                    clus[0]=(maxmz-(2*delmz));                          /* low mass boundary **************/
+                    clus[(1*leng)]=(minmz+(2*delmz));                   /* high mass boundary *************/
+                    delrt=(drt2-(maxrt-minrt));                         /* re-center RT window ************/
+                    if(delrt>0){
+                        delrt=(delrt/2);
+                        clus[(2*leng)]=(minrt-delrt);                   /* low RT boundary ****************/
+                        clus[(3*leng)]=(maxrt+delrt);                   /* high RT boundary ***************/
+                    }else{
+                        if(verbose==1){Rprintf(" DEBUG RT range#1?");};
+                        clus[(2*leng)]=minrt;
+                        clus[(3*leng)]=maxrt;
+                    }
+                    clus[(4*leng)]=peak_number;                         /* number of peaks ****************/
+                    clus[(5*leng)]=summmz;                              /* mass sum ***********************/
+                    clus[(6*leng)]=(clustnumb+1);                       /* cluster ID *********************/
+                    clus[(7*leng)]=0;                                   /* merged (1) or not (0)? *********/
+                    clus[(8*leng)]=*(intensity+(*(ordint+n)-1));        /* maximum intensity in a cluster */
+                    for(m=0;m<peak_number;m++){
+                        clus[(9*leng)+(find_group[m])]=(clustnumb+1);   /* cluster ID for measurement *****/
+                        assigned_peaks[at_assigned_peak]=find_group[m];
+                        at_assigned_peak++;
+                    }
+                    clus[(10*leng)]=0;                                  /* variance, not set yet **********/
+                    clus[(11*leng)]=minmz;                              /* lowest mass in cluster *********/
+                    clus[(12*leng)]=maxmz;                              /* highest mass in cluster ********/
+                    clus[(13*leng)]=minrt;                              /* lowest rt value in cluster *****/
+                    clus[(14*leng)]=maxrt;                              /* highest rt value in cluster ****/
+                    clustnumb++;
+                    continue;
+                }
+
+                /* ASSORT TO EXISTING CLUSTER */
+                /* reset marker for available cluster */
+                for(m=0;m<clustnumb;m++){
+                    check_cluster[m]=1;
+                }
+                /* check same-sample peak exclusion for cluster */
+                for(m=0;m<at_assigned_peak;m++){
+                    for(k=0;k<peak_number;k++){
+                        if( *(samp+(find_group[k])) == *(samp+(assigned_peaks[m])) ){
+                            at_cluster=clus[(9*leng)+(assigned_peaks[m])];
+                            check_cluster[(at_cluster-1)]=0;
+                        }
+                    }
+                }
+                found_cluster=0;
+                /* check if new peak group falls within ranges of existing clusters */
+                for(m=0;m<clustnumb;m++){
+                    if(check_cluster[m]==1){
+                        if(
+                           (minmz>=clus[m]) &&
+                           (maxmz<=clus[(1*leng)+m]) &&
+                           (minrt>=clus[(2*leng)+m]) &&
+                           (maxrt<=clus[(3*leng)+m])
+                        ){
+                            if(verbose==1){Rprintf(" + ");};
+                            /* adapt properties of existing cluster */
+                            clus[(4*leng)+m]=(clus[(4*leng)+m]+peak_number);     /* number of peaks ****************/
+                            clus[(5*leng)+m]=(clus[(5*leng)+m]+summmz);          /* mass sum ***********************/
+                            reset_mass=0;
+                            if(minmz<clus[(11*leng)+m]){                         /* lowest mass in cluster *********/
+                                clus[(11*leng)+m]=minmz;
+                                reset_mass=1;
+                            }
+                            if(maxmz>clus[(12*leng)+m]){                         /* highest mass in cluster *********/
+                                clus[(12*leng)+m]=maxmz;
+                                reset_mass=1;
+                            }
+                            if(reset_mass==1){
+                                if(ppm2==1){
+                                    delmz=(dmz2*((clus[(11*leng)+m]+clus[(12*leng)+m])/2)/1e6);
+                                }else{
+                                    delmz=dmz2;
+                                }
+                                clus[m]=(clus[(12*leng)+m]-(2*delmz));          /* low mass boundary **************/
+                                clus[(1*leng)+m]=(clus[(11*leng)+m]+(2*delmz)); /* high mass boundary *************/
+                            }
+                            reset_RT=0;
+                            if(minrt<clus[(13*leng)+m]){                         /* lowest rt value in cluster *****/
+                                clus[(13*leng)+m]=minrt;
+                                reset_RT=1;
+                            }
+                            if(maxrt>clus[(14*leng)+m]){                         /* highest rt value in cluster ****/
+                                clus[(14*leng)+m]=maxrt;
+                                reset_RT=1;
+                            }
+                            if(reset_RT==1){
+                                delrt=(drt2-(clus[(14*leng)+m]-clus[(13*leng)+m]));
+                                if(delrt>0){
+                                    delrt=(delrt/2);
+                                    clus[(2*leng)+m]=(clus[(13*leng)+m]-delrt);             /* low RT boundary ****************/
+                                    clus[(3*leng)+m]=(clus[(14*leng)+m]+delrt);             /* high RT boundary ***************/
+                                }else{
+                                    if(verbose==1){Rprintf(" DEBUG RT range#2?");};
+                                    clus[(2*leng)+m]=clus[(13*leng)+m];
+                                    clus[(3*leng)+m]=clus[(14*leng)+m];
                                 }
                             }
+                            /* add peaks to the cluster */
+                            for(k=0;k<peak_number;k++){
+                                clus[(9*leng)+(find_group[k])]=(m+1);   /* cluster ID for measurement *****/
+                                assigned_peaks[at_assigned_peak]=find_group[k];
+                                at_assigned_peak++;
+                            }
+                            found_cluster=1;
+                            break; /* assign to most intense */
+                        }else{
+                            if(verbose==1){Rprintf(" - ");};
                         }
                     }else{
-                        Rprintf("Error in getProfiles - debug me!");
+                        if(verbose==1){Rprintf(" - ");};
                     }
                 }
-           }
-           /* output **********************************************************/
-           delete[] at;
-           delete[] peak;
-           UNPROTECT(13);
-           return(clusters);
 
-       }
+                /* NOT ASSIGNABLE TO EXISTING CLUSTER = MAKE NEW ONE */
+                if(found_cluster==0){
+                    if(verbose==1){Rprintf(" not assignable - create new cluster.");};
+                    if(ppm2==1){
+                        delmz=(dmz2*minmz/1e6);
+                    }else{
+                        delmz=dmz2;
+                    }
+                    clus[0+clustnumb]=(maxmz-(2*delmz));                    /* low mass boundary **************/
+                    clus[(1*leng)+clustnumb]=(minmz+(2*delmz));             /* high mass boundary *************/
+                    delrt=(drt2-(maxrt-minrt));                             /* re-center RT window ************/
+                    if(delrt>0){
+                        delrt=(delrt/2);
+                        clus[(2*leng)+clustnumb]=(minrt-delrt);             /* low RT boundary ****************/
+                        clus[(3*leng)+clustnumb]=(maxrt+delrt);             /* high RT boundary ***************/
+                    }else{
+                        if(verbose==1){Rprintf(" DEBUG RT range#3?");};
+                        clus[(2*leng)+clustnumb]=minrt;
+                        clus[(3*leng)+clustnumb]=maxrt;
+                    }
+                    clus[(4*leng)+clustnumb]=peak_number;                   /* number of peaks ****************/
+                    clus[(5*leng)+clustnumb]=summmz;                        /* mass sum ***********************/
+                    clus[(6*leng)+clustnumb]=(clustnumb+1);                 /* cluster ID *********************/
+                    clus[(7*leng)+clustnumb]=0;                             /* merged (1) or not (0)? *********/
+                    clus[(8*leng)+clustnumb]=*(intensity+(*(ordint+n)-1));  /* maximum intensity in a cluster */
+                    for(m=0;m<peak_number;m++){
+                        clus[(9*leng)+(find_group[m])]=(clustnumb+1);       /* cluster ID for measurement *****/
+                        assigned_peaks[at_assigned_peak]=find_group[m];
+                        at_assigned_peak++;
+                    }
+                    clus[(10*leng)+clustnumb]=0;                            /* variance, set later if merged **/
+                    clus[(11*leng)+clustnumb]=minmz;                        /* lowest mass in cluster *********/
+                    clus[(12*leng)+clustnumb]=maxmz;                        /* highest mass in cluster ********/
+                    clus[(13*leng)+clustnumb]=minrt;                        /* lowest rt value in cluster *****/
+                    clus[(14*leng)+clustnumb]=maxrt;                        /* highest rt value in cluster ****/
+                    clustnumb++;
+                }
+
+            }else{
+                if(verbose==1){Rprintf("already assigned. ");};
+            }
+
+        }
+
+        /* output **********************************************************/
+        delete[] find_group;
+        delete[] assigned_peaks;
+        delete[] check_cluster;
+        UNPROTECT(11);
+        return(clusters);
+
+    }
 
 
 
@@ -1134,7 +991,7 @@ SEXP agglom(           SEXP mz, /* must be sorted */
 SEXP indexed(      SEXP index, /* must be sorted */
                    SEXP maxindex,
                    SEXP many
-                      ){
+            ){
 
             PROTECT(index = AS_NUMERIC(index));
             PROTECT(maxindex = AS_NUMERIC(maxindex));
@@ -1679,7 +1536,7 @@ SEXP intdiff(      SEXP timeset,
 /* assemble data for plotting *************************************************/
 /******************************************************************************/
 
-SEXP plotit_prof(       SEXP RTlim_low,
+SEXP plot_prof(       SEXP RTlim_low,
                         SEXP RTlim_up,
                         SEXP mzlim_low,
                         SEXP mzlim_up,

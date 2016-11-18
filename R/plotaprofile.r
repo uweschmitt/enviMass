@@ -17,6 +17,8 @@
 #' @param supersimple Logical. Plot parameter.
 #' @param colorit Logical. Plot parameter.
 #' @param use_lwd Logical. Plot parameter.
+#' @param ranges_x NULL or vector. Plot parameter.
+#' @param ranges_y NULL or vector. Plot parameter.
 #'
 #' @return A dataset.
 #' 
@@ -38,7 +40,9 @@ plotaprofile<-function(
 	simple=FALSE,
 	supersimple=FALSE,
 	colorit=FALSE,
-	use_lwd=FALSE
+	use_lwd=FALSE,
+	ranges_x=NULL,
+	ranges_y=NULL
 ){
 
     ############################################################################
@@ -53,6 +57,12 @@ plotaprofile<-function(
     atPOSIX<-profileList[[3]];
     sampletype<-profileList[[9]];
     sampleID<-profileList[[4]];
+	# filter out other file types such as spiked ones
+	keep<-((sampletype=="sample")|(sampletype=="blank"))
+	atPOSIX<-atPOSIX[keep]
+	sampletype<-sampletype[keep]
+	sampleID<-sampleID[keep]
+	#
     atdate<-c();
     attime<-c();
     for(i in 1:length(atPOSIX)){
@@ -81,7 +91,7 @@ plotaprofile<-function(
 	colnames(timeset)<-c("above blank?","sampleID","blankID","sample_int","blank_int",rep("lag_int",length(lags)),rep("del_int",length(lags)),rep("max_time",length(lags)),rep("blind_int",length(lags)))	
     ############################################################################
     timeset[,4:5]<-0;
-    timeset[,c(4,5)] <-.Call("fill_timeset",
+    timeset[,c(4,5)]<-.Call("fill_timeset",
                                 as.numeric(timeset),
                                 as.numeric(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),6]), # sampleIDs
                                 as.numeric(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),2]), # intensities
@@ -157,32 +167,47 @@ plotaprofile<-function(
 	names(dataset)<-c("Date","Time","ID sample","Intensity sample","ID blind","Intensity blind","ID peak")
 	############################################################################
     dated<-as.POSIXct(atPOSIXsort)
-    timelimit<-c(min(dated),max(dated))
+    #timelimit<-c(min(dated),max(dated))
 	sam_dat<-seq(1,length(dated),(length(dated)/5))
 	dated2<-pretty(dated)
+	if(!is.null(ranges_x)){
+		timelimit<-ranges_x
+	}else{
+		timelimit<-c(min(dated),max(dated))
+	}
+	if(!is.null(ranges_y)){	
+		y_lim<-ranges_y
+	}else{
+		if(logint){
+			y_lim<-c(0,max(log10(timeset[,4:5])))
+		}else{
+			y_lim<-c(0,max(timeset[,4:5]))		
+		}
+	}	
     if(logint){
 		if(!add){	
 			plot.new()
 			plot.window(xlim=c(0,10),ylim=c(0,10))
 			if(textit){
-				text(8,9.5,labels="Sample intensity",col="darkgreen",pos=4)
+				text(0,9.5,labels="Sample intensity",col="darkgreen",pos=4)
 				if(!supersimple){
-					text(8,8.5,labels="Blank intensity",col="red",pos=4)      
+					text(0,8.5,labels="Blank intensity",col="red",pos=4)      
 					if(!simple){
-						text(8,7.5,labels=paste("mean m/z = ",round(mean(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),1]),digits=4),sep=""),col="black",pos=4)
-						text(8,6.5,labels=paste("mean RT = ",round(mean(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),3]),digits=1),sep=""),col="black",pos=4)      
+						text(0,7.5,labels=paste("mean m/z = ",round(mean(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),1]),digits=4),sep=""),col="black",pos=4)
+						text(0,6.5,labels=paste("mean RT = ",round(mean(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),3]),digits=1),sep=""),col="black",pos=4)      
 						#text(8.5,7.5,labels=paste("Partit. ID = ",round(unique(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),7]),digits=0),sep=""),col="black",pos=4)      
-						text(8,5.5,labels=paste("Profile ID = ",round(unique(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),8]),digits=0),sep=""),col="black",pos=4)      	
+						text(0,5.5,labels=paste("Profile ID = ",round(unique(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),8]),digits=0),sep=""),col="black",pos=4)      	
 					}
 				}
 			}
-			plot.window(xlim=c(timelimit),ylim=c(0,max(log10(timeset[,4:5]))))
+			plot.window(xlim=c(timelimit),ylim=y_lim)
 			axis(1,at=dated2,labels=dated2,col="grey",cex.axis=1) # former at=dated
 			ax2<-pretty((that1[that1[,2]!=0,4])) 
 			ax3<-format(ax2,scientific=TRUE)
 			axis(2,at=ax2,labels=ax3);
 			box();
-			title(xlab="Time",ylab="log10(intensity)")
+			title(xlab="Time",ylab="log10(intensity)",
+				main="Draw rectangles and double-click into them to zoom, double-click again to zoom out.",cex.main=1)
 			if(!supersimple){
 				if(!simple){
 					abline(h=log10(that2[6,]+(that2[3,]*threshold)),col="red",lty=2)
@@ -203,24 +228,25 @@ plotaprofile<-function(
 			plot.new()
 			plot.window(xlim=c(0,10),ylim=c(0,10))
 			if(textit){
-				text(8,9.5,labels="Sample intensity",col="darkgreen",pos=4)
+				text(0,9.5,labels="Sample intensity",col="darkgreen",pos=4)
 				if(!supersimple){
-					text(8,8.5,labels="Blind intensity",col="red",pos=4)      
+					text(0,8.5,labels="Blind intensity",col="red",pos=4)      
 					if(!simple){
-						text(8,7.5,labels=paste("mean m/z = ",round(mean(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),1]),digits=4),sep=""),col="black",pos=4)
-						text(8,6.5,labels=paste("mean RT = ",round(mean(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),3]),digits=1),sep=""),col="black",pos=4)      
+						text(0,7.5,labels=paste("mean m/z = ",round(mean(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),1]),digits=4),sep=""),col="black",pos=4)
+						text(0,6.5,labels=paste("mean RT = ",round(mean(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),3]),digits=1),sep=""),col="black",pos=4)      
 						#text(8.5,7.5,labels=paste("Partit. ID = ",round(unique(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),7]),digits=0),sep=""),col="black",pos=4)      
-						text(8,5.5,labels=paste("Profile ID = ",round(unique(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),8]),digits=0),sep=""),col="black",pos=4)      	
+						text(0,5.5,labels=paste("Profile ID = ",round(unique(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),8]),digits=0),sep=""),col="black",pos=4)      	
 					}
 				}
 			}
-			plot.window(xlim=c(timelimit),ylim=c(0,max((timeset[,4:5]))))
+			plot.window(xlim=c(timelimit),ylim=y_lim)
 			axis(1,at=dated2,labels=dated2,col="grey",cex.axis=1) # former at=dated
 			ax2<-pretty((that1[that1[,2]!=0,4])) 
 			ax3<-format(ax2,scientific=TRUE)
 			axis(2,at=ax2,labels=ax3);
 			box();
-			title(xlab="Time",ylab="Intensity")
+			title(xlab="Time",ylab="Intensity",	
+				main="Draw rectangles and double-click into them to zoom, double-click again to zoom out.",cex.main=1)
 			if(!supersimple){
 				if(!simple){
 					abline(h=(that2[6,]+(that2[3,]*threshold)),col="red",lty=2)

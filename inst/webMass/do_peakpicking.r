@@ -3,78 +3,78 @@
 	output$dowhat<-renderText("Peak picking ... please wait");
 	if(any(search()=="package:nlme")){detach(package:nlme,force=TRUE);addit<-TRUE}else{addit<-FALSE}
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-    leng<-length(measurements[,1]);         
+    leng<-length(measurements[,"ID"]);         
     for(i in 1:leng){ 
         # (measurement included & not yet picked) OR (peakpick forced) 
-            if( (measurements[i,8]=="TRUE")&&(measurements[i,10]=="FALSE") ){
+            if( (measurements[i,"include"]=="TRUE")&&(measurements[i,"peakpicking"]=="FALSE") ){
 				cat(paste("\n    Peak picking sample ",as.character(i)," of ",as.character(leng),": "));                        
 				MSlist<-enviPick::readMSdata(
 					file.path(logfile[[1]],"files",paste(as.character(measurements[i,1]),".mzXML",sep="")),
-					MSlevel=logfile$parameters[1],  # MSlevel
-					progbar=logfile$parameters[21], # progbar
+					MSlevel=logfile$parameters$peak_MSlevel,  # MSlevel
+					progbar=logfile$parameters$progressBar, # progbar
 					minRT=FALSE,maxRT=FALSE,minmz=FALSE,maxmz=FALSE,
-					ion_mode=measurements[i,4]
+					ion_mode=measurements[i,"Mode"]
 				);
 				cat(" data read -");  				
-				if(logfile$parameters[92]>"0"){
+				if(as.numeric(logfile$parameters$peak_perc_cut)>0){
 					len1<-length(MSlist[[4]][[2]][,2])
 					MSlist[[4]][[2]]<-MSlist[[4]][[2]][
-						MSlist[[4]][[2]][,2]>=quantile(MSlist[[4]][[2]][,2],(as.numeric(logfile$parameters[92])/100))
+						MSlist[[4]][[2]][,2]>=quantile(MSlist[[4]][[2]][,2],(as.numeric(logfile$parameters$peak_perc_cut)/100))
 					,]
 					len2<-length(MSlist[[4]][[2]][,2])
 					cat(paste(" ",as.character(len1-len2),"of",as.character(len1),"data points discarded -"))
 				}
 				MSlist<-enviPick::mzagglom(
 					MSlist,
-					((as.numeric(logfile$parameters[[3]])*2)+1),
+					((as.numeric(logfile$parameters$peak_dmzdens)*2)+1),
 					ppm=TRUE,  
-					as.numeric(logfile$parameters[[2]]),
-					as.numeric(logfile$parameters[[4]]),
-					10^as.numeric(logfile$parameters[[14]]),
-					progbar=as.logical(logfile$parameters[21])
+					as.numeric(logfile$parameters$peak_drtgap),
+					as.numeric(logfile$parameters$peak_minpeak),
+					10^as.numeric(logfile$parameters$peak_maxint_log10),
+					progbar=as.logical(logfile$parameters$progressBar)
 				);
 				cat(" partitioned -");
 				MSlist<-enviPick::mzclust(      
 					MSlist,
-					as.numeric(logfile$parameters[[3]]),
+					as.numeric(logfile$parameters$peak_dmzdens),
 					ppm=TRUE,
 					60,
-					as.numeric(logfile$parameters[[4]]),
-					10^as.numeric(logfile$parameters[[14]]),
-					progbar=as.logical(logfile$parameters[21]),
+					as.numeric(logfile$parameters$peak_minpeak),
+					10^as.numeric(logfile$parameters$peak_maxint_log10),
+					progbar=as.logical(logfile$parameters$progressBar),
 					merged=TRUE,from=FALSE,to=FALSE
 				);
 				cat(" clustered -");
 				MSlist<-enviPick::mzpick(       
 					MSlist,
-					as.numeric(logfile$parameters[[4]]),  # minpeak
-					as.numeric(logfile$parameters[[5]]),  # drtsmall2
-					as.numeric(logfile$parameters[[6]]),  # drtfill                
-					as.numeric(logfile$parameters[[7]]),  # drtdens2
-					as.numeric(logfile$parameters[[11]]), # recurs
-					as.numeric(logfile$parameters[[13]]), # weight
-					as.numeric(logfile$parameters[[10]]), # SB
-					as.numeric(logfile$parameters[[9]]),  # SN               
-					10^as.numeric(logfile$parameters[[8]]),  # minint
-					10^as.numeric(logfile$parameters[[14]]), # maxint
-					as.numeric(logfile$parameters[[12]]), # ended
-					progbar=logfile$parameters[21],
+					as.numeric(logfile$parameters$peak_minpeak),  # minpeak
+					as.numeric(logfile$parameters$peak_drtsmall2),  # drtsmall2
+					as.numeric(logfile$parameters$peak_drtfill),  # drtfill                
+					as.numeric(logfile$parameters$peak_drtdens2),  # drtdens2
+					as.numeric(logfile$parameters$peak_recurs), # recurs
+					as.numeric(logfile$parameters$peak_weight), # weight
+					as.numeric(logfile$parameters$peak_SB), # SB
+					as.numeric(logfile$parameters$peak_SN),  # SN               
+					10^as.numeric(logfile$parameters$peak_minint_log10),  # minint
+					10^as.numeric(logfile$parameters$peak_maxint_log10), # maxint
+					as.numeric(logfile$parameters$peak_ended), # ended
+					progbar=logfile$parameters$progressBar,
 					from=FALSE,to=FALSE
 				);
 				#MSlist[[8]]<-cbind(MSlist[[8]],MSlist[[8]][,c(1,4,5)]);
-				save(MSlist,file=file.path(logfile[[1]],"MSlist",as.character(measurements[i,1])));   
+				save(MSlist,file=file.path(logfile[[1]],"MSlist",as.character(measurements[i,"ID"])));   
 				peaklist<-MSlist[[8]];
-				peaklist<-cbind(peaklist,peaklist[,c(1,4,5)])
+				peaklist<-cbind(peaklist,peaklist[,1],rep(0,length(peaklist[,4])),peaklist[,5])
 				colnames(peaklist)[12]<-"m/z_corr";
-				colnames(peaklist)[13]<-"sum_int_corr";
+				colnames(peaklist)[13]<-"int_corr";
 				colnames(peaklist)[14]<-"RT_corr";      
 				keep<-rep(1,length(peaklist[,1])) # 1 == TRUE
 				peaklist<-cbind(peaklist,keep,keep) # replicate & blind indicators
 				colnames(peaklist)[15]<-"keep";
 				colnames(peaklist)[16]<-"keep_2";
-				save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,1])));   
+				save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,"ID"])));   
 				cat(" plot -");  
-				path=file.path(logfile[[1]],"pics",paste("peakhist_",as.character(measurements[i,1]),sep=""))
+				path=file.path(logfile[[1]],"pics",paste("peakhist_",as.character(measurements[i,"ID"]),sep=""))
 				png(filename = path, bg = "white")    
 				a<-hist(log10(MSlist[[4]][[2]][,2]),breaks=200,plot=FALSE)
 				hist(log10(MSlist[[4]][[2]][,2]),breaks=a$breaks,
@@ -92,8 +92,7 @@
 				dev.off()
 				if(any(objects(envir=as.environment(".GlobalEnv"))=="MSlist")){rm(MSlist,envir=as.environment(".GlobalEnv"))}
 				if(any(objects()=="MSlist")){rm(MSlist)}
-				measurements[i,10]<-TRUE;
-				output$measurements<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),rownames= FALSE); 
+				measurements[i,"peakpicking"]<-TRUE;
 				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 				cat(" picked -"); 
 				formulator<-cbind(
@@ -109,8 +108,6 @@
 				cat(" exported. ");
             }
     }
-    measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-	output$measurements<-DT::renderDataTable(read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character"),rownames= FALSE); 
 	if(addit){library(nlme)}
     cat("Peak picking completed \n"); 	  
     

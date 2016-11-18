@@ -1,5 +1,5 @@
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_screening.r!")}
-verbose<-TRUE
+
 ##############################################################################
 # update screening results ###################################################
 ##############################################################################
@@ -135,7 +135,7 @@ observe({
 				compound_table<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
 				# For IS without Conz.:
 				updateSelectInput(session,inputId="selec_pos_x",label="x axis",choices=c("m/z","RT","Intensity","Date&time","Type","Place"),selected = "m/z")
-				updateSelectInput(session,inputId="selec_pos_y",label="y axis",choices=c("m/z","RT","Intensity","Date&time","Type","Place"),selected = "RT")	
+				updateSelectInput(session,inputId="selec_pos_y",label="y axis",choices=c("m/z","RT","Intensity","Date&time","Type","Place"),selected = "Intensity")	
 			}else{	
 				output$Table_screening_pos <- DT::renderDataTable({
 					DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No internal standard screening results available")
@@ -207,13 +207,13 @@ observe({
 					res_pos_screen_sel<-res_pos_screen[use_comp][[1]]
 					which_where<-c();which_peaks<-c();sample_type<-c();score_1<-c();score_2<-c();delppm<-c();delRT<-c();inte<-c();
 					with_peaks<-c();#with_file<-c();with_s<-c();
-					IDs<-as.numeric(measurements[,1]) 
+					IDs<-as.numeric(measurements[,"ID"]) 
 					if(length(res_pos_screen_sel)>0){
 						for(i in 1:length(res_pos_screen_sel)){
 							if(length(res_pos_screen_sel[[i]])>0){
 								for(j in 1:length(res_pos_screen_sel[[i]])){
-									which_where<-c(which_where,measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),1]);
-									sample_type<-c(sample_type,measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),3]);
+									which_where<-c(which_where,measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),"ID"]);
+									sample_type<-c(sample_type,measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),"Type"]);
 									which_peaks<-c(which_peaks,paste(res_pos_screen_sel[[i]][[j]]$Peaks[,1],collapse=", "))
 									score_1<-c(score_1,round(res_pos_screen_sel[[i]][[j]]$score_1,digits=2));
 									score_2<-c(score_2,round(res_pos_screen_sel[[i]][[j]]$score_2,digits=2));
@@ -310,7 +310,7 @@ observe({
 					pattern_sel<-pattern_pos[use_comp][[1]]
 					res_pos_screen_sel<-res_pos_screen[use_comp][[1]]
 					cut_score<-as.numeric(logfile$parameters$IS_w1)	
-					IDs<-as.numeric(measurements[,1])
+					IDs<-as.numeric(measurements[,"ID"])
 					# extract relevant data for the compound - adduct ##########################
 					if(length(res_pos_screen_sel)>0){
 						mass<-c();inte<-c();RT<-c();cutit<-c();atdate<-c();attime<-c();placed<-c();typed<-c();
@@ -335,10 +335,10 @@ observe({
 										cutit<-c(cutit,0);
 									}
 									lengi<-length(res_pos_screen_sel[[i]][[j]][[7]])	
-									placed<-c(placed,rep(measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),5],lengi))
-									typed<-c(typed,rep(measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),3],lengi))
-									atdate<-c(atdate,rep(measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),6],lengi))
-									attime<-c(attime,rep(measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),7],lengi))										
+									placed<-c(placed,rep(measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),"Place"],lengi))
+									typed<-c(typed,rep(measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),"Type"],lengi))
+									atdate<-c(atdate,rep(measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),"Date"],lengi))
+									attime<-c(attime,rep(measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),"Time"],lengi))										
 								}
 							}
 						}
@@ -478,15 +478,15 @@ observe({
 		if(isolate(input$Pos_compound_select=="File-wise counts")){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements<-measurements[
- 				(measurements[,8]=="TRUE") & # included?
-				(measurements[,4]=="positive") &
+ 				(measurements[,"include"]=="TRUE") & # included?
+				(measurements[,"Mode"]=="positive") &
 				(
-					(measurements[,15]=="TRUE") | # profiled?
-					(measurements[,3]=="calibration")
+					(measurements[,"profiled"]=="TRUE") | # profiled?
+					(measurements[,"Type"]=="calibration")
 				)
 			,]		
-			if(length(measurements[,1])>0 ){
-				IDs<-measurements[,1]
+			if(length(measurements[,"ID"])>0 ){
+				IDs<-measurements[,"ID"]
 				count_file_compound_pos<-measurements[,c(1,2,3)]
 				count_file_compound_pos<-cbind(
 					count_file_compound_pos,
@@ -613,38 +613,77 @@ observe({
 		if(isolate(input$Pos_compound_select=="Quantification")){
 			if(file.exists(file.path(logfile[[1]],"quantification","target_quant_table_pos"))){
 				load(file.path(logfile[[1]],"quantification","target_quant_table_pos"))
-				if((dim(target_quant_table_pos)[1]>0)&(dim(target_quant_table_pos)[2]>0)){
+				load(file.path(logfile[[1]],"quantification","target_quant_table_pos_warn"))				
+				if( (dim(target_quant_table_pos)[1]>4) & (dim(target_quant_table_pos)[2]>2) ){
+					target_quant_table_pos<-cbind(
+						target_quant_table_pos,
+						target_quant_table_pos_warn
+					)
 					dim1<-dim(target_quant_table_pos)[1]
 					dim2<-dim(target_quant_table_pos)[2]
+					dim3<-(dim2/2)
+					s<-input$target_quant_table_pos_columns_selected
+					if(length(s)){
+						if(s>1){#print(s);
+							reord<-sapply(target_quant_table_pos[6:dim1,(s+1)],strsplit,",")
+							get_ord<-rep(0,length(reord))
+							for(k in 1:length(reord)){
+								if(length(reord[[k]])==0){next} 	# empty ...
+								if(grepl("!",reord[[k]][[1]])){next}		# no quantifiaction, with reason ...
+								get_ord[k]<-as.numeric(reord[[k]])[1]
+							}
+							get_ord<-order(get_ord,decreasing=TRUE)
+							target_quant_table_pos[6:dim1,]<-(target_quant_table_pos[6:dim1,][get_ord,])
+						}else{s<-2}
+					}else{
+						s<-2
+					}
 					sketch = htmltools::withTags(table(
 						class = 'cell-border stripe',
 						thead(
 							tr(
-								th(rowspan = 4, 'Target ID'),
-								th(rowspan = 4, 'Target name'),
-								th(colspan = 1, 'Files'),	  
-								th(colspan = (dim2-3), '')
+								th(rowspan = 6, 'Target ID'),
+								th(rowspan = 6, 'Target name'),
+								th(colspan = 1, 'Files'),									
+								th(colspan = (dim2-4), '')
 							),
-							tr(lapply(target_quant_table_pos[1,3:dim2], th)),
-							tr(lapply(target_quant_table_pos[2,3:dim2], th)),
-							tr(lapply(target_quant_table_pos[3,3:dim2], th))
+							tr(lapply(target_quant_table_pos[1,3:dim2], td)),
+							tr(lapply(target_quant_table_pos[2,3:dim2], td)),
+							tr(lapply(target_quant_table_pos[3,3:dim2], td)),
+							tr(lapply(target_quant_table_pos[4,3:dim2], td)),
+							tr(lapply(target_quant_table_pos[5,3:dim2], td))
 						)
-					))
+					))	
 					output$target_quant_table_pos<-DT::renderDataTable({
 						DT::datatable(
-							as.data.frame(target_quant_table_pos[5:dim1,],row.names =FALSE,stringsAsFactors=FALSE), 
+							as.data.frame(target_quant_table_pos[6:dim1,],
+								row.names =FALSE,stringsAsFactors=FALSE), 
 							rownames=FALSE,
 							container = sketch,
-							#extensions = list('Buttons'),
+							extensions = c('Buttons'),
 							options = list(	
 								lengthMenu = c(100,200,400),
-								ordering=F
-								#,dom = 'Bfrtip',
-								#buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+								ordering=F,
+								dom = 'Bfrtip',
+								buttons = c('excel'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+								columnDefs = list(list(targets = (dim3):(dim2-1), visible = FALSE)), # indices at 0
+								rowCallback = JS(paste0("
+									function(row, data) {
+										for (i = 2; i < ",dim3,"; i++) {
+										   value = data[i+",dim3,"]
+										   backgroundValue = 'lightgrey'
+										   if (value == '1') backgroundValue = 'lightgreen'
+										   if (value == '2') backgroundValue = 'yellow'
+										   if (value == '3') backgroundValue = 'orange'
+										   $('td', row).eq(i).css('background',backgroundValue);
+										}
+									}								
+								"))								
 							),
-							selection = 'single',
-							#selection = list(target = 'column'),
-							caption = 'Quantification table: concentrations shown for targets with available calibration models and screening matches.'#,
+							selection = list(mode = 'single', selected = s, target = 'column'),
+							caption = 'Click on a table column to trigger row sorting by decreasing concentration for a file.
+							Cells in yellow and orange indicate concentrations above the first and second warn levels set in the target compound table, respectively.
+							For several concentration values per cell, the first value is the result of applying quantification rules (e.g., use most intense peak) to ambiguous screening matches.'
 						)
 					})						
 				}else{
@@ -655,6 +694,55 @@ observe({
 			}else{
 				output$target_quant_table_pos <- DT::renderDataTable({
 					DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No quantification results available")
+				},server = TRUE)	
+			}
+		}
+		if(isolate(input$Pos_compound_select=="Recovery")){
+			if(file.exists(file.path(logfile[[1]],"quantification","target_recov_table_pos"))){
+				load(file.path(logfile[[1]],"quantification","target_recov_table_pos"))
+				if((dim(target_recov_table_pos)[1]>0)&(dim(target_recov_table_pos)[2]>0)){
+					dim1<-dim(target_recov_table_pos)[1]
+					dim2<-dim(target_recov_table_pos)[2]
+					sketch = htmltools::withTags(table(
+						class = 'cell-border stripe',
+						thead(
+							tr(
+								th(rowspan = 4, 'Target ID'),
+								th(rowspan = 4, 'Target name'),
+								th(colspan = 1, 'Files'),	  
+								th(colspan = (dim2-3), '')
+							),
+							tr(lapply(target_recov_table_pos[1,3:dim2], th)),
+							tr(lapply(target_recov_table_pos[2,3:dim2], th)),
+							tr(lapply(target_recov_table_pos[3,3:dim2], th))
+						)
+					))
+					output$target_recov_table_pos<-DT::renderDataTable({
+						DT::datatable(
+							as.data.frame(target_recov_table_pos[5:dim1,],row.names =FALSE,stringsAsFactors=FALSE), 
+							rownames=FALSE,
+							container = sketch,
+							extensions = list('Buttons'),
+							options = list(	
+								lengthMenu = c(100,200,400),
+								ordering=F,
+								dom = 'Bfrtip',
+								buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+							),
+							selection = 'single',
+							#selection = list(target = 'column'),
+							caption = 'Recovery: concentration differences of quantified targets between spiked files and their corresponding samples.
+							For several values per cell, the first value specifies the result from applying the quantification rules (e.g., use most intense peak) to ambiguous screening matches.'#,
+						)
+					})						
+				}else{
+					output$target_recov_table_pos <- DT::renderDataTable({
+						DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No recovery results available")
+					},server = TRUE)					
+				}
+			}else{
+				output$target_recov_table_pos <- DT::renderDataTable({
+					DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No recovery results available")
 				},server = TRUE)	
 			}
 		}
@@ -795,7 +883,7 @@ observe({
 				compound_table<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
 				# For IS without Conz.:
 				updateSelectInput(session,inputId="selec_neg_x",label="x axis",choices=c("m/z","RT","Intensity","Date&time","Type","Place"),selected = "m/z")
-				updateSelectInput(session,inputId="selec_neg_y",label="y axis",choices=c("m/z","RT","Intensity","Date&time","Type","Place"),selected = "RT")	
+				updateSelectInput(session,inputId="selec_neg_y",label="y axis",choices=c("m/z","RT","Intensity","Date&time","Type","Place"),selected = "Intensity")	
 			}else{	
 				output$Table_screening_neg <- DT::renderDataTable({
 					DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No internal standard screening results available")
@@ -867,13 +955,13 @@ observe({
 					res_neg_screen_sel<-res_neg_screen[use_comp][[1]]
 					which_where<-c();which_peaks<-c();sample_type<-c();score_1<-c();score_2<-c();delppm<-c();delRT<-c();inte<-c();
 					with_peaks<-c();#with_file<-c();with_s<-c();
-					IDs<-as.numeric(measurements[,1]) 
+					IDs<-as.numeric(measurements[,"ID"]) 
 					if(length(res_neg_screen_sel)>0){
 						for(i in 1:length(res_neg_screen_sel)){
 							if(length(res_neg_screen_sel[[i]])>0){
 								for(j in 1:length(res_neg_screen_sel[[i]])){
-									which_where<-c(which_where,measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),1]);
-									sample_type<-c(sample_type,measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),3]);
+									which_where<-c(which_where,measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),"ID"]);
+									sample_type<-c(sample_type,measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),"Type"]);
 									which_peaks<-c(which_peaks,paste(res_neg_screen_sel[[i]][[j]]$Peaks[,1],collapse=", "))
 									score_1<-c(score_1,round(res_neg_screen_sel[[i]][[j]]$score_1,digits=2));
 									score_2<-c(score_2,round(res_neg_screen_sel[[i]][[j]]$score_2,digits=2));
@@ -971,7 +1059,7 @@ observe({
 					pattern_sel<-pattern_neg[use_comp][[1]]
 					res_neg_screen_sel<-res_neg_screen[use_comp][[1]]
 					cut_score<-as.numeric(logfile$parameters$IS_w1)	
-					IDs<-as.numeric(measurements[,1])
+					IDs<-as.numeric(measurements[,"ID"])
 					# extract relevant data for the compound - adduct ##########################
 					if(length(res_neg_screen_sel)>0){
 						mass<-c();inte<-c();RT<-c();cutit<-c();atdate<-c();attime<-c();placed<-c();typed<-c();
@@ -996,10 +1084,10 @@ observe({
 										cutit<-c(cutit,0);
 									}
 									lengi<-length(res_neg_screen_sel[[i]][[j]][[7]])	
-									placed<-c(placed,rep(measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),5],lengi))
-									typed<-c(typed,rep(measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),3],lengi))
-									atdate<-c(atdate,rep(measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),6],lengi))
-									attime<-c(attime,rep(measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),7],lengi))										
+									placed<-c(placed,rep(measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),"Place"],lengi))
+									typed<-c(typed,rep(measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]), "Type"],lengi))
+									atdate<-c(atdate,rep(measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),"Date"],lengi))
+									attime<-c(attime,rep(measurements[IDs==(res_neg_screen_sel[[i]][[j]][10]),"Time"],lengi))										
 								}
 							}
 						}
@@ -1139,15 +1227,15 @@ observe({
 		if(isolate(input$Neg_compound_select=="File-wise counts")){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 			measurements<-measurements[
- 				(measurements[,8]=="TRUE") & # included?
-				(measurements[,4]=="negative") &
+ 				(measurements[,"include"]=="TRUE") & # included?
+				(measurements[,"Mode"]=="negative") &
 				(
-					(measurements[,15]=="TRUE") | # profiled?
-					(measurements[,3]=="calibration")
+					(measurements[,"profiled"]=="TRUE") | # profiled?
+					(measurements[,"Type"]=="calibration")
 				)
 			,]		
-			if(length(measurements[,1])>0 ){
-				IDs<-measurements[,1]
+			if(length(measurements[,"ID"])>0 ){
+				IDs<-measurements[,"ID"]
 				count_file_compound_neg<-measurements[,c(1,2,3)]
 				count_file_compound_neg<-cbind(
 					count_file_compound_neg,
@@ -1274,34 +1362,77 @@ observe({
 		if(isolate(input$Neg_compound_select=="Quantification")){
 			if(file.exists(file.path(logfile[[1]],"quantification","target_quant_table_neg"))){
 				load(file.path(logfile[[1]],"quantification","target_quant_table_neg"))
-				if((dim(target_quant_table_neg)[1]>0)&(dim(target_quant_table_neg)[2]>0)){
+				load(file.path(logfile[[1]],"quantification","target_quant_table_neg_warn"))				
+				if( (dim(target_quant_table_neg)[1]>4) & (dim(target_quant_table_neg)[2]>2) ){
+					target_quant_table_neg<-cbind(
+						target_quant_table_neg,
+						target_quant_table_neg_warn
+					)
 					dim1<-dim(target_quant_table_neg)[1]
 					dim2<-dim(target_quant_table_neg)[2]
+					dim3<-(dim2/2)
+					s<-input$target_quant_table_neg_columns_selected
+					if(length(s)){
+						if(s>1){#print(s);
+							reord<-sapply(target_quant_table_neg[6:dim1,(s+1)],strsplit,",")
+							get_ord<-rep(0,length(reord))
+							for(k in 1:length(reord)){
+								if(length(reord[[k]])==0){next} 	# empty ...
+								if(grepl("!",reord[[k]][[1]])){next}		# no quantifiaction, with reason ...
+								get_ord[k]<-as.numeric(reord[[k]])[1]
+							}
+							get_ord<-order(get_ord,decreasing=TRUE)
+							target_quant_table_neg[6:dim1,]<-(target_quant_table_neg[6:dim1,][get_ord,])
+						}else{s<-2}
+					}else{
+						s<-2
+					}
 					sketch = htmltools::withTags(table(
 						class = 'cell-border stripe',
 						thead(
 							tr(
-								th(rowspan = 4, 'Target ID'),
-								th(rowspan = 4, 'Target name'),
-								th(colspan = 1, 'Files'),	  
-								th(colspan = (dim2-3), '')
+								th(rowspan = 6, 'Target ID'),
+								th(rowspan = 6, 'Target name'),
+								th(colspan = 1, 'Files'),									
+								th(colspan = (dim2-4), '')
 							),
-							tr(lapply(target_quant_table_neg[1,3:dim2], th)),
-							tr(lapply(target_quant_table_neg[2,3:dim2], th)),
-							tr(lapply(target_quant_table_neg[3,3:dim2], th))
+							tr(lapply(target_quant_table_neg[1,3:dim2], td)),
+							tr(lapply(target_quant_table_neg[2,3:dim2], td)),
+							tr(lapply(target_quant_table_neg[3,3:dim2], td)),
+							tr(lapply(target_quant_table_neg[4,3:dim2], td)),
+							tr(lapply(target_quant_table_neg[5,3:dim2], td))
 						)
-					))
+					))	
 					output$target_quant_table_neg<-DT::renderDataTable({
 						DT::datatable(
-							as.data.frame(target_quant_table_neg[5:dim1,],row.names =FALSE,stringsAsFactors=FALSE), 
+							as.data.frame(target_quant_table_neg[6:dim1,],
+								row.names =FALSE,stringsAsFactors=FALSE), 
 							rownames=FALSE,
 							container = sketch,
+							extensions = c('Buttons'),
 							options = list(	
 								lengthMenu = c(100,200,400),
 								ordering=F,
-								target = 'column'
+								dom = 'Bfrtip',
+								buttons = c('excel'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+								columnDefs = list(list(targets = (dim3):(dim2-1), visible = FALSE)), # indices at 0
+								rowCallback = JS(paste0("
+									function(row, data) {
+										for (i = 2; i < ",dim3,"; i++) {
+										   value = data[i+",dim3,"]
+										   backgroundValue = 'lightgrey'
+										   if (value == '1') backgroundValue = 'lightgreen'
+										   if (value == '2') backgroundValue = 'yellow'
+										   if (value == '3') backgroundValue = 'orange'
+										   $('td', row).eq(i).css('background',backgroundValue);
+										}
+									}								
+								"))								
 							),
-							caption = 'Quantification table: concentrations shown for targets with available calibration models and screening matches.'#,
+							selection = list(mode = 'single', selected = s, target = 'column'),
+							caption = 'Click on a table column to trigger row sorting by decreasing concentration for a file.
+							Cells in yellow and orange indicate concentrations above the first and second warn levels set in the target compound table, respectively.
+							For several concentration values per cell, the first value is the result of applying quantification rules (e.g., use most intense peak) to ambiguous screening matches.'
 						)
 					})						
 				}else{
@@ -1312,6 +1443,55 @@ observe({
 			}else{
 				output$target_quant_table_neg <- DT::renderDataTable({
 					DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No quantification results available")
+				},server = TRUE)	
+			}
+		}
+		if(isolate(input$Neg_compound_select=="Recovery")){
+			if(file.exists(file.path(logfile[[1]],"quantification","target_recov_table_neg"))){
+				load(file.path(logfile[[1]],"quantification","target_recov_table_neg"))
+				if((dim(target_recov_table_neg)[1]>0)&(dim(target_recov_table_neg)[2]>0)){
+					dim1<-dim(target_recov_table_neg)[1]
+					dim2<-dim(target_recov_table_neg)[2]
+					sketch = htmltools::withTags(table(
+						class = 'cell-border stripe',
+						thead(
+							tr(
+								th(rowspan = 4, 'Target ID'),
+								th(rowspan = 4, 'Target name'),
+								th(colspan = 1, 'Files'),	  
+								th(colspan = (dim2-3), '')
+							),
+							tr(lapply(target_recov_table_neg[1,3:dim2], th)),
+							tr(lapply(target_recov_table_neg[2,3:dim2], th)),
+							tr(lapply(target_recov_table_neg[3,3:dim2], th))
+						)
+					))
+					output$target_recov_table_neg<-DT::renderDataTable({
+						DT::datatable(
+							as.data.frame(target_recov_table_neg[5:dim1,],row.names =FALSE,stringsAsFactors=FALSE), 
+							rownames=FALSE,
+							container = sketch,
+							#extensions = list('Buttons'),
+							options = list(	
+								lengthMenu = c(100,200,400),
+								ordering=F
+								#,dom = 'Bfrtip',
+								#buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+							),
+							selection = 'single',
+							#selection = list(target = 'column'),
+							caption = 'Recovery: concentration differences of quantified targets between spiked files and their corresponding samples.
+							For several values per cell, the first value specifies the result from applying the quantification rules (e.g., use most intense peak) to ambiguous screening matches.'#,
+						)
+					})						
+				}else{
+					output$target_recov_table_neg <- DT::renderDataTable({
+						DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No recovery results available")
+					},server = TRUE)					
+				}
+			}else{
+				output$target_recov_table_neg <- DT::renderDataTable({
+					DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No recovery results available")
 				},server = TRUE)	
 			}
 		}

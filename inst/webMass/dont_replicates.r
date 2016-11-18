@@ -1,6 +1,6 @@
 
 measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-measurements<-measurements[measurements[,8]=="TRUE",]
+measurements<-measurements[measurements[,"include"]=="TRUE",]
 replic<-(measurements$tag3[measurements$tag3!="FALSE"])
 replic<-replic[duplicated(replic)]
 replic<-unique(replic)
