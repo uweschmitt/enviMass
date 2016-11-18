@@ -12,13 +12,8 @@
 			HTML('<hr noshade="noshade" />'),
 				bsCollapse(multiple = FALSE, open = "files_open", id = "files",
 					# ADD FILE #################################################
-					bsCollapsePanel("Add LC-HRMS file", 		
+					bsCollapsePanel("Add LC-MS file", 		
 						helpText("To add a new file.mzXML, set its specifications below and upload it."),
-						#HTML('<hr noshade="noshade" />'),												
-						#fluidRow( # BETTER HAVE THAT AUTOMATIZED PER DEFAULT
-						#	column(width = 5, numericInput("Measadd_ID", "Numeric ID:", value = "123")),
-						#	column(width = 5, radioButtons("Measadd_ID_autom", "...or assign ID automatically (highly recommended)?", c("yes"="yes","no"="no")))							
-						#),
 						HTML('<hr noshade="noshade" />'),
 						fluidRow(
 							column(width = 5, textInput("Measadd_name", "Name:", value = "File XY")),
@@ -31,9 +26,15 @@
 							HTML('<hr noshade="noshade" />'),
 							fluidRow(
 								column(width = 5,textInput("Measadd_place", "Place:", value = "Rhine")),		
-								column(width = 5,dateInput("Measadd_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
-								column(width = 5,textInput("Measadd_time", "Time (HH:MM:SS)", value = "12:00:00")),							
-								column(width = 5,textInput("Measadd_tag3", "Replicate group (tag3)", value = "FALSE")),
+								column(width = 5,dateInput("Measadd_date", "Date:", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
+								column(width = 5,textInput("Measadd_time", "Time (HH:MM:SS):", value = "12:00:00")),							
+								column(width = 5,
+									conditionalPanel(
+										condition = "input.Measadd_type == 'samples'",								
+											textInput("Measadd_tag3", "Replicate group (tag3):", value = "FALSE")
+									)
+								),
+								column(width = 5,textInput("Measadd_ID2", "Custom ID:", value = "FALSE")),
 								column(width = 5, selectInput("Measadd_profiled", "Use for profiling (if Settings/Profiling/Omit adjusted to do so)?", choices = c("TRUE","FALSE"), selected = "TRUE"))
 							)			
 						),	
@@ -42,7 +43,7 @@
 							HTML('<hr noshade="noshade" />'),
 							fluidRow(
 								column(width = 5,textInput("Measadd_tag1", "Concentration (no units; tag1)", value = "FALSE")),
-								column(width = 5,textInput("Measadd_tag2", "Calibration group (required; tag2)", value = "Group A")),
+								column(width = 5,textInput("Measadd_tag2", "Name of calibration file set (required; tag2)", value = "Group A")),
 								column(width = 5,dateInput("Measadd_cal_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
 								column(width = 5,textInput("Measadd_cal_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
 								column(width = 5,dateInput("Measadd_cal_date2", "Date end", value="2018-01-01", min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
@@ -53,7 +54,9 @@
 							condition = "input.Measadd_type == 'spiked'", 
 							HTML('<hr noshade="noshade" />'),
 							fluidRow(
-								column(width = 5,textInput("Measadd_spiked_tag2", "ID of file to subtract from (tag2)", value = "FALSE"))						
+								column(width = 5,textInput("Measadd_spiked_tag2", "ID of reference file (tag2)", value = "FALSE")),
+								column(width = 5,dateInput("Measadd_recov_date", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+								column(width = 5,textInput("Measadd_recov_time", "Time start (HH:MM:SS)", value = "12:00:00"))
 							)
 						),						
 						HTML('<hr noshade="noshade" />'),
@@ -68,7 +71,7 @@
 						)
 					),
 					# DELETE FILE ##################################################
-					bsCollapsePanel("Delete LC-HRMS file", 		
+					bsCollapsePanel("Delete LC-MS file", 		
 						tags$h5("Delete file by its unique ID from the below file table"),
 						textInput("Measdel_ID", "ID:", value = "123"),
 						bsButton("Measdel","Remove",style="primary")		
@@ -90,10 +93,11 @@
 							condition = "input.Modif_type == 'sample' | input.Modif_type == 'blank'", 						
 							HTML('<hr noshade="noshade" />'),
 							fluidRow(
-								column(width = 5,textInput("Modif_place", "Place:", value = "Rhine")),		
+								column(width = 5,textInput("Modif_place", "Place:", value = "Rhine")),										
 								column(width = 5,dateInput("Modif_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
-								column(width = 5,textInput("Modif_time", "Time:(HH:MM:SS)", value = "12:00:00")),							
+								column(width = 5,textInput("Modif_time", "Time:(HH:MM:SS)", value = "12:00:00")),
 								column(width = 5,textInput("Modif_tag3", "Replicate group (tag3)", value = "FALSE")),
+								column(width = 5,textInput("Modif_ID2", "Custom ID", value = "FALSE")),
 								column(width = 5, selectInput("Modif_profiled","Use for profiling (if Settings/Profiling/Omit adjusted to do so)?",choices = c("TRUE","FALSE"),selected="TRUE"))								
 							)
 						),
@@ -113,7 +117,9 @@
 							condition = "input.Modif_type == 'spiked'", 
 							HTML('<hr noshade="noshade" />'),
 							fluidRow(
-								column(width = 5,textInput("Modif_spiked_tag2", "ID of file to subtract from (tag2)", value = "FALSE"))
+								column(width = 5,textInput("Modif_spiked_tag2", "ID of file to subtract from (tag2)", value = "FALSE")),
+								column(width = 5,dateInput("Modif_recov_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
+								column(width = 5,textInput("Modif_recov_time", "Time:(HH:MM:SS)", value = "12:00:00"))
 							)
 						),						
 						HTML('<hr noshade="noshade" />'),
@@ -124,7 +130,7 @@
 						fluidRow(
 							column(width = 4, helpText("Load a calibration group to be modified, deleted or copied below. To do so, select the ionization mode, insert the calibration group name (tag2 in the file table) and press Load.")),
 							column(width = 3, selectInput("Modif_cal_mode", "Choose ionization mode:", choices = c("positive", "negative"))),
-							column(width = 3, textInput("Modif_cal_group", "Calibration group:", value = "existinggroup"), bsButton("Load_cal","Load",style="primary"))
+							column(width = 3, textInput("Modif_cal_group", "Calibration group (tag2):", value = "existinggroup"), bsButton("Load_cal","Load",style="primary"))
 						),
 						HTML('<hr noshade="noshade" />'),
 						htmlOutput('Modif_cal_text_load'),
@@ -182,15 +188,26 @@
 						HTML('<hr noshade="noshade" />'),
 						textOutput("had_import_project")	
 					),
-					bsCollapsePanel("File overview", 	
+					bsCollapsePanel("File overview", 
+						helpText("The below plot indicates available files as dots at their respective date and time, listed over the different file categories 
+						and seperately for each of the two ion modes."),
+						helpText("Select a time period via mouse brush to list the file IDs for it. Double-click into the area to zoom in; double-click again to zoom out."),
 						plotOutput("file_overview", 
 							dblclick = "file_overview_dblclick",
 							brush = brushOpts(
 								id = "file_overview_brush",
 								resetOnNew = TRUE,
-								direction = "x"
-							)
-						)
+								direction = "x",
+								fill="red"
+							),
+							height = "600px"
+						),
+						HTML('<hr noshade="noshade" />'),
+						HTML('<font size="5"> + </font><font size="3"> Last selected file IDs, positive ionization:</font>'),
+						htmlOutput("info_files_pos_samp"),htmlOutput("info_files_pos_blind"),htmlOutput("info_files_pos_cal"),htmlOutput("info_files_pos_calgroup"),htmlOutput("info_files_pos_spiked"),
+						HTML('<hr noshade="noshade" />'),		
+						HTML('<font size="5"> - </font><font size="3"> Last selected file IDs, negative ionization:</font>'),
+						htmlOutput("info_files_neg_samp"),htmlOutput("info_files_neg_blind"),htmlOutput("info_files_neg_cal"),htmlOutput("info_files_neg_calgroup"),htmlOutput("info_files_neg_spiked")
 					)
 				),	
 			HTML('<hr noshade="noshade" />'),
@@ -204,54 +221,97 @@
             tabPanel("Internal standards",
 				HTML('<hr noshade="noshade" />'),
 				bsCollapse(multiple = FALSE, open = "IS_comp_open", id = "IS_comp",
-					bsCollapsePanel("Add internal standard compound", 
+					bsCollapsePanel("Add or modify an internal standard compound", 
 						fluidRow(
 							column(width = 5, helpText("To add a new internal standard, fill out the below form and press Add") ),
 							column(width = 2, offset = 0.3, bsButton("AddIS","Add",style="primary"))
 						),
 						HTML('<hr noshade="noshade" />'),
-						div(style = widget_style,
-							textInput("ISadd_ID", "Unique ID:", value = "123_XYZ"),          
-							textInput("ISadd_name", "Name:", value = "CompoundX"),
-							textInput("ISadd_formula", "Formula:", value = "C10H12O10")
+						fluidRow(
+							column(width = 5, helpText("To modify a compound insert its ID into the field to the right and press Load,
+								which updates the below form. Modifications in the form can then be saved with the Modify button.
+								If the compound ID in the form is changed, a new entry to the compound table with this ID will be made.
+								Beware: if another compound with this new ID exists, it will be replaced in the table.") ),
+							column(width = 4, 
+								textInput("ISmodif_ID", "Compound ID:", value = "123_XYZ"),
+								bsButton("LoadIS","Load",style="primary")),
+							column(width = 3, offset = 0.3, bsButton("ModifIS","Modify",style="primary"))
 						),
-						div(style = widget_style,
-							textInput("ISadd_RT", "Retention time (RT) [min]:", value = "7.52"),    
-							checkboxInput("ISadd_RTtol_use", "Use specific +/- RT tolerance [min]:", FALSE),                    
-							textInput("ISadd_RTtol","", value = "2"),          
-							selectInput(inputId="ISadd_charge", label="Ionization mode", choices=c("positive","negative"), selected = "positive", multiple = FALSE),
-							popify(
-								selectInput(inputId="ISadd_add", label="Main adduct:", choices= "FALSE", selected = "FALSE", multiple = FALSE),
-									title = "Adduct definition for a compound",
-									content = 	"A compound-specific adduct can be defined here; non-specific adducts are defined in the Settings tab. Unless the below restriction is enabled, the compound-specific adduct is used alongside the non-specific ones. Seperate compound entries have to be made when including more than one compound-specific adduct.", 
-									placement = "right", trigger = "hover"),		
-							checkboxInput("ISadd_rest_adduct", "Restrict screening to main adduct?", FALSE),       
-							checkboxInput("ISadd_use_recal", "To be used for m/z recalibration?", TRUE),
-							checkboxInput("ISadd_use_screen", "To be used for screening?", TRUE)
+						HTML('<hr style="border: .8px solid " />'),
+						fluidRow(
+							column(width = 2, textInput("ISadd_ID", "Unique ID:", value = "123_XYZ")),  
+							column(width = 8, helpText("Must be unique, numbers and characters permitted; no empty spaces or special characters or underscores permitted.") )							
 						),
-						div(style = widget_style,
-							textInput("ISadd_remark", "remark", value = "none"),
-							textInput("ISadd_tag1", "tag1", value = "none"),
-							textInput("ISadd_tag2", "tag2", value = "none"),
-							textInput("ISadd_tag3", "tag3", value = "none")
+						HTML('<hr style="border: .8px solid " />'),
+						fluidRow(         
+							column(width = 3, textInput("ISadd_name", "Name:", value = "CompoundX")),
+							column(width = 3, selectInput("ISadd_charge", label="Ionization mode", choices=c("positive","negative"), selected = "positive", multiple = FALSE))									
 						),
-						div(style = widget_style,							
-							checkboxInput("ISadd_date", "Restrict to temporal range?", FALSE),	
-							dateRangeInput("ISadd_date_range", label="", start = NULL, end = NULL,
-								min = NULL, max = NULL, format = "yyyy-mm-dd",
-								startview = "month", weekstart = 0, language = "en",
-								separator = " to ")
+						HTML('<hr style="border: .8px solid " />'),
+						fluidRow(
+							column(width = 3, textInput("ISadd_formula", "Formula:", value = "C10H12O10")),
+							column(width = 8, helpText("Must consist of an upper case letter, possibly followed by lower case letters; to refer to individual isotopes (e.g., from isotope 
+									labelling of a molecule, e.g., N5 vs. [15]N2N3), square brackets may precede the capital letter. Any other symbols which may be part of a chemical formula (e.g., charges (+), 
+									dashes, asterisks, ...) are not permitted.") )										
 						),
-						div(style = widget_style,
-							tags$h4("Quantification settings"),
-							popify(
-								selectInput(inputId="IS_quant_add", label="Adduct for calibration & quantification:", choices= "FALSE", selected = "FALSE", multiple = FALSE),
-									title = "Adduct used for quantification.",
-									content = 	"Selection depends on the ionization mode set above. Ensure this adduct is indeed calculated for this compound (either via the above main adduct or the more general adducts to be set in the Settings/Adducts tab)!", 
-									placement = "right", trigger = "hover"),		
-							numericInput("IS_quant_peak", "Isotopologue peak used for quantification ... (integer, 1=monoisotopic):", 1),
-							textInput("Lower_intensity_bound", "... with a lower intensity bound (.-separated)", value = "0"),						
-							textInput("Upper_intensity_bound", "... with an upper intensity bound (.-separated)", value = "Inf")								
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(
+							column(width = 3, textInput("ISadd_RT", "Retention time (RT) [min]:", value = "7.52")),    
+							column(width = 3, checkboxInput("ISadd_RTtol_use", "Use specific +/- RT tolerance [min]:", FALSE)),                    
+							column(width = 3, textInput("ISadd_RTtol","", value = "2"))
+						),
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(						
+							column(width = 4, 
+								selectInput("ISadd_add", label="Main adduct:", choices= "FALSE", selected = "FALSE", multiple = FALSE),
+								checkboxInput("ISadd_rest_adduct", "Restrict screening to main adduct?", FALSE)),
+							column(width = 8, helpText("A compound-specific adduct can be defined here; general adducts to be considered for all compounds can be defined in the Settings/Adducts tab. 	
+														Unless the below restriction, the compound-specific adduct is used alongside the general ones. 
+														Seperate compound entries have to be made when including more than one compound-specific adduct."))							
+						),
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(	
+							column(width = 4, checkboxInput("ISadd_use_recal", "To be used for m/z recalibration?", TRUE)),
+							column(width = 4, checkboxInput("ISadd_use_screen", "To be used for screening?", TRUE))
+						),
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(
+							column(width = 4, textInput("ISadd_remark", "remark", value = "none")),
+							column(width = 4, textInput("ISadd_tag1", "tag1", value = "none")),
+							column(width = 4, textInput("ISadd_tag2", "tag2", value = "none")),
+							column(width = 4, textInput("ISadd_tag3", "tag3", value = "none"))
+						),
+						HTML('<hr noshade="noshade" />'),
+						#div(style = widget_style,							
+						#	checkboxInput("ISadd_date", "Restrict to temporal range?", FALSE),	
+						#	dateRangeInput("ISadd_date_range", label="", start = NULL, end = NULL,
+						#		min = NULL, max = NULL, format = "yyyy-mm-dd",
+						#		startview = "month", weekstart = 0, language = "en",
+						#		separator = " to ")
+						#),
+						fluidRow(
+							column(width = 12, tags$h4("Quantification settings")),
+							column(width = 4,
+								helpText("Used adduct:"),
+								selectInput("IS_quant_add", label=NULL, choices= "FALSE", selected = "FALSE", multiple = FALSE)
+							),		
+							column(width = 5,
+								helpText("Used centroid peak (sorted by mass, 1=monoisotopic):"),
+								numericInput("IS_quant_peak", label=NULL, 1)
+							),
+							column(width = 8,
+								fluidRow(
+									column(width = 5,
+										helpText("Lower intensity bound of considered centroid peak(s) (.-separated):"),
+										textInput("Lower_intensity_bound", label=NULL, value = "0")),						
+									column(width = 5,
+										helpText("Upper intensity bound of considered centroid peak(s) (.-separated):"),
+										textInput("Upper_intensity_bound", label=NULL, value = "Inf"))
+								)
+							),
+							column(width = 5,
+								helpText("To rank several centroid peaks to quantify with, use:"),
+								selectInput("IS_quant_rule", label=NULL, choices=c("most intense peak","closest RT","closest m/z"), selected = "most intense peak",width='400px'))							
 						)
 					),
 					bsCollapsePanel("Remove internal standard compound", 					
@@ -259,38 +319,68 @@
 						textInput("ISdelete_ID", "ID for deletion:", value = "123_XYZ"),          
 						bsButton("DeleteIS","Delete",style="primary")					
 					),
-					bsCollapsePanel("Import compound list", 					
-						fileInput("ISlist_path", "Select IS.txt file, e.g. from dataframes folder of another project", multiple = FALSE, accept = c(".txt"))
+					bsCollapsePanel("Import / export compound list", 		
+						helpText("Import IS compund list.txt file, e.g. from the dataframes folder of another project (where it can be found as IS.txt):"),					
+						fileInput("ISlist_path", NULL, multiple = FALSE, accept = c(".txt")),
+						checkboxInput("ISlist_save_copy", "Save a copy of the current IS compound table below if it is to be replaced by the import?", TRUE),
+						bsPopover("ISlist_save_copy", 
+							title = "Safety copy",
+							content = "The copy can be found in the dataframes folder of your project, named as IS_date_time. You may reload this backup later to undo a compound import.", 
+							placement = "right", trigger = "hover"),
+						HTML('<hr noshade="noshade" />'),
+						helpText("Export and save the below IS table as .txt file. The latter can again be reloaded after modifications, using the above import."),
+						shinySaveButton(id="download_IS", label="Save", title="Save below IS table", filetype=list(text='txt'), buttonType = "default", class = NULL)	
 					),
 					bsCollapsePanel("Modify in external editor", 					
 						HTML('
 							<p><font>
-								The below compound table can be assembled and modified in external text editors, OpenOffice Calc or Excel and then imported via the above import step.
-								To do so, use file IS.txt from the dataframe folder of a new enviMass project as a template. 
-								Mind the character encoding (e.g., ANSI) of .txt files when modifying. 
-								Ensure your imported compound set does not contain empty rows, especially at the table end.
+								The below compound table can be exported as .txt file and modified in external text editors, OpenOffice Calc or Excel and then again imported. 
+								Export and import MUST be done with the above Import / export functions to check for correctness of the tables. The .txt files are tab-separated when exported and must be so for import.
+								Mind the character encoding (e.g., ANSI) of .txt files when modifying and ensure your imported compound table does not contain empty rows, especially at the table end.
 							</font></p>
 							<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> 
-								Any such modifications must strictly adhere to the following rules to avoid frustration:
+								Any external modifications must strictly adhere to the following rules:
 							</font></p> 
 							<ol>
-								<li>Headers: strictly use file IS.txt generated in a new enviMass project (dataframes folder) as a template. No empty spaces in header names permitted (e.g. ion_mode NOT ion mode).</li>
 								<li>Input format: text file (.txt), tab delimited.</li>
-								<li>Compound names: no special signs permitted. Use big and small letters, numbers, underscores, hyphen, brackets and empty spaces - and absolutely nothing else.</li>
-								<li>No empty columns. If you are not sure what to fill in, use what is given  in the template IS.txt file.</li>
+								<li>Column headers: DO NOT MODIFY.</li>
+								<li>No empty columns. If you are not sure what to fill in, simply stay with what is set in the exported file.</li>
 								<li>Absolutely NO duplicated IDs or IDs containing underscores.</li>
-								<li>Do not delete columns; their number, order and content types are all fixed.</li>
-								<li>No uncompleted entries per compounds.</li>
+								<li>Do not delete columns; their number, order and content types are all fixed for good reasons.</li>
+								<li>No uncompleted entries per compounds,i.e., row.</li>
 								<li>Numeric entries with decimal points: dot-separated.</li>	
 							</ol>
 							<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> 
-								Help for some column contents:
+								Help for column contents of the internal standard table:
 							</font></p> 
 							<ol>
-								<li>ID: numbers and characters permitted; no empty spaces or special characters. Unique, absolutely NO duplicates and NO underscores permitted!</li>
-								<li>RT_tolerance: FALSE or a compound-specific retention time tolerance. Overwrites the one set as standard value in tab Settings/Screening/IS.</li>
-								<li>main_adduct: FALSE or name of a special adduct to be used for this compound entry. Valid adduct names can be found in tab Settings/Adduct.</li>								
-								<li>restrict_adduct: TRUE or FALSE. Only use the main_adduct (if specified) for this compound and ignore the ones specified in tab Settings/Adduct?</li>
+								<li><b>ID</b>: must be unique, numbers and characters permitted; no empty spaces or special characters. Absolutely NO duplicate IDs and NO IDs with underscores permitted.</li>
+								<li><b>Name</b>: (= compound name) no special signs permitted. Use big and small letters, numbers, underscores, hyphen, brackets and empty spaces - and absolutely nothing else.</li>
+								<li><b>Formula</b>: molecular formula of compounds: must consist of an upper case letter, possibly followed by lower case letters; to refer to individual isotopes (e.g., from isotope 
+									labelling of a molecule, e.g., N5 vs. [15]N2N3), square brackets may precede the capital letter. Any other symbols which may be part of a chemical formula (e.g., charges (+), 
+									dashes, asterisks, ...) are not permitted. </li>
+								<li><b>RT</b>: retention time, IN MINUTES. Must be specified. The value will be converted to seconds during workflow usage.</li>
+								<li><b>RT_tolerance</b>: FALSE or a compound-specific retention time tolerance given IN MINUTES. Overwrites the one set as standard value in tab Settings/Screening/IS. 
+									The RT_tolerance will be automatically converted to seconds during workflow usage.</li>
+								<li><b>main_adduct</b>: FALSE or name of a special adduct to be used for this compound entry. Valid adduct names can be found in tab Settings/Adduct.</li>								
+								<li><b>ion_mod</b>e: positive or negative. If a compound is to be screened in both modes, two entries (table rows) are required.</li>
+								<li><b>use_for_recalibration</b>: TRUE or FALSE.</li>
+								<li><b>use_for_screening</b>: TRUE or FALSE.</li>
+								<li><b>restrict_adduct</b>: TRUE or FALSE. 
+									TRUE: only use the <b>main_adduct</b> (must then be specified) for this compound and ignore the ones specified in tab Settings/Adduct? 
+									FALSE: the adducts specified in tab Settings/Adduct and the one set in column <b>main_adduct</b> (if specified) are all considered for this compound.</li>
+								<li><b>Remark</b>: Character string for your remark on this compound (no tabs.</li>
+								<li><b>tag1</b>: Character string for specification of the compound (no tabs), e.g. pharmaceutical.</li>	
+								<li><b>tag2</b>: Character string for further specifications (no tabs).</li>
+								<li><b>tag3</b>: Character string for further specifications (no tabs).</li>
+								<li>from: ignore.</li>
+								<li>to: ignore.</li>
+								<li><b>Lower_intensity_bound</b>: peaks with intensities below this bound are not used for quantification. Set to 0 to omit; can be interactively set for each IS compound after screening, in the Results tab.</li>	
+								<li><b>Upper_intensity_bound</b>: peaks with intensities above this bound are not used for quantification. Set to Inf to omit; can be interactively set for each IS compound after screening, in the Results tab.</li>
+								<li><b>Quant_adduct</b>: ESI adduct to be used for quantification purposes. Valid adduct names can be found among those selected in tab Settings/Adduct or must be in agreement with <b>main_adduct</b>. </li>
+								<li><b>Quant_peak</b>: Integer number refering to the centroid peak (ordered by increasing mass; 1 = monoisotopic) of the adduct to be used for quantification purposes. </li>
+								<li><b>Quant_rule</b>: Any ONE of exactly these choices "most intense peak","closest RT" or "closest m/z". Used for quantification if several peaks are available. 
+									The one quantified concentration after applying the rule will be listed first in the quantification tables for targets linked to this internal standard.</li>
 							</ol>
 						')		
 					)
@@ -301,54 +391,101 @@
             tabPanel("Targets", 
 				HTML('<hr noshade="noshade" />'),
 				bsCollapse(multiple = FALSE, open = "target_comp_open", id = "target_comp",
-					bsCollapsePanel("Add target compound", 
+					bsCollapsePanel("Add or modify a target compound", 
 						fluidRow(
 							column(width = 5, helpText("To add a new target, fill out the below form and press Add.") ),
-							column(width = 2, offset = 0.3,  bsButton("Addtargets","Add",style="primary"))
-						),			
-						div(style = widget_style,
-							textInput("targetsadd_ID", "Unique ID:", value = "123_XYZ"),          
-							textInput("targetsadd_name", "Name:", value = "CompoundY"),
-							textInput("targetsadd_formula", "Formula:", value = "C10H12O10")          
+							column(width = 2, offset = 0.3, bsButton("Addtargets","Add",style="primary"))
 						),
-						div(style = widget_style,						
-							textInput("targetsadd_RT", "Retention time (RT) [min]:", value = "7.52"),    
-							checkboxInput("targetsadd_RTtol_use", "Use specific +/- RT tolerance [min]:", FALSE),                    
-							textInput("targetsadd_RTtol","", value = "2"),          
-							selectInput(inputId="targetsadd_charge", label="Ionization mode", choices=c("positive","negative"), selected = "positive", multiple = FALSE),
-							popify(
-								selectInput(inputId="targetsadd_add", label="Main adduct:", choices= "FALSE", selected = "FALSE", multiple = FALSE),
-									title = "Adduct definition for a compound",
-									content = 	"A compound-specific adduct can be defined here; non-specific adducts are defined in the Settings tab. Unless the below restriction is enabled, the compound-specific adduct is used alongside the non-specific ones. Seperate compound entries have to be made when including more than one compound-specific adduct.", 
-									placement = "right", trigger = "hover"),		
-							checkboxInput("targetsadd_rest_adduct", "Restrict screening to main adduct?", FALSE),                    
-							checkboxInput("targetsadd_use_recal", "To be used for m/z recalibration?", TRUE),
-							checkboxInput("targetsadd_use_screen", "To be used for screening?", TRUE)
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(
+							column(width = 5, helpText("To modify a compound insert its ID into the field to the right and press Load,
+								which updates the below form. Modifications in the form can then be saved with the Modify button.
+								If the compound ID in the form is changed, a new entry to the compound table with this ID will be made.
+								Beware: if another compound with this new ID already exists, it will be replaced in the table.") ),
+							column(width = 4, 
+								textInput("targetmodif_ID", "Compound ID:", value = "123_XYZ"),
+								bsButton("Loadtarget","Load",style="primary")),
+							column(width = 3, offset = 0.3, bsButton("Modiftarget","Modify",style="primary"))
 						),
-						div(style = widget_style,							
-							textInput("targetsadd_remark", "remark", value = "none"),
-							textInput("targetsadd_tag1", "tag1", value = "none"),
-							textInput("targetsadd_tag2", "tag2", value = "none"),
-							textInput("targetsadd_tag3", "tag3", value = "none")
+						HTML('<hr style="border: .8px solid " />'),
+						fluidRow(
+							column(width = 2, textInput("targetsadd_ID", "Unique ID:", value = "123_XYZ")),          
+							column(width = 8, helpText("Must be unique, numbers and characters permitted; no empty spaces or special characters or underscores permitted."))	
 						),
-						div(style = widget_style,
-							checkboxInput("targetsadd_date", "Restrict to temporal range?", FALSE),	
-							dateRangeInput("targetsadd_date_range", label="", start = NULL, end = NULL,
-								min = NULL, max = NULL, format = "yyyy-mm-dd",
-								startview = "month", weekstart = 0, language = "en",
-								separator = " to ")						
+						HTML('<hr style="border: .8px solid " />'),
+						fluidRow(         
+							column(width = 3, textInput("targetsadd_name", "Name:", value = "CompoundX")),
+							column(width = 3, selectInput("targetsadd_charge", label="Ionization mode", choices=c("positive","negative"), selected = "positive", multiple = FALSE))									
 						),						
-						div(style = widget_style,
-							tags$h4("Quantification settings"),
-							popify(
-								selectInput(inputId="target_quant_add", label="Adduct used for calibration & quantification:", choices= "FALSE", selected = "FALSE", multiple = FALSE),
-									title = "Adduct used for quantification.",
-									content = 	"Selection depends on the ionization mode set above. Ensure this adduct is indeed calculated for this compound (either via the above main adduct or the more general adducts to be set in the Settings/Adducts tab)!", 
-									placement = "right", trigger = "hover"),		
-							numericInput("target_quant_peak", "Isotopologue peak used for calibration & quantification (integer, 1=monoisotopic):", 1),
-							textInput("target_quant_ISID", "ID of internal standard used for calibration & quantification", value = "FALSE"),
-							textInput("warn_1", "First concentration warn level (.-separated)", value = "FALSE"),							
-							textInput("warn_2", "Second concentration warn level (.-separated)", value = "FALSE")									
+						HTML('<hr style="border: .8px solid " />'),
+						fluidRow(
+							column(width = 3, textInput("targetsadd_formula", "Formula:", value = "C10H12O10")),
+							column(width = 8, helpText("Must consist of an upper case letter, possibly followed by lower case letters; to refer to individual isotopes (e.g., from isotope 
+									labelling of a molecule, e.g., N5 vs. [15]N2N3), square brackets may precede the capital letter. Any other symbols which may be part of a chemical formula (e.g., charges (+), 
+									dashes, asterisks, ...) are not permitted."))		
+						),						
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(
+							column(width = 3, textInput("targetsadd_RT", "Retention time (RT) [min]:", value = "7.52")),    
+							column(width = 3, checkboxInput("targetsadd_RTtol_use", "Use specific +/- RT tolerance [min]:", FALSE)),                    
+							column(width = 3, textInput("targetsadd_RTtol","", value = "2"))
+						),
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(						
+							column(width = 4, 
+								selectInput("targetsadd_add", label="Main adduct:", choices= "FALSE", selected = "FALSE", multiple = FALSE),
+								checkboxInput("targetsadd_rest_adduct", "Restrict screening to main adduct?", FALSE)),
+							column(width = 8, helpText("A compound-specific adduct can be defined here; general adducts to be considered for all compounds can be defined in the Settings/Adducts tab. 	
+														Unless the below restriction, the compound-specific adduct is used alongside the general ones. 
+														Seperate compound entries have to be made when including more than one compound-specific adduct."))							
+						),
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(	
+							column(width = 4, checkboxInput("targetsadd_use_recal", "To be used for m/z recalibration?", TRUE)),
+							column(width = 4, checkboxInput("targetsadd_use_screen", "To be used for screening?", TRUE))
+						),
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(
+							column(width = 4, textInput("targetsadd_remark", "remark", value = "none")),
+							column(width = 4, textInput("targetsadd_tag1", "tag1", value = "none")),
+							column(width = 4, textInput("targetsadd_tag2", "tag2", value = "none")),
+							column(width = 4, textInput("targetsadd_tag3", "tag3", value = "none"))
+						),
+						HTML('<hr noshade="noshade" />'),
+						#div(style = widget_style,							
+						#	checkboxInput("targetsadd_date", "Restrict to temporal range?", FALSE),	
+						#	dateRangeInput("targetsadd_date_range", label="", start = NULL, end = NULL,
+						#		min = NULL, max = NULL, format = "yyyy-mm-dd",
+						#		startview = "month", weekstart = 0, language = "en",
+						#		separator = " to ")
+						#),
+						fluidRow(
+							column(width = 12, tags$h4("Quantification settings")),
+							column(width = 4,
+								helpText("Used adduct:"),
+								selectInput("target_quant_add", label=NULL, choices= "FALSE", selected = "FALSE", multiple = FALSE)
+							),		
+							column(width = 5,
+								helpText("Used centroid peak (sorted by mass, 1=monoisotopic):"),
+								numericInput("target_quant_peak", label=NULL, 1)
+							),
+							column(width = 5,
+								helpText("ID of internal standard used for calibration & quantification for this target:"),
+								textInput("target_quant_ISID", label=NULL, value = "FALSE")
+							),							
+							column(width = 8,
+								fluidRow(
+									column(width = 5,
+										helpText("First concentration warn level (.-separated):"),
+										textInput("warn_1", label=NULL, value = "FALSE")),						
+									column(width = 5,
+										helpText("Second concentration warn level (.-separated):"),
+										textInput("warn_2", label=NULL, value = "FALSE"))
+								)
+							),
+							column(width = 5,
+								helpText("To rank several centroid peaks to quantify with, use:"),
+								selectInput("target_quant_rule", label=NULL, choices=c("most intense peak","closest RT","closest m/z"), selected = "most intense peak",width='400px'))							
 						)
 					),
 					bsCollapsePanel("Remove target compound", 
@@ -356,41 +493,74 @@
 						textInput("targetsdelete_ID", "ID for deletion:", value = "123_XYZ"),          
 						bsButton("Deletetargets","Delete",style="primary")					
 					),
-					bsCollapsePanel("Import compound list", 					
-						fileInput("targetlist_path", "Select targets.txt file, e.g. from dataframes folder of another project", multiple = FALSE, accept = c(".txt"))
+					bsCollapsePanel("Import / export compound list", 		
+						helpText("Import target compound list.txt file, e.g. from the dataframes folder of another project (where it can be found as targets.txt):"),					
+						fileInput("targetlist_path", NULL, multiple = FALSE, accept = c(".txt")),
+						checkboxInput("targetlist_save_copy", "Save a copy of the current target compound table below if it is to be replaced by the import?", TRUE),
+						bsPopover("targetlist_save_copy", 
+							title = "Safety copy",
+							content = "The copy can be found in the dataframes folder of your project, named as targets_date_time. You may reload this backup later to undo a compound import.", 
+							placement = "right", trigger = "hover"),
+						HTML('<hr noshade="noshade" />'),
+						helpText("Export and save the below target compound table as .txt file. The latter can again be reloaded after modifications, using the above import."),
+						shinySaveButton(id="download_target", label="Save", title="Save below target compound table", filetype=list(text='txt'), buttonType = "default", class = NULL)	
 					),
 					bsCollapsePanel("Modify in external editor", 					
 						HTML('
 							<p><font>
-								The below compound table can be assembled and modified in external text editors or Excel and then imported via the above import step.
-								To do so, use file targets.txt from the dataframe folder of a new enviMass project as a template.
-								Mind the character encoding (e.g., ANSI) of .txt files when modifying.
-								Ensure your imported compound set does not contain empty rows, especially at the table end.
+								The below compound table can be exported as .txt file and modified in external text editors, OpenOffice Calc or Excel and then again imported. 
+								Export and import MUST be done with the above Import / export functions to check for correctness of the tables. The .txt files are tab-separated when exported and must be so for import.
+								Mind the character encoding (e.g., ANSI) of .txt files when modifying and ensure your imported compound table does not contain empty rows, especially at the table end.
 							</font></p>
 							<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> 
-								Any such modifications must strictly adhere to the following rules to avoid frustration:
+								Any external modifications must strictly adhere to the following rules:
 							</font></p> 
 							<ol>
-								<li>Headers: strictly use file targets.txt generated in a new enviMass project (dataframes folder) as a template. No empty spaces in header names permitted (e.g. ion_mode NOT ion mode).</li>
 								<li>Input format: text file (.txt), tab delimited.</li>
-								<li>Compound names: no special signs permitted. Use big and small letters, numbers, underscores, hyphen, brackets and empty spaces - and absolutely nothing else.</li>
-								<li>No empty columns. If you are not sure what to fill in, use what is given  in the template targets.txt file.</li>
-								<li>Absolutely NO duplicated IDs; IDs must NOT contain underscores.</li>
-								<li>Do not delete columns; their number, order and content types are all fixed.</li>
-								<li>No uncompleted entries per compounds.</li>
-								<li>Numeric entries with decimal points: dot-separated.</li>								
+								<li>Column headers: DO NOT MODIFY.</li>
+								<li>No empty columns. If you are not sure what to fill in, simply stay with what is set in the exported file.</li>
+								<li>Absolutely NO duplicated IDs or IDs containing underscores.</li>
+								<li>Do not delete columns; their number, order and content types are all fixed for good reasons.</li>
+								<li>No uncompleted entries per compounds,i.e., row.</li>
+								<li>Numeric entries with decimal points: dot-separated.</li>
+								<li>If you want to make links to the internal standard table via column <b>ID_internal_standard</b>, the internal standard
+								must exists in the according table. Thus, better start setting up the internal standard table first.</li>								
 							</ol>
 							<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> 
-								Help for some column contents:
+								Help for target table column contents:
 							</font></p> 
 							<ol>
-								<li>ID: numbers and characters permitted; no empty spaces or special characters. Unique, absolutely NO duplicates and NO underscores permitted!</li>
-								<li>RT_tolerance: FALSE or a compound-specific retention time tolerance. Overwrites the one set as standard value in tab Settings/Screening/targets.</li>
-								<li>ID_internal_standard: unique ID of a internal standard compound to be used for quantification. Set to FALSE otherwise.</li>
-								<li>main_adduct: FALSE or name of a special adduct to be used for this compound entry. Valid adduct names can be found in tab Settings/Adduct.</li>								
-								<li>restrict_adduct: TRUE or FALSE. Only use the main_adduct (if specified) for this compound and ignore the ones specified in tab Settings/Adduct?</li>
+								<li><b>ID</b>: must be unique, numbers and characters permitted; no empty spaces or special characters. Absolutely NO duplicate IDs and NO IDs with underscores permitted.</li>
+								<li><b>Name</b>: (= compound name) no special signs permitted. Use big and small letters, numbers, underscores, hyphen, brackets and empty spaces - and absolutely nothing else.</li>
+								<li><b>Formula</b>: molecular formula of compounds: must consist of an upper case letter, possibly followed by lower case letters; to refer to individual isotopes (e.g., from isotope 
+									labelling of a molecule, e.g., N5 vs. [15]N2N3), square brackets may precede the capital letter. Any other symbols which may be part of a chemical formula (e.g., charges (+), 
+									dashes, asterisks, ...) are not permitted. </li>
+								<li><b>RT</b>: retention time, IN MINUTES. Must be specified. The value will be converted to seconds during workflow usage.</li>
+								<li><b>ID_internal_standard</b>: FALSE or a valid ID of an internal standards to be found in the CURRENT internal standard table. Only targets linked with this ID will be considered for quantification.</li>
+								<li><b>RT_tolerance</b>: FALSE or a compound-specific retention time tolerance given IN MINUTES. Overwrites the one set as standard value in tab Settings/Screening/IS. 
+									The RT_tolerance will be automatically converted to seconds during workflow usage.</li>
+								<li><b>main_adduct</b>: FALSE or name of a special adduct to be used for this compound entry. Valid adduct names can be found in tab Settings/Adduct.</li>								
+								<li><b>ion_mod</b>e: positive or negative. If a compound is to be screened in both modes, two entries (table rows) are required.</li>
+								<li><b>use_for_recalibration</b>: TRUE or FALSE.</li>
+								<li><b>use_for_screening</b>: TRUE or FALSE.</li>
+								<li><b>restrict_adduct</b>: TRUE or FALSE. 
+									TRUE: only use the <b>main_adduct</b> (must then be specified) for this compound and ignore the ones specified in tab Settings/Adduct? 
+									FALSE: the adducts specified in tab Settings/Adduct and the one set in column <b>main_adduct</b> (if specified) are all considered for this compound.</li>
+								<li><b>Remark</b>: Character string for your remark on this compound (no tabs.</li>
+								<li><b>tag1</b>: Character string for specification of the compound (no tabs), e.g. pharmaceutical.</li>	
+								<li><b>tag2</b>: Character string for further specifications (no tabs).</li>
+								<li><b>tag3</b>: Character string for further specifications (no tabs).</li>
+								<li>from: ignore.</li>
+								<li>to: ignore.</li>
+								<li><b>warn_1</b>: First concentration warn level, without units. Quantified targets above this level are marked orange in the quantification table. </li>
+								<li><b>warn_2</b>: Second concentration warn level, without units. Quantified targets above this level are marked red in the quantification table. </li>
+								<li><b>Quant_adduct</b>: ESI adduct to be used for quantification purposes. Valid adduct names can be found among those selected in tab Settings/Adduct or must be in agreement with <b>main_adduct</b>. </li>
+								<li><b>Quant_peak</b>: Integer number refering to the centroid peak (ordered by increasing mass; 1 = monoisotopic) of the adduct to be used for quantification purposes. </li>
+								<li><b>Quant_rule</b>: Any ONE of exactly these choices "most intense peak","closest RT" or "closest m/z". Used for quantification if several peaks are available. 
+									The one quantified concentration after applying the rule will be listed first in the quantification tables.</li>
 							</ol>
 						')		
+	
 					)
 				),
 				HTML('<hr noshade="noshade" />'),  
@@ -428,12 +598,12 @@
 						)
 					),
 				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Median intensity normalization </font></p> '),
-					radioButtons("intnorm", "Include?", c("yes"="yes","no"="no")),
+					radioButtons("norm", "Include?", c("yes"="yes","no"="no")),
 				#HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> RT alignment </font></p> '),
 				#radioButtons("RTalign", "Include?", c("yes"="yes","no"="no")),  
 				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Blank / blind peak detection </font></p> '),				
 					fluidRow(
-						column(width = 2, radioButtons("blind_filter", "Detect?", c("yes"="yes","no"="no")) ),
+						column(width = 2, radioButtons("blind", "Detect?", c("yes"="yes","no"="no")) ),
 						column(width = 2, radioButtons("blind_omit", "Remove?", c("yes"="yes","no"="no")) ),
 						column(width = 8, offset = 0.3,
 							tags$p(align="justify","Detects sample peaks which are also present in blind/blank files. Check Settings Blind Tab for file selection. 
@@ -457,7 +627,7 @@
 				# block 3 ######################################################
 				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> Profile extraction </font></p>'),
 					fluidRow(
-						column(width = 2, radioButtons("profiled", "Include? ", c("yes"="yes","no"="no")) ),
+						column(width = 2, radioButtons("profiling", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
 							tags$p(align="justify","An intensity descent assorts peaks into profiles. Uses a fixed retention time tolerance window and
 							an adaptive mass tolerance window. Only peaks of files marked for profiling are used (column profiled in the files table / File Tab).")
@@ -465,7 +635,7 @@
 					),					
 				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> LOD interpolation </font></p>'),
 					fluidRow(
-						column(width = 2, radioButtons("LOD_interpol", "Include? ", c("yes"="yes","no"="no")) ),
+						column(width = 2, radioButtons("LOD", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
 							tags$p(align="justify","For each measurement, estimates a RT-dependent intensity threshold below which peaks are not expected to get picked. 
 							Can be used for the below compound screening.")
@@ -474,10 +644,10 @@
 				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> Compound screening </font></p> '),
 					fluidRow(
 						column(width = 3, 
-							radioButtons("screen_IS", "Screen internal standards?", c("yes"="yes","no"="no"))
+							radioButtons("IS_screen", "Screen internal standards?", c("yes"="yes","no"="no"))
 						),
 						column(width = 3, 
-							radioButtons("screen_target", "Screen target compounds?", c("yes"="yes","no"="no"))
+							radioButtons("target_screen", "Screen target compounds?", c("yes"="yes","no"="no"))
 						),						
 						column(width = 6, offset = 0.3,
 							tags$p(align="justify","Uses the LOD thresholds estimated in the above step. If the LOD interpolation is not run, a fixed intensity threshold as specified in the
@@ -488,9 +658,9 @@
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),  					
 				# block 4 ######################################################					
-				HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Calibration & Recovery </font></p> '),
+				HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Calibration </font></p> '),
 					fluidRow(
-						column(width = 2, radioButtons("calib", "Include? ", c("yes"="yes","no"="no")) ),
+						column(width = 2, radioButtons("calibration", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
 							tags$p(align="justify","This step screens for calibration sets of target and internal standard compound peaks, using
 							the provided calibration files. The sets can be used in the Calibration tab to establish specific calibration models (curves)
@@ -499,82 +669,113 @@
 							you can deselect this step, until new calibration files have been added.")
 						)
 					),
+				HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Quantification </font></p> '),
+					fluidRow(
+						column(width = 2, radioButtons("quantification", "Include? ", c("yes"="yes","no"="no")) ),
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","Based on the calibration models from the above step, an estimation of target compound concentrations
+							from their intensity ratios to their individual internal standard compounds is derived.")
+						)
+					),
 				HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Recovery </font></p> '),
 					fluidRow(
 						column(width = 2, radioButtons("recovery", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","Using the calibration models from the above step, a concentration recovery of spiked compounds is calculated.
-							Requires upload of spiked files; affected by the above mass recalibration, replicate intersection, blind subtraction and LOD interpolation steps.")
-						)
-					),
-				HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Quantification </font></p> '),
-					fluidRow(
-						column(width = 2, radioButtons("quantif", "Include? ", c("yes"="yes","no"="no")) ),
-						column(width = 10, offset = 0.3,
-							tags$p(align="justify","Based on the calibration models established and evaluated in the above steps, an estimation of target compound concentrations
-							from their intensity ratios to their individual internal standard compounds is derived.")
+							tags$p(align="justify","Following the above calibration and quantification steps, a concentration recovery of spiked target compounds is calculated.
+							Requires upload of spiked files.")
 						)
 					),
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),  		
 				# block X ######################################################					
+				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> EIC correlation </font></p> '),
+					fluidRow(
+						#column(width = 2, radioButtons("EIC_correlation", "Include?", c("yes"="yes","no"="no"))),
+						column(width = 10, offset = 0.3,tags$p(align="justify","Under construction"))
+					),	
 				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> Isotopologue grouping </font></p> '),
-					helpText("Under construction"),
-					#radioButtons("isotopol", "Include? ", c("yes"="yes","no"="no")),	
-				HTML('<hr noshade="noshade" />'),
+					fluidRow(
+						#column(width = 2, radioButtons("isotopologues", "Include?", c("yes"="yes","no"="no"))),
+						column(width = 10, offset = 0.3,tags$p(align="justify","Under construction"))
+					),	
 				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> Adduct grouping </font></p> '),
-					helpText("Under construction"),
-					#radioButtons("adducts", "Include? ", c("yes"="yes","no"="no")),	
-				HTML('<hr noshade="noshade" />'),				
+					fluidRow(
+						#column(width = 2, radioButtons("adducts", "Include?", c("yes"="yes","no"="no"))),
+						column(width = 10, offset = 0.3,tags$p(align="justify","Under construction"))
+					),	
 				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> Homologue series detection </font></p> '),
-					helpText("Under construction"),
-					#radioButtons("homol", "Include? ", c("yes"="yes","no"="no")),	
-				HTML('<hr noshade="noshade" />'),					
+					fluidRow(
+						#column(width = 2, radioButtons("homologues", "Include?", c("yes"="yes","no"="no"))),
+						column(width = 10, offset = 0.3,tags$p(align="justify","Under construction"))
+					),	
+				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),  				
 				# block 5 ######################################################
-				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Normalization using IS-profiles </font></p> '),
+				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Intensity normalization using IS-profiles </font></p> '),
 					fluidRow(
-						column(width = 2, radioButtons("profnorm", "Include? ", c("yes"="yes","no"="no")) ),
+						column(width = 2, radioButtons("IS_normaliz", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","Relies on the above internal standard screening and profile extraction (see green steps). Intensities of picked peaks in each measurements 
-							are normalized by the median deviation over all internal standards from their individual median intensity taken over their individual profiles. Thus,
-							this approach differs from the less reliable Median intensity normalization above, which can be skipped in this case (see blue steps).")
+							tags$p(align="justify","Relies on the above profile extraction and internal standard screening (green steps). Intensities of picked peaks in each measurement 
+							are normalized by the median deviation all internal standards have in the measurement from their individual median profile intensity.
+							This approach can replace the less reliable Median intensity normalization above (blue steps). Internal standards must have been spiked at constant concentrations.")
 						)
 					),					
-				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Compound subtraction </font></p> '),
-					fluidRow(
-						column(width = 3, 
-							radioButtons("subtr_IS", "Subtract internal standards?", c("yes"="yes","no"="no"))
-						),
-						column(width = 3, 
-							radioButtons("subtr_target", "Subtract targets compounds?", c("yes"="yes","no"="no"))
-						),						
-						column(width = 6, offset = 0.3,
-							tags$p(align="justify","Run a profile recalculation omitting compound peaks belonging to matches >= the cutoff score defined in the Settings/Screening Tab.
-							The original compound screening results remain visible, but affected peaks will not be part of the final profiles.")
-						)
-					),	
-				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Blind peak subtraction </font></p> '),
+				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Profile filtering </font></p> '),
 					fluidRow(
 						column(width = 2, 
-							radioButtons("subtr_blind", "Subtract?", c("yes"="yes","no"="no"))
-						),	
+							radioButtons("subtr", "Include?", c("yes"="yes","no"="no"),inline=TRUE)
+						),
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","Subtract peaks from profiles which have also been detected in blind/blank samples but not removed yet (cp. blind detection of blue steps)?")
+							tags$p(align="justify","Run a profile recalculation omitting...")						
+						)
+					),	
+					HTML('<hr noshade="noshade" />'), 
+					fluidRow(
+						column(width = 6, offset = 0.3,
+							tags$p(align="justify","... peaks belonging to matches >= the cutoff score defined in the Settings/Screening Tab.
+							The original compound screening results remain visible, but affected peaks will not be part of the final profiles.")
+						),
+						column(width = 3, 
+							radioButtons("subtr_IS", "Subtract internal standard peaks?", c("yes"="yes","no"="no"),inline=TRUE)
+						),
+						column(width = 3, 
+							radioButtons("subtr_target", "Subtract target compound peaks?", c("yes"="yes","no"="no"),inline=TRUE)
+						)
+					),	
+					HTML('<hr noshade="noshade" />') ,
+					fluidRow(
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","... peaks which have also been detected in blind/blank samples but not removed yet (cp. blind detection of blue steps)?")
+						),
+						column(width = 2, 
+							radioButtons("subtr_blind", "Subtract?", c("yes"="yes","no"="no"),inline=TRUE)
+						)
+					),	
+					HTML('<hr noshade="noshade" />') ,
+					fluidRow(
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","... peaks from spiked files?")
+						),
+						column(width = 2, 
+							radioButtons("subtr_spiked", "Subtract?", c("yes"="yes","no"="no"),inline=TRUE)
 						)
 					),	
 				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Trend detection </font></p> '),
 					fluidRow(
-						column(width = 2, radioButtons("trenddetect", "Include? ", c("yes"="yes","no"="no")) ),
+						column(width = 2, radioButtons("trendblind", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","Contains a separate blind detection step. Herein, intensities of blind/blank peaks are interpolated over the time series.
-							This interpolation and subtraction is only applicable if the separate blind filter step is disabled (see above blue steps).")
+							tags$p(align="justify","Depending on settings, this can contain a separate blind detection step. Herein, intensities of blind/blank peaks are interpolated over the time series.
+							This interpolation and subtraction is only applicable if the separate blind filter step is disabled (see above blue steps and the preceding red step).")
 						)
-					),							
-				HTML('<hr noshade="noshade" />')             
+					),							            
 				#HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Peak grouping (componentization) </font></p>'),
 				#	checkboxInput("Comp_isotop", "Group isotopologue peaks?", TRUE),
-				#	checkboxInput("Comp_add", "Group adduct peaks?", TRUE),
+				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Componentization </font></p> '),
+					fluidRow(
+						#column(width = 2, radioButtons("components", "Include?", c("yes"="yes","no"="no"))),
+						column(width = 10, offset = 0.3,tags$p(align="justify","Under construction"))
+					),
+				HTML('<hr noshade="noshade" />') 
 				#HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Component-wise screening </font></p> '),
 				#	checkboxInput("screen_IS_comp", "Screen internal standards?", TRUE),
 				#	checkboxInput("screen_target_comp", "Screen internal targets/sustpects?", TRUE),
@@ -606,7 +807,7 @@
 					sliderInput("peak_drtsmall2", "... within a given RT window [s]", min = 1, max = 200, value = 20, step= 0.1),
 					sliderInput("peak_drtfill", "Maximum RT gap length to be interpolated [s]", min = 0, max = 60, value = 10, step= 0.1),
 					sliderInput("peak_drtdens2", "Peak definition - Maximum RT length of a single peak", min = 10, max = 1500, value = 120, step= 0.1),
-					sliderInput("peak_minint", "Minimum log10(intensity) threshold", min = 0, max = 10, value = 4, step= .1),
+					sliderInput("peak_minint_log10", "Minimum log10(intensity) threshold", min = 0, max = 10, value = 4, step= .1),
 					numericInput("peak_SN", "Minimum Signal/Noise", 5),
 					numericInput("peak_SB", "Minimum Signal/Base", 2),
 					numericInput("peak_recurs", "Maximum possible number of peaks within a single EIC", 3)
@@ -620,7 +821,8 @@
 					tags$h5("Advanced"),
 					numericInput("peak_ended", "How often can a peak detection fail to end the recursion? - peak picking", 1),
 					numericInput("peak_weight", "Weight for assigning measurements to a peak - peak picking", 1),
-					sliderInput("peak_maxint", "Upper log10(intensity) safety threshold", min = 0, max = 15, value = 6.7, step= .1),
+					numericInput("peak_maxint_log10", "Upper log10(intensity) safety threshold", 6.7),					
+					#sliderInput("peak_maxint_log10", "Upper log10(intensity) safety threshold", min = 0, max = 15, value = 6.7, step= .1),
 					sliderInput("peak_perc_cut", "Percentage of low-intense data points to discard", min = 0, max = 100, value = 0, step= .1)
 				),
               tags$h4(""),
@@ -642,7 +844,7 @@
               tags$h5("Mass recalibration"),
               div(
                 style = widget_style3,
-                selectInput("recal_what", "Reference compounds:", c("Internal standards","Target compounds","both"),"Internal standards",multiple=FALSE),                
+                selectInput("recal_use", "Reference compounds:", c("Internal standards","Target compounds","both"),"Internal standards",multiple=FALSE),                
                 numericInput("recal_dmz", "m/z tolerance ...", 3),            
                 numericInput("recal_maxdmz", "Maximum allowable m/z correction ...", 30),  				
                 selectInput("recal_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),
@@ -656,7 +858,7 @@
 				selectInput("replicate_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),	
 				#selectInput("replicate_recalib", "... and corrected by recalibration results (if available)", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE"),	
 				numericInput("replicate_delRT", "RT tolerance window of peaks caused by the same analyte across replicate samples [s]", 30),
-				numericInput("replicate_dInt", "Intensity tolerance X (log scale, 1E^X):", 9)
+				numericInput("replicate_IS_dInt", "Intensity tolerance X (log 10 scale, 10^X):", 9)
 			),	
             # ALLIGNMENT #######################################################
             #tabPanel("Alignment",
@@ -668,22 +870,22 @@
                 tabPanel("IS",
 					div(style = widget_style2,
 						tags$h5("Retention time"),
-						numericInput("screen_IS_delRT", "RT tolerance of peaks in sample relative to their expected RT [s]", 30),
-						numericInput("screen_IS_dRTwithin", "RT tolerance of peaks within an isotope pattern [s]", 50)
+						numericInput("IS_drt1", "RT tolerance of peaks in sample relative to their expected RT [s]", 30),
+						numericInput("IS_drt2", "RT tolerance of peaks within an isotope pattern [s]", 50)
 					),
 				  	div(style = widget_style2,
 						tags$h5("Mass"),
-						numericInput("screen_IS_dmz", "m/z tolerance ...", 3),                
-						selectInput("screen_IS_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE")
+						numericInput("IS_dmz", "m/z tolerance ...", 3),                
+						selectInput("IS_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE")
  					),
 					div(style = widget_style2,
 						tags$h5("Intensity"),
-						sliderInput("screen_IS_dInt", "Intensity tolerance %", min = 0, max = 100, value = 30, step= .2),
-						numericInput("screen_IS_Intcut", "Lower intensity threshold (if LOD interpolation disabled)", 5E4)                
+						sliderInput("IS_inttol", "Intensity tolerance %", min = 0, max = 100, value = 30, step= .2),
+						numericInput("IS_intcut", "Lower intensity threshold (if LOD interpolation disabled)", 5E4)                
 					),
 					div(style = widget_style2,
 						tags$h5("Scoring"),
-						numericInput("screen_IS_w1", "Cutoff score [0,1]", 0.8),         
+						numericInput("IS_w1", "Cutoff score [0,1]", 0.8),         
 						HTML('<h1 align="center"> &#x21f3; </h1> '),						
 						selectInput("screen_IS_cutit", "Exclude matches below cutoff score?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE"),
 						HTML('<h1 align="center"> &#x21f3; </h1> '),
@@ -693,22 +895,22 @@
                 tabPanel("Targets & Suspects",
 					div(style = widget_style2,
 						tags$h5("Retention time"),
-						numericInput("screen_target_delRT", "RT tolerance of peaks in sample relative to their expected RT [s]", 30),
-						numericInput("screen_target_dRTwithin", "RT tolerance of peaks within an isotope pattern [s]", 50)
+						numericInput("tar_drt1", "RT tolerance of peaks in sample relative to their expected RT [s]", 30),
+						numericInput("tar_drt2", "RT tolerance of peaks within an isotope pattern [s]", 50)
 					),
 				  	div(style = widget_style2,
 						tags$h5("Mass"),
-						numericInput("screen_target_dmz", "m/z tolerance ...", 3),                
-						selectInput("screen_target_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE")
+						numericInput("tar_dmz", "m/z tolerance ...", 3),                
+						selectInput("tar_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE")
  					),
 					div(style = widget_style2,
 						tags$h5("Intensity"),
-						sliderInput("screen_target_dInt", "Intensity tolerance %", min = 0, max = 100, value = 30, step= .2),
-						numericInput("screen_target_Intcut", "Lower intensity threshold", 5E4)                
+						sliderInput("tar_inttol", "Intensity tolerance %", min = 0, max = 100, value = 30, step= .2),
+						numericInput("tar_intcut", "Lower intensity threshold", 5E4)                
 					),
 					div(style = widget_style2,
 						tags$h5("Scoring"),
-						numericInput("screen_target_w1", "Cutoff score [0,1]", 0.8),
+						numericInput("tar_w1", "Cutoff score [0,1]", 0.8),
 						HTML('<h1 align="center"> &#x21f3; </h1> '),
 						selectInput("screen_target_cutit", "Exclude matches below cutoff score?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE"),
 						HTML('<h1 align="center"> &#x21f3; </h1> '),
@@ -717,28 +919,36 @@
                 )
               )
             ),
+			# QUANTIFICATION & RECOVERY ########################################
+			tabPanel("Quantification",
+				HTML('<hr noshade="noshade" />'),
+				numericInput("quant_files_included", "Number of latest file to include in the quantification:", 30),
+				numericInput("recov_files_included", "Number of latest spiked files to include for recovery estimation:", 30)			
+			),
             # INTENSITY NORMALIZATION ##########################################
             tabPanel("Normalization",
 				tags$h5("Intensity normalization based on IS-profiles"),
-				sliderInput("profnorm_cover_files", "Minimum of files covered by each IS profile (%)", min = 0, max = 100, value = 90, step= 1),
-				sliderInput("profnorm_threshold", "Screening threshold", min = 0, max = 1, value = 0.8, step= .01),
-				numericInput("profnorm_cover_isccount", "Minimum number of IS profiles", 15),
+				sliderInput("ISnorm_percfiles", "Minimum of files covered by each IS profile (%)", min = 0, max = 100, value = 90, step= 1),
+				sliderInput("ISnorm_score", "Screening threshold", min = 0, max = 1, value = 0.8, step= .01),
+				numericInput("ISnorm_numbIS", "Minimum number of IS profiles", 15),
 				HTML('<hr noshade="noshade" />'),
-				checkboxInput("profnorm_use_blank", "Show median deviation of blank/blind profiles?", FALSE),
-				checkboxInput("profnorm_use_blank_sample", "Use subsampling", FALSE),
-				numericInput("profnorm_use_blank_samplecount", "Number of blank/blind profiles in subsample", 100),
+				checkboxInput("ISnorm_medblank", "Show median deviation of blank/blind profiles?", FALSE),
+				checkboxInput("ISnorm_usesubblank", "Use subsampling", FALSE),
+				numericInput("ISnorm_numblank", "Number of blank/blind profiles in subsample", 100),
 				HTML('<hr noshade="noshade" />'),
-				checkboxInput("profnorm_use_nonblank", "Show median deviation of sample (i.e., non-blank) profiles?", FALSE),	
-				checkboxInput("profnorm_use_nonblank_sample", "Use subsampling", FALSE),
-				numericInput("profnorm_use_nonblank_samplecount", "Number of sample profiles in subsample", 100)
+				checkboxInput("ISnorm_medsam", "Show median deviation of sample (i.e., non-blank) profiles?", FALSE),	
+				checkboxInput("ISnorm_usesubsam", "Use subsampling", FALSE),
+				numericInput("ISnorm_numsam", "Number of sample profiles in subsample", 100)
 			),
             # PROFILING ########################################################
             tabPanel("Profiling",
 				tags$h5("Profile extraction"),
-				sliderInput("prof_sets", "Maximum number of newest files to be processed (by date/time) ", min = 50, max = 3000, value = 100, step= 1),
+				sliderInput("prof_maxfiles", "Maximum number of newest files to be processed (by date/time) ", min = 50, max = 3000, value = 100, step= 1),
 				numericInput("prof_dmz", "Peak deviation within profiles: m/z tolerance ...", 3),                
                 selectInput("prof_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),
                 numericInput("prof_drt", "Peak deviation within profiles: RT tolerance [s]", 60),     
+				HTML('<hr noshade="noshade" />'),
+				selectInput("peak_which_intensity", "Use peak intensities set as:", choices = c("maximum"="maximum","sum"="sum"), "maximum"),
 				HTML('<hr noshade="noshade" />'),				
 				selectInput("prof_select", "Omit files with table entry profiled=FALSE from profiling?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), selected="FALSE")			
 			),
@@ -746,7 +956,7 @@
             tabPanel("Trends",
 				tags$h5("Trend detection:"),
 				textInput("trend_lags", "Time lags of trends [days], comma-separated:", value = "4,7,14"),
-				numericInput("trend_thres", "Trend vs. mean+variance intensity threshold:", 3),
+				numericInput("trend_threshold", "Trend vs. mean+variance intensity threshold:", 3),
 				HTML('<hr noshade="noshade" />'),
 				radioButtons("trend_blind", "Additional blind interpolation and subtraction per profile?", c("yes"="yes","no"="no")),
 				HTML('<hr noshade="noshade" />'),
@@ -755,7 +965,7 @@
             # BLIND #############################################################
             tabPanel("Blind",
 				tags$h5("Blind subtraction:"),
-				numericInput("blind_fold", "Intensity threshold ratio sample/blind <", 100),
+				numericInput("blind_threshold", "Intensity threshold ratio sample/blind <", 100),
 				numericInput("blind_dmz", "Mass uncertainty (+/-) ...", 3), 
                 selectInput("blind_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),				
                 numericInput("blind_drt", "RT tolerance [s]:", 60),       
@@ -777,7 +987,7 @@
 				),
 				div(style = widget_style,
 					tags$h5("Debug tools"),
-					selectInput("progressbar", "Show progress bars (Windows OS only)", choices = c("TRUE","FALSE"), selected="FALSE"),
+					selectInput("progressBar", "Show progress bars (Windows OS only)", choices = c("TRUE","FALSE"), selected="FALSE"),
 					selectInput("do_project_check", "Skip the project check before calculations?", choices = c("TRUE","FALSE"), selected="FALSE"),					
 					selectInput("ignore_large_files", "Ignore .mzXML and MSlist files during check?", choices = c("TRUE","FALSE"), selected="FALSE"),					
 					textInput("upto_file", "Up to file with ID:", value = "FALSE"),
@@ -805,41 +1015,71 @@
         tabPanel("Calibration", 	
 			tabsetPanel( 
 				tabPanel("Create",
-					helpText("Select the ionization mode to load the available calibration file groups into the below selection."),
+					helpText("Select the ionization mode to load the available calibration file sets into the below selection."),
 					selectInput("Ion_mode_Cal", label="Ionization mode", c("none","positive","negative"), selected = ("none"), multiple = FALSE),	
 					HTML('<hr noshade="noshade" />'),
 					HTML('<h1 align="center"> &#x21e9; </h1> '),
 					conditionalPanel(
 						condition = "input.Ion_mode_Cal != 'none'", 	
-						#helpText("Select the calibration file group to continue with the below compound selection."),
-						selectInput(inputId="Cal_file_set",label="Specify calibration file group",choices=c("none"),selected = "none", multiple = FALSE),
+						selectInput("Cal_file_set",label="Specify calibration file set",choices=c("none"),selected = "none", multiple = FALSE),
+						conditionalPanel(
+							condition = "input.Cal_file_set != 'none' & input.Ion_mode_Cal != 'none'", 						
+							bsButton("Cal_file_set_delete", label="Delete all models for this calibration file set?", icon = icon("fire-extinguisher"))
+						),
 						HTML('<hr noshade="noshade" />'),
 						HTML('<h1 align="center"> &#x21e9; </h1> '),
 						conditionalPanel(
 							condition = "input.Cal_file_set != 'none' & input.Ion_mode_Cal != 'none'", 
-							helpText("Select compounds which are linked to an internal standard (column 6 of the target compound table) to (resume) work on their individual calibration models below. The screened compounds can also be viewed in the Results/Compound screening tab, choosing the calibration files."),
+							helpText("Select Target compounds which are linked to an Internal standard (column 6 of the target compound table) to (resume) work on their individual calibration models below. 
+							The screened compounds can also be viewed in the Results/Compound screening tab, choosing the calibration files. Target - Internal standard links can be modified either directly 
+							in the target compound table (above tab Compound -> Targets) or with the below orange button Use for quantification"),
 							fluidRow(
-								column(3, selectInput(inputId="Cal_target_name",label="Target name",choices=c("none"),selected = "none", multiple = FALSE)),							
-								column(3, selectInput(inputId="Cal_target_ID",label="Target ID",choices=c("none"),selected = "none", multiple = FALSE))
+								column(3, selectInput("Cal_target_name",label="Target name",choices=c("none"),selected = "none", multiple = FALSE)),							
+								column(3, selectInput("Cal_target_ID",label="Target ID",choices=c("none"),selected = "none", multiple = FALSE))
 							),
 							fluidRow(
-								column(3, selectInput(inputId="Cal_IS_name",label="Internal standard name",choices=c("none"),selected = "none", multiple = FALSE)),
-								column(3, selectInput(inputId="Cal_IS_ID",label="Internal standard ID",choices=c("none"),selected = "none", multiple = FALSE))
+								column(3, selectInput("Cal_IS_name",label="Internal standard name",choices=c("none"),selected = "none", multiple = FALSE)),
+								column(3, selectInput("Cal_IS_ID",label="Internal standard ID",choices=c("none"),selected = "none", multiple = FALSE))
 							),
+							textOutput('number_missing_models'),
 							HTML('<hr noshade="noshade" />'),			
-							helpText("Proceed stepwise through entries in the target compound list:"),
+							helpText("Proceed through entries in the target compound list:"),
 							fluidRow(
 								column(1, bsButton("Cal_first", label="", icon = icon("step-backward"))),
+									bsTooltip("Cal_first", title="Jump to first Target", placement = "top", trigger = "hover", options = NULL),	
 								column(1, bsButton("Cal_previous", label="", icon = icon("arrow-left"))),
-								column(1, bsButton("Cal_next", label="", icon = icon("arrow-right"))),								
-								column(1, bsButton("Cal_last", label="", icon = icon("step-forward")))								
+									bsTooltip("Cal_previous", title="Jump to preceeding (or last, if beginning of table is reached) Target", placement = "top", trigger = "hover", options = NULL),
+								column(1, bsButton("Cal_next", label="", icon = icon("arrow-right"))),		
+									bsTooltip("Cal_next", title="Jump to next (or first, if end of table is reached) Target", placement = "top", trigger = "hover", options = NULL),	
+								column(1, bsButton("Cal_next_missing", label="", icon = icon("arrow-right"), style="info")),		
+									bsTooltip("Cal_next_missing", title="Jump to next Target with missing calibration model", placement = "top", trigger = "hover", options = NULL),	
+								column(1, bsButton("Cal_missing", label="", icon = icon("map-pin"), style="info")),	
+									bsTooltip("Cal_missing", title="Jump to first Target with missing calibration model", placement = "top", trigger = "hover", options = NULL),
+								column(1, bsButton("Cal_last", label="", icon = icon("step-forward"))),
+									bsTooltip("Cal_last", title="Jump to last Target", placement = "top", trigger = "hover", options = NULL)							
 							),							
 							HTML('<hr noshade="noshade" />'),
 							HTML('<h1 align="center"> &#x21e9; </h1> '),
 							bsButton("save_Cal","Save/replace model",style="success"),
+							bsPopover("save_Cal", 
+								title = "Save the selected calibration model for later modification or to quantify with? Overwrites any existing model.",
+								content = "The model is only used for quantification if the Internal standard is linked to the selected Target compound in column 6 of the target compound table. You may modify this default link with the orange button on the right.", 
+								placement = "bottom", trigger = "hover"),							
 							bsButton("use_Cal","Use for quantification",style="warning"),
+							bsPopover("use_Cal", 
+								title = "Make entry to target compound list",
+								content = "Save the selected Internal standard as the one to quantify with (= entry into column 6 of the target compound table)?", 
+								placement = "bottom", trigger = "hover"),							
 							bsButton("remove_Cal","Remove model",style="danger"),
-							bsButton("reload_Cal","Reload data",style="info"),								
+							bsPopover("remove_Cal", 
+								title = "Delete any existing model for the compound selection.",
+								content = "Target compounds without a calibration model for their linked Internal standard  (= entry into column 6 of the target compound table) will not be quantified.", 
+								placement = "bottom", trigger = "hover"),							
+							bsButton("reload_Cal","Reload data",style="info"),	
+							bsPopover("reload_Cal", 
+								title = "Refresh below plot and table for the selected compound pair of Target and Internal standard ...",
+								content = "... e.g., after you have changed the intensity bounds of the Internal standard in the tab <em> Results -> Screening& -> Ionization -> Internal standards (show all adducts) -> Characteristics for selected compound. </em>", 
+								placement = "bottom", trigger = "hover"),							
 							conditionalPanel(
 								condition = "input.Cal_file_set != 'none' & input.Ion_mode_Cal != 'none' & input.Cal_target_ID != 'none' & input.Cal_target_name != 'none' & input.Cal_IS_ID != 'none' & input.Cal_IS_name != 'none'  ", 
 								HTML('<hr noshade="noshade" />'),
@@ -855,14 +1095,32 @@
 								HTML('<hr noshade="noshade" />'),
 								fluidRow(
 									column(4,selectInput("cal_model", "Select calibration model (red in above plot)", choices = c("linear","quadratic"), "linear")),
-									column(4,checkboxInput("cal_model_0intercept", "Force 0-intercept?",  width = NULL))
+									column(4,checkboxInput("cal_model_0intercept", "Force 0-intercept?",  width = NULL)),
+									column(4,checkboxInput("cal_model_weight", "Weight by inverse target intensity?",  width = NULL))
 								),
-								textOutput('cal_model_summary'),					
+								textOutput('cal_model_summary'),
+								HTML('<hr noshade="noshade" />'),
+								fluidRow(
+									column(4,
+										checkboxInput("cal_model_bound_low", "Set a lower bound for the intensity ratio?",  width = NULL),
+										numericInput("cal_model_bound_low_value", "Lower bound:", 0)
+									),
+									column(4,
+										checkboxInput("cal_model_bound_up", "Set an upper bound for the intensity ratio?",  width = NULL),
+										numericInput("cal_model_bound_up_value", "Upper bound:", 20)
+									)									
+								),						
 								HTML('<hr noshade="noshade" />'),
 								helpText("Click into the below table rows to select and deselect data points for the above calibration model (red line):"),
 								fluidRow(
 									column(12,DT::dataTableOutput('cal_table'))
-								)							
+								),
+								HTML('<hr noshade="noshade" />'),		
+								numericInput("use_precision", "Numeric match precision", 0.01),
+								bsPopover("use_precision", 
+									title = "Precision with which intensity ratios at a given concentration from a calibration model are matched to those in the above table.",
+									content = "Only applied if a calibration model exists. Rows in the table for which no matches exist are automatically deselected.", 
+									placement = "right", trigger = "hover")
 							)
 						)
 					)
@@ -884,6 +1142,132 @@
         ########################################################################
         tabPanel("Results", 	
 			tabsetPanel( 
+				######################################################################################################################
+                tabPanel("Data viewer",
+					div(style = widget_style3,numericInput("sel_meas_ID", "Type in file ID:", 0)),
+					HTML('<hr noshade="noshade" />'),
+					conditionalPanel(			
+						condition = "input.sel_meas_ID != 0",					
+						bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_pos_one",
+							bsCollapsePanel(title="All picked peaks & raw data", 
+								navbarPage("Settings:",
+									tabPanel("Data",
+										fluidRow(
+											column(3,checkboxInput("peaks_mz_RT_use_peaks", "Plot peaks?", TRUE)),
+											column(4,checkboxInput("peaks_mz_RT_use_raw", "Show raw data (as density grid >1E5 data points)?", FALSE)),
+											column(3,checkboxInput("peaks_mz_RT_use_IDs", "Display peak IDs?", FALSE))								
+										)
+									),
+									tabPanel("View",
+										fluidRow(
+											column(5,checkboxInput('showPanel1', 'Show marginal intensity distributions (for <1E5 raw data points)', FALSE)),
+											column(5,checkboxInput('showPanel2', 'Show interactive 3D plot (for <1E5 raw data points)', FALSE))
+										)
+									),
+									tabPanel("Search & Filter",
+										fluidRow(
+											column(4,checkboxInput("peaks_mz_RT_use_window", "Add a blue search window centered at coordinates:", FALSE)),									
+											column(2,	
+												numericInput("peaks_mz_RT_use_window_mass", "m/z",  216.101),
+												 helpText( a("Calculate a mass?", href="http://www.envipat.eawag.ch/index.php",target="_blank"))
+											),
+											column(2,numericInput("peaks_mz_RT_use_window_RT", "RT", 500)),
+											column(3,numericInput("peaks_mz_RT_use_window_RT_tol", "RT tolerance", 60))
+										),
+										fluidRow(
+											column(4,checkboxInput("peaks_mz_RT_use_bar", "Add a blue ppm bar to search window?", FALSE)),									
+											column(3,numericInput("peaks_mz_RT_use_bar_value", "ppm", 10))
+										),
+										HTML('<hr noshade="noshade" />'),
+										fluidRow(
+											column(6,sliderInput("plot_filter_intensity", "Filter intensity range (log10):", min=0, max=8, value=c(0,8), width = '100%', dragRange=TRUE))
+										),
+										HTML('<hr noshade="noshade" />'),
+										helpText("If included in the workflow:"),							
+										fluidRow(
+											column(4,checkboxInput("plot_filter_blind", "Include blind subtraction?", FALSE)),									
+											column(4,checkboxInput("plot_filter_replicates", "Include replicate filter?", FALSE))
+										),
+										HTML('<hr noshade="noshade" />')
+									),
+									tabPanel("Hide",HTML('<hr noshade="noshade" />')),
+									inverse=FALSE
+								),			
+								#HTML('<hr noshade="noshade" />'),	
+								#fluidRow(
+								#	column(2,bsButton("peaks_mz_RT_zoom_out","Zoom out",style="info"))			
+								
+								#),									
+								plotOutput("plot_peaks_mz_RT", 
+									width = "100%", height = "650px",
+									dblclick = "plot_peaks_mz_RT_dblclick",
+									#click = "plot_peaks_mz_RT_click",
+									hover = "plot_peaks_mz_RT_hover",
+									brush = brushOpts(
+										id = "plot_peaks_mz_RT_brush",
+										resetOnNew = TRUE
+									)
+								),
+								HTML('<p><font>
+									<span style="color:black"><b>&bull;</b></span> Picked peaks <span style="color:gray"><b>&bull;</b></span> Raw data centroids <span style="color:red"><b>&bull;</b></span> Peak centroids 							
+								</p></font>'),
+								conditionalPanel(condition = 'input.showPanel1',
+									plotOutput("plot_peaks_mz_int", width = "100%", height = "320px"),
+									plotOutput("plot_peaks_RT_int", width = "100%", height = "320px")
+								),
+								conditionalPanel(condition = 'input.showPanel2',
+									plotly:::plotlyOutput("plot_peaks_3D", width = "100%", height = "800px")
+								)
+							),
+							bsCollapsePanel(title="Individual EICs and peaks", 
+								div(style = widget_style3,numericInput("sel_peak_ID", "Specify peak ID:", 0)),
+								HTML('<hr noshade="noshade" />'),								
+								plotOutput("EIC1", 
+									dblclick = "plot_EIC1_dblclick",
+									brush = brushOpts(
+										id = "plot_EIC1_brush",
+										resetOnNew = TRUE
+										)
+								),
+								plotOutput("EIC2", 
+									dblclick = "plot_EIC2_dblclick",
+									brush = brushOpts(
+										id = "plot_EIC2_brush",
+										resetOnNew = TRUE
+										)
+								),
+								plotOutput("EIC3", 
+									dblclick = "plot_EIC3_dblclick",
+									brush = brushOpts(
+										id = "plot_EIC3_brush",
+										resetOnNew = TRUE
+										)
+								)						
+							)
+						)
+					)
+                ),
+				######################################################################################################################
+				tabPanel("Quality control",
+					tabsetPanel(
+						tabPanel("Positive ionization ",
+							tags$h5("Quantile distribution of peak intensities:"),           
+							imageOutput("plotQCa_pos", height="auto"),
+							tags$h5("Outliers:"),
+							imageOutput("plotQCb_pos", height="auto"),
+							tags$h5("Intensity distribution for median intensity normalization:"),                    
+							imageOutput("pic_int_distr_pos", width = "100%", height = "250px")
+						),
+						tabPanel("Negative ionization ",
+							tags$h5("Quantile distribution of peak intensities:"),           
+							imageOutput("plotQCa_neg", height="auto"),
+							tags$h5("Outliers:"),
+							imageOutput("plotQCb_neg", height="auto"),
+							tags$h5("Intensity distribution for median intensity normalization:"),                    
+							imageOutput("pic_int_distr_neg", width = "100%", height = "250px")
+						)
+					)	
+				),
 				###################################################################################################################### 
 				tabPanel("Processing",            
 					numericInput("sel_meas", "Type in file ID:", 0),
@@ -906,8 +1290,6 @@
 						HTML('<hr noshade="noshade" />'),
 						imageOutput("peakhist_pic", height="auto"),
 						HTML('<hr noshade="noshade" />'),
-						imageOutput("peakmzRT_pic", height="auto"),
-						HTML('<hr noshade="noshade" />'),
 						imageOutput("LOD_pic", height="auto"),
 						HTML('<hr noshade="noshade" />'),
 						div(style = widget_style3,
@@ -921,45 +1303,16 @@
 					)
 				),
 				######################################################################################################################
-				tabPanel("Quality control",
-					tabsetPanel(
-						tabPanel("Positive ionization ",
-							tags$h5("Quantile distribution of peak intensities:"),           
-							imageOutput("plotQCa_pos", height="auto"),
-							tags$h5("Outliers:"),
-							imageOutput("plotQCb_pos", height="auto"),
-							tags$h5("Intensity distribution for median intensity normalization:"),                    
-							imageOutput("pic_int_distr_pos", width = "100%", height = "250px")
-						),
-						tabPanel("Negative ionization ",
-							tags$h5("Quantile distribution of peak intensities:"),           
-							imageOutput("plotQCa_neg", height="auto"),
-							tags$h5("Outliers:"),
-							imageOutput("plotQCb_neg", height="auto"),
-							tags$h5("Intensity distribution for median intensity normalization:"),                    
-							imageOutput("pic_int_distr_neg", width = "100%", height = "250px")
-						)
-					)	
-				),
-				######################################################################################################################
-                tabPanel("EIC & Peaks",
-					div(style = widget_style3,numericInput("sel_meas_ID", "Type in file ID:", 0)),
-					div(style = widget_style3,numericInput("sel_peak_ID", "Type in peak ID:", 0)),
-					imageOutput("EIC1", height="auto"),
-					imageOutput("EIC2", height="auto"),
-					imageOutput("EIC3", height="auto")
-                ),
-				######################################################################################################################
 				tabPanel("Screening & quantification",
 					tabsetPanel(
 						tabPanel("Positive ionization",
 							fluidRow(
-								column(3, selectInput(inputId="Pos_compound_select",label="",choices=c("Choose","Target compounds","Internal standards","Quantification","File-wise counts"), 
+								column(3, selectInput("Pos_compound_select",label="",choices=c("Choose","Target compounds","Internal standards","Quantification","Recovery","File-wise counts"), 
 									selected = "Choose", multiple = FALSE)),
 								conditionalPanel(			
 									condition = "input.Pos_compound_select == 'Internal standards' || input.Pos_compound_select == 'Target compounds'",										
-										column(3, selectInput(inputId="screen_pos_summarize", label="", choices = c("Show all adducts"="yes","Collapse adducts"="no"), "yes")),
-										column(4, selectInput(inputId="Pos_type_select",label="",choices=c("Sample/blind files","Calibration files"), 
+										column(3, selectInput("screen_pos_summarize", label="", choices = c("Show all adducts"="yes","Collapse adducts"="no"), "yes")),
+										column(4, selectInput("Pos_type_select",label="",choices=c("Sample/blind files","Calibration files"), 
 											selected = "Non-calibration files", multiple = FALSE))			
 								)							
 							),
@@ -982,10 +1335,10 @@
 											textOutput('screening_details_comp_pos2'),
 											HTML('<hr noshade="noshade" />'),
 											fluidRow(										
-												column(4, selectInput(inputId="selec_pos_x",label="x axis",
+												column(4, selectInput("selec_pos_x",label="x axis",
 													choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "m/z", multiple = FALSE)),
-												column(4, selectInput(inputId="selec_pos_y",label="y axis",
-													choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "RT", multiple = FALSE)),									
+												column(4, selectInput("selec_pos_y",label="y axis",
+													choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "Intensity", multiple = FALSE)),									
 												column(4, radioButtons("selec_pos_log_rat", "Log intensity?", c("yes"="yes","no"="no"),inline=TRUE))
 											),
 											HTML('<hr noshade="noshade" />'),						
@@ -1019,8 +1372,8 @@
 											column(width = 4, offset = 0.6,
 													tags$p(align="justify","Characteristics of all signal peaks for screened compounds from the above table.")
 											),
-											column(4, selectInput(inputId="Summ_pos_x",label="x axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "m/z", multiple = FALSE)),
-											column(4, selectInput(inputId="Summ_pos_y",label="y axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "RT", multiple = FALSE))									
+											column(4, selectInput("Summ_pos_x",label="x axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "m/z", multiple = FALSE)),
+											column(4, selectInput("Summ_pos_y",label="y axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "RT", multiple = FALSE))									
 										),
 										plotOutput("plot_pattern_distrib_pos"),
 										HTML('<hr noshade="noshade" />'),
@@ -1036,7 +1389,12 @@
 								condition = "input.Pos_compound_select == 'Quantification'",							
 								HTML('<hr noshade="noshade" />'),
 								DT::dataTableOutput('target_quant_table_pos')
-							),								
+							),		
+							conditionalPanel(			
+								condition = "input.Pos_compound_select == 'Recovery'",							
+								HTML('<hr noshade="noshade" />'),
+								DT::dataTableOutput('target_recov_table_pos')
+							),												
 							conditionalPanel(			
 								condition = "input.Pos_compound_select == 'File-wise counts'",	
 								tags$p(align="justify","The below table lists the number of compounds which have been positively screened above the cutoff score per file. Matches for different adducts of the same compound are counted separately."),
@@ -1047,12 +1405,12 @@
 						),
 						tabPanel("Negative ionization",
 							fluidRow(
-								column(3, selectInput(inputId="Neg_compound_select",label="",choices=c("Choose","Target compounds","Internal standards","Quantification","File-wise counts"), 
+								column(3, selectInput("Neg_compound_select",label="",choices=c("Choose","Target compounds","Internal standards","Quantification","Recovery","File-wise counts"), 
 									selected = "Choose", multiple = FALSE)),
 								conditionalPanel(			
 									condition = "input.Neg_compound_select == 'Internal standards' || input.Neg_compound_select == 'Target compounds'",										
-										column(3, selectInput(inputId="screen_neg_summarize", label="", choices = c("Show all adducts"="yes","Collapse adducts"="no"), "yes")),
-										column(4, selectInput(inputId="Neg_type_select",label="",choices=c("Sample/blind files","Calibration files"), 
+										column(3, selectInput("screen_neg_summarize", label="", choices = c("Show all adducts"="yes","Collapse adducts"="no"), "yes")),
+										column(4, selectInput("Neg_type_select",label="",choices=c("Sample/blind files","Calibration files"), 
 											selected = "Non-calibration files", multiple = FALSE))			
 								)							
 							),
@@ -1075,10 +1433,10 @@
 											textOutput('screening_details_comp_neg2'),
 											HTML('<hr noshade="noshade" />'),
 											fluidRow(										
-												column(4, selectInput(inputId="selec_neg_x",label="x axis",
+												column(4, selectInput("selec_neg_x",label="x axis",
 													choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "m/z", multiple = FALSE)),
-												column(4, selectInput(inputId="selec_neg_y",label="y axis",
-													choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "RT", multiple = FALSE)),									
+												column(4, selectInput("selec_neg_y",label="y axis",
+													choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "Intensity", multiple = FALSE)),									
 												column(4, radioButtons("selec_neg_log_rat", "Log intensity?", c("yes"="yes","no"="no"),inline=TRUE))
 											),
 											HTML('<hr noshade="noshade" />'),						
@@ -1112,8 +1470,8 @@
 											column(width = 4, offset = 0.6,
 													tags$p(align="justify","Characteristics of all signal peaks for screened compounds from the above table.")
 											),
-											column(4, selectInput(inputId="Summ_neg_x",label="x axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "m/z", multiple = FALSE)),
-											column(4, selectInput(inputId="Summ_neg_y",label="y axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "RT", multiple = FALSE))									
+											column(4, selectInput("Summ_neg_x",label="x axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "m/z", multiple = FALSE)),
+											column(4, selectInput("Summ_neg_y",label="y axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "RT", multiple = FALSE))									
 										),
 										plotOutput("plot_pattern_distrib_neg"),
 										HTML('<hr noshade="noshade" />'),
@@ -1130,6 +1488,11 @@
 								HTML('<hr noshade="noshade" />'),
 								DT::dataTableOutput('target_quant_table_neg')
 							),								
+							conditionalPanel(			
+								condition = "input.Neg_compound_select == 'Recovery'",							
+								HTML('<hr noshade="noshade" />'),
+								DT::dataTableOutput('target_recov_table_neg')
+							),	
 							conditionalPanel(			
 								condition = "input.Neg_compound_select == 'File-wise counts'",	
 								tags$p(align="justify","The below table lists the number of compounds which have been positively screened above the cutoff score per file. Matches for different adducts of the same compound are counted separately."),
@@ -1149,9 +1512,7 @@
 					),
 					HTML('<hr noshade="noshade" />'),  
 					#navbarPage("", 
-					tabsetPanel( 
-
-### Baustelle						
+					tabsetPanel( 					
 						tabPanel("Summary",										
 								tags$h5("Filter profile list:"),
 								div(style = widget_style3,numericInput("filterProf_minmass", "Minimum m/z:", 0)),
@@ -1200,7 +1561,6 @@
 										title = "Export above filtered profiles",
 										content = "Time-sorted peak intensities of profiles and their mean mass & RT are exported as profiles.txt to the export folder of this project. WARNING: restrict list size to avoid lengthy exports!", 
 										placement = "right", trigger = "hover"))				
-### Baustelle	
 						),
 						tabPanel("Latest trends",
 								tags$h5("Comparison of current vs. global trends by profile ID"),
@@ -1225,8 +1585,14 @@
 								div(style = widget_style3,numericInput("profID", "profile ID:", 0)),
 								div(style = widget_style3,numericInput("profentry", "Entry # in (filtered, sorted) profile list:", 0)),
 								div(style = widget_style3,radioButtons("prof_log", "Logarithmic intensity?", c("no"="no","yes"="yes"))),
-								div(style = widget_style3,textOutput("peak_number")),
-								imageOutput("timeprofile", height="auto"),
+								div(style = widget_style3,textOutput("peak_number")),			
+								plotOutput("timeprofile", 
+									dblclick = "timeprofile_dblclick",
+									brush = brushOpts(
+									  id = "timeprofile_brush",
+									  resetOnNew = TRUE
+									)
+								),
 								bsCollapse(multiple = FALSE, open = "col1", id = "collapse1",
 									bsCollapsePanel("Profile EICs & Peak viewer", 
 										div(style = widget_style3,numericInput("profpeakID", "Peak entry #:", min=0, 0)),
@@ -1263,26 +1629,26 @@
             )				
         ),
         ########################################################################
-        # HELP #################################################################
+        # HELP & ABOUT #########################################################
         ########################################################################
-        tabPanel("Manual",
-			tags$iframe(style="height:800px; width:110%;", src="manual.pdf")
-		),
-        ########################################################################
-        # ABOUT ################################################################
-        ########################################################################
-        tabPanel("About",
-		   tags$h5("Citing enviMass"),
-		   HTML('<p>
-			Loos, M., Ruff, M., Singer, H., 2013. enviMass v3.1 - Software workflow for the monitoring of temporal micropollutant dynamics using LC-HRMS data
+        tabPanel("Help & About",
+			tags$h4("Help"),
+			helpText( a("For further help, instructions, topics, examples and requests please visit the enviMass website", href="http://www.envimass.ch/",target="_blank")),
+			HTML('<hr noshade="noshade" />'),							
+			tags$h4("Citing enviMass"),
+			HTML('<p>
+				Loos, M., Ruff, M., Singer, H., 2013. enviMass v3.1 - Software workflow for the monitoring of temporal micropollutant dynamics using LC-HRMS data
 			</p> '),
-		   tags$h5("Contact, maintainer:"),
-		   HTML('<p> Martin Loos, Martin.Loos@eawag.ch </p> '),
-		   tags$h5("License:"),
-		   HTML('<p>GPL-2 </p> ')
-        )
+			HTML('<hr noshade="noshade" />'),	
+			tags$h4("Contact, maintainer:"),
+			helpText( a("Martin Loos, mloos@looscomputing.ch", href="http://looscomputing.ch/eng/contact.htm",target="_blank") ),
+			HTML('<hr noshade="noshade" />'),	
+			tags$h4("License enviMass version 3.117 :"),
+			helpText( a("creative commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)", href="https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode", target="_blank") ),
+			helpText("enviMass is distributed in the hope that it will be useful and was tested in different settings, but WITHOUT ANY WARRANTY (see license). 
+				TERMS: You must give appropriate credit, indicate changes, not redistribute modifications and not use material for commercial purposes. ")	
+		)
         ########################################################################
       ),
 	  HTML('<font color="white">') # camouflage of TRUE from sourcing
     )
-
