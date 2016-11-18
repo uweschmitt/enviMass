@@ -74,6 +74,9 @@ observe({
 				output$Table_screening_pos <- DT::renderDataTable({
 					DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No target screening results available")
 				},server = TRUE)	
+				output$plot_pattern_distrib_pos <- renderPlot({
+					plot.new()
+				})
 				found_table<-FALSE				
 			}
 		}
@@ -140,6 +143,9 @@ observe({
 				output$Table_screening_pos <- DT::renderDataTable({
 					DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No internal standard screening results available")
 				},server = TRUE)	
+				output$plot_pattern_distrib_pos <- renderPlot({
+					plot.new()
+				})
 				found_table<-FALSE				
 			}
 		}
@@ -822,6 +828,9 @@ observe({
 				output$Table_screening_neg <- DT::renderDataTable({
 					DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No target screening results available")
 				},server = TRUE)	
+				output$plot_pattern_distrib_neg <- renderPlot({
+					plot.new()
+				})
 				found_table<-FALSE				
 			}
 		}
@@ -888,6 +897,9 @@ observe({
 				output$Table_screening_neg <- DT::renderDataTable({
 					DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No internal standard screening results available")
 				},server = TRUE)	
+				output$plot_pattern_distrib_neg <- renderPlot({
+					plot.new()
+				})
 				found_table<-FALSE				
 			}
 		}
