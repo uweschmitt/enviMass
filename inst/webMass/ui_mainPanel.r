@@ -870,7 +870,7 @@
                 tabPanel("IS",
 					div(style = widget_style2,
 						tags$h5("Retention time"),
-						numericInput("IS_drt1", "RT tolerance of peaks in sample relative to their expected RT [s]", 30),
+						numericInput("IS_drt1", "RT tolerance of peaks relative to their expected RT [s]", 30),
 						numericInput("IS_drt2", "RT tolerance of peaks within an isotope pattern [s]", 50)
 					),
 				  	div(style = widget_style2,

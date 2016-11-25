@@ -64,6 +64,9 @@
 				#MSlist[[8]]<-cbind(MSlist[[8]],MSlist[[8]][,c(1,4,5)]);
 				save(MSlist,file=file.path(logfile[[1]],"MSlist",as.character(measurements[i,"ID"])));   
 				peaklist<-MSlist[[8]];
+				if(length(peaklist)==0){
+					stop("No peaks picked - wrong parameters (e.g., intensity thresholds too high)?")
+				}
 				peaklist<-cbind(peaklist,peaklist[,1],rep(0,length(peaklist[,4])),peaklist[,5])
 				colnames(peaklist)[12]<-"m/z_corr";
 				colnames(peaklist)[13]<-"int_corr";

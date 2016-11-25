@@ -126,7 +126,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters$peak_MSlevel<-"1"; 	
 		logfile$parameters$peak_drtgap<-"300"; 
 		logfile$parameters$peak_dmzdens<-"3.5"; 
-		logfile$parameters$peak_minpeak<-"40"; 		
+		logfile$parameters$peak_minpeak<-"4"; 		
 		logfile$parameters$peak_drtsmall2<-"20"; 		
 		logfile$parameters$peak_drtfill<-"10"; 		
 		logfile$parameters$peak_drtdens2<-"120";
