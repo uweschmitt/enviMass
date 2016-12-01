@@ -20,11 +20,11 @@ if(length(those)>0){
 				LOD_splined_new[[at]]<-LOD_splined[[copy_this]]
 				names(LOD_splined_new)[at]<-paste("LOD_",those[i],sep="")
 				at<-(at+1)
-				cat("\nCould copy LOD model.")
+				cat("\nCopied LOD model.")
 				next;
+			}else{
+				cat("\nMake new LOD model.")
 			}
-			#}else{
-			cat("\nDoing a new LOD model.")
 		} 		
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="peaklist")){rm(peaklist)}
@@ -63,7 +63,8 @@ if(length(those)>0){
 				lines(get_ret,predict(get(paste("LOD_",those[i],sep="")))$y,col="red",lwd=2)
 				points(get_ret,get_int,col="black",pch=19,cex=0.5)
 				box()
-			dev.off();cat("!")
+			dev.off();
+			cat("!")
 		}
 		measurements[measurements[,"ID"]==those[i],"LOD"]<-"TRUE";
 	}

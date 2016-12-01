@@ -15,6 +15,7 @@
 					minRT=FALSE,maxRT=FALSE,minmz=FALSE,maxmz=FALSE,
 					ion_mode=measurements[i,"Mode"]
 				);
+				if(any(MSlist[[4]][[2]][,2]==0)){stop("\n do_peakpicking: zero intensities found - resolve issue before proceding.")}
 				cat(" data read -");  				
 				if(as.numeric(logfile$parameters$peak_perc_cut)>0){
 					len1<-length(MSlist[[4]][[2]][,2])
@@ -61,6 +62,7 @@
 					progbar=logfile$parameters$progressBar,
 					from=FALSE,to=FALSE
 				);
+				if(any(MSlist[[8]][,3]==0)){stop("\n do_peakpicking: zero intensities found - resolve issue before proceding.")}
 				#MSlist[[8]]<-cbind(MSlist[[8]],MSlist[[8]][,c(1,4,5)]);
 				save(MSlist,file=file.path(logfile[[1]],"MSlist",as.character(measurements[i,"ID"])));   
 				peaklist<-MSlist[[8]];

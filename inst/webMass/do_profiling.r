@@ -14,7 +14,7 @@
 		measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]	
 	}
 	############################################################################################
-	
+
 	
 	if(any(measurements[,"Mode"]=="positive")){
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
@@ -33,6 +33,7 @@
 							selective=logfile$parameters$prof_select,
 							types=c("sample","blank","spiked")
 						)
+		if(any(profileList_pos[[2]][,2]==0)){stop("\n issue in do_profiling: zero intensities detected - resolve issue!")}
 		profileList_pos<-agglomer(
 							profileList_pos,
 							dmass=(as.numeric(logfile$parameters$prof_dmz)+1),
@@ -100,6 +101,7 @@
 							selective=logfile$parameters$prof_select,
 							types=c("sample","blank","spiked")
 						)
+		if(any(profileList_neg[[2]][,2]==0)){stop("\n issue in do_profiling: zero intensities detected - resolve issue!")}
 		profileList_neg<-agglomer(
 							profileList_neg,
 							dmass=(as.numeric(logfile$parameters$prof_dmz)+1),

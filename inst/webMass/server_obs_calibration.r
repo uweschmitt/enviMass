@@ -13,62 +13,64 @@ observe({ # - A
 	input$Ion_mode_Cal 
 	if(verbose){cat("\n in A")}
 	if(isolate(init$a)=="TRUE"){
-	if(logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="calibration"]=="FALSE"){ # e.g., if files were changed / added / ...
-		if(verbose){cat("\n in A_1")}
-		if(isolate(input$Ion_mode_Cal)=="positive"){
-			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-			measurements<-measurements[measurements[,"Type"]=="calibration",,drop=FALSE]
-			measurements<-measurements[measurements[,"Mode"]=="positive",,drop=FALSE]
-			measurements<<-measurements
-			targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
-			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
-			targets<-targets[targets[,"ion_mode"]=="positive",,drop=FALSE]
-			intstand<-intstand[intstand[,"ion_mode"]=="positive",,drop=FALSE]
-			targets<-targets[targets[,"ID_internal_standard"]!="FALSE",,drop=FALSE] # MUST have an ISTD associated!
-			targets<<-targets
-			intstand<<-intstand
-			if(length(measurements[,"ID"])>0 & length(targets[,"ID"])>0 & length(intstand[,"ID"])>0 ){
-				those<-unique(measurements$tag2)
-				if(all(those!="FALSE")){
-					those<-c("none",those)
-					updateSelectInput(session,"Cal_file_set","Specify calibration file group",choices = those, selected = those[1])
-				}else{ # trigger warning
-					cat("all calibration groups must have a tag2 other than FALSE!")
+		if(logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="calibration"]=="FALSE"){ # e.g., if files were changed / added / ...
+			if(verbose){cat("\n in A_1")}
+			if(isolate(input$Ion_mode_Cal)=="positive"){
+				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+				measurements<-measurements[measurements[,"Type"]=="calibration",,drop=FALSE]
+				measurements<-measurements[measurements[,"Mode"]=="positive",,drop=FALSE]
+				measurements<<-measurements
+				targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
+				intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
+				targets<-targets[targets[,"ion_mode"]=="positive",,drop=FALSE]
+				intstand<-intstand[intstand[,"ion_mode"]=="positive",,drop=FALSE]
+				targets<-targets[targets[,"ID_internal_standard"]!="FALSE",,drop=FALSE] # MUST have an ISTD associated!
+				targets<<-targets
+				intstand<<-intstand
+				if(length(measurements[,"ID"])>0 & length(targets[,"ID"])>0 & length(intstand[,"ID"])>0 ){
+					those<-unique(measurements$tag2)
+					if(all(those!="FALSE")){
+						those<-c("none",those)
+						updateSelectInput(session,"Cal_file_set","Specify calibration file group",choices = those, selected = those[1])
+					}else{ # trigger warning
+						cat("all calibration groups must have a tag2 other than FALSE!")
+					}
+				}
+				if(length(targets[,"ID"])==0 || length(intstand[,"ID"])==0 ){
+					shinyjs:::info("No valid targets and/or internal standard compounds found for a quantification!");
 				}
 			}
-			if(length(targets[,"ID"])==0 || length(intstand[,"ID"])==0 ){
-				shinyjs:::info("No valid targets and/or internal standard compounds found for a quantification!");
-			}
-		}
-		if(isolate(input$Ion_mode_Cal)=="negative"){
-			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-			measurements<-measurements[measurements[,"Type"]=="calibration",,drop=FALSE]
-			measurements<-measurements[measurements[,"Mode"]=="negative",,drop=FALSE]
-			measurements<<-measurements
-			targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
-			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
-			targets<-targets[targets[,"ion_mode"]=="negative",,drop=FALSE]
-			intstand<-intstand[intstand[,"ion_mode"]=="negative",,drop=FALSE]
-			targets<-targets[targets[,"ID_internal_standard"]!="FALSE",,drop=FALSE] # MUST have an ISTD associated!
-			targets<<-targets
-			intstand<<-intstand
-			if(length(measurements[,"ID"])>0 & length(targets[,"ID"])>0 & length(intstand[,"ID"])>0 ){
-				those<-unique(measurements$tag2)
-				if(all(those!="FALSE")){
-					those<-c("none",those)
-					updateSelectInput(session,"Cal_file_set","Specify calibration file group",choices = those, selected = those[1])
-				}else{ # trigger warning
-					cat("all calibration groups must have a tag2 other than FALSE!")
+			if(isolate(input$Ion_mode_Cal)=="negative"){
+				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+				measurements<-measurements[measurements[,"Type"]=="calibration",,drop=FALSE]
+				measurements<-measurements[measurements[,"Mode"]=="negative",,drop=FALSE]
+				measurements<<-measurements
+				targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
+				intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
+				targets<-targets[targets[,"ion_mode"]=="negative",,drop=FALSE]
+				intstand<-intstand[intstand[,"ion_mode"]=="negative",,drop=FALSE]
+				targets<-targets[targets[,"ID_internal_standard"]!="FALSE",,drop=FALSE] # MUST have an ISTD associated!
+				targets<<-targets
+				intstand<<-intstand
+				if(length(measurements[,"ID"])>0 & length(targets[,"ID"])>0 & length(intstand[,"ID"])>0 ){
+					those<-unique(measurements$tag2)
+					if(all(those!="FALSE")){
+						those<-c("none",those)
+						updateSelectInput(session,"Cal_file_set","Specify calibration file group",choices = those, selected = those[1])
+					}else{ # trigger warning
+						cat("all calibration groups must have a tag2 other than FALSE!")
+					}
+				}
+				if(length(targets[,"ID"])==0 || length(intstand[,"ID"])==0 ){
+					shinyjs:::info("No valid targets and/or internal standard compounds found for a quantification!");
 				}
 			}
-			if(length(targets[,"ID"])==0 || length(intstand[,"ID"])==0 ){
-				shinyjs:::info("No valid targets and/or internal standard compounds found for a quantification!");
+		}else{
+			if(isolate(input$Ion_mode_Cal)!="none"){
+				shinyjs:::info("Calibration files have been modified or compounds added. Workflow recalculation including the calibration step (enabled?) required.");
+				cat("\n Calibration files have been modified or compounds added. Recalculation required!")
 			}
-		}
-	}else{
-		shinyjs:::info("Calibration files have been modified or compounds added. Workflow recalculation including the calibration step (enabled?) required.");
-		cat("\n Calibration files have been modified or compounds added. Recalculation required!")
-	}	
+		}	
 	}
 })
 ###########################################################################################################
@@ -116,8 +118,10 @@ observe({ # - B
 					cal_models_pos[[1]]<<-list()
 					names(cal_models_pos)<<-isolate(input$Cal_file_set)
 					dump("cal_models_pos",file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));			
-				}
-				source(file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")),local=as.environment(".GlobalEnv"));	
+					if(verbose){cat("\n Made new cal_models_pos_...")}
+				}else{
+					source(file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")),local=as.environment(".GlobalEnv"));
+				}	
 				# how many models left to calibrate? concerns only targets with a valid ISTD link
 				at_Cal<-isolate(input$Cal_file_set)
 				use_cal<-which(names(cal_models_pos)==at_Cal) # well, the first entry ... just in case different calibration groups are merged into a list at some point (= makes saving too slow).
@@ -143,6 +147,8 @@ observe({ # - B
 					updateSelectInput(session,inputId="Cal_IS_ID",choices="none",selected = "none")			
 					updateSelectInput(session,inputId="Cal_target_name",choices="none",selected = "none")
 					updateSelectInput(session,inputId="Cal_target_ID",choices="none",selected = "none")	
+					updateSelectInput(session,inputId="Cal_file_set",selected = "none")	
+					shinyjs:::info("No screening results for this calibration file set (positive mode) found - have you run the workflow with the calibration step enabled before?")
 					output$number_missing_models<-renderText({"Screening results are missing."})
 				}
 			}
@@ -182,6 +188,7 @@ observe({ # - B
 					cal_models_neg[[1]]<<-list()
 					names(cal_models_neg)<<-isolate(input$Cal_file_set)
 					dump("cal_models_neg",file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));			
+					if(verbose){cat("\n Made new cal_models_neg_...")}
 				}
 				source(file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")),local=as.environment(".GlobalEnv"));	
 				# how many models left to calibrate? concerns only targets with a valid ISTD link
@@ -209,6 +216,8 @@ observe({ # - B
 					updateSelectInput(session,inputId="Cal_IS_ID",choices="none",selected = "none")			
 					updateSelectInput(session,inputId="Cal_target_name",choices="none",selected = "none")
 					updateSelectInput(session,inputId="Cal_target_ID",choices="none",selected = "none")	
+					updateSelectInput(session,inputId="Cal_file_set",selected = "none")	
+					shinyjs:::info("No screening results for this calibration file set (negative mode) found - have you run the workflow with the calibration step enabled before?")
 					output$number_missing_models<-renderText({"Screening results are missing."})					
 				}
 			}
@@ -223,10 +232,19 @@ observe({ # Update target name & IS_ID - C
 	input$Cal_file_set_delete
 	if((isolate(init$a)=="TRUE")){	
 		at_Cal<-isolate(input$Cal_file_set)
-		use_cal<-which(names(cal_models_pos)==at_Cal) # well, the first entry ... just in case different calibration groups are merged into a list at some point (= makes saving too slow).
-		if(use_cal!="none"){
-			cal_models_pos[[use_cal]]<<-list()
-			dump("cal_models_pos",file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));			
+		if(isolate(input$Ion_mode_Cal)=="positive"){
+			use_cal<-which(names(cal_models_pos)==at_Cal) # well, the first entry ... just in case different calibration groups are merged into a list at some point (= makes saving too slow).
+			if(use_cal!="none"){
+				cal_models_pos[[use_cal]]<<-list()
+				dump("cal_models_pos",file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));			
+			}
+		}
+		if(isolate(input$Ion_mode_Cal)=="negative"){
+			use_cal<-which(names(cal_models_neg)==at_Cal) # well, the first entry ... just in case different calibration groups are merged into a list at some point (= makes saving too slow).
+			if(use_cal!="none"){
+				cal_models_neg[[use_cal]]<<-list()
+				dump("cal_models_neg",file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));			
+			}
 		}
 	}
 })
@@ -882,16 +900,16 @@ observe({ # - K
 				mat_cal[mat_cal[,3]<min_int,8]<-0
 				mat_cal[mat_cal[,3]>max_int,8]<-0
 				# adapt point selection to existing model (if any) ######################
-				use_cal<-which(names(cal_models_pos)==at_Cal) # well, the first entry ... just in case different calibration groups are merged into a list at some point (= makes saving too slow).
-				if(length(names(cal_models_pos[[use_cal]]))>0){				
+				use_cal<-which(names(cal_models_neg)==at_Cal) # well, the first entry ... just in case different calibration groups are merged into a list at some point (= makes saving too slow).
+				if(length(names(cal_models_neg[[use_cal]]))>0){				
 					use_precision<-isolate(input$use_precision)
-					at_model<-which(names(cal_models_pos[[use_cal]])==paste("_",IS_ID,"_",target_ID,"_",sep=""))
+					at_model<-which(names(cal_models_neg[[use_cal]])==paste("_",IS_ID,"_",target_ID,"_",sep=""))
 					if(length(at_model)>0){
-						cal_models_pos[[use_cal]][[at_model]]$data
+						cal_models_neg[[use_cal]][[at_model]]$data
 						for(k in 1:length(mat_cal[,1])){
 							if(!any(
-								(cal_models_pos[[use_cal]][[at_model]]$data$resp==mat_cal[k,"Concentration"]) &
-								(abs(cal_models_pos[[use_cal]][[at_model]]$data$lin-mat_cal[k,"Intensity ratio"])<use_precision)	
+								(cal_models_neg[[use_cal]][[at_model]]$data$resp==mat_cal[k,"Concentration"]) &
+								(abs(cal_models_neg[[use_cal]][[at_model]]$data$lin-mat_cal[k,"Intensity ratio"])<use_precision)	
 							)){
 								mat_cal[k,"Used?"]<-0
 								if(verbose){cat(".")}

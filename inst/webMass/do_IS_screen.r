@@ -3,7 +3,7 @@
 	those<-list.files(file.path(logfile$project_folder,"results","screening"))
 	if(length(those)>0){
 		for(i in 1:length(those)){
-			if(grepl("IS",those[i])){ # distinguish wfrom targets
+			if(grepl("IS",those[i])){ # distinguish from targets
 				file.remove(file.path(logfile$project_folder,"results","screening",those[i]))
 			}
 		}
@@ -25,24 +25,21 @@
 	########################################################################################################	
 	########################################################################################################
 	# IS screening on POSITIVE ionization ##################################################################
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="peaklist")){rm(peaklist)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="profileList_pos")){rm(profileList_pos)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="links_peaks_pos")){rm(links_peaks_pos,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="links_peaks_pos")){rm(links_peaks_pos)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_pos_IS")){rm(pattern_pos_IS,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="pattern_pos_IS")){rm(pattern_pos_IS)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternRT_pos_IS")){rm(patternRT_pos_IS,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="patternRT_pos_IS")){rm(patternRT_pos_IS)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternDelRT_pos_IS")){rm(patternDelRT_pos_IS,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="patternDelRT_pos_IS")){rm(patternDelRT_pos_IS)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern")){rm(pattern,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="pattern")){rm(pattern)}	
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_RT")){rm(pattern_RT,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="pattern_RT")){rm(pattern_RT)}		
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_delRT")){rm(pattern_delRT,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="pattern_delRT")){rm(pattern_delRT)}		
+	those_objects<-c(
+		"peaklist",
+		"profileList_pos",
+		"links_peaks_pos",
+		"pattern_pos_IS",
+		"patternRT_pos_IS",
+		"patternDelRT_pos_IS",
+		"pattern",
+		"pattern_delRT"
+	)
+	for(i in 1:length(those_objects)){
+		if(exists(those_objects[i],envir=as.environment(".GlobalEnv"))){rm(list=(those_objects[i]),envir=as.environment(".GlobalEnv"))}	
+		if(exists(those_objects[i])){rm(list=(those_objects[i]))}	
+	}
+	
 	
 	if(
 		file.exists(file.path(as.character(logfile[[1]]),"results","profileList_pos")) &
@@ -292,24 +289,20 @@
 	########################################################################################################	
 	########################################################################################################
 	# IS screening on NEGATIVE ionization ##################################################################
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="peaklist")){rm(peaklist)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="profileList_neg")){rm(profileList_neg)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="links_peaks_neg")){rm(links_peaks_neg,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="links_peaks_neg")){rm(links_peaks_neg)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_neg_IS")){rm(pattern_neg_IS,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="pattern_neg_IS")){rm(pattern_neg_IS)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternRT_neg_IS")){rm(patternRT_neg_IS,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="patternRT_neg_IS")){rm(patternRT_neg_IS)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternDelRT_neg_IS")){rm(patternDelRT_neg_IS,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="patternDelRT_neg_IS")){rm(patternDelRT_neg_IS)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern")){rm(pattern,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="pattern")){rm(pattern)}	
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_RT")){rm(pattern_RT,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="pattern_RT")){rm(pattern_RT)}		
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_delRT")){rm(pattern_delRT,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="pattern_delRT")){rm(pattern_delRT)}		
+	those_objects<-c(
+		"peaklist",
+		"profileList_neg",
+		"links_peaks_neg",
+		"pattern_neg_IS",
+		"patternRT_neg_IS",
+		"patternDelRT_neg_IS",
+		"pattern",
+		"pattern_delRT"
+	)
+	for(i in 1:length(those_objects)){
+		if(exists(those_objects[i],envir=as.environment(".GlobalEnv"))){rm(list=(those_objects[i]),envir=as.environment(".GlobalEnv"))}	
+		if(exists(those_objects[i])){rm(list=(those_objects[i]))}	
+	}	
 
 	if(
 		file.exists(file.path(as.character(logfile[[1]]),"results","profileList_neg")) &

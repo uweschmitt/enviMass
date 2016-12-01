@@ -27,7 +27,7 @@
 			load(file=file.path(logfile[[1]],"results","intmass_pos_target"),envir=as.environment(".GlobalEnv"))                    
 			mz_pos<-c(mz_pos,intmass_pos_target[,1]);
 			RT_pos<-c(RT_pos,intmass_pos_target[,2]);
-		}else{cat("\n target recalibration masses not found ... recalibration skipped!")}      
+		}else{cat("\n Target recalibration masses not found ... recalibration skipped!")}      
 	  }
       if(logfile$parameters$recal_use=="both"){
         if(file.exists(file.path(logfile[[1]],"results","intmass_pos_IS"))){	  
@@ -43,7 +43,7 @@
 			load(file=file.path(logfile[[1]],"results","intmass_pos_target"),envir=as.environment(".GlobalEnv"))                    
 			mz_pos<-c(mz_pos,intmass_pos_target[,1]);
 			RT_pos<-c(RT_pos,intmass_pos_target[,2]);
-		}else{cat("\n IS target masses not found ... recalibration skipped?")}			
+		}else{cat("\n Target recalibration masses not found ... recalibration skipped?")}			
 	  }
 	  mz_pos<-c(as.numeric(as.character(mz_pos)));
       RT_pos<-c(as.numeric(as.character(RT_pos)));
@@ -94,7 +94,7 @@
 		  if( (measurements_incl[i,"Mode"]=="positive") & (measurements_incl[i,"include"]=="TRUE") ){  
 			if( length(mz_pos)>0 ){
 				  peak_recal<-recalib(
-						peaklist=peaklist[,c(1,4,5)],
+						peaklist=peaklist[,c("m/z","max_int","RT")],
 						mz=mz_pos,
 						tolmz=as.numeric(logfile$parameters$recal_dmz),
 						ppm=as.character(logfile$parameters$recal_ppm),

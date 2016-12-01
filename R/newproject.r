@@ -116,7 +116,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
     logfile[[3]]<-summar
     names(logfile)[3]<-c("summary")
     # ProteoWizard MSConvert path ##############################################
-    logfile[[4]]<-"C:/Program Files/ProteoWizard/ProteoWizard 3.0.5140/msconvert.exe"
+    logfile[[4]]<-"C:/Program Files/ProteoWizard/ProteoWizard 3.0.10200/msconvert.exe"
     names(logfile)[4]<-c("PW MSconvert path")
     # Parameters settings ######################################################
 		# order of entries not a sequence! #####################################

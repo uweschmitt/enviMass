@@ -194,17 +194,17 @@ startprofiles<-function(
 				that<-c(length(peaklist[,1]))
 			}
 			da2<-c(da1+that-1)				
-			if( logfile$workflow[names(logfile$workflow)=="recal"] == "yes" ){ # use recalibrated data ....
-				peaks[da1:da2,]<-as.matrix(cbind( peaklist[1:that,c(12,13,14,10)], 	# must use the peakID as listed!
-								rep(0,that),rep(as.numeric(measurements[i,1]),that),
-								rep(0,that),rep(0,that),peaklist[1:that,colnames(peaklist)=="keep_2"])
-				);
-			}else{ # ... or not?
-				peaks[da1:da2,]<-as.matrix(cbind( peaklist[1:that,c(1,4,5,10)], 	# must use the peakID as listed!
-								rep(0,that),rep(as.numeric(measurements[i,1]),that),
-								rep(0,that),rep(0,that),peaklist[1:that,colnames(peaklist)=="keep_2"])
-				);			
+			use_columns<-c("m/z","max_int","RT","peak_ID")
+			if(logfile$workflow[names(logfile$workflow)=="recal"] == "yes"){
+				use_columns[1]<-"m/z_corr"
 			}
+			if(logfile$workflow[names(logfile$workflow)=="align"] == "yes"){
+				use_columns[3]<-"RT_corr"
+			}
+			peaks[da1:da2,]<-as.matrix(cbind( peaklist[1:that,use_columns], 	# must use the peakID as listed!
+					rep(0,that),rep(as.numeric(measurements[i,1]),that),
+					rep(0,that),rep(0,that),peaklist[1:that,colnames(peaklist)=="keep_2"])
+			);
 			da1<-c(da2+1);
 			rm(peaklist,envir=as.environment(".GlobalEnv"))
 		}

@@ -81,7 +81,7 @@
 		if(file.exists(file.path(logfile[[1]],"quantification","target_quant_table_pos"))){
 			file.remove(file.path(logfile[[1]],"quantification","target_quant_table_pos"))
 		}
-		those_files<-use_files[use_group!="FALSE",] # only files covered by a calibration model are considered!
+		those_files<-use_files[use_group!="FALSE",,drop=FALSE] # only files covered by a calibration model are considered!
 		if(length(those_files[,1])==0){
 			stop("\nNothing to be quantified? Check your calibration and quantification settings; consider removing the quantificcation step from your workflow!")
 		}
@@ -91,10 +91,10 @@
 		attime<-those_files[,7]
 		attime<-as.difftime(attime);
 		ord<-order(as.numeric(atdate),as.numeric(attime),as.numeric(those_files[,1]),decreasing=TRUE);
-		those_files<-those_files[ord,]	
+		those_files<-those_files[ord,,drop=FALSE]	
 		if(logfile$parameters$quant_files_included!="FALSE"){ # restrict number of files to inlcude
 			if(logfile$parameters$quant_files_included<length(those_files[,1])){
-				those_files<-those_files[1:logfile$parameters$quant_files_included,]		
+				those_files<-those_files[1:logfile$parameters$quant_files_included,,drop=FALSE]		
 			}
 		}
 		those_targets<-target_table[target_table[,"ID_internal_standard"]!="FALSE",,drop=FALSE]
@@ -110,7 +110,7 @@
 		target_quant_table_pos[,1]<-c("","","","","",those_targets[,1])
 		target_quant_table_pos[,2]<-c("","","","","",those_targets[,2])
 		target_quant_table_pos_warn<-target_quant_table_pos
-		target_quant_table_pos_warn[6:length(target_quant_table_pos_warn[,1]),3:length(target_quant_table_pos_warn[1,])]<-"0"
+		target_quant_table_pos_warn[6:length(target_quant_table_pos_warn[,1]),3:length(target_quant_table_pos_warn[1,,drop=FALSE])]<-"0"
 		# QUANTIFY #########################################################################
 		if(length(cal_models_pos_used)>0){ # no calibration models? 
 			res_IS_names<-rep("",length(res_IS_pos_screen))
@@ -307,8 +307,10 @@
 			}
 			splitted<-unlist(splitted)
 			ord<-order(splitted,decreasing=TRUE)
-			target_quant_table_pos[6:length(target_quant_table_pos[,1]),]<-(target_quant_table_pos[6:length(target_quant_table_pos[,1]),][ord,])
-			target_quant_table_pos_warn[6:length(target_quant_table_pos_warn[,1]),]<-(target_quant_table_pos_warn[6:length(target_quant_table_pos_warn[,1]),][ord,])
+			target_quant_table_pos[6:length(target_quant_table_pos[,1,drop=FALSE]),]<-
+				(target_quant_table_pos[6:length(target_quant_table_pos[,1,drop=FALSE]),,drop=FALSE][ord,,drop=FALSE])
+			target_quant_table_pos_warn[6:length(target_quant_table_pos_warn[,1,drop=FALSE]),]<-
+				(target_quant_table_pos_warn[6:length(target_quant_table_pos_warn[,1,drop=FALSE]),,drop=FALSE][ord,,drop=FALSE])		
 		}
 		# state why missing quantification arose ###########################################
 		if(length(target_quant_table_pos[,1])>5){		
@@ -327,7 +329,7 @@
 					find_name<-paste(at_ID_IS,"_",at_adduct_IS,"_",sep="")
 					at_res_IS<-which(substr(names(res_IS_pos_screen),1,nchar(find_name))==find_name)
 					if(length(at_res_tar)==0){stop("Debug in do_quantification.r required!")}
-					for(j in 3:length(target_quant_table_pos[1,])){ # over samples
+					for(j in 3:length(target_quant_table_pos[1,,drop=FALSE])){ # over samples
 						if(target_quant_table_pos[i,j]!=""){next}
 						reason<-"!"
 						# calibration models cover file (just a check, should always be the case as such files are excluded further above)
@@ -530,7 +532,7 @@
 		if(file.exists(file.path(logfile[[1]],"quantification","target_quant_table_neg"))){
 			file.remove(file.path(logfile[[1]],"quantification","target_quant_table_neg"))
 		}
-		those_files<-use_files[use_group!="FALSE",] # only files covered by a calibration model are considered!
+		those_files<-use_files[use_group!="FALSE",,drop=FALSE] # only files covered by a calibration model are considered!
 		if(length(those_files[,1])==0){
 			stop("\nNothing to be quantified? Check your calibration and quantification settings; consider removing the quantificcation step from your workflow!")
 		}
@@ -540,10 +542,10 @@
 		attime<-those_files[,7]
 		attime<-as.difftime(attime);
 		ord<-order(as.numeric(atdate),as.numeric(attime),as.numeric(those_files[,1]),decreasing=TRUE);
-		those_files<-those_files[ord,]	
+		those_files<-those_files[ord,,drop=FALSE]	
 		if(logfile$parameters$quant_files_included!="FALSE"){ # restrict number of files to inlcude
 			if(logfile$parameters$quant_files_included<length(those_files[,1])){
-				those_files<-those_files[1:logfile$parameters$quant_files_included,]		
+				those_files<-those_files[1:logfile$parameters$quant_files_included,,drop=FALSE]		
 			}
 		}
 		those_targets<-target_table[target_table[,"ID_internal_standard"]!="FALSE",,drop=FALSE]
@@ -756,8 +758,8 @@
 			}
 			splitted<-unlist(splitted)
 			ord<-order(splitted,decreasing=TRUE)
-			target_quant_table_neg[6:length(target_quant_table_neg[,1]),]<-(target_quant_table_neg[6:length(target_quant_table_neg[,1]),][ord,])
-			target_quant_table_neg_warn[6:length(target_quant_table_neg_warn[,1]),]<-(target_quant_table_neg_warn[6:length(target_quant_table_neg_warn[,1]),][ord,])
+			target_quant_table_neg[6:length(target_quant_table_neg[,1,drop=FALSE]),]<-(target_quant_table_neg[6:length(target_quant_table_neg[,1,drop=FALSE]),,drop=FALSE][ord,,drop=FALSE])
+			target_quant_table_neg_warn[6:length(target_quant_table_neg_warn[,1,drop=FALSE]),]<-(target_quant_table_neg_warn[6:length(target_quant_table_neg_warn[,1,drop=FALSE]),,drop=FALSE][ord,,drop=FALSE])
 		}
 		# state why missing quantification arose ###########################################
 		if(length(target_quant_table_neg[,1])>5){		
@@ -776,7 +778,7 @@
 					find_name<-paste(at_ID_IS,"_",at_adduct_IS,"_",sep="")
 					at_res_IS<-which(substr(names(res_IS_neg_screen),1,nchar(find_name))==find_name)
 					if(length(at_res_tar)==0){stop("Debug in do_quantification.r required!")}
-					for(j in 3:length(target_quant_table_neg[1,])){ # over samples
+					for(j in 3:length(target_quant_table_neg[1,,drop=FALSE])){ # over samples
 						if(target_quant_table_neg[i,j]!=""){next}
 						reason<-"!"
 						# calibration models cover file (just a check, should always be the case as such files are excluded further above)

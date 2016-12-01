@@ -490,7 +490,7 @@ observe({
 					(measurements[,"profiled"]=="TRUE") | # profiled?
 					(measurements[,"Type"]=="calibration")
 				)
-			,]		
+			,,drop=FALSE]		
 			if(length(measurements[,"ID"])>0 ){
 				IDs<-measurements[,"ID"]
 				count_file_compound_pos<-measurements[,c(1,2,3)]
@@ -639,7 +639,7 @@ observe({
 								get_ord[k]<-as.numeric(reord[[k]])[1]
 							}
 							get_ord<-order(get_ord,decreasing=TRUE)
-							target_quant_table_pos[6:dim1,]<-(target_quant_table_pos[6:dim1,][get_ord,])
+							target_quant_table_pos[6:dim1,]<-(target_quant_table_pos[6:dim1,,drop=FALSE][get_ord,,drop=FALSE])
 						}else{s<-2}
 					}else{
 						s<-2
@@ -1245,7 +1245,7 @@ observe({
 					(measurements[,"profiled"]=="TRUE") | # profiled?
 					(measurements[,"Type"]=="calibration")
 				)
-			,]		
+			,,drop=FALSE]		
 			if(length(measurements[,"ID"])>0 ){
 				IDs<-measurements[,"ID"]
 				count_file_compound_neg<-measurements[,c(1,2,3)]
@@ -1394,7 +1394,7 @@ observe({
 								get_ord[k]<-as.numeric(reord[[k]])[1]
 							}
 							get_ord<-order(get_ord,decreasing=TRUE)
-							target_quant_table_neg[6:dim1,]<-(target_quant_table_neg[6:dim1,][get_ord,])
+							target_quant_table_neg[6:dim1,]<-(target_quant_table_neg[6:dim1,,drop=FALSE][get_ord,,drop=FALSE])
 						}else{s<-2}
 					}else{
 						s<-2

@@ -246,7 +246,7 @@
 		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),compress=FALSE);	
 		# derive plots #####################################################################
 		path=file.path(logfile[[1]],"pics","profnorm_pos")
-		png(filename = path, bg = "white", width = 2000, height = 480)    	
+		png(filename = path, bg = "white", width = 1800, height = 440)    	
 			ylimit_del=c(0,0)
 			count_IS=c(10000,0)
 			count_b=c(10000,0)

@@ -24,25 +24,22 @@
 
 	########################################################################################################	
 	########################################################################################################
-	# target screening on positive ionization ##################################################################
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="peaklist")){rm(peaklist)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="profileList_pos")){rm(profileList_pos)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="links_peaks_pos")){rm(links_peaks_pos,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="links_peaks_pos")){rm(links_peaks_pos)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_pos_target")){rm(pattern_pos_target,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="pattern_pos_target")){rm(pattern_pos_target)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternRT_pos_target")){rm(patternRT_pos_target,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="patternRT_pos_target")){rm(patternRT_pos_target)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternDelRT_pos_target")){rm(patternDelRT_pos_target,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="patternDelRT_pos_target")){rm(patternDelRT_pos_target)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern")){rm(pattern,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="pattern")){rm(pattern)}	
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_RT")){rm(pattern_RT,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="pattern_RT")){rm(pattern_RT)}		
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_delRT")){rm(pattern_delRT,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="pattern_delRT")){rm(pattern_delRT)}		
+	# target screening on positive ionization ##############################################################
+	those_objects<-c(
+		"peaklist",
+		"profileList_pos",
+		"links_peaks_pos",
+		"pattern_pos_target",
+		"patternRT_pos_target",
+		"patternDelRT_pos_target",
+		"pattern",
+		"pattern_delRT"
+	)
+	for(i in 1:length(those_objects)){
+		if(exists(those_objects[i],envir=as.environment(".GlobalEnv"))){rm(list=(those_objects[i]),envir=as.environment(".GlobalEnv"))}	
+		if(exists(those_objects[i])){rm(list=(those_objects[i]))}	
+	}		
+	
 	
 	if(
 		file.exists(file.path(as.character(logfile[[1]]),"results","profileList_pos")) &
@@ -289,24 +286,21 @@
 	########################################################################################################	
 	########################################################################################################
 	# target screening on negative ionization ##############################################################
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="peaklist")){rm(peaklist)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="profileList_neg")){rm(profileList_neg)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="links_peaks_neg")){rm(links_peaks_neg,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="links_peaks_neg")){rm(links_peaks_neg)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_neg_target")){rm(pattern_neg_target,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="pattern_neg_target")){rm(pattern_neg_target)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternRT_neg_target")){rm(patternRT_neg_target,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="patternRT_neg_target")){rm(patternRT_neg_target)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="patternDelRT_neg_target")){rm(patternDelRT_neg_target,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="patternDelRT_neg_target")){rm(patternDelRT_neg_target)}
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern")){rm(pattern,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="pattern")){rm(pattern)}	
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_RT")){rm(pattern_RT,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="pattern_RT")){rm(pattern_RT)}		
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="pattern_delRT")){rm(pattern_delRT,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="pattern_delRT")){rm(pattern_delRT)}		
+	those_objects<-c(
+		"peaklist",
+		"profileList_neg",
+		"links_peaks_neg",
+		"pattern_neg_target",
+		"patternRT_neg_target",
+		"patternDelRT_neg_target",
+		"pattern",
+		"pattern_delRT"
+	)
+	for(i in 1:length(those_objects)){
+		if(exists(those_objects[i],envir=as.environment(".GlobalEnv"))){rm(list=(those_objects[i]),envir=as.environment(".GlobalEnv"))}	
+		if(exists(those_objects[i])){rm(list=(those_objects[i]))}	
+	}		
+
 	
 	if(
 		file.exists(file.path(as.character(logfile[[1]]),"results","profileList_neg")) &

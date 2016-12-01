@@ -1,5 +1,5 @@
 options(shiny.maxRequestSize=2000*1024^2)
-verbose<-FALSE
+verbose<-TRUE
 
 shinyServer(function(input, output, session){
 ################################################################################

@@ -9,7 +9,7 @@
         # MEASUREMENTS #########################################################
         ########################################################################
 		tabPanel("Files",
-			HTML('<hr noshade="noshade" />'),
+			HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/inputs/files.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details</a></p>'),	
 				bsCollapse(multiple = FALSE, open = "files_open", id = "files",
 					# ADD FILE #################################################
 					bsCollapsePanel("Add LC-MS file", 		
@@ -219,7 +219,7 @@
         tabPanel("Compounds",
 		 tabsetPanel(
             tabPanel("Internal standards",
-				HTML('<hr noshade="noshade" />'),
+				HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/inputs/IS.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details</a></p>'),	
 				bsCollapse(multiple = FALSE, open = "IS_comp_open", id = "IS_comp",
 					bsCollapsePanel("Add or modify an internal standard compound", 
 						fluidRow(
@@ -302,10 +302,10 @@
 							column(width = 8,
 								fluidRow(
 									column(width = 5,
-										helpText("Lower intensity bound of considered centroid peak(s) (.-separated):"),
+										HTML('<span class="help-block">Lower log<sub>10</sub> intensity bound of centroid peak used for quantification (.-separated):</span>'),
 										textInput("Lower_intensity_bound", label=NULL, value = "0")),						
 									column(width = 5,
-										helpText("Upper intensity bound of considered centroid peak(s) (.-separated):"),
+										HTML('<span class="help-block">Upper log<sub>10</sub> intensity bound of centroid peak used for quantification (.-separated):</span>'),
 										textInput("Upper_intensity_bound", label=NULL, value = "Inf"))
 								)
 							),
@@ -319,7 +319,7 @@
 						textInput("ISdelete_ID", "ID for deletion:", value = "123_XYZ"),          
 						bsButton("DeleteIS","Delete",style="primary")					
 					),
-					bsCollapsePanel("Import / export compound list", 		
+					bsCollapsePanel("Import / export internal standard compound list", 		
 						helpText("Import IS compund list.txt file, e.g. from the dataframes folder of another project (where it can be found as IS.txt):"),					
 						fileInput("ISlist_path", NULL, multiple = FALSE, accept = c(".txt")),
 						checkboxInput("ISlist_save_copy", "Save a copy of the current IS compound table below if it is to be replaced by the import?", TRUE),
@@ -375,8 +375,8 @@
 								<li><b>tag3</b>: Character string for further specifications (no tabs).</li>
 								<li>from: ignore.</li>
 								<li>to: ignore.</li>
-								<li><b>Lower_intensity_bound</b>: peaks with intensities below this bound are not used for quantification. Set to 0 to omit; can be interactively set for each IS compound after screening, in the Results tab.</li>	
-								<li><b>Upper_intensity_bound</b>: peaks with intensities above this bound are not used for quantification. Set to Inf to omit; can be interactively set for each IS compound after screening, in the Results tab.</li>
+								<li><b>Lower_intensity_bound</b>: peaks with log<sub>10</sub> intensities below this bound are not used for quantification. Set to 0 to omit; can be interactively set for each IS compound after screening, in the Results tab.</li>	
+								<li><b>Upper_intensity_bound</b>: peaks with log<sub>10</sub> intensities above this bound are not used for quantification. Set to Inf to omit; can be interactively set for each IS compound after screening, in the Results tab.</li>
 								<li><b>Quant_adduct</b>: ESI adduct to be used for quantification purposes. Valid adduct names can be found among those selected in tab Settings/Adduct or must be in agreement with <b>main_adduct</b>. </li>
 								<li><b>Quant_peak</b>: Integer number refering to the centroid peak (ordered by increasing mass; 1 = monoisotopic) of the adduct to be used for quantification purposes. </li>
 								<li><b>Quant_rule</b>: Any ONE of exactly these choices "most intense peak","closest RT" or "closest m/z". Used for quantification if several peaks are available. 
@@ -389,7 +389,7 @@
                 DT::dataTableOutput("IS")
             ),
             tabPanel("Targets", 
-				HTML('<hr noshade="noshade" />'),
+				HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/inputs/targets.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details</a></p>'),	
 				bsCollapse(multiple = FALSE, open = "target_comp_open", id = "target_comp",
 					bsCollapsePanel("Add or modify a target compound", 
 						fluidRow(
@@ -493,7 +493,7 @@
 						textInput("targetsdelete_ID", "ID for deletion:", value = "123_XYZ"),          
 						bsButton("Deletetargets","Delete",style="primary")					
 					),
-					bsCollapsePanel("Import / export compound list", 		
+					bsCollapsePanel("Import / export target compound list", 		
 						helpText("Import target compound list.txt file, e.g. from the dataframes folder of another project (where it can be found as targets.txt):"),					
 						fileInput("targetlist_path", NULL, multiple = FALSE, accept = c(".txt")),
 						checkboxInput("targetlist_save_copy", "Save a copy of the current target compound table below if it is to be replaced by the import?", TRUE),
@@ -572,10 +572,9 @@
         # WORKFLOW OPTIONS #####################################################
         ########################################################################
         tabPanel("Workflow options",
-			tags$h5("Apply settings to project?"), 
+			tags$h5("Apply workflow settings to project?"), 
 			bsButton("saveflow","Apply",style="warning"),
 			bsAlert("alert_1"),
-			HTML('<hr noshade="noshade" />'),
 			tags$p(align="justify","Below is an illustrative network graph of dependencies between steps in the workflow. Enabled steps are shown in 
 				dark blue; disabled ones in light blue; interactive and zoomable. When modifying workflow steps, parameters or inputs, enviMass 
 				dynamically adjusts and minimizes all required recalculations via their relevant dependencies. These recalculations will ultimately be 
@@ -666,7 +665,8 @@
 							the provided calibration files. The sets can be used in the Calibration tab to establish specific calibration models (curves)
 							for quantification. If selected, the extraction of these calibration peaks will be affected by the above mass recalibration, 
 							replicate intersection, blind subtraction and LOD interpolation steps. Once you have established the desired calibration models,
-							you can deselect this step, until new calibration files have been added.")
+							you can deselect this step, until new calibration files have been added."),
+							HTML('<a href="http://www.looscomputing.ch/eng/enviMass/topics/quantification.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a>')	
 						)
 					),
 				HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Quantification </font></p> '),
@@ -674,7 +674,8 @@
 						column(width = 2, radioButtons("quantification", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
 							tags$p(align="justify","Based on the calibration models from the above step, an estimation of target compound concentrations
-							from their intensity ratios to their individual internal standard compounds is derived.")
+							from their intensity ratios to their individual internal standard compounds is derived."),
+							HTML('<a href="http://www.looscomputing.ch/eng/enviMass/topics/quantification.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a>')	
 						)
 					),
 				HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Recovery </font></p> '),
@@ -682,7 +683,8 @@
 						column(width = 2, radioButtons("recovery", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
 							tags$p(align="justify","Following the above calibration and quantification steps, a concentration recovery of spiked target compounds is calculated.
-							Requires upload of spiked files.")
+							Requires upload of spiked files."),
+							HTML('<a href="http://www.looscomputing.ch/eng/enviMass/topics/quantification.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a>')	
 						)
 					),
 				HTML('<hr noshade="noshade" />'),
@@ -794,10 +796,10 @@
         # PARAMETER SETTINGS ###################################################
         ########################################################################
         tabPanel("Settings",     
-		  tags$h5("Apply settings to project?"), 
+		  tags$h5("Apply paramter settings to project?"), 
 		  bsButton("savepar","Apply",style="warning"),
 		  bsAlert("alert_2"),
-          HTML('<hr noshade="noshade" />'),
+		  HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/inputs/parameters.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on parameters</a></p>'),	
           tabsetPanel(
             # PEAK PICKING #####################################################
             tabPanel("Peak picking",
@@ -815,7 +817,7 @@
 				div(style = widget_style2,
 					tags$h5("EIC partitioning & clustering"),
 					sliderInput("peak_drtgap", "Maximum retention time gap in an EIC", min = 20, max = 1500, value = 300, step= 1),
-					sliderInput("peak_dmzdens", "Maximum m/z deviation of a measurement from its EIC mean [ppm]", min = 1, max = 20, value = 3.5, step= 0.1)       				
+					sliderInput("peak_dmzdens", "Maximum m/z deviation of a measurement from its EIC mean [ppm]", min = 1, max = 100, value = 3.5, step= 0.1)       				
 				),
 				div(style = widget_style,
 					tags$h5("Advanced"),
@@ -921,7 +923,7 @@
             ),
 			# QUANTIFICATION & RECOVERY ########################################
 			tabPanel("Quantification",
-				HTML('<hr noshade="noshade" />'),
+				HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/quantification.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details & parameter descriptions.</a></p>'),	
 				numericInput("quant_files_included", "Number of latest file to include in the quantification:", 30),
 				numericInput("recov_files_included", "Number of latest spiked files to include for recovery estimation:", 30)			
 			),
@@ -1011,6 +1013,7 @@
         # CALIBRATION ##########################################################
         ########################################################################
         tabPanel("Calibration", 	
+			HTML('<a href="http://www.looscomputing.ch/eng/enviMass/topics/quantification.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; More info.</a>'),
 			tabsetPanel( 
 				tabPanel("Create",
 					helpText("Select the ionization mode to load the available calibration file sets into the below selection."),
@@ -1101,11 +1104,11 @@
 								fluidRow(
 									column(4,
 										checkboxInput("cal_model_bound_low", "Set a lower bound for the intensity ratio?",  width = NULL),
-										numericInput("cal_model_bound_low_value", "Lower bound:", 0)
+										numericInput("cal_model_bound_low_value", "Lower bound log10:", 0)
 									),
 									column(4,
 										checkboxInput("cal_model_bound_up", "Set an upper bound for the intensity ratio?",  width = NULL),
-										numericInput("cal_model_bound_up_value", "Upper bound:", 20)
+										numericInput("cal_model_bound_up_value", "Upper bound log10:", 20)
 									)									
 								),						
 								HTML('<hr noshade="noshade" />'),
@@ -1166,15 +1169,15 @@
 										fluidRow(
 											column(4,checkboxInput("peaks_mz_RT_use_window", "Add a blue search window centered at coordinates:", FALSE)),									
 											column(2,	
-												numericInput("peaks_mz_RT_use_window_mass", "m/z",  216.101),
-												 helpText( a("Calculate a mass?", href="http://www.envipat.eawag.ch/index.php",target="_blank"))
+												textInput("peaks_mz_RT_use_window_mass", "m/z",  "216.101"),
+												helpText( a("Calculate a mass?", href="http://www.envipat.eawag.ch/index.php",target="_blank"))
 											),
-											column(2,numericInput("peaks_mz_RT_use_window_RT", "RT", 500)),
-											column(3,numericInput("peaks_mz_RT_use_window_RT_tol", "RT tolerance", 60))
+											column(2,textInput("peaks_mz_RT_use_window_RT", "RT", "500")),
+											column(3,textInput("peaks_mz_RT_use_window_RT_tol", "RT tolerance", "60"))
 										),
 										fluidRow(
 											column(4,checkboxInput("peaks_mz_RT_use_bar", "Add a blue ppm bar to search window?", FALSE)),									
-											column(3,numericInput("peaks_mz_RT_use_bar_value", "ppm", 10))
+											column(3,textInput("peaks_mz_RT_use_bar_value", "ppm", "10"))
 										),
 										HTML('<hr noshade="noshade" />'),
 										fluidRow(
@@ -1597,9 +1600,9 @@
 										bsPopover("profpeakID", title = "View extracted chromatograms & peaks of the selected profile (sample files only).",
 											content = "Select peaks in the order listed in the profile peak table, i.e. from latest to oldest file.", placement = "right", trigger = "hover"),
 										div(style = widget_style3,textOutput("prof_peak_text")),
-										HTML('<hr noshade="noshade" />'),
-										imageOutput("profile_position", height="auto"),
-										imageOutput("profile_EIC", height="auto"),
+										HTML('<hr noshade="noshade" />'),				
+										plotOutput("profile_position"),										
+										plotOutput("profile_EIC"),											
 										value="test1"),
 									bsCollapsePanel("Profile mass estimation",
 										div(style = widget_style3,
@@ -1617,7 +1620,7 @@
 										value="test2")
 								)
 						),
-						tabPanel("Normalization",            
+						tabPanel("Normalization",            					
 								imageOutput("profnorm", height="auto"),
 								imageOutput("profcount", height="auto")
 						)#,
@@ -1634,12 +1637,12 @@
 			helpText( a("For further help, instructions, topics, examples and requests please visit the enviMass website", href="http://www.envimass.ch/",target="_blank")),
 			HTML('<hr noshade="noshade" />'),							
 			tags$h4("Citing enviMass"),
-			HTML('<p>
-				Loos, M., Ruff, M., Singer, H., 2013. enviMass v3.1 - Software workflow for the monitoring of temporal micropollutant dynamics using LC-HRMS data
-			</p> '),
+			HTML('<p> Martin Loos, 2016, enviMass version 3.1. Zenodo. http://doi.org/10.5281/zenodo.48164 </p> '),
 			HTML('<hr noshade="noshade" />'),	
 			tags$h4("Contact, author, maintainer:"),
 			helpText( a("Martin Loos, mloos@looscomputing.ch", href="http://looscomputing.ch/eng/contact.htm",target="_blank") ),
+			tags$h4("Contributors:"),
+			helpText("Steffen Ruppe, Matthias Ruff, Jan Mazacek, Heinz Singer"),
 			HTML('<hr noshade="noshade" />'),	
 			tags$h4("License enviMass version 3.117 :"),
 			helpText( a("creative commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)", href="https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode", target="_blank") ),
@@ -1648,5 +1651,5 @@
 		)
         ########################################################################
       ),
-	  HTML('<font color="white">') # camouflage of TRUE from sourcing
+	  HTML('<font color="white">') # hide TRUE from sourcing
     )

@@ -37,6 +37,7 @@ recomb_score<-function(
 	if((!is.numeric(LOD))||(length(LOD)>1)){stop("LOD must be numeric")}
 	if((!is.numeric(RT_tol_inside))||(length(RT_tol_inside)>1)){stop("LOD must be numeric")}
 	if((!is.numeric(int_tol))||(length(int_tol)>1)){stop("LOD must be numeric")}	
+	if(any(profileList[[2]][,2]==0)){stop("Data with zereo intensity found - debug")}
 	#######################################################################		
 	results<-list()
 	at_results<-1

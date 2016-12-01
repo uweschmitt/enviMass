@@ -40,6 +40,17 @@ observe({
 				cat("\n Not found recal_pic")			
 			}
 			##########################################################################
+			# intensity distribution #################################################
+			if(
+				any(pics==paste("peakhist_",as.character(isolate(input$sel_meas)),sep="")) & (logfile$workflow[names(logfile$workflow)=="recal"]=="yes")
+			){			
+				expr_peakhist<-list(src=file.path(logfile[[1]],"pics",paste("peakhist_",as.character(isolate(input$sel_meas)),sep="")))			
+				output$peakhist_pic<-renderImage(expr_peakhist, deleteFile = FALSE)			
+				cat("\n Found peakhist_ pic")				
+			}else{
+				cat("\n Not found peakhist_ pic")				
+			}
+			##########################################################################
 			# LOD  ###################################################################
 			if( file.exists( file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",as.character(isolate(input$sel_meas)),".png",sep="") ) ) ){
 				expr_LOD<-list( src=file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",as.character(isolate(input$sel_meas)),".png",sep="")) )
@@ -47,7 +58,7 @@ observe({
 			}else{
 				cat("\n LOD pic file not found")
 			}
-			##########################################################################
+			##########################################################################			
 			output$dowhat<-renderText("Processing per file viewed.");	
 		}else{
 			output$dowhat<-renderText("Invalid ID chosen to view processing results.");		
@@ -100,166 +111,106 @@ observe({
 					updateSliderInput(session,"plot_filter_intensity", min=round(log10(min_int),digits=1), max=round(log10(max_int),digits=1), value=c(log10(min_int),log10(max_int)))
 				}
 				# prepare plotting information #############################################################
-				if(!is.null(isolate(ranges_peaks_mz_RT$x))){
-					x_lim<-isolate(ranges_peaks_mz_RT$x)
-				}else{
-					x_lim<-c(min(MSlist[["Scans"]][[2]][,"m/z"]),max(MSlist[["Scans"]][[2]][,"m/z"]))
-				}
-				if(!is.null(isolate(ranges_peaks_mz_RT$y))){
-					y_lim<-isolate(ranges_peaks_mz_RT$y)
-				}else{
-					y_lim<-c(min(MSlist[["Scans"]][[2]][,"RT"]),max(MSlist[["Scans"]][[2]][,"RT"]))
-				}		
-				use_these<-which(
-					(peaklist[,"m/z"]>=x_lim[1]) &
-					(peaklist[,"m/z"]<=x_lim[2]) &
-					(peaklist[,"RT"]>=y_lim[1]) &
-					(peaklist[,"RT"]<=y_lim[2]) &
-					(peaklist[,"max_int"]>=isolate(10^input$plot_filter_intensity[1])) &
-					(peaklist[,"max_int"]<=isolate(10^input$plot_filter_intensity[2])) 
-				)
-				if((length(use_these)>0) & isolate(input$plot_filter_blind)){
-					use_these<-use_these[peaklist[use_these,"keep_2"]==1]
-				}
-				if((length(use_these)>0) & isolate(input$plot_filter_replicates)){
-					use_these<-use_these[peaklist[use_these,"keep"]==1]
-				}				
-				if(length(use_these)>0){
-					z_lim<-c(min(peaklist[use_these,"max_int"]),max(peaklist[use_these,"max_int"]))
-				}else{
-					z_lim<-c(min(peaklist[,"max_int"]),max(peaklist[,"max_int"]))
-				}
-				if(isolate(input$peaks_mz_RT_use_raw)){ # must be prerequisite to evaluate those, below
-					if(is.null(isolate(ranges_peaks_mz_RT$x))){
-						x_min<-min(MSlist[["Scans"]][[2]][,"m/z"])
-						x_max<-max(MSlist[["Scans"]][[2]][,"m/z"])							
+				if(
+					(exists("MSlist")) &
+					(exists("peaklist"))
+				){
+					if(!is.null(isolate(ranges_peaks_mz_RT$x))){
+						x_lim<-isolate(ranges_peaks_mz_RT$x)
 					}else{
-						x_min<-min(MSlist[["Scans"]][[2]][
-							MSlist[["Scans"]][[2]][,"m/z"]>=isolate(ranges_peaks_mz_RT$x[1])
-						,"m/z"])
-						x_max<-max(MSlist[["Scans"]][[2]][
-							MSlist[["Scans"]][[2]][,"m/z"]<=isolate(ranges_peaks_mz_RT$x[2])
-						,"m/z"])	
+						x_lim<-c(min(MSlist[["Scans"]][[2]][,"m/z"]),max(MSlist[["Scans"]][[2]][,"m/z"]))
 					}
-					if(is.null(isolate(ranges_peaks_mz_RT$y))){
-						y_min<-min(MSlist[["Scans"]][[2]][,"RT"])
-						y_max<-max(MSlist[["Scans"]][[2]][,"RT"])							
+					if(!is.null(isolate(ranges_peaks_mz_RT$y))){
+						y_lim<-isolate(ranges_peaks_mz_RT$y)
 					}else{
-						y_min<-min(MSlist[["Scans"]][[2]][
-							MSlist[["Scans"]][[2]][,"RT"]>=isolate(ranges_peaks_mz_RT$y[1])
-						,"RT"])
-						y_max<-max(MSlist[["Scans"]][[2]][
-							MSlist[["Scans"]][[2]][,"RT"]<=isolate(ranges_peaks_mz_RT$y[2])
-						,"RT"])	
-					}					
-					those<-which(
-						(MSlist[["Scans"]][[2]][,"m/z"]>=x_min) &
-						(MSlist[["Scans"]][[2]][,"m/z"]<=x_max) &
-						(MSlist[["Scans"]][[2]][,"RT"]>=y_min) &
-						(MSlist[["Scans"]][[2]][,"RT"]<=y_max) &
-						(MSlist[["Scans"]][[2]][,"intensity"]>=isolate(10^input$plot_filter_intensity[1])) &
-						(MSlist[["Scans"]][[2]][,"intensity"]<=isolate(10^input$plot_filter_intensity[2]))						
-					)			
-					if(length(those)<=1E6){
-						colorit<-rep("gray",length(those))
-						colorit[MSlist[["Scans"]][[2]][those,"peakID"]!=0]<-"red"
-					}
-				}else{
-					those<-c()
-				}
-				####################################################################################			
-				output$plot_peaks_mz_RT <- renderPlot({
-					par(mar=c(4, 4, 3, .1))
-					plot.new()
-					plot.window(xlim=x_lim,ylim=y_lim)
-					title(
-						xlab="m/z [Th]", ylab="RT",
-						main="Draw rectangles and double-click into them to zoom in, double-click again to zoom fully out. Bottom plots adapt accordingly.",cex.main=.75
+						y_lim<-c(min(MSlist[["Scans"]][[2]][,"RT"]),max(MSlist[["Scans"]][[2]][,"RT"]))
+					}		
+					use_these<-which(
+						(peaklist[,"m/z"]>=x_lim[1]) &
+						(peaklist[,"m/z"]<=x_lim[2]) &
+						(peaklist[,"RT"]>=y_lim[1]) &
+						(peaklist[,"RT"]<=y_lim[2]) &
+						(peaklist[,"max_int"]>=isolate(10^input$plot_filter_intensity[1])) &
+						(peaklist[,"max_int"]<=isolate(10^input$plot_filter_intensity[2])) 
 					)
-					box();axis(1);axis(2);
-					# add raw data ? #########################################################
-					if(isolate(input$peaks_mz_RT_use_raw)){
-						if(length(those)<=1E5 & length(those)>0){
-							points(
-								MSlist[["Scans"]][[2]][those,"m/z"],
-								MSlist[["Scans"]][[2]][those,"RT"],
-								pch=19,cex=.5,col=colorit
-							)
+					if((length(use_these)>0) & isolate(input$plot_filter_blind)){
+						use_these<-use_these[peaklist[use_these,"keep_2"]==1]
+					}
+					if((length(use_these)>0) & isolate(input$plot_filter_replicates)){
+						use_these<-use_these[peaklist[use_these,"keep"]==1]
+					}				
+					if(length(use_these)>0){
+						z_lim<-c(min(peaklist[use_these,"max_int"]),max(peaklist[use_these,"max_int"]))
+					}else{
+						z_lim<-c(min(peaklist[,"max_int"]),max(peaklist[,"max_int"]))
+					}
+					if(isolate(input$peaks_mz_RT_use_raw)){ # must be prerequisite to evaluate those, below
+						if(is.null(isolate(ranges_peaks_mz_RT$x))){
+							x_min<-min(MSlist[["Scans"]][[2]][,"m/z"])
+							x_max<-max(MSlist[["Scans"]][[2]][,"m/z"])							
 						}else{
-							smoothScatter(
-								x=MSlist[["Scans"]][[2]][those,"m/z"], 
-								y=MSlist[["Scans"]][[2]][those,"RT"],
-								 colramp = colorRampPalette(c("white", "red")),
-								nbin = 200, add = TRUE
-							)
+							x_min<-min(MSlist[["Scans"]][[2]][
+								MSlist[["Scans"]][[2]][,"m/z"]>=isolate(ranges_peaks_mz_RT$x[1])
+							,"m/z"])
+							x_max<-max(MSlist[["Scans"]][[2]][
+								MSlist[["Scans"]][[2]][,"m/z"]<=isolate(ranges_peaks_mz_RT$x[2])
+							,"m/z"])	
 						}
-					}
-					# add picked peaks ? ######################################################
-					if(isolate(input$peaks_mz_RT_use_peaks)){		
-						if(length(use_these)>0){
-							if(!isolate(input$peaks_mz_RT_use_IDs)){
-								colorit<-"black"
-							}else{
-								colorit<-"darkgrey"
-							}
-							points(
-								peaklist[use_these,"m/z"],
-								peaklist[use_these,"RT"],						
-								pch=21,cex=.8,col=colorit
-							)
-						}
-					}
-					# add peak IDs? ###########################################################
-					if(isolate(input$peaks_mz_RT_use_IDs)){
-						if(length(use_these)>0){
-							text(						
-								peaklist[use_these,"m/z"],
-								peaklist[use_these,"RT"], 
-								labels = as.character(peaklist[use_these,"peak_ID"]),
-								pos = NULL, col	= "darkred", cex=.6
-							)
+						if(is.null(isolate(ranges_peaks_mz_RT$y))){
+							y_min<-min(MSlist[["Scans"]][[2]][,"RT"])
+							y_max<-max(MSlist[["Scans"]][[2]][,"RT"])							
+						}else{
+							y_min<-min(MSlist[["Scans"]][[2]][
+								MSlist[["Scans"]][[2]][,"RT"]>=isolate(ranges_peaks_mz_RT$y[1])
+							,"RT"])
+							y_max<-max(MSlist[["Scans"]][[2]][
+								MSlist[["Scans"]][[2]][,"RT"]<=isolate(ranges_peaks_mz_RT$y[2])
+							,"RT"])	
 						}					
-					}					
-					# add search window ? ######################################################
-					if(isolate(input$peaks_mz_RT_use_window)){	
-						del_mz<-((x_lim[2]-x_lim[1])/15)
-						at_mz<-isolate(input$peaks_mz_RT_use_window_mass)
-						at_RT<-isolate(input$peaks_mz_RT_use_window_RT)
-						rect(
-							xleft=(at_mz-del_mz), 
-							ybottom=(at_RT-isolate(input$peaks_mz_RT_use_window_RT_tol)), 
-							xright=(at_mz+del_mz), 
-							ytop=(at_RT+isolate(input$peaks_mz_RT_use_window_RT_tol)),
-							col=NULL, border="blue",lwd=2)
-						if(isolate(input$peaks_mz_RT_use_bar)){		
-							del_ppm<-(at_mz*isolate(input$peaks_mz_RT_use_bar_value)/1E6)
-							lines(
-								x=c((at_mz-del_ppm),(at_mz+del_ppm)),
-								y=c(at_RT,at_RT),
-								col="blue",lwd=2)
-						}	
+						those<-which(
+							(MSlist[["Scans"]][[2]][,"m/z"]>=x_min) &
+							(MSlist[["Scans"]][[2]][,"m/z"]<=x_max) &
+							(MSlist[["Scans"]][[2]][,"RT"]>=y_min) &
+							(MSlist[["Scans"]][[2]][,"RT"]<=y_max) &
+							(MSlist[["Scans"]][[2]][,"intensity"]>=isolate(10^input$plot_filter_intensity[1])) &
+							(MSlist[["Scans"]][[2]][,"intensity"]<=isolate(10^input$plot_filter_intensity[2]))						
+						)			
+						if(length(those)<=1E6){
+							colorit<-rep("gray",length(those))
+							colorit[MSlist[["Scans"]][[2]][those,"peakID"]!=0]<-"red"
+						}
+					}else{
+						those<-c()
 					}
-					############################################################################	
-				}, res = 100, execOnResize=TRUE)
-				####################################################################################
-				output$plot_peaks_mz_int <- renderPlot({		
-						par(mar=c(4, 4, .8, .2))
+					####################################################################################			
+					output$plot_peaks_mz_RT <- renderPlot({
+						par(mar=c(4, 4, 3, .1))
 						plot.new()
-						plot.window(xlim=x_lim,ylim=c(0,z_lim[2]))
-						title(xlab="m/z [Th]", ylab="Intensity")
+						plot.window(xlim=x_lim,ylim=y_lim)
+						title(
+							xlab="m/z [Th]", ylab="RT",
+							main="Draw rectangles and double-click into them to zoom in, double-click again to zoom fully out. Bottom plots adapt accordingly.",cex.main=.75
+						)
 						box();axis(1);axis(2);
-						# add raw data ? #########################################################			
-						if(isolate(input$peaks_mz_RT_use_raw)){			
+						# add raw data ? #########################################################
+						if(isolate(input$peaks_mz_RT_use_raw)){
 							if(length(those)<=1E5 & length(those)>0){
 								points(
 									MSlist[["Scans"]][[2]][those,"m/z"],
-									MSlist[["Scans"]][[2]][those,"intensity"],
-									type="h",pch=19,cex=.5,col=colorit
+									MSlist[["Scans"]][[2]][those,"RT"],
+									pch=19,cex=.5,col=colorit
 								)
-							}						
+							}else{
+								smoothScatter(
+									x=MSlist[["Scans"]][[2]][those,"m/z"], 
+									y=MSlist[["Scans"]][[2]][those,"RT"],
+									 colramp = colorRampPalette(c("white", "red")),
+									nbin = 200, add = TRUE
+								)
+							}
 						}
-						# add picked peaks ? #####################################################
-						if(isolate(input$peaks_mz_RT_use_peaks)){						
+						# add picked peaks ? ######################################################
+						if(isolate(input$peaks_mz_RT_use_peaks)){		
 							if(length(use_these)>0){
 								if(!isolate(input$peaks_mz_RT_use_IDs)){
 									colorit<-"black"
@@ -268,200 +219,294 @@ observe({
 								}
 								points(
 									peaklist[use_these,"m/z"],
-									peaklist[use_these,"max_int"],						
-									pch=21,cex=.8,col=colorit,type="h"
-								)					
+									peaklist[use_these,"RT"],						
+									pch=21,cex=.8,col=colorit
+								)
 							}
 						}
-						# add ppm bar? #############################################################
+						# add peak IDs? ###########################################################
+						if(isolate(input$peaks_mz_RT_use_IDs)){
+							if(length(use_these)>0){
+								text(						
+									peaklist[use_these,"m/z"],
+									peaklist[use_these,"RT"], 
+									labels = as.character(peaklist[use_these,"peak_ID"]),
+									pos = NULL, col	= "darkred", cex=.6
+								)
+							}					
+						}					
+						# add search window ? ######################################################
 						if(isolate(input$peaks_mz_RT_use_window)){	
-							if(isolate(input$peaks_mz_RT_use_bar)){	
-								at_mz<-isolate(input$peaks_mz_RT_use_window_mass)							
-								del_ppm<-(at_mz*isolate(input$peaks_mz_RT_use_bar_value)/1E6)
+							del_mz<-((x_lim[2]-x_lim[1])/15)
+							at_mz<-isolate(as.numeric(input$peaks_mz_RT_use_window_mass))
+							at_RT<-isolate(as.numeric(input$peaks_mz_RT_use_window_RT))
+							rect(
+								xleft=(at_mz-del_mz), 
+								ybottom=(at_RT-isolate(as.numeric(input$peaks_mz_RT_use_window_RT_tol))), 
+								xright=(at_mz+del_mz), 
+								ytop=(at_RT+isolate(as.numeric(input$peaks_mz_RT_use_window_RT_tol))),
+								col=NULL, border="blue",lwd=2)
+							if(isolate(input$peaks_mz_RT_use_bar)){		
+								del_ppm<-(at_mz*isolate(as.numeric(input$peaks_mz_RT_use_bar_value))/1E6)
 								lines(
 									x=c((at_mz-del_ppm),(at_mz+del_ppm)),
-									y=c(0.5*z_lim[2],.5*z_lim[2]),
+									y=c(at_RT,at_RT),
 									col="blue",lwd=2)
 							}	
-						}						
-				}, res = 100, execOnResize=TRUE)	
-				####################################################################################
-				output$plot_peaks_RT_int <- renderPlot({		
-						par(mar=c(4, 4, .8, .2))
-						plot.new()
-						plot.window(xlim=y_lim,ylim=c(0,z_lim[2]))
-						title(xlab="RT", ylab="Intensity")
-						box();axis(1);axis(2);
-						# add raw data ? #########################################################			
-						if(isolate(input$peaks_mz_RT_use_raw)){			
-							if(length(those)<=1E5 & length(those)>0){
-								points(
-									MSlist[["Scans"]][[2]][those,"RT"],
-									MSlist[["Scans"]][[2]][those,"intensity"],
-									type="h",pch=19,cex=.5,col=colorit
-								)
-							}						
 						}
-						# add picked peaks ? #####################################################
-						if(isolate(input$peaks_mz_RT_use_peaks)){						
-							if(length(use_these)>0){
-								if(!isolate(input$peaks_mz_RT_use_IDs)){
-									colorit<-"black"
-								}else{
-									colorit<-"darkgrey"
-								}
-								points(
-									peaklist[use_these,"RT"],
-									peaklist[use_these,"max_int"],						
-									pch=21,cex=.8,col=colorit,type="h"
-								)					
+						############################################################################	
+					}, res = 100, execOnResize=TRUE)
+					####################################################################################
+					output$plot_peaks_mz_int <- renderPlot({		
+							par(mar=c(4, 4, .8, .2))
+							plot.new()
+							plot.window(xlim=x_lim,ylim=c(0,z_lim[2]))
+							title(xlab="m/z [Th]", ylab="Intensity")
+							box();axis(1);axis(2);
+							# add raw data ? #########################################################			
+							if(isolate(input$peaks_mz_RT_use_raw)){			
+								if(length(those)<=1E5 & length(those)>0){
+									points(
+										MSlist[["Scans"]][[2]][those,"m/z"],
+										MSlist[["Scans"]][[2]][those,"intensity"],
+										type="h",pch=19,cex=.5,col=colorit
+									)
+								}						
 							}
+							# add picked peaks ? #####################################################
+							if(isolate(input$peaks_mz_RT_use_peaks)){						
+								if(length(use_these)>0){
+									if(!isolate(input$peaks_mz_RT_use_IDs)){
+										colorit<-"black"
+									}else{
+										colorit<-"darkgrey"
+									}
+									points(
+										peaklist[use_these,"m/z"],
+										peaklist[use_these,"max_int"],						
+										pch=21,cex=.8,col=colorit,type="h"
+									)					
+								}
+							}
+							# add ppm bar? #############################################################
+							if(isolate(input$peaks_mz_RT_use_window)){	
+								if(isolate(input$peaks_mz_RT_use_bar)){	
+									at_mz<-isolate(as.numeric(input$peaks_mz_RT_use_window_mass))							
+									del_ppm<-(at_mz*isolate(as.numeric(input$peaks_mz_RT_use_bar_value))/1E6)
+									lines(
+										x=c((at_mz-del_ppm),(at_mz+del_ppm)),
+										y=c(0.5*z_lim[2],.5*z_lim[2]),
+										col="blue",lwd=2)
+								}	
+							}						
+					}, res = 100, execOnResize=TRUE)	
+					####################################################################################
+					output$plot_peaks_RT_int <- renderPlot({		
+							par(mar=c(4, 4, .8, .2))
+							plot.new()
+							plot.window(xlim=y_lim,ylim=c(0,z_lim[2]))
+							title(xlab="RT", ylab="Intensity")
+							box();axis(1);axis(2);
+							# add raw data ? #########################################################			
+							if(isolate(input$peaks_mz_RT_use_raw)){			
+								if(length(those)<=1E5 & length(those)>0){
+									points(
+										MSlist[["Scans"]][[2]][those,"RT"],
+										MSlist[["Scans"]][[2]][those,"intensity"],
+										type="h",pch=19,cex=.5,col=colorit
+									)
+								}						
+							}
+							# add picked peaks ? #####################################################
+							if(isolate(input$peaks_mz_RT_use_peaks)){						
+								if(length(use_these)>0){
+									if(!isolate(input$peaks_mz_RT_use_IDs)){
+										colorit<-"black"
+									}else{
+										colorit<-"darkgrey"
+									}
+									points(
+										peaklist[use_these,"RT"],
+										peaklist[use_these,"max_int"],						
+										pch=21,cex=.8,col=colorit,type="h"
+									)					
+								}
+							}
+							# add RT window? ##########################################################
+							if(isolate(input$peaks_mz_RT_use_window)){	
+									at_RT<-isolate(as.numeric(input$peaks_mz_RT_use_window_RT))
+									lines(
+										x=c(
+											(at_RT-isolate(as.numeric(input$peaks_mz_RT_use_window_RT_tol))),
+											(at_RT+isolate(as.numeric(input$peaks_mz_RT_use_window_RT_tol)))
+										),
+										y=c(.5*z_lim[2],.5*z_lim[2]),
+										col="blue",lwd=2)
+								}	
+					}, res = 100, execOnResize=TRUE)	
+					####################################################################################		
+					# plotly output ####################################################################
+					# only peaks? ######################################################################
+					if(
+						( isolate(input$peaks_mz_RT_use_peaks) & !isolate(input$peaks_mz_RT_use_raw) & (length(use_these)>0) ) ||
+						( isolate(input$peaks_mz_RT_use_peaks) & (length(those)==0) & (length(use_these)>0) )
+					){
+						if(length(use_these)<=1E5){
+							if(verbose){cat("\n Plottin only peaks")}
+							sub_peaks<-as.data.frame(peaklist[use_these,c("m/z","RT","max_int"),drop=FALSE])
+							names(sub_peaks)<-c("m_z","RT","Intensity")				
+							sub_peaks[,"Intensity"]<-(sub_peaks[,"Intensity"]/2)
+							output$plot_peaks_3D <- renderPlotly({
+								p <- plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)%>%
+								plotly:::add_trace(p,
+									x = ~m_z, y = ~RT, z = ~Intensity,
+									data = sub_peaks,
+									color=I("black"),
+									size = I(1),
+									name = "",
+									error_z=list(
+										color="black",
+										thickness=0,
+										symmetric = TRUE, 
+										type = "data" ,
+										array = sub_peaks$Intensity
+									)
+								)	
+							})					
+						}else{
+							output$plot_peaks_3D <- renderPlotly({plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})
 						}
-						# add RT window? ##########################################################
-						if(isolate(input$peaks_mz_RT_use_window)){	
-								at_RT<-isolate(input$peaks_mz_RT_use_window_RT)
-								lines(
-									x=c(
-										(at_RT-isolate(input$peaks_mz_RT_use_window_RT_tol)),
-										(at_RT+isolate(input$peaks_mz_RT_use_window_RT_tol))
-									),
-									y=c(.5*z_lim[2],.5*z_lim[2]),
-									col="blue",lwd=2)
-							}	
-				}, res = 100, execOnResize=TRUE)	
-				####################################################################################		
-				# plotly output ####################################################################
-				# only peaks? ######################################################################
-				if(isolate(input$peaks_mz_RT_use_peaks) & !isolate(input$peaks_mz_RT_use_raw)){
-					if(length(use_these)<=1E5 & length(use_these)>0){
-						sub_peaks<-as.data.frame(peaklist[use_these,c("m/z","RT","max_int")])
-						names(sub_peaks)<-c("m_z","RT","Intensity")				
-						sub_peaks[,"Intensity"]<-(sub_peaks[,"Intensity"]/2)
-						output$plot_peaks_3D <- renderPlotly({
-							p <- plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)%>%
-							plotly:::add_trace(p,
-								x = ~m_z, y = ~RT, z = ~Intensity,
-								data = sub_peaks,
-								color=I("black"),
-								size = I(1),
-								name = "",
-								error_z=list(
-									color="black",
-									thickness=0,
-									symmetric = TRUE, 
-									type = "data" ,
-									array = sub_peaks$Intensity
-								)
-							)	
-						})					
-					}else{
-						output$plot_peaks_3D <- renderPlotly({plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})
 					}
-				}
-				# only raw data? ###########################################################						
-				if(!isolate(input$peaks_mz_RT_use_peaks) & isolate(input$peaks_mz_RT_use_raw)){
-					if(length(those)<=1E5 & length(those)>0){  # implies number of peaks is lower, too
-						sub_MSlist<-as.data.frame(MSlist[["Scans"]][[2]][those,c("m/z","RT","intensity","peakID")])
-						names(sub_MSlist)<-c("m_z","RT","Intensity","peakID")		
-						sub_MSlist[,"Intensity"]<-(sub_MSlist[,"Intensity"]/2)
-						output$plot_peaks_3D <- renderPlotly({
-							p <- plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)%>%
-							plotly:::add_trace(p,
-								x = ~m_z, y = ~RT, z = ~Intensity,
-								data = sub_MSlist[sub_MSlist[,"peakID"]==0,],
-								color=I("gray"),
-								size = I(1),
-								name = "",
-								error_z=list(
-									color="gray",
-									thickness=0,
-									symmetric = TRUE, 
-									type = "data" ,
-									array = sub_MSlist[sub_MSlist[,"peakID"]==0,]$Intensity
-								)
-							)%>%	
-							plotly:::add_trace(p,
-								x = ~m_z, y = ~RT, z = ~Intensity,
-								data = sub_MSlist[sub_MSlist[,"peakID"]!=0,],
-								color=I("red"),
-								size = I(1),
-								name = "",
-								error_z=list(
-									color="red",
-									thickness=0,
-									symmetric = TRUE, 
-									type = "data" ,
-									array = sub_MSlist[sub_MSlist[,"peakID"]!=0,]$Intensity
-								)
-							)
-						})					
-					}else{
-						output$plot_peaks_3D <- renderPlotly({plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})					
+					# only raw data? ###########################################################						
+					if(
+						( !isolate(input$peaks_mz_RT_use_peaks) & isolate(input$peaks_mz_RT_use_raw) & (length(those)>0) ) ||
+						( isolate(input$peaks_mz_RT_use_raw) & (length(use_these)==0) & (length(those)>0) )
+					){
+						if(length(those)<=1E5){  # implies number of peaks is lower, too
+							if(verbose){cat("\n Plottin only raw data")}
+							sub_MSlist<-as.data.frame(MSlist[["Scans"]][[2]][those,c("m/z","RT","intensity","peakID"),drop=FALSE])
+							names(sub_MSlist)<-c("m_z","RT","Intensity","peakID")		
+							sub_MSlist[,"Intensity"]<-(sub_MSlist[,"Intensity"]/2)
+							if(any(sub_MSlist[,"peakID"]!=0)){ # raw data included in peaks available?
+								output$plot_peaks_3D <- renderPlotly({
+									p <- plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)%>%
+									plotly:::add_trace(p,
+										x = ~m_z, y = ~RT, z = ~Intensity,
+										data = sub_MSlist[sub_MSlist[,"peakID"]==0,],
+										color=I("gray"),
+										size = I(1),
+										name = "",
+										error_z=list(
+											color="gray",
+											thickness=0,
+											symmetric = TRUE, 
+											type = "data" ,
+											array = sub_MSlist[sub_MSlist[,"peakID"]==0,]$Intensity
+										)
+									)%>%	
+									plotly:::add_trace(p,
+										x = ~m_z, y = ~RT, z = ~Intensity,
+										data = sub_MSlist[sub_MSlist[,"peakID"]!=0,],
+										color=I("red"),
+										size = I(1),
+										name = "",
+										error_z=list(
+											color="red",
+											thickness=0,
+											symmetric = TRUE, 
+											type = "data" ,
+											array = sub_MSlist[sub_MSlist[,"peakID"]!=0,]$Intensity
+										)
+									)
+								})				
+							}else{
+								output$plot_peaks_3D <- renderPlotly({
+									p <- plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)%>%
+									plotly:::add_trace(p,
+										x = ~m_z, y = ~RT, z = ~Intensity,
+										data = sub_MSlist[sub_MSlist[,"peakID"]==0,],
+										color=I("gray"),
+										size = I(1),
+										name = "",
+										error_z=list(
+											color="gray",
+											thickness=0,
+											symmetric = TRUE, 
+											type = "data" ,
+											array = sub_MSlist[sub_MSlist[,"peakID"]==0,]$Intensity
+										)
+									)
+								})								
+							}
+						}else{
+							output$plot_peaks_3D <- renderPlotly({plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})					
+						}
+					}					
+					# peaks & raw data? ########################################################
+					if( isolate(input$peaks_mz_RT_use_peaks) & isolate(input$peaks_mz_RT_use_raw) & (length(those)>0) & (length(use_these)>0) ){
+						if(length(those)<=1E5){ # implies number of peaks is lower, too
+							if(verbose){cat("\n Plottin peaks & raw data")}
+							sub_MSlist<-as.data.frame(MSlist[["Scans"]][[2]][those,c("m/z","RT","intensity","peakID"),drop=FALSE])
+							names(sub_MSlist)<-c("m_z","RT","Intensity","peakID")		
+							sub_MSlist[,"Intensity"]<-(sub_MSlist[,"Intensity"]/2)
+							sub_peaks<-as.data.frame(peaklist[use_these,c("m/z","RT","max_int"),drop=FALSE])
+							names(sub_peaks)<-c("m_z","RT","Intensity")				
+							sub_peaks[,"Intensity"]<-(sub_peaks[,"Intensity"]/2)
+							output$plot_peaks_3D <- renderPlotly({
+								p <- plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)%>%
+								plotly:::add_trace(p,
+									x = ~m_z, y = ~RT, z = ~Intensity,
+									data = sub_MSlist[sub_MSlist[,"peakID"]==0,],
+									color=I("gray"),
+									size = I(1),
+									name = "",
+									error_z=list(
+										color="gray",
+										thickness=0,
+										symmetric = TRUE, 
+										type = "data" ,
+										array = sub_MSlist[sub_MSlist[,"peakID"]==0,]$Intensity
+									)
+								)%>%	
+								plotly:::add_trace(p,
+									x = ~m_z, y = ~RT, z = ~Intensity,
+									data = sub_MSlist[sub_MSlist[,"peakID"]!=0,],
+									color=I("red"),
+									size = I(1),
+									name = "",
+									error_z=list(
+										color="red",
+										thickness=0,
+										symmetric = TRUE, 
+										type = "data" ,
+										array = sub_MSlist[sub_MSlist[,"peakID"]!=0,]$Intensity
+									)
+								)%>%
+								plotly:::add_trace(p,
+									x = ~m_z, y = ~RT, z = ~Intensity,
+									data = sub_peaks,
+									color=I("black"),
+									size = I(1),
+									name = "",
+									error_z=list(
+										color="black",
+										thickness=0,
+										symmetric = TRUE, 
+										type = "data" ,
+										array = sub_peaks$Intensity
+									)
+								)	
+							})							
+						}else{
+							output$plot_peaks_3D <- renderPlotly({plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})					
+						}
+					}						
+					# nothing? ##################################################################
+					if( !isolate(input$peaks_mz_RT_use_peaks) & !isolate(input$peaks_mz_RT_use_raw)){
+						output$plot_peaks_3D <- renderPlotly({plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})	
 					}
-				}					
-				# peaks & raw data? ########################################################
-				if( isolate(input$peaks_mz_RT_use_peaks) & isolate(input$peaks_mz_RT_use_raw)){
-					if(length(those)<=1E5 & length(those)>0){ # implies number of peaks is lower, too
-						sub_MSlist<-as.data.frame(MSlist[["Scans"]][[2]][those,c("m/z","RT","intensity","peakID")])
-						names(sub_MSlist)<-c("m_z","RT","Intensity","peakID")		
-						sub_MSlist[,"Intensity"]<-(sub_MSlist[,"Intensity"]/2)
-						sub_peaks<-as.data.frame(peaklist[use_these,c("m/z","RT","max_int")])
-						names(sub_peaks)<-c("m_z","RT","Intensity")				
-						sub_peaks[,"Intensity"]<-(sub_peaks[,"Intensity"]/2)
-						output$plot_peaks_3D <- renderPlotly({
-							p <- plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)%>%
-							plotly:::add_trace(p,
-								x = ~m_z, y = ~RT, z = ~Intensity,
-								data = sub_MSlist[sub_MSlist[,"peakID"]==0,],
-								color=I("gray"),
-								size = I(1),
-								name = "",
-								error_z=list(
-									color="gray",
-									thickness=0,
-									symmetric = TRUE, 
-									type = "data" ,
-									array = sub_MSlist[sub_MSlist[,"peakID"]==0,]$Intensity
-								)
-							)%>%	
-							plotly:::add_trace(p,
-								x = ~m_z, y = ~RT, z = ~Intensity,
-								data = sub_MSlist[sub_MSlist[,"peakID"]!=0,],
-								color=I("red"),
-								size = I(1),
-								name = "",
-								error_z=list(
-									color="red",
-									thickness=0,
-									symmetric = TRUE, 
-									type = "data" ,
-									array = sub_MSlist[sub_MSlist[,"peakID"]!=0,]$Intensity
-								)
-							)%>%
-							plotly:::add_trace(p,
-								x = ~m_z, y = ~RT, z = ~Intensity,
-								data = sub_peaks,
-								color=I("black"),
-								size = I(1),
-								name = "",
-								error_z=list(
-									color="black",
-									thickness=0,
-									symmetric = TRUE, 
-									type = "data" ,
-									array = sub_peaks$Intensity
-								)
-							)	
-						})							
-					}else{
-						output$plot_peaks_3D <- renderPlotly({plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})					
-					}
-				}						
-				# nothing? ##################################################################
-				if( !isolate(input$peaks_mz_RT_use_peaks) & !isolate(input$peaks_mz_RT_use_raw)){
-					output$plot_peaks_3D <- renderPlotly({plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})	
-				}
-				#############################################################################
+					#############################################################################
+				}	
 			}else{
 				output$plot_peaks_mz_RT <- renderPlot({})
 				output$plot_peaks_mz_int <- renderPlot({})
@@ -509,7 +554,7 @@ observe({
 	input$sel_peak_ID
 	if(!is.na(isolate(input$sel_meas_ID))){ # if user deletes entry!
 		if(isolate(input$sel_meas_ID)!=0){
-			if(atit==isolate(input$sel_meas_ID)){ # above MSlist upload worked?
+			if(atit==isolate(input$sel_meas_ID) & exists("MSlist")){ # above MSlist upload worked?
 				if( !is.na(isolate(input$sel_peak_ID)) & 
 					(isolate(input$sel_peak_ID)!=0) & 
 					any(MSlist[[8]][,10]==isolate(input$sel_peak_ID)) &
@@ -577,7 +622,7 @@ maincalc3<-reactive({
 	input$Ion_mode
 	if( (isolate(init$a)=="TRUE") & (isolate(input$Ion_mode)=="positive") ){
 		exprprofnorm_pos<-list(src=file.path(logfile[[1]],"pics","profnorm_pos"))
-		output$profnorm<-renderImage(exprprofnorm_pos, deleteFile = FALSE)
+		#output$profnorm<-renderImage(exprprofnorm_pos, deleteFile = FALSE)
 		exprprofcount_pos<-list(src=file.path(logfile[[1]],"pics","profcount_pos"))
 		output$profcount<-renderImage(exprprofcount_pos, deleteFile = FALSE)
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList")){ rm(profileList, inherits = TRUE) }
@@ -1096,9 +1141,8 @@ maincalc4<-reactive({
 	){
 		if( (isolate(input$profpeakID)<=length(peakTable[,1])) & (any(profileList[[7]][,4]==as.numeric(isolate(input$profID)))) ){
 			# positioning plot ###############################################
-			path=file.path(logfile[[1]],"pics","profile_position.png");
-			png(filename = path, bg = "white", width = 1100,height=150);
-				timed<-as.POSIXct(paste(peakTable[,1],peakTable[,2],sep=" "))
+			timed<-as.POSIXct(paste(peakTable[,1],peakTable[,2],sep=" "))
+			output$profile_position <- renderPlot({
 				par_old<-par(mar=c(1,1,1,1))				
 				plot.new()
 				plot.window(xlim=c(min(timed),max(timed)),ylim=c(0,max(max(as.numeric(as.character(peakTable[,4]))),max(as.numeric(as.character(peakTable[,6]))))))
@@ -1107,9 +1151,7 @@ maincalc4<-reactive({
 				points(timed[peakTable[,3]!=0],peakTable[peakTable[,3]!=0,4],type="l",col="darkgreen");
 				points(timed[peakTable[,5]!=0],peakTable[peakTable[,5]!=0,6],type="l",col="red");
 				par(par_old);
-			dev.off();
-			expr_profile_position<-list(src=file.path(logfile[[1]],"pics","profile_position.png"));
-			output$profile_position<-renderImage(expr_profile_position, deleteFile = FALSE);		
+			})			
 			# EIC plot ########################################################
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="MSlist")){rm(MSlist,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="MSlist")){rm(MSlist)}				
@@ -1120,80 +1162,63 @@ maincalc4<-reactive({
 			if(any(peakTable[as.numeric(isolate(input$profpeakID)),7]!=0)){
 				load(file.path(logfile[[1]],"MSlist",fileID[as.numeric(isolate(input$profpeakID))]), envir=as.environment(".GlobalEnv"))
 				cat("\n MSlist loaded");		
-				EIC_ID<<-unique(MSlist[[8]][MSlist[[8]][,10]==as.numeric(peakTable[as.numeric(isolate(input$profpeakID)),7]),9]);
-				peakit<<-MSlist[[4]][[2]][c(MSlist[[7]][as.numeric(peakTable[as.numeric(isolate(input$profpeakID)),7]),1]:MSlist[[7]][as.numeric(peakTable[as.numeric(isolate(input$profpeakID)),7]),2]),]		
+				EIC_ID<-unique(MSlist[[8]][MSlist[[8]][,10]==as.numeric(peakTable[as.numeric(isolate(input$profpeakID)),7]),9]);
+				peakit<-MSlist[[4]][[2]][c(MSlist[[7]][as.numeric(peakTable[as.numeric(isolate(input$profpeakID)),7]),1]:MSlist[[7]][as.numeric(peakTable[as.numeric(isolate(input$profpeakID)),7]),2]),]		
 				#if(length(peakit)>7){
-				EICit<<-MSlist[[4]][[2]][c(MSlist[[6]][EIC_ID,1]:MSlist[[6]][EIC_ID,2]),]
-				path=file.path(logfile[[1]],"pics","profile_EIC.png");
-				png(filename = path, bg = "white", width = 1100,height=300);
-						par_old<-par(mar=c(2,2,1,1))							
-						if(length(EICit)>7){
-							plot(EICit[,3],EICit[,2],type="h",col="darkgrey",xlab="RT",ylab="Intensity",xlim=c(min(MSlist[[4]][[1]]),max(MSlist[[4]][[1]])))
-						}else{
-							plot(EICit[3],EICit[2],type="h",col="darkgrey",xlab="RT",ylab="Intensity")
-						}
-						if(length(peakit)>7){	
-							points(peakit[,3],peakit[,2],type="h",col="red",lwd=2)
-						}else{
-							points(peakit[3],peakit[2],type="h",col="red",lwd=2)				
-						}
-						par(par_old);	
-				dev.off();
-				expr_profile_EIC<-list(src=file.path(logfile[[1]],"pics","profile_EIC.png"));
-				output$profile_EIC<-renderImage(expr_profile_EIC, deleteFile = FALSE);	
-				rm(EIC_ID,peakit,envir=as.environment(".GlobalEnv"))
+				EICit<-MSlist[[4]][[2]][c(MSlist[[6]][EIC_ID,1]:MSlist[[6]][EIC_ID,2]),]								
+				output$profile_EIC <- renderPlot({
+					par_old<-par(mar=c(2,2,1,1))							
+					if(length(EICit)>7){
+						plot(EICit[,3],EICit[,2],type="h",col="darkgrey",xlab="RT",ylab="Intensity",xlim=c(min(MSlist[[4]][[1]]),max(MSlist[[4]][[1]])))
+					}else{
+						plot(EICit[3],EICit[2],type="h",col="darkgrey",xlab="RT",ylab="Intensity")
+					}
+					if(length(peakit)>7){	
+						points(peakit[,3],peakit[,2],type="h",col="red",lwd=2)
+					}else{
+						points(peakit[3],peakit[2],type="h",col="red",lwd=2)				
+					}
+					par(par_old);	
+					env=as.environment(".GlobalEnv")
+				})
+				rm(EIC_ID,peakit)			
 				return(
 					paste("= sample file ID: ",as.character(fileID[as.numeric(isolate(input$profpeakID))])," (",as.character(timed[as.numeric(isolate(input$profpeakID))]),")" )
 				);		
 				#}					
 			}else{
-				path=file.path(logfile[[1]],"pics","profile_EIC.png");
-				png(filename = path, bg = "white", width = 1100,height=300);
-					plot.new()
-					plot.window(xlim=c(0,1),ylim=c(0,1))
-					text(0.5,0.5,labels="No sample peak available",cex=1.8,col="red")
-				dev.off();
-				expr_profile_EIC<-list(src=file.path(logfile[[1]],"pics","profile_EIC.png"));
-				output$profile_EIC<-renderImage(expr_profile_EIC, deleteFile = FALSE);		
-				return("No peak or EIC available");
-			}
-		}else{
-			path=file.path(logfile[[1]],"pics","profile_position.png");
-			png(filename = path, bg = "white", width = 900,height=150);
-				plot.new()
-				plot.window(xlim=c(0,1),ylim=c(0,1))
-				text(0.5,0.5,labels="Selection out of range",cex=1.8,col="red")
-			dev.off();
-			expr_profile_position<-list(src=file.path(logfile[[1]],"pics","profile_position.png"));
-			output$profile_position<-renderImage(expr_profile_position, deleteFile = FALSE);		
-			path=file.path(logfile[[1]],"pics","profile_EIC.png");
-			png(filename = path, bg = "white", width = 1100,height=300);
+			output$profile_EIC <- renderPlot({
 				plot.new()
 				plot.window(xlim=c(0,1),ylim=c(0,1))
 				text(0.5,0.5,labels="No sample peak available",cex=1.8,col="red")
-			dev.off();
-			expr_profile_EIC<-list(src=file.path(logfile[[1]],"pics","profile_EIC.png"));
-			output$profile_EIC<-renderImage(expr_profile_EIC, deleteFile = FALSE);		
+			})				
+			return("No peak or EIC available");
+			}
+		}else{
+			output$profile_position <- renderPlot({
+				plot.new()
+				plot.window(xlim=c(0,1),ylim=c(0,1))
+				text(0.5,0.5,labels="Selection out of range",cex=1.8,col="red")
+			})			
+			output$profile_EIC <- renderPlot({
+				plot.new()
+				plot.window(xlim=c(0,1),ylim=c(0,1))
+				text(0.5,0.5,labels="No sample peak available",cex=1.8,col="red")
+			})				
 			return("No peak or EIC available");
 		}
 	}else{
 		if( (isolate(init$a)=="TRUE") ){
-			path=file.path(logfile[[1]],"pics","profile_position.png");
-			png(filename = path, bg = "white", width = 900,height=150);
+			output$profile_position <- renderPlot({
 				plot.new()
 				plot.window(xlim=c(0,1),ylim=c(0,1))
-				text(0.5,0.5,labels="Nothing to plot",cex=1.8,col="red")
-			dev.off();
-			expr_profile_position<-list(src=file.path(logfile[[1]],"pics","profile_position.png"));
-			output$profile_position<-renderImage(expr_profile_position, deleteFile = FALSE);
-			path=file.path(logfile[[1]],"pics","profile_EIC.png");
-			png(filename = path, bg = "white", width = 1100,height=300);
+				text(0.5,0.5,labels="Selection out of range",cex=1.8,col="red")
+			})			
+			output$profile_EIC <- renderPlot({
 				plot.new()
 				plot.window(xlim=c(0,1),ylim=c(0,1))
 				text(0.5,0.5,labels="No sample peak available",cex=1.8,col="red")
-			dev.off();
-			expr_profile_EIC<-list(src=file.path(logfile[[1]],"pics","profile_EIC.png"));
-			output$profile_EIC<-renderImage(expr_profile_EIC, deleteFile = FALSE);		
+			})				
 			return("No peak or EIC available");
 		}
 	}

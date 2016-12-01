@@ -40,6 +40,7 @@ observe({
 					measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
 				); 
 				# SET DUMMY RESULTS ####################################################
+				enviMass:::reset_selections(session)
 				# (1) Peak picking #####################################################
 				#path=file.path(logfile$project_folder,"pics","EIC1");
 				#	png(filename = path, bg = "white", width = 1100, height= 300)
@@ -119,8 +120,6 @@ observe({
 					dev.off()
 					expr31n<-list(src=path)
 					output$profcount_neg<-renderImage(expr31n, deleteFile = FALSE)		
-				 
-
 				# (X) Profiling, trends, blind ########################################
 				path=file.path(logfile$project_folder,"pics","boxprofile_pos")
 					png(filename = path, bg = "white")
@@ -134,7 +133,6 @@ observe({
 					dev.off()
 					expr4n<-list(src=path)
 					output$boxprofile<-renderImage(expr4n, deleteFile = FALSE)
-
 				# Parse selectable isotopes ###########################################
 				elements<-unique(as.character(isotopes[1:295,1]))
 				elements<-elements[order(elements)]
@@ -210,6 +208,7 @@ maincalc2<-reactive({
 				measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
 			); 
 			# RETRIEVE RESULTS #####################################################
+			enviMass:::reset_selections(session)
 			# (1) Peak picking & preprocessing #####################################
 			#path=file.path(logfile$project_folder,"pics","EIC1");
 			#	png(filename = path, bg = "white", width = 1100, height= 300)
