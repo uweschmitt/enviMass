@@ -666,7 +666,7 @@
 							for quantification. If selected, the extraction of these calibration peaks will be affected by the above mass recalibration, 
 							replicate intersection, blind subtraction and LOD interpolation steps. Once you have established the desired calibration models,
 							you can deselect this step, until new calibration files have been added."),
-							HTML('<a href="http://www.looscomputing.ch/eng/enviMass/topics/quantification.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a>')	
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/quantification.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
 					),
 				HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Quantification </font></p> '),

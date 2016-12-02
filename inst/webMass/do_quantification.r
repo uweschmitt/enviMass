@@ -83,7 +83,8 @@
 		}
 		those_files<-use_files[use_group!="FALSE",,drop=FALSE] # only files covered by a calibration model are considered!
 		if(length(those_files[,1])==0){
-			stop("\nNothing to be quantified? Check your calibration and quantification settings; consider removing the quantificcation step from your workflow!")
+			shinyjs:::info("No samples to be quantified (positive mode)? Check if timing of samples are covered by calibration file sets periods; otherwise consider removing the quantification step from your workflow!")
+			stop("\nNo samples to be quantified (positive mode)? Check if timing of samples are covered by calibration file sets periods; otherwise consider removing the quantification step from your workflow!")
 		}
 		# sort those files by decreasing date!
 		atdate<-those_files[,6]
@@ -345,7 +346,7 @@
 						}else{
 							at_group_model<-which(names(cal_models_pos_used[[at_group]])==paste("_",at_IS,"_",at_ID_tar,"_",sep=""))
 							if(length(at_group_model)==0){
-								reason<-paste(reason,"incorrect calibration model",sep=" / ")
+								reason<-paste(reason,"only model w/ incorrect ISTD",sep=" / ")
 							}
 						}				
 						# target screening results exist, correct peak found?
@@ -534,7 +535,8 @@
 		}
 		those_files<-use_files[use_group!="FALSE",,drop=FALSE] # only files covered by a calibration model are considered!
 		if(length(those_files[,1])==0){
-			stop("\nNothing to be quantified? Check your calibration and quantification settings; consider removing the quantificcation step from your workflow!")
+			shinyjs:::info("No samples to be quantified (negative mode)? Check if timing of samples are covered by calibration file sets periods; otherwise consider removing the quantification step from your workflow!")
+			stop("\nNo samples to be quantified (negative mode)? Check if timing of samples are covered by calibration file sets periods; otherwise consider removing the quantification step from your workflow!")
 		}
 		# sort those files by decreasing date!
 		atdate<-those_files[,6]

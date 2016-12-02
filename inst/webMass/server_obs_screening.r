@@ -620,7 +620,7 @@ observe({
 			if(file.exists(file.path(logfile[[1]],"quantification","target_quant_table_pos"))){
 				load(file.path(logfile[[1]],"quantification","target_quant_table_pos"))
 				load(file.path(logfile[[1]],"quantification","target_quant_table_pos_warn"))				
-				if( (dim(target_quant_table_pos)[1]>4) & (dim(target_quant_table_pos)[2]>2) ){
+				if( (dim(target_quant_table_pos)[1]>5) & (dim(target_quant_table_pos)[2]>2) ){
 					target_quant_table_pos<-cbind(
 						target_quant_table_pos,
 						target_quant_table_pos_warn
@@ -662,8 +662,8 @@ observe({
 					))	
 					output$target_quant_table_pos<-DT::renderDataTable({
 						DT::datatable(
-							as.data.frame(target_quant_table_pos[6:dim1,],
-								row.names =FALSE,stringsAsFactors=FALSE), 
+							as.data.frame(target_quant_table_pos,
+								row.names =FALSE,stringsAsFactors=FALSE)[6:dim1,,drop=FALSE], 
 							rownames=FALSE,
 							container = sketch,
 							extensions = c('Buttons'),
@@ -706,7 +706,7 @@ observe({
 		if(isolate(input$Pos_compound_select=="Recovery")){
 			if(file.exists(file.path(logfile[[1]],"quantification","target_recov_table_pos"))){
 				load(file.path(logfile[[1]],"quantification","target_recov_table_pos"))
-				if((dim(target_recov_table_pos)[1]>0)&(dim(target_recov_table_pos)[2]>0)){
+				if((dim(target_recov_table_pos)[1]>4)&(dim(target_recov_table_pos)[2]>2)){
 					dim1<-dim(target_recov_table_pos)[1]
 					dim2<-dim(target_recov_table_pos)[2]
 					sketch = htmltools::withTags(table(
@@ -716,7 +716,7 @@ observe({
 								th(rowspan = 4, 'Target ID'),
 								th(rowspan = 4, 'Target name'),
 								th(colspan = 1, 'Files'),	  
-								th(colspan = (dim2-3), '')
+								th(colspan = (dim2-4), '')
 							),
 							tr(lapply(target_recov_table_pos[1,3:dim2], th)),
 							tr(lapply(target_recov_table_pos[2,3:dim2], th)),
@@ -725,7 +725,7 @@ observe({
 					))
 					output$target_recov_table_pos<-DT::renderDataTable({
 						DT::datatable(
-							as.data.frame(target_recov_table_pos[5:dim1,],row.names =FALSE,stringsAsFactors=FALSE), 
+							as.data.frame(target_recov_table_pos,row.names =FALSE,stringsAsFactors=FALSE)[5:dim1,,drop=FALSE], 
 							rownames=FALSE,
 							container = sketch,
 							extensions = list('Buttons'),
@@ -1375,7 +1375,7 @@ observe({
 			if(file.exists(file.path(logfile[[1]],"quantification","target_quant_table_neg"))){
 				load(file.path(logfile[[1]],"quantification","target_quant_table_neg"))
 				load(file.path(logfile[[1]],"quantification","target_quant_table_neg_warn"))				
-				if( (dim(target_quant_table_neg)[1]>4) & (dim(target_quant_table_neg)[2]>2) ){
+				if( (dim(target_quant_table_neg)[1]>5) & (dim(target_quant_table_neg)[2]>2) ){
 					target_quant_table_neg<-cbind(
 						target_quant_table_neg,
 						target_quant_table_neg_warn
@@ -1417,8 +1417,8 @@ observe({
 					))	
 					output$target_quant_table_neg<-DT::renderDataTable({
 						DT::datatable(
-							as.data.frame(target_quant_table_neg[6:dim1,],
-								row.names =FALSE,stringsAsFactors=FALSE), 
+							as.data.frame(target_quant_table_neg,
+								row.names =FALSE,stringsAsFactors=FALSE)[6:dim1,,drop=FALSE], 
 							rownames=FALSE,
 							container = sketch,
 							extensions = c('Buttons'),
@@ -1461,7 +1461,7 @@ observe({
 		if(isolate(input$Neg_compound_select=="Recovery")){
 			if(file.exists(file.path(logfile[[1]],"quantification","target_recov_table_neg"))){
 				load(file.path(logfile[[1]],"quantification","target_recov_table_neg"))
-				if((dim(target_recov_table_neg)[1]>0)&(dim(target_recov_table_neg)[2]>0)){
+				if((dim(target_recov_table_neg)[1]>4)&(dim(target_recov_table_neg)[2]>2)){
 					dim1<-dim(target_recov_table_neg)[1]
 					dim2<-dim(target_recov_table_neg)[2]
 					sketch = htmltools::withTags(table(
@@ -1471,7 +1471,7 @@ observe({
 								th(rowspan = 4, 'Target ID'),
 								th(rowspan = 4, 'Target name'),
 								th(colspan = 1, 'Files'),	  
-								th(colspan = (dim2-3), '')
+								th(colspan = (dim2-4), '')
 							),
 							tr(lapply(target_recov_table_neg[1,3:dim2], th)),
 							tr(lapply(target_recov_table_neg[2,3:dim2], th)),
@@ -1480,7 +1480,7 @@ observe({
 					))
 					output$target_recov_table_neg<-DT::renderDataTable({
 						DT::datatable(
-							as.data.frame(target_recov_table_neg[5:dim1,],row.names =FALSE,stringsAsFactors=FALSE), 
+							as.data.frame(target_recov_table_neg,row.names =FALSE,stringsAsFactors=FALSE)[5:dim1,,drop=FALSE], 
 							rownames=FALSE,
 							container = sketch,
 							#extensions = list('Buttons'),

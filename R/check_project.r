@@ -165,27 +165,126 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 			paste(these,collapse=", "),". Please revise concerned calibration file(s) in the files tab!",sep="")
 	  }
   }
-  # check spiked files
-  measurements_spiked<-measurements[measurements[,"Type"]=="spiked",,drop=FALSE]   
-  if(length(measurements_spiked[,1])>0){  
-	these_pos<-which(is.na(match(
+	if(logfile$workflow[names(logfile$workflow)=="quantification"]=="yes" & any(measurements[,"Type"]=="calibration")){
+		# no period overlaps! ######################################################
+		# -> positive 
+		cal_files<-measurements[(measurements[,"Mode"]=="positive")&(measurements[,"Type"]=="calibration"),,drop=FALSE]
+		if(length(cal_files[,1])>0){
+			# do calibration sets overlap in periods?
+			cal_files2<-unique(cal_files[,c(20,6,7,22,23),drop=FALSE])
+			starttime<-as.difftime(cal_files2[,3]);startdate<-as.Date(cal_files2[,2]);
+			numstart<-(as.numeric(startdate)+as.numeric(starttime/24))		
+			endtime<-as.difftime(cal_files2[,5]);enddate<-as.Date(cal_files2[,4]);
+			numend<-(as.numeric(enddate)+as.numeric(endtime/24))
+			if(length(starttime)>1){			
+				for(i in 1:(length(starttime)-1)){
+					for(j in (i+1):length(starttime)){		
+						if(
+							(numstart[j]<=numend[i])&
+							(numstart[i]<=numend[j])
+						){
+							say<-paste("Time periods of calibration set ",cal_files2[i,"tag2"]," and ",cal_files2[j,"tag2"]," (positive mode) overlap. Time periods of different calibration files sets must not overlap - please revise!",sep="")
+						}
+					}
+				}
+			}
+			for(i in 1:length(starttime)){			
+				if(numstart[i]>=numend[i]){
+						say<-paste("Start Date/Time >= end Date time for calibration set ",cal_files2[i,"tag2"]," (positive mode) overlap. Please revise!",sep="")				
+				}
+			}
+			# do all files in one calibration set have identical start & end times?		
+			tags2<-unique(cal_files[,"tag2"])
+			for(i in 1:length(tags2)){
+				if(length(unique(cal_files[cal_files[,"tag2"]==tags2[i],"Date"]))>1){
+					say<-paste("Positive mode calibration files of set ",tags2[i]," must have identical start dates - but they do not. Please revise!",sep="")
+				}
+				if(length(unique(cal_files[cal_files[,"tag2"]==tags2[i],"Time"]))>1){
+					say<-paste("Positive mode calibration files of set ",tags2[i]," must have identical start times - but they do not. Please revise!",sep="")
+				}		
+				if(length(unique(cal_files[cal_files[,"tag2"]==tags2[i],"date_end"]))>1){
+					say<-paste("Positive mode calibration files of set ",tags2[i]," must have identical end dates - but they do not. Please revise!",sep="")
+				}
+				if(length(unique(cal_files[cal_files[,"tag2"]==tags2[i],"time_end"]))>1){
+					say<-paste("Positive mode calibration files of set ",tags2[i]," must have identical end times - but they do not. Please revise!",sep="")
+				}		
+			}
+		}	
+		# -> negative
+		cal_files<-measurements[(measurements[,"Mode"]=="negative")&(measurements[,"Type"]=="calibration"),,drop=FALSE]	
+		if(length(cal_files[,1])>0){
+			# do calibration sets overlap in periods?
+			cal_files2<-unique(cal_files[,c(20,6,7,22,23),drop=FALSE])
+			starttime<-as.difftime(cal_files2[,3]);startdate<-as.Date(cal_files2[,2]);
+			numstart<-(as.numeric(startdate)+as.numeric(starttime/24))		
+			endtime<-as.difftime(cal_files2[,5]);enddate<-as.Date(cal_files2[,4]);
+			numend<-(as.numeric(enddate)+as.numeric(endtime/24))	
+			if(length(starttime)>1){
+				for(i in 1:(length(starttime)-1)){
+					for(j in (i+1):length(starttime)){		
+						if(
+							(numstart[j]<=numend[i])&
+							(numstart[i]<=numend[j])
+						){
+							say<-paste("Time periods of calibration set ",cal_files2[i,"tag2"]," and ",cal_files2[j,"tag2"]," (negative mode) overlap. Time periods of different calibration files sets must not overlap - please revise!",sep="")
+						}
+					}
+				}
+			}
+			for(i in 1:length(starttime)){			
+				if(numstart[i]>=numend[i]){
+						say<-paste("Start Date/Time >= end Date time for calibration set ",cal_files2[i,"tag2"]," (negative mode) overlap. Please revise!",sep="")				
+				}
+			}
+			# do all files in one calibration set have identical start & end times?		
+			tags2<-unique(cal_files[,"tag2"])
+			for(i in 1:length(tags2)){
+				if(length(unique(cal_files[cal_files[,"tag2"]==tags2[i],"Date"]))>1){
+					say<-paste("Negative mode calibration files of set ",tags2[i]," must have identical start dates - but they do not. Please revise!",sep="")
+				}
+				if(length(unique(cal_files[cal_files[,"tag2"]==tags2[i],"Time"]))>1){
+					say<-paste("Negative mode calibration files of set ",tags2[i]," must have identical start times - but they do not. Please revise!",sep="")
+				}		
+				if(length(unique(cal_files[cal_files[,"tag2"]==tags2[i],"date_end"]))>1){
+					say<-paste("Negative mode calibration files of set ",tags2[i]," must have identical end dates - but they do not. Please revise!",sep="")
+				}
+				if(length(unique(cal_files[cal_files[,"tag2"]==tags2[i],"time_end"]))>1){
+					say<-paste("Negative mode calibration files of set ",tags2[i]," must have identical end times - but they do not. Please revise!",sep="")
+				}		
+			}
+		}	
+	}
+	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+	if(logfile$workflow[names(logfile$workflow)=="quantification"]=="yes" & !any(measurements[,"Type"]=="calibration")){
+		say<-"You want to run a quantification but you have not even calibration files in your project? Either add such files or remove the Quantification step from your project!"
+	} 
+	if(logfile$workflow[names(logfile$workflow)=="calibration"]=="yes" & !any(measurements[,"Type"]=="calibration")){
+		say<-"You want to run a calibration but you have no calibration files in your project? Either add such files or remove the Calibration step from your project!"
+	} 
+	if(logfile$workflow[names(logfile$workflow)=="recovery"]=="yes" & !any(measurements[,"Type"]=="calibration")){
+		say<-"You want to run a recovery but you have not even calibration files in your project for a quantification? Either add such files or remove the Recovery step from your project!"
+	}	   
+	# check spiked files
+	measurements_spiked<-measurements[measurements[,"Type"]=="spiked",,drop=FALSE]   
+	if(length(measurements_spiked[,1])>0){  
+		these_pos<-which(is.na(match(
 			measurements_spiked[measurements_spiked$Mode=="positive",]$tag2,
 			measurements[measurements$Mode=="positive",1]))
-	)
-	if(length(these_pos)>0){
-		these_pos<-measurements_spiked[measurements_spiked$Mode=="positive",1,drop=FALSE][these_pos]
-	}
-	these_neg<-which(is.na(match(
-		measurements_spiked[measurements_spiked$Mode=="negative",]$tag2,
-		measurements[measurements$Mode=="negative",1]))
-	)
-	if(length(these_neg)>0){	
-		these_neg<-measurements_spiked[measurements_spiked$Mode=="negative",1,drop=FALSE][these_neg]
-	}
-	if(length(these_pos)>0 || length(these_neg)>0){
+		)
+		if(length(these_pos)>0){
+			these_pos<-measurements_spiked[measurements_spiked$Mode=="positive",1,drop=FALSE][these_pos]
+		}
+		these_neg<-which(is.na(match(
+			measurements_spiked[measurements_spiked$Mode=="negative",]$tag2,
+			measurements[measurements$Mode=="negative",1]))
+		)
+		if(length(these_neg)>0){	
+			these_neg<-measurements_spiked[measurements_spiked$Mode=="negative",1,drop=FALSE][these_neg]
+		}
+		if(length(these_pos)>0 || length(these_neg)>0){
 			say<-paste("Invalid file IDs (tag2) to subtract from for spiked file(s) with ID(s) ",
 			paste(c(these_pos,these_neg),collapse=", "),". Please revise concerned spiked file(s) in the files tab!",sep="")	
-	}
+		}
   }
   ##############################################################################
   # progress bar? ##############################################################
