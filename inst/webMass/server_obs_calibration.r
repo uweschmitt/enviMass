@@ -1141,27 +1141,31 @@ observe({ # - M plot
 				if(verbose){cat("\n in M_text_output")}
 				if(cal_model$call[[2]]=="resp ~ 0 + lin"){ # linear, 0-intercept
 					coefi<-cal_model$coefficient
-					printthis<-paste("Concentration = ",as.character(round(coefi[[1]],digits=5)),"*Ratio",sep="")
+					R2<-round(summary(cal_model)[[8]],digits=3)
+					printthis<-paste("Concentration = ",as.character(round(coefi[[1]],digits=5)),"*Ratio,   R^2=",R2,sep="")
 					if(verbose){cat("\n in M_text_1")}
 				}
 				if(cal_model$call[[2]]=="resp ~ lin"){ # linear, with intercept
 					coefi<-cal_model$coefficient
-					printthis<-paste("Concentration = ",as.character(round(coefi[[1]],digits=5))," + ",as.character(round(coefi[[2]],digits=5)),"*Ratio",sep="")
+					R2<-round(summary(cal_model)[[8]],digits=3)
+					printthis<-paste("Concentration = ",as.character(round(coefi[[1]],digits=5))," + ",as.character(round(coefi[[2]],digits=5)),"*Ratio,   R^2=",R2,sep="")
 					if(verbose){cat("\n in M_text_2")}
 				}
 				if(cal_model$call[[2]]=="resp ~ 0 + lin + quad"){ # linear, 0-intercept
 					coefi<-cal_model$coefficient
+					R2<-round(summary(cal_model)[[8]],digits=3)
 					printthis<-paste("Concentration = ",
 						as.character(round(coefi[[1]],digits=5)),"*Ratio + ",
-						as.character(round(coefi[[2]],digits=5)),"*Ratio^2",					
+						as.character(round(coefi[[2]],digits=5)),"*Ratio^2,   R^2=",R2,					
 					sep="")
 				}
 				if(cal_model$call[[2]]=="resp ~ lin + quad"){ # linear, 0-intercept
 					coefi<-cal_model$coefficient
+					R2<-round(summary(cal_model)[[8]],digits=3)
 					printthis<-paste("Concentration = ",
 						as.character(round(coefi[[1]],digits=5))," + ",
 						as.character(round(coefi[[2]],digits=5)),"*Ratio + ",
-						as.character(round(coefi[[3]],digits=5)),"*Ratio^2",					
+						as.character(round(coefi[[3]],digits=5)),"*Ratio^2,   R^2=",R2,					
 					sep="")
 				}				
 				return(printthis)			
