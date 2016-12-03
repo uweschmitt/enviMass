@@ -213,6 +213,8 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters$subtr_target<-"yes"; 		
 		logfile$parameters$subtr_blind<-"yes"; 			
 		logfile$parameters$subtr_spiked<-"yes"; 		
+		# quantification #######################################################
+		logfile$parameters$quant_files_included<-"100"
 		# add custom parameters ################################################
 		source(file="workflow_parameters.r",local=TRUE)
 	if(any(duplicated(names(logfile$parameters)))){stop("Duplicated parameter names found - revise!")}	

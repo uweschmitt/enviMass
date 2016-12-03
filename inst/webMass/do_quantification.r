@@ -545,7 +545,7 @@
 		attime<-as.difftime(attime);
 		ord<-order(as.numeric(atdate),as.numeric(attime),as.numeric(those_files[,1]),decreasing=TRUE);
 		those_files<-those_files[ord,,drop=FALSE]	
-		if(logfile$parameters$quant_files_included!="FALSE"){ # restrict number of files to inlcude
+		if(logfile$parameters$quant_files_included!="FALSE"){ # restrict number of files to include
 			if(logfile$parameters$quant_files_included<length(those_files[,1])){
 				those_files<-those_files[1:logfile$parameters$quant_files_included,,drop=FALSE]		
 			}
