@@ -770,25 +770,12 @@
 							This interpolation and subtraction is only applicable if the separate blind filter step is disabled (see above blue steps and the preceding red step).")
 						)
 					),							            
-				#HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Peak grouping (componentization) </font></p>'),
-				#	checkboxInput("Comp_isotop", "Group isotopologue peaks?", TRUE),
 				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Componentization </font></p> '),
 					fluidRow(
-						#column(width = 2, radioButtons("components", "Include?", c("yes"="yes","no"="no"))),
+						column(width = 2, radioButtons("components", "Include?", c("yes"="yes","no"="no"))),
 						column(width = 10, offset = 0.3,tags$p(align="justify","Under construction"))
 					),
 				HTML('<hr noshade="noshade" />') 
-				#HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Component-wise screening </font></p> '),
-				#	checkboxInput("screen_IS_comp", "Screen internal standards?", TRUE),
-				#	checkboxInput("screen_target_comp", "Screen internal targets/sustpects?", TRUE),
-				#HTML('<hr noshade="noshade" />'),
-				#HTML('<h1 align="center"> &#x21e9; </h1> '),                     
-				# block 5 ######################################################
-				#HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Homologue series detection </font></p> '),
-					#radioButtons("homol", "Include? ", c("yes"="yes","no"="no")),	
-				#HTML('<p style="background-color:orange"; align="center"> <font color="#FFFFFF"> Mass defect calculation </font></p> '),
-					#radioButtons("massdef", "Include? ", c("yes"="yes","no"="no")),	
-				#HTML('<hr noshade="noshade" />')
 				################################################################
 	
         ),
