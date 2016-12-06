@@ -9,7 +9,7 @@
 
 convDate<-function(for_dates){
 	
-	if(any(!is.character(for_dates))){stop("\n debug for_dates in convDate: non-character input found!")}
+	#if(any(!is.character(for_dates))){stop("\n debug for_dates in convDate: non-character input found!")}
 	leng<-length(for_dates)
 	getit<-c()
 	for(i in 1:leng){
