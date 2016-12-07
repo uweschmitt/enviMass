@@ -187,7 +187,9 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters$IS_intcut<-"50000";		# Lower intensity threhold
 		logfile$parameters$IS_w1<-"0.8";    		# Matching score
 		logfile$parameters$screen_IS_cutit<-"FALSE";    	# Cut off match combiantions below matching score?	
-		logfile$parameters$screen_IS_maxonly<-"FALSE";    	# Screen only most intense isotopologue peak?		
+		logfile$parameters$screen_IS_maxonly<-"FALSE";    	# Screen only most intense isotopologue peak?	
+		logfile$parameters$screen_IS_restrict<-"FALSE";		# Restrict screening to the latest ...
+		logfile$parameters$screen_IS_restrict_many<-"10";	# ... number of files only?	
 		# target screening #####################################################
 		logfile$parameters$tar_drt1<-"30"; 		# RT tolerance of peaks in sample relative to their expected RT [s]
 		logfile$parameters$tar_drt2<-"10"; 		# RT tolerance of peaks within an isotope pattern [s]
@@ -197,7 +199,9 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters$tar_intcut<-"50000";	# Lower intensity threhold
 		logfile$parameters$tar_w1<-"0.8";    	# Matching score	
 		logfile$parameters$screen_target_cutit<-"FALSE";    	# Cut off match combiantions below matching score?		
-		logfile$parameters$screen_target_maxonly<-"FALSE";    	# Screen only most intense isotopologue peak?			
+		logfile$parameters$screen_target_maxonly<-"FALSE";    	# Screen only most intense isotopologue peak?		
+		logfile$parameters$screen_target_restrict<-"FALSE";		# Restrict screening to the latest ...
+		logfile$parameters$screen_target_restrict_many<-"10";	# ... number of files only?			
 		# IS-based normalization ###############################################
 		logfile$parameters$ISnorm_percfiles<-"90";		# Minimum percentage of files covered by each IS profile %
 		logfile$parameters$ISnorm_numbIS<-"15";			# Minimum number of IS profiles

@@ -62,7 +62,31 @@
 		RT_tol_outside<-as.numeric(logfile$parameters$tar_drt1)		# RT tolerance of peaks in sample relative to their expected RT [s]
 		RT_tol_inside<-as.numeric(logfile$parameters$tar_drt2)		# RT tolerance of peaks within an isotope pattern [s]
 		cut_score<-as.numeric(logfile$parameters$tar_w1)	
-		
+
+# BAUSTELLE
+		if(logfile$parameters$screen_IS_restrict=="TRUE"){
+			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");			
+			measurements<-measurements[measurements[,"Mode"]=="positive",,drop=FALSE]
+			measurements<-measurements[(measurements[,"Type"]=="sample" | measurements[,"Type"]=="blank" | measurements[,"Type"]=="spiked" ),,drop=FALSE]				
+			starttime<-as.difftime(measurements[,"Time"]);
+			startdate<-as.Date(measurements[,"Date"]);
+			numstart<-(as.numeric(startdate)+as.numeric(starttime/24))	
+			if(length(numstart)>as.numeric(logfile$parameters$screen_IS_restrict_many)){	
+				retain_sample<-rep(FALSE,max(as.numeric(measurements[,"ID"])))			
+				retain_sample[
+					as.numeric(measurements[
+						(order(numstart,decreasing=TRUE)[1:as.numeric(logfile$parameters$screen_IS_restrict_many)])
+					,"ID"])
+				]<-TRUE
+			}else{
+				retain_sample<-rep(TRUE,max(as.numeric(measurements[,"ID"])))
+			}
+			rm(measurements)
+		}else{
+			retain_sample<-rep(TRUE,max(as.numeric(measurements[,"ID"])))		
+		}
+# BAUSTELLE
+				
 		peaks<-profileList_pos[[7]];
 		peaklist<-peaks[,c(14,16,15)];
 		# screen centroids
@@ -117,6 +141,9 @@
 						for(k in 1:length(profs)){ # over their matched profile peaks = k
 							if(profileList_pos[[7]][profs[k],4]!=profs[k]){cat("\n debug me: profile ID mismatch");stop();} # just a check
 							for(m in profileList_pos[[7]][profs[k],1]:profileList_pos[[7]][profs[k],2]){ # over their sample peaks
+# BAUSTELLE
+								if(retain_sample[profileList_pos[[2]][m,"sampleIDs"]]==FALSE){next} # Is this file among the latest ones?
+# BAUSTELLE	
 								delmass<-abs(profileList_pos[[2]][m,1]-pattern[[i]][j,1])		
 								if(!ppm){
 									if(delmass>mztol){next}
@@ -323,6 +350,30 @@
 		RT_tol_outside<-as.numeric(logfile$parameters$tar_drt1)		# RT tolerance of peaks in sample relative to their expected RT [s]
 		RT_tol_inside<-as.numeric(logfile$parameters$tar_drt2)		# RT tolerance of peaks within an isotope pattern [s]
 		cut_score<-as.numeric(logfile$parameters$tar_w1)	
+
+# BAUSTELLE
+		if(logfile$parameters$screen_IS_restrict=="TRUE"){
+			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");			
+			measurements<-measurements[measurements[,"Mode"]=="negative",,drop=FALSE]
+			measurements<-measurements[(measurements[,"Type"]=="sample" | measurements[,"Type"]=="blank" | measurements[,"Type"]=="spiked" ),,drop=FALSE]				
+			starttime<-as.difftime(measurements[,"Time"]);
+			startdate<-as.Date(measurements[,"Date"]);
+			numstart<-(as.numeric(startdate)+as.numeric(starttime/24))	
+			if(length(numstart)>as.numeric(logfile$parameters$screen_IS_restrict_many)){	
+				retain_sample<-rep(FALSE,max(as.numeric(measurements[,"ID"])))			
+				retain_sample[
+					as.numeric(measurements[
+						(order(numstart,decreasing=TRUE)[1:as.numeric(logfile$parameters$screen_IS_restrict_many)])
+					,"ID"])
+				]<-TRUE
+			}else{
+				retain_sample<-rep(TRUE,max(as.numeric(measurements[,"ID"])))
+			}
+			rm(measurements)
+		}else{
+			retain_sample<-rep(TRUE,max(as.numeric(measurements[,"ID"])))		
+		}
+# BAUSTELLE
 		
 		peaks<-profileList_neg[[7]];
 		peaklist<-peaks[,c(14,16,15)];
@@ -378,6 +429,9 @@
 						for(k in 1:length(profs)){ # over their matched profile peaks = k
 							if(profileList_neg[[7]][profs[k],4]!=profs[k]){cat("\n debug me: profile ID mismatch");stop();} # just a check
 							for(m in profileList_neg[[7]][profs[k],1]:profileList_neg[[7]][profs[k],2]){ # over their sample peaks
+# BAUSTELLE
+								if(retain_sample[profileList_neg[[2]][m,"sampleIDs"]]==FALSE){next} # Is this file among the latest ones?
+# BAUSTELLE	
 								delmass<-abs(profileList_neg[[2]][m,1]-pattern[[i]][j,1])		
 								if(!ppm){
 									if(delmass>mztol){next}

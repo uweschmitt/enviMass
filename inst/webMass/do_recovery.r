@@ -29,12 +29,12 @@
 		ord<-order(as.numeric(atdate),as.numeric(attime),as.numeric(those_files[,1]),decreasing=TRUE);
 		those_files<-those_files[ord,,drop=FALSE]	
 		if(logfile$parameters$recov_files_included!="FALSE"){
-			if(logfile$parameters$recov_files_included<length(those_files[,1])){
-				those_files<-those_files[1:logfile$parameters$recov_files_included,,drop=FALSE]		
+			if(as.numeric(logfile$parameters$recov_files_included)<length(those_files[,1])){
+				those_files<-those_files[1:as.numeric(logfile$parameters$recov_files_included),,drop=FALSE]		
 			}
 		}
-		those_targets<-target_quant_table_pos[6:length(target_quant_table_pos[,1,drop=FALSE]),1:2,drop=FALSE]
-		target_recov_table_pos<-matrix(nrow=(length(those_targets[,1,drop=FALSE])+4),ncol=(length(those_files[,1,drop=FALSE])+2),"")
+		those_targets<-target_quant_table_pos[6:length(target_quant_table_pos[,1]),1:2,drop=FALSE]
+		target_recov_table_pos<-matrix(nrow=(length(those_targets[,1])+4),ncol=(length(those_files[,1])+2),"")
 		colnames(target_recov_table_pos)<-c("Target ID","Target name",those_files[,"ID"])
 		rownames(target_recov_table_pos)<-c("Name","Type","Date","Time",those_targets[,1])
 		target_recov_table_pos[1,]<-c("","",as.character(those_files[,"Name"]))
@@ -107,12 +107,12 @@
 		ord<-order(as.numeric(atdate),as.numeric(attime),as.numeric(those_files[,1]),decreasing=TRUE);
 		those_files<-those_files[ord,,drop=FALSE]	
 		if(logfile$parameters$recov_files_included!="FALSE"){
-			if(logfile$parameters$recov_files_included<length(those_files[,1])){
-				those_files<-those_files[1:logfile$parameters$recov_files_included,,drop=FALSE]		
+			if(as.numeric(logfile$parameters$recov_files_included)<length(those_files[,1])){
+				those_files<-those_files[1:as.numeric(logfile$parameters$recov_files_included),,drop=FALSE]		
 			}
 		}
-		those_targets<-target_quant_table_neg[6:length(target_quant_table_neg[,1,drop=FALSE]),1:2,drop=FALSE]
-		target_recov_table_neg<-matrix(nrow=(length(those_targets[,1,drop=FALSE])+4),ncol=(length(those_files[,1,drop=FALSE])+2),"")
+		those_targets<-target_quant_table_neg[6:length(target_quant_table_neg[,1]),1:2,drop=FALSE]
+		target_recov_table_neg<-matrix(nrow=(length(those_targets[,1])+4),ncol=(length(those_files[,1])+2),"")
 		colnames(target_recov_table_neg)<-c("Target ID","Target name",those_files[,"ID"])
 		rownames(target_recov_table_neg)<-c("Name","Type","Date","Time",those_targets[,1])
 		target_recov_table_neg[1,]<-c("","",as.character(those_files[,"Name"]))

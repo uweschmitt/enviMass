@@ -71,7 +71,6 @@ startprofiles<-function(
 	sampleID<-measurements[,"ID"];
 	locus<-measurements[,"Place"];
 	typus<-measurements[,"Type"];
-	tag2<-
 	ord<-order(atPOSIX,decreasing=TRUE);
 	atPOSIX<-atPOSIX[ord];
 	datetime<-datetime[ord];

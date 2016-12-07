@@ -111,10 +111,29 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 			say<-"Workflow option profiling and settings->profile restriction enabled, but no file included as TRUE in measurement table for profiling."
 		}
 	}
+	if(logfile$parameters$screen_IS_restrict=="TRUE"){
+		if(is.na(as.numeric(logfile$parameters$screen_IS_restrict_many)) | (as.numeric(logfile$parameters$screen_IS_restrict_many)<1)){
+			say<-"ISTD screening: number of latest files to include invalid - must be >=1. Please revise!"
+		}
+	}
+	if(logfile$parameters$screen_target_restrict=="TRUE"){
+		if(is.na(as.numeric(logfile$parameters$screen_target_restrict_many)) | (as.numeric(logfile$parameters$screen_target_restrict_many)<1)){
+			say<-"Target screening: number of latest files to include invalid - must be >=1. Please revise!"
+		}
+	}
 	# data sets ok? ##############################################################
 	filed<-list.files(file.path(logfile[[1]],"files"))
 	if(!length(filed) & ignorefiles=="FALSE"){say<-"No files available!"}
 	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
+	if(length(names(measurements))!=29){
+		say<-"Measurement table seems corrupted. Have you made any updates recently? Please report this issue!"
+	}
+# check: do profiling, but no samples or blinds or spiked exist?
+
+	
+	
+	
+	
 	if(length(measurements[measurements[,"ID"]!="-",1,drop=FALSE])==0){
 		say<-"No files available."; 
 		return(say);

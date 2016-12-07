@@ -111,7 +111,7 @@
 		target_quant_table_pos[,1]<-c("","","","","",those_targets[,1])
 		target_quant_table_pos[,2]<-c("","","","","",those_targets[,2])
 		target_quant_table_pos_warn<-target_quant_table_pos
-		target_quant_table_pos_warn[6:length(target_quant_table_pos_warn[,1]),3:length(target_quant_table_pos_warn[1,,drop=FALSE])]<-"0"
+		target_quant_table_pos_warn[6:length(target_quant_table_pos_warn[,1]),3:length(target_quant_table_pos_warn[1,])]<-"0"
 		# QUANTIFY #########################################################################
 		if(length(cal_models_pos_used)>0){ # no calibration models? 
 			res_IS_names<-rep("",length(res_IS_pos_screen))
@@ -308,10 +308,10 @@
 			}
 			splitted<-unlist(splitted)
 			ord<-order(splitted,decreasing=TRUE)
-			target_quant_table_pos[6:length(target_quant_table_pos[,1,drop=FALSE]),]<-
-				(target_quant_table_pos[6:length(target_quant_table_pos[,1,drop=FALSE]),,drop=FALSE][ord,,drop=FALSE])
-			target_quant_table_pos_warn[6:length(target_quant_table_pos_warn[,1,drop=FALSE]),]<-
-				(target_quant_table_pos_warn[6:length(target_quant_table_pos_warn[,1,drop=FALSE]),,drop=FALSE][ord,,drop=FALSE])		
+			target_quant_table_pos[6:length(target_quant_table_pos[,1]),]<-
+				(target_quant_table_pos[6:length(target_quant_table_pos[,1]),,drop=FALSE][ord,,drop=FALSE])
+			target_quant_table_pos_warn[6:length(target_quant_table_pos_warn[,1]),]<-
+				(target_quant_table_pos_warn[6:length(target_quant_table_pos_warn[,1]),,drop=FALSE][ord,,drop=FALSE])		
 		}
 		# state why missing quantification arose ###########################################
 		if(length(target_quant_table_pos[,1])>5){		
@@ -330,7 +330,7 @@
 					find_name<-paste(at_ID_IS,"_",at_adduct_IS,"_",sep="")
 					at_res_IS<-which(substr(names(res_IS_pos_screen),1,nchar(find_name))==find_name)
 					if(length(at_res_tar)==0){stop("Debug in do_quantification.r required!")}
-					for(j in 3:length(target_quant_table_pos[1,,drop=FALSE])){ # over samples
+					for(j in 3:length(target_quant_table_pos[1,])){ # over samples
 						if(target_quant_table_pos[i,j]!=""){next}
 						reason<-"!"
 						# calibration models cover file (just a check, should always be the case as such files are excluded further above)
@@ -344,7 +344,7 @@
 							reason<-paste(reason,"missing calibration model",sep=" / ")
 						# ... or just not the one with the ISTD specified in the target table?
 						}else{
-							at_group_model<-which(names(cal_models_pos_used[[at_group]])==paste("_",at_IS,"_",at_ID_tar,"_",sep=""))
+							at_group_model<-which(names(cal_models_pos_used[[at_group]])==paste("_",at_ID_IS,"_",at_ID_tar,"_",sep=""))
 							if(length(at_group_model)==0){
 								reason<-paste(reason,"only model w/ incorrect ISTD",sep=" / ")
 							}
@@ -760,8 +760,8 @@
 			}
 			splitted<-unlist(splitted)
 			ord<-order(splitted,decreasing=TRUE)
-			target_quant_table_neg[6:length(target_quant_table_neg[,1,drop=FALSE]),]<-(target_quant_table_neg[6:length(target_quant_table_neg[,1,drop=FALSE]),,drop=FALSE][ord,,drop=FALSE])
-			target_quant_table_neg_warn[6:length(target_quant_table_neg_warn[,1,drop=FALSE]),]<-(target_quant_table_neg_warn[6:length(target_quant_table_neg_warn[,1,drop=FALSE]),,drop=FALSE][ord,,drop=FALSE])
+			target_quant_table_neg[6:length(target_quant_table_neg[,1]),]<-(target_quant_table_neg[6:length(target_quant_table_neg[,1]),,drop=FALSE][ord,,drop=FALSE])
+			target_quant_table_neg_warn[6:length(target_quant_table_neg_warn[,1]),]<-(target_quant_table_neg_warn[6:length(target_quant_table_neg_warn[,1]),,drop=FALSE][ord,,drop=FALSE])
 		}
 		# state why missing quantification arose ###########################################
 		if(length(target_quant_table_neg[,1])>5){		
@@ -780,7 +780,7 @@
 					find_name<-paste(at_ID_IS,"_",at_adduct_IS,"_",sep="")
 					at_res_IS<-which(substr(names(res_IS_neg_screen),1,nchar(find_name))==find_name)
 					if(length(at_res_tar)==0){stop("Debug in do_quantification.r required!")}
-					for(j in 3:length(target_quant_table_neg[1,,drop=FALSE])){ # over samples
+					for(j in 3:length(target_quant_table_neg[1,])){ # over samples
 						if(target_quant_table_neg[i,j]!=""){next}
 						reason<-"!"
 						# calibration models cover file (just a check, should always be the case as such files are excluded further above)
@@ -794,7 +794,7 @@
 							reason<-paste(reason,"missing calibration model",sep=" / ")
 						# ... or just not the one with the ISTD specified in the target table?
 						}else{
-							at_group_model<-which(names(cal_models_neg_used[[at_group]])==paste("_",at_IS,"_",at_ID_tar,"_",sep=""))
+							at_group_model<-which(names(cal_models_neg_used[[at_group]])==paste("_",at_ID_IS,"_",at_ID_tar,"_",sep=""))
 							if(length(at_group_model)==0){
 								reason<-paste(reason,"incorrect calibration model",sep=" / ")
 							}

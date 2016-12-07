@@ -873,6 +873,11 @@
 						numericInput("IS_intcut", "Lower intensity threshold (if LOD interpolation disabled)", 5E4)                
 					),
 					div(style = widget_style2,
+						tags$h5("Restrict screening to latest files (covered during profiling)?"),
+						selectInput("screen_IS_restrict", "Include?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE"),
+						numericInput("screen_IS_restrict_many", "Number of latest files to include", 10)
+					),
+					div(style = widget_style2,
 						tags$h5("Scoring"),
 						numericInput("IS_w1", "Cutoff score [0,1]", 0.8),         
 						HTML('<h1 align="center"> &#x21f3; </h1> '),						
@@ -896,6 +901,11 @@
 						tags$h5("Intensity"),
 						sliderInput("tar_inttol", "Intensity tolerance %", min = 0, max = 100, value = 30, step= .2),
 						numericInput("tar_intcut", "Lower intensity threshold", 5E4)                
+					),
+					div(style = widget_style2,
+						tags$h5("Restrict screening to latest files (covered during profiling)?"),
+						selectInput("screen_target_restrict", "Include?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE"),
+						numericInput("screen_target_restrict_many", "Number of latest files to include", 10)
 					),
 					div(style = widget_style2,
 						tags$h5("Scoring"),

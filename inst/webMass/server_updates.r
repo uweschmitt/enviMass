@@ -1237,6 +1237,25 @@ if(logfile$version<3.117){
 
 if(logfile$version<3.118){
 
+	################################################################################################
+	# peak intensity updates #######################################################################
+	if(!any(names(logfile$parameters)=="screen_IS_restrict")){
+		logfile$parameters$screen_IS_restrict<<-"FALSE";		# Restrict screening to the latest ...
+		logfile$parameters$screen_IS_restrict_many<<-"10";	# ... number of files only?	
+		logfile$parameters$screen_target_restrict<<-"FALSE";		# Restrict screening to the latest ...
+		logfile$parameters$screen_target_restrict_many<<-"10";	# ... number of files only?					
+	}		
+	################################################################################################	
+	logfile$version<<-3.118
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
+
+}
+
+if(logfile$version<3.119){
+
 	# -> make adduct node dependent on EIC_correlation
 
 }
