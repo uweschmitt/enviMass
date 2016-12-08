@@ -780,7 +780,7 @@ addmeasu<-reactive({
 					)
 					measurements3<-rbind(measurements2,measurements1,stringsAsFactors=FALSE);
 					names(measurements3)<-nameit;
-					measurements3[,"Date"]<<-enviMass:::convDate(measurements3[,"Date"]);
+					measurements3[,"Date"]<-enviMass:::convDate(measurements3[,"Date"]);
 					measurements3[,"date_end"]<-enviMass:::convDate(measurements3[,"date_end"]);
 					write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 					rm(measurements1,measurements2,measurements3);
