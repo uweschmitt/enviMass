@@ -83,11 +83,11 @@ if((logfile$parameters$subtract_pos_bydate=="TRUE") || (logfile$parameters$subtr
 				int=peaks_sample[,2],
 				get_matches=FALSE
 			)	
-			peaklist[getit=="TRUE",colnames(peaklist)=="keep_2"]<-0
+			peaklist[getit=="TRUE","keep_2"]<-0
 			save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(sam_ID)))
 			blank_ID_last<-blank_ID
 			cat(paste("\n",
-				round(sum(peaklist[,colnames(peaklist)=="keep_2"]==0)/length(peaklist[,1])*100,digits=1),
+				round(sum(peaklist[,"keep_2"]==0)/length(peaklist[,1])*100,digits=1),
 				" % of ",
 				length(peaklist[,1]),
 				" peaks blind filtered (files ",

@@ -64,8 +64,8 @@
 		cut_score<-as.numeric(logfile$parameters$tar_w1)	
 
 # BAUSTELLE
+		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");			
 		if(logfile$parameters$screen_IS_restrict=="TRUE"){
-			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");			
 			measurements<-measurements[measurements[,"Mode"]=="positive",,drop=FALSE]
 			measurements<-measurements[(measurements[,"Type"]=="sample" | measurements[,"Type"]=="blank" | measurements[,"Type"]=="spiked" ),,drop=FALSE]				
 			starttime<-as.difftime(measurements[,"Time"]);
@@ -81,10 +81,10 @@
 			}else{
 				retain_sample<-rep(TRUE,max(as.numeric(measurements[,"ID"])))
 			}
-			rm(measurements)
 		}else{
 			retain_sample<-rep(TRUE,max(as.numeric(measurements[,"ID"])))		
 		}
+		rm(measurements)
 # BAUSTELLE
 				
 		peaks<-profileList_pos[[7]];
@@ -352,8 +352,8 @@
 		cut_score<-as.numeric(logfile$parameters$tar_w1)	
 
 # BAUSTELLE
+		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");			
 		if(logfile$parameters$screen_IS_restrict=="TRUE"){
-			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");			
 			measurements<-measurements[measurements[,"Mode"]=="negative",,drop=FALSE]
 			measurements<-measurements[(measurements[,"Type"]=="sample" | measurements[,"Type"]=="blank" | measurements[,"Type"]=="spiked" ),,drop=FALSE]				
 			starttime<-as.difftime(measurements[,"Time"]);
@@ -369,10 +369,10 @@
 			}else{
 				retain_sample<-rep(TRUE,max(as.numeric(measurements[,"ID"])))
 			}
-			rm(measurements)
 		}else{
 			retain_sample<-rep(TRUE,max(as.numeric(measurements[,"ID"])))		
 		}
+		rm(measurements)
 # BAUSTELLE
 		
 		peaks<-profileList_neg[[7]];

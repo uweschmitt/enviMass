@@ -47,7 +47,7 @@ if(logfile$version<3.100){
 			if(any(colnames(peaklist)=="keep")){break} # ok, has been done before
 			keep<-rep(1,length(peaklist[,1])) # 1 == TRUE
 			peaklist<-cbind(peaklist,keep)
-			colnames(peaklist)[15]<-"keep_2";
+			colnames(peaklist)[15]<-"keep";
 			save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])))
 			rm(peaklist)
 		}

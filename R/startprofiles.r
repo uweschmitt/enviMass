@@ -82,7 +82,9 @@ startprofiles<-function(
 		remain<-rep(TRUE,length(sampleID))
 		remain[is.na(match(typus,types))]<-FALSE
 		if(any(types=="spiked") & any(measurements[,"Type"]=="spiked")){ # include subtraction files, too
-			subtr_files<-measurements[measurements[,"ID"]==sampleID[typus=="spiked"],]$tag2
+			subtr_files<-measurements[
+				match(sampleID[typus=="spiked"],measurements[,"ID"])
+			,]$tag2
 			remain[match(subtr_files,sampleID)]<-TRUE	
 		}
 		datetime<-datetime[remain]
