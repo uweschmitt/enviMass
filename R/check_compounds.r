@@ -147,7 +147,7 @@ check_compounds<-function(intstand_check,targets_check,isotopes,adducts,logfile,
 		rm(checked)
 	}
 	if(length(targets_check$Formula[targets_check$Formula!="-"])==0){
-		  cat("No internal targets available \n")    
+		  cat("No targets available \n")    
 	}else{
 		if(
 			!all(names(targets_check)==c("ID","Name","Formula","RT","RT_tolerance","ID_internal_standard","main_adduct","ion_mode",
