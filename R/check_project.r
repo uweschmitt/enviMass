@@ -52,7 +52,7 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 	# compounds available & ok? ##################################################
 	intstand_check<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character",blank.lines.skip=TRUE);
 	targets_check<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character",blank.lines.skip=TRUE);
-	say<-enviMass:::check_compounds(intstand_check,targets_check,isotopes,adducts,logfile)
+	say<-enviMass:::check_compounds(intstand_check,targets_check,isotopes,adducts,logfile,write_tables=TRUE)
 	if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in check_project.r!")}	
 	
 	# enough compounds for recalibration available? ##############################
@@ -131,7 +131,7 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 # check: do profiling, but no samples or blinds or spiked exist?
 
 	
-	
+# check: no blind files, but blind subtraction enabled?	
 	
 	
 	if(length(measurements[measurements[,"ID"]!="-",1,drop=FALSE])==0){
