@@ -29,8 +29,8 @@ shinyServer(function(input, output, session){
   output$textit<-renderText("Waiting...")
   output$dowhat<-renderText("Open")
   output$isotable<-renderTable(isotopes)
-  updateCheckboxGroupInput(session, "adducts_pos", "Positive ions:", choices =  as.character(adducts[adducts[,6]=="positive",1]),selected=as.character(adducts[adducts[,6]=="positive",1][1]))
-  updateCheckboxGroupInput(session, "adducts_neg", "Negative ions:", choices =  as.character(adducts[adducts[,6]=="negative",1]),selected=as.character(adducts[adducts[,6]=="negative",1][1]))               
+  updateCheckboxGroupInput(session, "adducts_pos", "Positive mode:", choices =  as.character(adducts[adducts[,6]=="positive",1]),selected=as.character(adducts[adducts[,6]=="positive",1][1]))
+  updateCheckboxGroupInput(session, "adducts_neg", "Negative mode:", choices =  as.character(adducts[adducts[,6]=="negative",1]),selected=as.character(adducts[adducts[,6]=="negative",1][1]))               
   updateSelectInput(session, "resolution", "Instrument resolution:", choices =  names(resolution_list), selected= (names(resolution_list)[1]))                   
   init<-reactiveValues() 	# reactive value to indicate ...
   init$a<-"FALSE"  			# ... if/when a project is opened

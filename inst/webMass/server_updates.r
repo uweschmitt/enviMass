@@ -1256,9 +1256,13 @@ if(logfile$version<3.118){
 
 if(logfile$version<3.119){
 
+	################################################################################################
+	# update adduct parameters #####################################################################
+
 	# -> make adduct node dependent on EIC_correlation
 
 }
+
 ########################################################################
 
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_updates.r!")}
