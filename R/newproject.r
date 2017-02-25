@@ -36,6 +36,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	dir.create(file.path(pro_dir,pro_name,"results","componentization","isotopologues"),recursive=TRUE)   # subfolder 	
 	dir.create(file.path(pro_dir,pro_name,"results","componentization","EIC_corr"),recursive=TRUE)   # subfolder 
 	dir.create(file.path(pro_dir,pro_name,"results","componentization","homologues"),recursive=TRUE)   # subfolder 	
+	dir.create(file.path(pro_dir,pro_name,"results","componentization","components"),recursive=TRUE)   # subfolder 		
   dir.create(file.path(pro_dir,pro_name,"dataframes"),recursive=TRUE) # subfolder
   dir.create(file.path(pro_dir,pro_name,"pics"),recursive=TRUE)       # subfolder
   dir.create(file.path(pro_dir,pro_name,"exports"),recursive=TRUE)    # subfolder
@@ -47,10 +48,10 @@ newproject<-function(pro_name,pro_dir,IS,targets){
   # write measurement table #################################################### 
   measurements<-data.frame(c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),
     c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),
-	c("-"),c("-"),c("-"),c("-"),c("-"),c("-"));
+	c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"));
   names(measurements)<-c("ID","Name","Type","Mode","Place","Date","Time","include","copied","peakpicking",
   "checked","recal","align","norm","profiled","LOD","IS_screen","tar_screen","tag1","tag2","tag3","date_end","time_end",
-  "isotopologues","adducts","homologues","EIC_correlation","blind","ID_2")
+  "isotopologues","adducts","homologues","EIC_correlation","blind","ID_2","components_files")
   write.csv(measurements,file=file.path(pro_dir,pro_name,"dataframes","measurements"),row.names=FALSE)
   ##############################################################################
   # create & save a logfile ####################################################
@@ -139,6 +140,12 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters$peak_maxint_log10<-"6.5"; 	   
 		logfile$parameters$peak_perc_cut<-"0"; 	
 		logfile$parameters$peak_which_intensity<-"maximum"
+		logfile$parameters$cut_RT<-"FALSE"
+		logfile$parameters$cut_RT_min<-"0"
+		logfile$parameters$cut_RT_max<-"25"		# in minutes!
+		logfile$parameters$cut_mass<-"FALSE"
+		logfile$parameters$cut_mass_min<-"0"
+		logfile$parameters$cut_mass_max<-"2000"		
 		# show progbar? ########################################################
 		logfile$parameters$progressBar<-"FALSE";	 
 		# isotope patterns #####################################################
@@ -176,6 +183,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters$prof_dmz<-"3";		
 		logfile$parameters$prof_ppm<-"TRUE";		
 		logfile$parameters$prof_drt<-"60";			
+		logfile$parameters$prof_comp_maxfiles<-"15"
 		logfile$parameters$prof_select<-"FALSE";		
 		logfile$parameters$replicates_prof<-"yes";		
 		# IS screening #########################################################
@@ -219,6 +227,34 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters$subtr_spiked<-"yes"; 		
 		# quantification #######################################################
 		logfile$parameters$quant_files_included<-"100"
+		# isotopologue grouping ################################################		
+		logfile$parameters$isotop_mztol<-"2.5"
+		logfile$parameters$isotop_ppm<-"TRUE"
+		logfile$parameters$isotop_inttol<-"0.5"
+		logfile$parameters$isotop_rttol<-"5"
+		logfile$parameters$isotop_use_charges<-"FALSE"
+		# adduct grouping ######################################################
+		logfile$parameters$adducts_rttol<-"5"
+		logfile$parameters$adducts_mztol<-"2.5"
+		logfile$parameters$adducts_ppm<-"TRUE"		
+		# homologues ###########################################################
+		logfile$parameters$homol_units<-c("CH2,C2H4O")
+		logfile$parameters$homol_charges<-c("1,2")
+		logfile$parameters$homol_minmz<-"10"
+		logfile$parameters$homol_maxmz<-"120"
+		logfile$parameters$homol_minrt<-"10"
+		logfile$parameters$homol_maxrt<-"60"
+		logfile$parameters$homol_ppm<-"TRUE"
+		logfile$parameters$homol_mztol<-"2.5"
+		logfile$parameters$homol_rttol<-"20"
+		logfile$parameters$homol_minlength<-"6"
+		logfile$parameters$homol_vec_size<-"1E8"
+		# EIC correlation ######################################################
+		logfile$parameters$EICor_delRT<-"5"		
+		logfile$parameters$EICor_minpeaks<-"15" 	
+		logfile$parameters$EICor_mincor<-".95"
+		
+
 		# add custom parameters ################################################
 		source(file="workflow_parameters.r",local=TRUE)
 	if(any(duplicated(names(logfile$parameters)))){stop("Duplicated parameter names found - revise!")}	
@@ -245,35 +281,43 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	names(logfile)[11]<-"workflow_depend"	
 	################################################################################################
 	# define upstream workflow "musts", i.e., upstream nodes on which`s execution a node ###########
-	# depends. 0 = not dependent. 1 = dependent. -1 = MUST NOT be executed (not yet further implemented)  	
+	# depends. 0 = not dependent. 1 = dependent. -1 = MUST NOT be executed (not yet implemented)  	
 	logfile[[12]]<-workflow_must
 	names(logfile)[12]<-"workflow_must"	
 	################################################################################################	
 	# reorder summary into workflow ################################################################
 	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
-	if(!is.data.frame(schedule)){stop(schedule)}
+	if(!is.data.frame(schedule)){stop("\nschedule not a data frame")}
 	set_order<-match(schedule[,1],logfile$summary[,1])
 	logfile$summary<-logfile$summary[set_order,]	
 	################################################################################################
-    # positive adducts #########################################################
+    # positive adducts - screening #########################################################
     logfile[[7]]<-0   
     names(logfile)[7]<-c("adducts_pos")
     logfile[[7]]<-"M+H";
-    # negative adducts #########################################################
+    # negative adducts - screening #########################################################
     logfile[[8]]<-0   
     names(logfile)[8]<-c("adducts_neg")
-    logfile[[8]]<-"M-H";
+    logfile[[8]]<-"M-H";	
     # isotopes #################################################################      
     logfile[[9]]<-"";
     names(logfile)[9]<-c("isotopes")
 	# enviMass version number ##################################################
-    logfile[[10]]<-3.117
+    logfile[[10]]<-3.126
     names(logfile)[10]<-c("version")   
 	# subtraction files ########################################################
 	logfile[[13]]<-"FALSE"
 	names(logfile)[13]<-"Positive_subtraction_files"
 	logfile[[14]]<-"FALSE"
 	names(logfile)[14]<-"Negative_subtraction_files"
+    # positive adducts - grouping #########################################################
+    logfile[[15]]<-0   
+    names(logfile)[15]<-c("adducts_pos_group")
+    logfile[[15]]<-c("M+H","M+Na","M+K","M+NH4")
+    # negative adducts - grouping #########################################################
+    logfile[[16]]<-0   
+    names(logfile)[16]<-c("adducts_neg_group")
+    logfile[[16]]<-c("M-H","M-","2M-H")
 	# calibration model ########################################################
 	cal_models_pos<-list()
 	save(cal_models_pos,file=file.path(logfile$project_folder,"quantification","cal_models_pos"));	

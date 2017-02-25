@@ -76,12 +76,13 @@ plot_measurements<-function(
 			,]
 			for(i in 1:length(measurements2[,"ID"])){
 				start_dated<-measurements2[i,"Date"]
-				start_timed<-measurements[i,"Time"]
+				start_timed<-measurements2[i,"Time"]
 				start_datetime<-paste(start_dated,start_timed,"CET",sep=" ")
 				atPOSIX_start<-as.POSIXct(start_datetime)
 				end_dated<-measurements2[i,"date_end"]
-				end_timed<-measurements[i,"time_end"]
+				end_timed<-measurements2[i,"time_end"]
 				end_datetime<-paste(end_dated,end_timed,"CET",sep=" ")
+				cat(end_datetime)
 				atPOSIX_end<-as.POSIXct(end_datetime)
 				lines(y=c(10,10),x=c(atPOSIX_start,atPOSIX_end),col="red")
 				text(mean(c(atPOSIX_start,atPOSIX_end)),10,as.character(measurements2[i,]$tag2),pos=3,col="red")
@@ -95,11 +96,11 @@ plot_measurements<-function(
 			,]
 			for(i in 1:length(measurements2[,"ID"])){
 				start_dated<-measurements2[i,"Date"]
-				start_timed<-measurements[i,"Time"]
+				start_timed<-measurements2[i,"Time"]
 				start_datetime<-paste(start_dated,start_timed,"CET",sep=" ")
 				atPOSIX_start<-as.POSIXct(start_datetime)
 				end_dated<-measurements2[i,"date_end"]
-				end_timed<-measurements[i,"time_end"]
+				end_timed<-measurements2[i,"time_end"]
 				end_datetime<-paste(end_dated,end_timed,"CET",sep=" ")
 				atPOSIX_end<-as.POSIXct(end_datetime)
 				lines(y=c(3,3),x=c(atPOSIX_start,atPOSIX_end),col="red")

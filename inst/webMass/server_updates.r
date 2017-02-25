@@ -732,7 +732,7 @@ if(logfile$version<3.103){
 
 if(logfile$version<3.104){
 
-		cat("\n Updating to version 3.104 ...")
+	cat("\n Updating to version 3.104 ...")
 	################################################################################################	
 	# make some table names equal to node names ####################################################
 	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -1154,6 +1154,7 @@ if(logfile$version<3.114){ # redone 3.113 -> 3.114
 
 if(logfile$version<3.115){
 
+	cat("\n Updating to version 3.115 ...")
 	################################################################################################
 	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");	
 	if( !any(names(measurements)=="ID_2") ){
@@ -1177,6 +1178,7 @@ if(logfile$version<3.115){
 
 if(logfile$version<3.116){
 
+	cat("\n Updating to version 3.116 ...")
 	################################################################################################
 	if(!any(names(logfile$parameters)=="quant_files_included")){
 		logfile$parameters$quant_files_included<<-20
@@ -1215,6 +1217,7 @@ if(logfile$version<3.116){
 
 if(logfile$version<3.117){ 
 
+	cat("\n Updating to version 3.117 ...")
 	################################################################################################
 	# peak intensity updates #######################################################################
 	if(!any(names(logfile$parameters)=="peak_which_intensity")){
@@ -1237,6 +1240,7 @@ if(logfile$version<3.117){
 
 if(logfile$version<3.118){
 
+	cat("\n Updating to version 3.118 ...")
 	################################################################################################
 	# peak intensity updates #######################################################################
 	if(!any(names(logfile$parameters)=="screen_IS_restrict")){
@@ -1256,12 +1260,236 @@ if(logfile$version<3.118){
 
 if(logfile$version<3.119){
 
+	cat("\n Updating to version 3.119 ...")
 	################################################################################################
-	# update adduct parameters #####################################################################
-
-	# -> make adduct node dependent on EIC_correlation
+	# update isotopologue parameters ###############################################################
+	if(!any(names(logfile$parameters)=="isotop_mztol")){
+		logfile$parameters$isotop_mztol<<-"2.5"
+		logfile$parameters$isotop_ppm<<-"TRUE"
+		logfile$parameters$isotop_inttol<<-"0.5"
+		logfile$parameters$isotop_rttol<<-"5"
+		logfile$parameters$isotop_use_charges<<-"FALSE"	
+	}	
+	################################################################################################	
+	logfile$version<<-3.119
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
 
 }
+
+if(logfile$version<3.120){
+
+	cat("\n Updating to version 3.120 ...")
+	################################################################################################
+	# update adducts for nontarget grouping ########################################################
+	if(!any(names(logfile)=="adducts_pos_group")){
+		# positive adducts - grouping #########################################################
+		logfile[[15]]<<-c("M+H","M+Na","M+NH4","M+K");
+		names(logfile)[15]<<-c("adducts_pos_group")
+		# negative adducts - grouping #########################################################
+		logfile[[16]]<<-c("M-H","M-");	  
+		names(logfile)[16]<<-c("adducts_neg_group")	
+	}	
+	################################################################################################
+	# update isotopologue parameters ###############################################################
+	if(!any(names(logfile$parameters)=="adducts_rttol")){
+		logfile$parameters$adducts_rttol<<-"5"
+		logfile$parameters$adducts_mztol<<-"2.5"
+		logfile$parameters$adducts_ppm<<-TRUE	
+	}	
+	################################################################################################	
+	logfile$version<<-3.120
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
+
+}
+
+if(logfile$version<3.121){
+
+	cat("\n Updating to version 3.121 ...")
+	################################################################################################	
+	# update HS parameters #########################################################################
+	if(!any(names(logfile$parameters)=="homol_units")){
+		logfile$parameters$homol_units<<-c("CH2,CH4O")
+		logfile$parameters$homol_charges<<-c("1,2")
+		logfile$parameters$homol_minmz<<-"10"
+		logfile$parameters$homol_maxmz<<-"120"
+		logfile$parameters$homol_minrt<<-"10"
+		logfile$parameters$homol_maxrt<<-"60"
+		logfile$parameters$homol_ppm<<-"TRUE"
+		logfile$parameters$homol_mztol<<-"2.5"
+		logfile$parameters$homol_rttol<<-"20"
+		logfile$parameters$homol_minlength<<-"6"
+		logfile$parameters$homol_vec_size<<-"1E8"	
+	}
+	################################################################################################	
+	# update EIC correlation parameters ############################################################
+	if(!any(names(logfile$parameters)=="EICor_delRT")){
+		logfile$parameters$EICor_delRT<<-"5"		
+		logfile$parameters$EICor_minpeaks<<-"10" 	
+		logfile$parameters$EICor_mincor<<-".95"		
+	}
+	################################################################################################	
+	# update max profiles in compon. - parameter ###################################################
+	if(!any(names(logfile$parameters)=="prof_comp_maxfiles")){
+		logfile$parameters$prof_comp_maxfiles<<-"15"
+	}	
+	################################################################################################
+	# insert missing components folder #############################################################	
+	if(!file.exists(file.path(as.character(logfile$project_folder),"results","componentization","components"))){
+		dir.create(file.path(as.character(logfile$project_folder),"results","componentization","components"),recursive=TRUE)    	 
+	}
+	################################################################################################	
+	logfile$version<<-3.121
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
+
+}
+
+
+if(logfile$version<3.122){
+
+	cat("\n Updating to version 3.122 ...")
+	################################################################################################
+	# update workflow, summary, Tasks_to_redo ######################################################
+	if(any(names(logfile$workflow)=="components")){
+	
+		######################################################
+		names(logfile$workflow)[names(logfile$workflow)=="components"]<<-"components_files"
+		logfile$workflow[names(logfile$workflow)=="components_files"]<<-"no"
+		######################################################	
+		logfile$workflow[24]<<-"no"
+		names(logfile$workflow)[24]<<-"components_profiles"
+		######################################################		
+		names(logfile$Tasks_to_redo)[names(logfile$Tasks_to_redo)=="components"]<<-"components_files"
+		logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="components_files"]<<-"FALSE"
+		######################################################
+		logfile$Tasks_to_redo[24]<<-"FALSE"
+		names(logfile$Tasks_to_redo)[24]<<-"components_profiles"
+		######################################################
+		logfile$summary[
+			logfile$summary[,1]=="components"
+		,1]<<-"components_files"
+		logfile$summary[
+			logfile$summary[,1]=="components"
+		,2]<<-"FALSE"
+		######################################################
+		logfile$summary<<-rbind(
+			logfile$summary,c("components_profiles","FALSE")
+		)
+		######################################################
+	
+	}
+	################################################################################################	
+	logfile$version<<-3.122
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
+
+}
+
+if(logfile$version<3.123){
+
+	cat("\n Updating to version 3.123 ...")
+	################################################################################################	
+	workflow_depend<-read.table(file="workflow_depend")
+	workflow_depend<-as.matrix(workflow_depend)
+	workflow_must<-read.table(file="workflow_must")
+	workflow_must<-as.matrix(workflow_must)
+	logfile[["workflow_depend"]]<<-workflow_depend	
+	logfile[["workflow_must"]]<<-workflow_must
+	################################################################################################	
+	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+	if(!is.data.frame(schedule)){stop("\nschedule not a data frame")}
+	set_order<-match(schedule[,1],logfile$summary[,1])
+	logfile$summary<<-logfile$summary[set_order,]	
+	################################################################################################	
+	logfile$version<<-3.123
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
+
+}
+
+
+if(logfile$version<3.124){
+
+	cat("\n Updating to version 3.124 ...")
+	################################################################################################	
+	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+	if( !any(names(measurements)=="components_files") ){
+		measurements<-cbind(
+			measurements,
+			rep("FALSE",length(measurements[,"ID"]))
+		)
+		names(measurements)<-c(names(measurements)[-30],"components_files")
+	}
+	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+	rm(measurements)
+	################################################################################################	
+	logfile$version<<-3.124
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
+
+}
+
+
+if(logfile$version<3.125){
+
+	cat("\n Updating to version 3.125 ...")
+	################################################################################################	
+	workflow_depend<-read.table(file="workflow_depend")
+	workflow_depend<-as.matrix(workflow_depend)
+	workflow_must<-read.table(file="workflow_must")
+	workflow_must<-as.matrix(workflow_must)
+	logfile[["workflow_depend"]]<<-workflow_depend	
+	logfile[["workflow_must"]]<<-workflow_must
+	################################################################################################	
+	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+	if(!is.data.frame(schedule)){stop("\nschedule not a data frame")}
+	set_order<-match(schedule[,1],logfile$summary[,1])
+	logfile$summary<<-logfile$summary[set_order,]	
+	################################################################################################	
+	logfile$version<<-3.125
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
+
+}
+
+
+if(logfile$version<3.126){
+
+	cat("\n Updating to version 3.126 ...")
+	################################################################################################	
+	if(!any(names(logfile$parameters)=="cut_RT")){
+		logfile$parameters$cut_RT<<-"FALSE"
+		logfile$parameters$cut_RT_min<<-"0"
+		logfile$parameters$cut_RT_max<<-"25"		# in minutes!
+		logfile$parameters$cut_mass<<-"FALSE"
+		logfile$parameters$cut_mass_min<<-"0"
+		logfile$parameters$cut_mass_max<<-"2000"	
+	}
+	################################################################################################	
+	logfile$version<<-3.126
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
+
+}
+
 
 ########################################################################
 

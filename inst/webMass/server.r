@@ -11,6 +11,7 @@ shinyServer(function(input, output, session){
   ##############################################################################
   # load data ##################################################################  
   if(!any(objects(envir=as.environment(".GlobalEnv"))=="isotopes")){data(isotopes,package="enviPat",envir=as.environment(".GlobalEnv"))}
+  updateSelectInput(session,inputId="atom_bounds_this", choices=unique(isotopes[1:295,1]),selected = c("C","H","N","O","Cl","Br"))    
   if(!any(objects(envir=as.environment(".GlobalEnv"))=="adducts")){data(adducts,package="enviPat",envir=as.environment(".GlobalEnv"))}
   if(!any(objects(envir=as.environment(".GlobalEnv"))=="resolution_list")){data(resolution_list,package="enviPat",envir=as.environment(".GlobalEnv"))}
   if(any(names(resolution_list)=="Elite/R240000@400")){
@@ -28,9 +29,12 @@ shinyServer(function(input, output, session){
   }
   output$textit<-renderText("Waiting...")
   output$dowhat<-renderText("Open")
+  output$sel_meas_comp_state<-renderText("No componentization results for this file available")
   output$isotable<-renderTable(isotopes)
-  updateCheckboxGroupInput(session, "adducts_pos", "Positive mode:", choices =  as.character(adducts[adducts[,6]=="positive",1]),selected=as.character(adducts[adducts[,6]=="positive",1][1]))
-  updateCheckboxGroupInput(session, "adducts_neg", "Negative mode:", choices =  as.character(adducts[adducts[,6]=="negative",1]),selected=as.character(adducts[adducts[,6]=="negative",1][1]))               
+  updateCheckboxGroupInput(session, "adducts_pos", "Positive ions:", choices =  as.character(adducts[adducts[,6]=="positive",1]),selected=as.character(adducts[adducts[,6]=="positive",1][1]))
+  updateCheckboxGroupInput(session, "adducts_neg", "Negative ions:", choices =  as.character(adducts[adducts[,6]=="negative",1]),selected=as.character(adducts[adducts[,6]=="negative",1][1]))               
+  updateCheckboxGroupInput(session, "adducts_pos_group", "Positive mode:", choices =  as.character(adducts[adducts[,6]=="positive",1]),selected=as.character(adducts[adducts[,6]=="positive",1][1]))
+  updateCheckboxGroupInput(session, "adducts_neg_group", "Negative mode:", choices =  as.character(adducts[adducts[,6]=="negative",1]),selected=as.character(adducts[adducts[,6]=="negative",1][1]))               
   updateSelectInput(session, "resolution", "Instrument resolution:", choices =  names(resolution_list), selected= (names(resolution_list)[1]))                   
   init<-reactiveValues() 	# reactive value to indicate ...
   init$a<-"FALSE"  			# ... if/when a project is opened
@@ -63,6 +67,12 @@ shinyServer(function(input, output, session){
   ############################################################################## 
   # observe calibration sets ###################################################
   source("server_obs_calibration.r", local=TRUE)  
+  ############################################################################## 
+  # observe componentization outputs ###########################################
+  source("server_obs_components.r", local=TRUE)  
+  ############################################################################## 
+  # observe profiling outputs ##################################################
+  source("server_obs_profiles.r", local=TRUE)  
   # output network js ##########################################################
   source("server_force.r", local=TRUE)    
   ##############################################################################  

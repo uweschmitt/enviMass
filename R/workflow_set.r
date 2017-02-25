@@ -11,7 +11,7 @@
 #' @param check_node Only evaluate whether the concerned node is enabled in workflow?
 #' @param single_node Apply single_file == TRUE resets of data.frame-measurements-entries only to down node?
 #' 
-#' @details enviMass workflow function
+#' @details enviMass workflow function. 
 #' 
 
 workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_node=FALSE,single_node=FALSE,...){
@@ -45,6 +45,7 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 	########################################################################################
 	depend<-logfile$workflow_depend
 	diag(depend)<-1
+	must<-logfile$workflow_must
 	########################################################################################
 	# retrieve tasks to redo ###############################################################
 	# redefined dependencies:
@@ -61,7 +62,7 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 		doit<-FALSE
 		new_stream<-work_stream
 		for(i in 1:length(work_stream)){
-			new_nodes<-rownames(depend)[depend[,colnames(depend)==work_stream[i]]>0]
+			new_nodes<-rownames(depend)[depend[,colnames(depend)==work_stream[i]]>0] # i.e., ==1 or ==2
 			new_nodes<-new_nodes[is.na(match(new_nodes,new_stream))]
 			if(length(new_nodes)>0){
 				new_stream<-c(new_stream,new_nodes)
@@ -80,7 +81,30 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 	########################################################################################
 	
 	########################################################################################
-	# update Tasks_to_redo #################################################################
+	# update $workflow #####################################################################
+	# adapt chained requirements if set to "no" ############################################
+	########################################################################################
+	doit<-TRUE
+	while(doit){ # if chained musts exist
+		doit<-FALSE	
+		for(i in 1:length(must[1,])){		# over columns
+			if(logfile$workflow[names(logfile$workflow)==(colnames(must)[i])]=="yes"){
+				for(j in 1:length(must[,1])){	# over rows
+					if(must[j,i]>0){ # upstream & downstream musts
+						if(logfile$workflow[names(logfile$workflow)==(rownames(must)[j])]!="yes"){
+							cat("\n",colnames(must)[i]," requires execution of ",rownames(must)[j])
+							logfile$workflow[names(logfile$workflow)==(rownames(must)[j])]<<-"yes"
+							doit<-TRUE
+						}
+					}
+				}				
+			}
+		}
+	}
+	########################################################################################	
+	
+	########################################################################################
+	# update $Tasks_to_redo ################################################################
 	########################################################################################
 	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 	while(length(work_stream)>0){

@@ -43,26 +43,11 @@ maincalc<-reactive({
 	  
 		if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_calculation.r!")}
         ########################################################################
-        # restart logfile[[3]] & mark data availability ########################        
+        # restart logfile$summary & mark data availability #####################      
         if(do_flow==0){
 			####################################################################
 			# erase all previous results #######################################
 
-			# adapt upstream requirements if set to "no" #######################
-			must<-logfile[[12]]
-			for(i in 1:length(must[1,])){
-				for(j in 1:length(must[,1])){	
-					if(must[j,i]==1){
-						if(logfile$workflow[names(logfile$workflow)==(colnames(must)[i])]=="yes"){
-							if(logfile$workflow[names(logfile$workflow)==(rownames(must)[j])]!="yes"){
-								cat("\n",colnames(must)[i]," depends on ",rownames(must)[j])
-								logfile$workflow[names(logfile$workflow)==(rownames(must)[j])]<<-"yes"
-							}
-						}
-					}
-				}
-			}
-			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 			####################################################################
 			closeAlert(session, alertId="a3")
 			logfile$summary[1,2]<<-c(TRUE);

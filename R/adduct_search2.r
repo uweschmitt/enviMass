@@ -1,4 +1,4 @@
-adduct.search2 <-
+adduct_search2 <-
 function(
     peaklist,
 	adducts,
@@ -64,7 +64,7 @@ function(
 	peakTree<-peakTree[,1:4,drop=FALSE];
 	if(ppm=="TRUE"){ppm2<-1}else{ppm2<-0}
 	pBar <- txtProgressBar(min = 0, max = length(peaklist[,1]), style = 3 )
- 	relat<-.Call("adduct_search",
+ 	relat_pairs<-.Call("adduct_search",
 		as.matrix(peaklist[,c(1,3)]),  	# peaklist
 		as.matrix(peakTree),			# peaks - search tree
 		as.matrix(add2),				# adduct table
@@ -77,43 +77,35 @@ function(
 	);
 	close(pBar)
 	# check for self-referencing ###############################################	
-	if(any(relat[,1]==relat[,2])){
+	if(any(relat_pairs[,1]==relat_pairs[,2])){
 		cat("remove self-references ...");
-		relat<-relat[relat[,1]!=relat[,2],];
+		relat_pairs<-relat_pairs[relat_pairs[,1]!=relat_pairs[,2],];
 	};
-	if(length(relat)==0){stop("\n No matches found \n ")}
+	if(length(relat_pairs)==0){stop("\n No matches found \n ")}
 	#########################################################################################################	
 	# DEBUG?
-	if(any(duplicated(relat))){
-		cat("\n WARNING: duplicated relat entries - debug me!")
-		relat<-unique(relat)
+	if(any(duplicated(relat_pairs))){
+		cat("\n WARNING: duplicated relat_pairs entries - debug me!")
+		relat_pairs<-unique(relat_pairs)
 	}
 	#########################################################################################################
 	# NEW
 	if(exclude[1]!=FALSE){
 		# exclude<-exclude[order(exclude[,1],exclude[,2],decreasing=FALSE),] # already ordered in do_EIC_correlation.r
-		those<-(relat[,1]>relat[,2])
-		relat[those,]<-relat[those,c(2,1,3)]
-		relat<-relat[order(relat[,1],relat[,2],decreasing=FALSE),]
-		found<-enviMass:::rows_compare(relat[,c(1,2)],exclude,row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=FALSE)
+		those<-(relat_pairs[,1]>relat_pairs[,2])
+		relat_pairs[those,]<-relat_pairs[those,c(2,1,3)]
+		relat_pairs<-relat_pairs[order(relat_pairs[,1],relat_pairs[,2],decreasing=FALSE),]
+		found<-enviMass:::rows_compare(relat_pairs[,c(1,2)],exclude,row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=FALSE)
 		cat("Exclusion: ")
 		cat(paste(as.character(round(sum(found)/length(found)*100,digits=2)),"% of potential potential pairs removed by missing EIC correlation.",sep=""))
-		relat<-relat[!found,,drop=FALSE]
+		relat_pairs<-relat_pairs[!found,,drop=FALSE]
 	}else{
 		cat("\n exclusion skipped.")
 	}
-	#########################################################################################################	
-	# return pairwise relations only ########################################################################
-	return(relat)
-	#########################################################################################################	
-	
-	
-if(FALSE){	
-	
 	# form groups ##############################################################
 	relat<-rbind(
-		cbind(relat,rep(1,length(relat[,1]))),
-		cbind(relat[,c(2,1,3),drop = FALSE],rep(2,length(relat[,1])))
+		cbind(relat_pairs,rep(1,length(relat_pairs[,1]))),
+		cbind(relat_pairs[,c(2,1,3),drop = FALSE],rep(2,length(relat_pairs[,1])))
 	);
 	relat<-relat[order(relat[,1],decreasing=FALSE),];	
 	groups<-.Call("metagroup",
@@ -189,13 +181,12 @@ if(FALSE){
     };
 	# list #####################################################################
     parameters<-data.frame(rttol,mztol,ppm,ion_mode,stringsAsFactors=FALSE);	
-    adduct<-list(list_adducts,parameters,grouping,hits,overlaps);
-    names(adduct)<-c("adducts","Parameters","Peaks in adduct groups","Adduct counts","Overlaps");
+    adduct<-list(list_adducts,parameters,grouping,hits,overlaps,relat_pairs);
+    names(adduct)<-c("adducts","Parameters","Peaks in adduct groups","Adduct counts","Overlaps","Pairs");
     cat("done.\n\n");
     ############################################################################
     return(adduct);
     ############################################################################
-}
 
 }
 

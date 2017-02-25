@@ -10,7 +10,9 @@ enviMass:::workflow_get(path,logfile,session)
 #########################################################################
 # adducts ###############################################################
 updateCheckboxGroupInput(session, "adducts_pos", selected=as.character(logfile$adducts_pos))
-updateCheckboxGroupInput(session, "adducts_neg", selected=as.character(logfile$adducts_neg))                              
+updateCheckboxGroupInput(session, "adducts_neg", selected=as.character(logfile$adducts_neg)) 
+updateCheckboxGroupInput(session, "adducts_pos_group", selected=as.character(logfile$adducts_pos_group))
+updateCheckboxGroupInput(session, "adducts_neg_group", selected=as.character(logfile$adducts_neg_group))                              
 #########################################################################
 
 #########################################################################

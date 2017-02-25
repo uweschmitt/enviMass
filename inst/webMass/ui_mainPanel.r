@@ -25,16 +25,16 @@
 							condition = "input.Measadd_type != 'calibration' & input.Measadd_type != 'spiked'",						
 							HTML('<hr noshade="noshade" />'),
 							fluidRow(
-								column(width = 5,textInput("Measadd_place", "Place:", value = "Rhine")),		
-								column(width = 5,dateInput("Measadd_date", "Date:", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
-								column(width = 5,textInput("Measadd_time", "Time (HH:MM:SS):", value = "12:00:00")),							
+								column(width = 5, textInput("Measadd_place", "Place:", value = "Rhine")),		
+								column(width = 5, dateInput("Measadd_date", "Date:", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
+								column(width = 5, textInput("Measadd_time", "Time (HH:MM:SS):", value = "12:00:00")),							
 								column(width = 5,
 									conditionalPanel(
-										condition = "input.Measadd_type == 'samples'",								
+										condition = "input.Measadd_type == 'sample'",								
 											textInput("Measadd_tag3", "Replicate group (tag3):", value = "FALSE")
 									)
 								),
-								column(width = 5,textInput("Measadd_ID2", "Custom ID:", value = "FALSE")),
+								column(width = 5, textInput("Measadd_ID2", "Custom ID:", value = "FALSE")),
 								column(width = 5, selectInput("Measadd_profiled", "Use for profiling (if Settings/Profiling/Omit adjusted to do so)?", choices = c("TRUE","FALSE"), selected = "TRUE"))
 							)			
 						),	
@@ -42,21 +42,21 @@
 							condition = "input.Measadd_type == 'calibration'", 
 							HTML('<hr noshade="noshade" />'),
 							fluidRow(
-								column(width = 5,textInput("Measadd_tag1", "Concentration (no units; tag1)", value = "FALSE")),
-								column(width = 5,textInput("Measadd_tag2", "Name of calibration file set (required; tag2)", value = "Group A")),
-								column(width = 5,dateInput("Measadd_cal_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-								column(width = 5,textInput("Measadd_cal_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
-								column(width = 5,dateInput("Measadd_cal_date2", "Date end", value="2018-01-01", min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-								column(width = 5,textInput("Measadd_cal_time2", "Time end (HH:MM:SS)", value = "12:00:00"))							
+								column(width = 5, textInput("Measadd_tag1", "Concentration (no units; tag1)", value = "FALSE")),
+								column(width = 5, textInput("Measadd_tag2", "Name of calibration file set (required; tag2)", value = "Group A")),
+								column(width = 5, dateInput("Measadd_cal_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+								column(width = 5, textInput("Measadd_cal_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
+								column(width = 5, dateInput("Measadd_cal_date2", "Date end", value="2018-01-01", min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+								column(width = 5, textInput("Measadd_cal_time2", "Time end (HH:MM:SS)", value = "12:00:00"))							
 							)
 						),
 						conditionalPanel(
 							condition = "input.Measadd_type == 'spiked'", 
 							HTML('<hr noshade="noshade" />'),
 							fluidRow(
-								column(width = 5,textInput("Measadd_spiked_tag2", "ID of reference file (tag2)", value = "FALSE")),
-								column(width = 5,dateInput("Measadd_recov_date", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-								column(width = 5,textInput("Measadd_recov_time", "Time start (HH:MM:SS)", value = "12:00:00"))
+								column(width = 5, textInput("Measadd_spiked_tag2", "ID of reference file (tag2)", value = "FALSE")),
+								column(width = 5, dateInput("Measadd_recov_date", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+								column(width = 5, textInput("Measadd_recov_time", "Time start (HH:MM:SS)", value = "12:00:00"))
 							)
 						),						
 						HTML('<hr noshade="noshade" />'),
@@ -93,11 +93,11 @@
 							condition = "input.Modif_type == 'sample' | input.Modif_type == 'blank'", 						
 							HTML('<hr noshade="noshade" />'),
 							fluidRow(
-								column(width = 5,textInput("Modif_place", "Place:", value = "Rhine")),										
-								column(width = 5,dateInput("Modif_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
-								column(width = 5,textInput("Modif_time", "Time:(HH:MM:SS)", value = "12:00:00")),
-								column(width = 5,textInput("Modif_tag3", "Replicate group (tag3)", value = "FALSE")),
-								column(width = 5,textInput("Modif_ID2", "Custom ID", value = "FALSE")),
+								column(width = 5, textInput("Modif_place", "Place:", value = "Rhine")),										
+								column(width = 5, dateInput("Modif_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
+								column(width = 5, textInput("Modif_time", "Time:(HH:MM:SS)", value = "12:00:00")),
+								column(width = 5, textInput("Modif_tag3", "Replicate group (tag3)", value = "FALSE")),
+								column(width = 5, textInput("Modif_ID2", "Custom ID", value = "FALSE")),
 								column(width = 5, selectInput("Modif_profiled","Use for profiling (if Settings/Profiling/Omit adjusted to do so)?",choices = c("TRUE","FALSE"),selected="TRUE"))								
 							)
 						),
@@ -105,21 +105,21 @@
 							condition = "input.Modif_type == 'calibration'", 
 							HTML('<hr noshade="noshade" />'),
 							fluidRow(
-								column(width = 5,textInput("Modif_tag1", "Concentration (no units; tag1)", value = "0")),
-								column(width = 5,textInput("Modif_tag2", "Calibration group (tag2)", value = "FALSE")),
-								column(width = 5,dateInput("Modif_cal_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-								column(width = 5,textInput("Modif_cal_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
-								column(width = 5,dateInput("Modif_cal_date2", "Date end", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-								column(width = 5,textInput("Modif_cal_time2", "Time end (HH:MM:SS)", value = "12:00:00"))							
+								column(width = 5, textInput("Modif_tag1", "Concentration (no units; tag1)", value = "0")),
+								column(width = 5, textInput("Modif_tag2", "Calibration group (tag2)", value = "FALSE")),
+								column(width = 5, dateInput("Modif_cal_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+								column(width = 5, textInput("Modif_cal_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
+								column(width = 5, dateInput("Modif_cal_date2", "Date end", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+								column(width = 5, textInput("Modif_cal_time2", "Time end (HH:MM:SS)", value = "12:00:00"))							
 							)
 						),
 						conditionalPanel(
 							condition = "input.Modif_type == 'spiked'", 
 							HTML('<hr noshade="noshade" />'),
 							fluidRow(
-								column(width = 5,textInput("Modif_spiked_tag2", "ID of file to subtract from (tag2)", value = "FALSE")),
-								column(width = 5,dateInput("Modif_recov_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
-								column(width = 5,textInput("Modif_recov_time", "Time:(HH:MM:SS)", value = "12:00:00"))
+								column(width = 5, textInput("Modif_spiked_tag2", "ID of file to subtract from (tag2)", value = "FALSE")),
+								column(width = 5, dateInput("Modif_recov_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
+								column(width = 5, textInput("Modif_recov_time", "Time:(HH:MM:SS)", value = "12:00:00"))
 							)
 						),						
 						HTML('<hr noshade="noshade" />'),
@@ -137,10 +137,10 @@
 						HTML('<hr noshade="noshade" />'),
 						helpText("Modify the specifications for all files of the above loaded calibration group and press Save to make the changes permanent"),
 						fluidRow(
-							column(width = 5,dateInput("Modif_calgroup_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-							column(width = 5,textInput("Modif_calgroup_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
-							column(width = 5,dateInput("Modif_calgroup_date2", "Date end", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-							column(width = 5,textInput("Modif_calgroup_time2", "Time end (HH:MM:SS)", value = "12:00:00"))
+							column(width = 5, dateInput("Modif_calgroup_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+							column(width = 5, textInput("Modif_calgroup_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
+							column(width = 5, dateInput("Modif_calgroup_date2", "Date end", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+							column(width = 5, textInput("Modif_calgroup_time2", "Time end (HH:MM:SS)", value = "12:00:00"))
 						),
 						bsButton("Change_cal","Save",style="primary"),					
 						HTML('<hr noshade="noshade" />'),
@@ -265,7 +265,7 @@
 							column(width = 4, 
 								selectInput("ISadd_add", label="Main adduct:", choices= "FALSE", selected = "FALSE", multiple = FALSE),
 								checkboxInput("ISadd_rest_adduct", "Restrict screening to main adduct?", FALSE)),
-							column(width = 8, helpText("A compound-specific adduct can be defined here; general adducts to be considered for all compounds can be defined in the Settings/Adducts tab. 	
+							column(width = 8, helpText("A compound-specific adduct can be defined here; general adducts to be considered for all compounds can be defined in the Settings/Screening/Adducts tab. 	
 														Unless the below restriction, the compound-specific adduct is used alongside the general ones. 
 														Seperate compound entries have to be made when including more than one compound-specific adduct."))							
 						),
@@ -368,7 +368,7 @@
 								<li><b>use_for_screening</b>: TRUE or FALSE.</li>
 								<li><b>restrict_adduct</b>: TRUE or FALSE. 
 									TRUE: only use the <b>main_adduct</b> (must then be specified) for this compound and ignore the ones specified in tab Settings/Adduct? 
-									FALSE: the adducts specified in tab Settings/Adduct and the one set in column <b>main_adduct</b> (if specified) are all considered for this compound.</li>
+									FALSE: the adducts specified in tab Settings/Screening/Adducts and the one set in column <b>main_adduct</b> (if specified) are all considered for this compound.</li>
 								<li><b>Remark</b>: Character string for your remark on this compound (no tabs.</li>
 								<li><b>tag1</b>: Character string for specification of the compound (no tabs), e.g. pharmaceutical.</li>	
 								<li><b>tag2</b>: Character string for further specifications (no tabs).</li>
@@ -435,7 +435,7 @@
 							column(width = 4, 
 								selectInput("targetsadd_add", label="Main adduct:", choices= "FALSE", selected = "FALSE", multiple = FALSE),
 								checkboxInput("targetsadd_rest_adduct", "Restrict screening to main adduct?", FALSE)),
-							column(width = 8, helpText("A compound-specific adduct can be defined here; general adducts to be considered for all compounds can be defined in the Settings/Adducts tab. 	
+							column(width = 8, helpText("A compound-specific adduct can be defined here; general adducts to be considered for all compounds can be defined in the Settings/Screening/Adducts tab. 	
 														Unless the below restriction, the compound-specific adduct is used alongside the general ones. 
 														Seperate compound entries have to be made when including more than one compound-specific adduct."))							
 						),
@@ -539,12 +539,12 @@
 								<li><b>ID_internal_standard</b>: FALSE or a valid ID of an internal standards to be found in the CURRENT internal standard table. Only targets linked with this ID will be considered for quantification.</li>
 								<li><b>RT_tolerance</b>: FALSE or a compound-specific retention time tolerance given IN MINUTES. Overwrites the one set as standard value in tab Settings/Screening/IS. 
 									The RT_tolerance will be automatically converted to seconds during workflow usage.</li>
-								<li><b>main_adduct</b>: FALSE or name of a special adduct to be used for this compound entry. Valid adduct names can be found in tab Settings/Adduct.</li>								
+								<li><b>main_adduct</b>: FALSE or name of a special adduct to be used for this compound entry. Valid adduct names can be found in tab Settings/Screening/Adducts.</li>								
 								<li><b>ion_mod</b>e: positive or negative. If a compound is to be screened in both modes, two entries (table rows) are required.</li>
 								<li><b>use_for_recalibration</b>: TRUE or FALSE.</li>
 								<li><b>use_for_screening</b>: TRUE or FALSE.</li>
 								<li><b>restrict_adduct</b>: TRUE or FALSE. 
-									TRUE: only use the <b>main_adduct</b> (must then be specified) for this compound and ignore the ones specified in tab Settings/Adduct? 
+									TRUE: only use the <b>main_adduct</b> (must then be specified) for this compound and ignore the ones specified in tab Settings/Screening/Adducts? 
 									FALSE: the adducts specified in tab Settings/Adduct and the one set in column <b>main_adduct</b> (if specified) are all considered for this compound.</li>
 								<li><b>Remark</b>: Character string for your remark on this compound (no tabs.</li>
 								<li><b>tag1</b>: Character string for specification of the compound (no tabs), e.g. pharmaceutical.</li>	
@@ -585,7 +585,12 @@
 				HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> File upload </font></p> '),
 				HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Peak picking </font></p> '),
 				HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Quality control filter </font></p> '),
-					radioButtons("qc", "Include?", c("yes"="yes","no"="no")),          
+					fluidRow(
+						column(width = 2, radioButtons("qc", "Include?", c("yes"="yes","no"="no"), inline = TRUE)),          
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","The quantile distributions of peak intensities are compared between files to detect outliers.")
+						)
+					),
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),
 				# block 2 ######################################################
@@ -597,7 +602,13 @@
 						)
 					),
 				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Median intensity normalization </font></p> '),
-					radioButtons("norm", "Include?", c("yes"="yes","no"="no")),
+					fluidRow(
+						column(width = 2, radioButtons("norm", "Include?", c("yes"="yes","no"="no"))),          
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","Intensity normalization with the median peak intensity of each file. Only useful if overall intensities can be assumed to be constant among files.
+							Should be avoided if this assumption is violated, e.g., when including blank/blind files into profiling. Better use the below normalization with internal standards.")
+						)
+					),
 				#HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> RT alignment </font></p> '),
 				#radioButtons("RTalign", "Include?", c("yes"="yes","no"="no")),  
 				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Blank / blind peak detection </font></p> '),				
@@ -692,24 +703,20 @@
 				# block X ######################################################					
 				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> EIC correlation </font></p> '),
 					fluidRow(
-						#column(width = 2, radioButtons("EIC_correlation", "Include?", c("yes"="yes","no"="no"))),
-						column(width = 10, offset = 0.3,tags$p(align="justify","Under construction"))
+						column(width = 2, radioButtons("EIC_correlation", "Include?", c("yes"="yes","no"="no"))),
+						column(width = 10, offset = 0.3, tags$p(align="justify","Checks for correlation between EICs (= chromatographic peak shapes) which share enough scans. 
+						Also used to exclude non-correlated EIC peaks from the below isotopologue and adduct grouping."))
 					),	
-				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> Isotopologue grouping </font></p> '),
+				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> File-wise componentization </font></p> '),
 					fluidRow(
-						#column(width = 2, radioButtons("isotopologues", "Include?", c("yes"="yes","no"="no"))),
-						column(width = 10, offset = 0.3,tags$p(align="justify","Under construction"))
-					),	
-				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> Adduct grouping </font></p> '),
-					fluidRow(
-						#column(width = 2, radioButtons("adducts", "Include?", c("yes"="yes","no"="no"))),
-						column(width = 10, offset = 0.3,tags$p(align="justify","Under construction"))
-					),	
-				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> Homologue series detection </font></p> '),
-					fluidRow(
-						#column(width = 2, radioButtons("homologues", "Include?", c("yes"="yes","no"="no"))),
-						column(width = 10, offset = 0.3,tags$p(align="justify","Under construction"))
-					),	
+						column(width = 2, offset = 0.3, tags$h5("Include...")),
+						column(width = 3, 
+							radioButtons("isotopologues", "... isotopologue grouping?", c("yes"="yes","no"="no"),inline=TRUE),
+							tags$h5("(Requires availability of feasible isotopologue space.)")
+						),
+						column(width = 3, radioButtons("adducts", "... adduct grouping?", c("yes"="yes","no"="no"),inline=TRUE)),
+						column(width = 3, radioButtons("homologues", "... homologue series detection?", c("yes"="yes","no"="no"),inline=TRUE))
+					),					
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),  				
 				# block 5 ######################################################
@@ -770,11 +777,11 @@
 							This interpolation and subtraction is only applicable if the separate blind filter step is disabled (see above blue steps and the preceding red step).")
 						)
 					),							            
-				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Componentization </font></p> '),
-					fluidRow(
-						column(width = 2, radioButtons("components", "Include?", c("yes"="yes","no"="no"))),
-						column(width = 10, offset = 0.3,tags$p(align="justify","Under construction"))
-					),
+				#HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Profile componentization </font></p> '),
+				#	fluidRow(
+				#		column(width = 2, radioButtons("components", "Include?", c("yes"="yes","no"="no"))),
+				#		column(width = 10, offset = 0.3,tags$p(align="justify","Under construction"))
+				#	),
 				HTML('<hr noshade="noshade" />') 
 				################################################################
 	
@@ -791,23 +798,35 @@
             # PEAK PICKING #####################################################
             tabPanel("Peak picking",
 				div(style = widget_style2,
-					tags$h5("Peak definition"), 
-					numericInput("peak_minpeak", "Minimum number of measurements per peak ...", 4),
-					sliderInput("peak_drtsmall2", "... within a given RT window [s]", min = 1, max = 200, value = 20, step= 0.1),
-					sliderInput("peak_drtfill", "Maximum RT gap length to be interpolated [s]", min = 0, max = 60, value = 10, step= 0.1),
-					sliderInput("peak_drtdens2", "Peak definition - Maximum RT length of a single peak", min = 10, max = 1500, value = 120, step= 0.1),
-					sliderInput("peak_minint_log10", "Minimum log10(intensity) threshold", min = 0, max = 10, value = 4, step= .1),
-					numericInput("peak_SN", "Minimum Signal/Noise", 5),
-					numericInput("peak_SB", "Minimum Signal/Base", 2),
-					numericInput("peak_recurs", "Maximum possible number of peaks within a single EIC", 3)
-				),
+					tags$h5("Data extraction"),
+					selectInput("cut_RT", "Filter RT range?", choices = c("yes"="TRUE","no"="FALSE"), selected="FALSE"),
+					numericInput("cut_RT_min", "Lower RT bound [minutes]", 0),
+					numericInput("cut_RT_max", "Upper RT bound [minutes]", 25),
+					HTML('<hr noshade="noshade" />') ,
+					selectInput("cut_mass", "Filter mass range?", choices = c("yes"="TRUE","no"="FALSE"), selected="FALSE"),
+					numericInput("cut_mass_min", "Lower m/z bound", 0),
+					numericInput("cut_mass_max", "Upper m/z bound", 2000)
+				),	
 				div(style = widget_style2,
 					tags$h5("EIC partitioning & clustering"),
 					sliderInput("peak_drtgap", "Maximum retention time gap in an EIC", min = 20, max = 1500, value = 300, step= 1),
 					sliderInput("peak_dmzdens", "Maximum m/z deviation of a measurement from its EIC mean [ppm]", min = 1, max = 100, value = 3.5, step= 0.1)       				
 				),
+				div(style = widget_style2,
+					tags$h5("Peak definition"), 
+					numericInput("peak_minpeak", "Minimum number of measurements per peak ...", 4),
+					sliderInput("peak_drtsmall2", "... within a given RT window [s]", min = 1, max = 200, value = 20, step= 0.1),
+					sliderInput("peak_drtfill", "Maximum RT gap length to be interpolated [s]", min = 0, max = 60, value = 10, step= 0.1),
+					sliderInput("peak_drtdens2", "Peak definition - Maximum RT length of a single peak", min = 10, max = 1500, value = 120, step= 0.1),
+					HTML('<hr noshade="noshade" />') ,
+					numericInput("peak_minint_log10", "Minimum log10(intensity) threshold", -10),
+					#sliderInput("peak_minint_log10", "Minimum log10(intensity) threshold", min = 0, max = 10, value = 4, step= .1),
+					numericInput("peak_SN", "Minimum Signal/Noise", 5),
+					numericInput("peak_SB", "Minimum Signal/Base", 2),
+					numericInput("peak_recurs", "Maximum possible number of peaks within a single EIC", 3)
+				),
 				div(style = widget_style,
-					tags$h5("Advanced"),
+					tags$h5("Advanced options"),
 					numericInput("peak_ended", "How often can a peak detection fail to end the recursion? - peak picking", 1),
 					numericInput("peak_weight", "Weight for assigning measurements to a peak - peak picking", 1),
 					numericInput("peak_maxint_log10", "Upper log10(intensity) safety threshold", 6.7),					
@@ -816,12 +835,6 @@
 				),
               tags$h4(""),
               tags$h4("")              
-            ),
-            # ADDUCTS ##########################################################
-            tabPanel("Adducts",
-                  helpText("Select adducts for the calculation of centroid masses of IS & targets isotope patterns.\n Used for recalibration and screening."),
-                  div(style = widget_style3,checkboxGroupInput("adducts_pos", "Positive ions:", "none")),
-                  div(style = widget_style3,checkboxGroupInput("adducts_neg", "Negative ions:", "none"))
             ),
 			# RESOLUTION #######################################################
             tabPanel("Resolution",
@@ -915,7 +928,12 @@
 						HTML('<h1 align="center"> &#x21f3; </h1> '),
 						selectInput("screen_target_maxonly", "Screen only most intense isotopologue peak?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE")					
 					)
-                )
+                ),
+				tabPanel("Adducts",
+					  helpText("Select adducts for the calculation of centroid masses of IS & targets isotope patterns.\n Used for recalibration and screening."),
+					  div(style = widget_style3,checkboxGroupInput("adducts_pos", "Positive ions:", "none")),
+					  div(style = widget_style3,checkboxGroupInput("adducts_neg", "Negative ions:", "none"))
+				)
               )
             ),
 			# QUANTIFICATION & RECOVERY ########################################
@@ -946,6 +964,8 @@
 				numericInput("prof_dmz", "Peak deviation within profiles: m/z tolerance ...", 3),                
                 selectInput("prof_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),
                 numericInput("prof_drt", "Peak deviation within profiles: RT tolerance [s]", 60),     
+				HTML('<hr noshade="noshade" />'),
+				sliderInput("prof_comp_maxfiles", "Maximum number of file-wise components to be considered for profile componentization (by date/time)", min = 1, max = 300, value = 15, step= 1),
 				HTML('<hr noshade="noshade" />'),				
 				selectInput("prof_select", "Omit files with table entry profiled=FALSE from profiling?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), selected="FALSE")			
 			),
@@ -977,6 +997,49 @@
 				checkboxInput("subtract_neg_byfile", "Additional non-sample files to subtract each sample file with (i.e. not preceding by date only), choose file ID:", FALSE),							
 				checkboxGroupInput("files_neg_select_subtract", label="", choices=c("FALSE"), selected = NULL)
             ),			
+            # Componentization #################################################
+            tabPanel("Componentization",			
+				tabsetPanel(
+					tabPanel("Isotopologue grouping",	
+						HTML('<hr noshade="noshade" />'),
+						numericInput("isotop_mztol", "Mass uncertainty (+/-) ...", 3), 
+						selectInput("isotop_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),				
+						numericInput("isotop_rttol", "RT tolerance [s]:", 60),       
+						sliderInput("isotop_inttol", "Intensity tolerance %", min = 0, max = 100, value = 30, step= .2)
+					),
+					tabPanel("Adduct grouping",	
+						HTML('<hr noshade="noshade" />'),
+						numericInput("adducts_mztol", "Mass uncertainty (+/-) ...", 3), 
+						selectInput("adducts_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),				
+						numericInput("adducts_rttol", "RT tolerance [s]:", 60),       
+						HTML('<hr noshade="noshade" />'),
+						div(style = widget_style3,checkboxGroupInput("adducts_pos_group", "Positive mode:", "none")),
+						div(style = widget_style3,checkboxGroupInput("adducts_neg_group", "Negative mode:", "none"))						
+					),
+					tabPanel("Homologue series detection",	
+						HTML('<hr noshade="noshade" />'),
+						textInput("homol_units", label="Homologue units (comma seperated, no empty spaces; insert FALSE to detect all series with m/z differences in between 10 and 120)", value = "CH2,CH4O", width = '100%', placeholder = "CH2,CH4O"),
+						textInput("homol_charges", label="Charges z (comma seperated, no empty spaces)", value = "1,2", width = NULL, placeholder = "1,2"),
+						HTML('<hr noshade="noshade" />'),
+						numericInput("homol_minrt", "Minimum change in RT from one homologue to the next [s]", 10),       
+						numericInput("homol_maxrt", "Maximum change in RT from one homologue to the next [s]", 60),   
+						numericInput("homol_rttol", "Tolerance by which the RT differences between two adjacent homologue pairs are allowed to change [s]", 20), 
+						HTML('<hr noshade="noshade" />'),
+						numericInput("homol_mztol", "Mass uncertainty (+/-) ...", 3), 
+						selectInput("homol_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),				
+						numericInput("homol_minlength", "Minimum number of homologues in a series:", 6),						
+						HTML('<hr noshade="noshade" />'),						
+						numericInput("homol_vec_size", "Ignore unless a relevant error message is printed (then try to increase size): ", 1E8)
+					),
+					tabPanel("EIC correlation",			
+						HTML('<hr noshade="noshade" />'),
+						numericInput("EICor_delRT", "RT tolerance window for candidate peak pairs [s]:", 5),
+						numericInput("EICor_minpeaks", "Min. number of scanes shared by EIC pairs to check for their correlation:", 15),
+						numericInput("EICor_mincor", "Min. Pearson correlation [0,1] coefficient:", 0.95)
+					)						
+				)
+				, style = "color: #123123;"
+            ),			
             # GENERAL SETTINGS #################################################
             tabPanel("General",
 				div(style = widget_style3,
@@ -988,18 +1051,18 @@
 					selectInput("do_project_check", "Skip the project check before calculations?", choices = c("TRUE","FALSE"), selected="FALSE"),					
 					selectInput("ignore_large_files", "Ignore .mzXML and MSlist files during check?", choices = c("TRUE","FALSE"), selected="FALSE"),					
 					textInput("upto_file", "Up to file with ID:", value = "FALSE"),
-					tags$h6("Reset project without peak picking:"),
+					tags$h6("Reset project excluding peak picking:"),
 					bsButton("reset_1","Reset",style="danger"),
-					tags$h6("Reset project with peak picking:"),
+					tags$h6("Reset project including peak picking:"),
 					bsButton("reset_2","Reset",style="danger")
 				)
 			),
 			# IMPORT PARAMETERS FROM ANOTHER PROJECT ###########################
             tabPanel("Import",			
-				tags$h5("Import all parameter settings from another project, excluding blind file selection."),
+				tags$h5("Import all parameter settings from another project, excluding blind file selection. Insert full project path to import from, i.e., the path to the project folder in which the logfile.emp file of the project file located. Does only work between projects made with the same enviMass version."),
 						textInput("import_pro_dir_paras", "", value = "C:\\...\\other_project_name"),
 						bsPopover("import_pro_dir_paras", 
-							title = "Insert full path, including the project folder, but excluding the logfile.emp.",
+							title = "Insert full project path to import from, i.e., the the project folder in which a logfile.emp file is located.",
 							content = "Using your OS explorer, you may navigate into your project folder and copy/paste the full path.", 
 							placement = "right", trigger = "hover"),
 						actionButton("Import_project_para","Import")		
@@ -1142,6 +1205,9 @@
 			tabsetPanel( 
 				######################################################################################################################
                 tabPanel("Data viewer",
+					HTML('<hr noshade="noshade" />'),
+					tags$p(align="justify","This tab plots the centroided data points and picked peaks for an individual file - please first specify the ID of this file. 
+					The ID associated with a file can be found in the second column of the files table in the Files tab."),											
 					div(style = widget_style3,numericInput("sel_meas_ID", "Type in file ID:", 0)),
 					HTML('<hr noshade="noshade" />'),
 					conditionalPanel(			
@@ -1267,7 +1333,10 @@
 					)	
 				),
 				###################################################################################################################### 
-				tabPanel("Processing",            
+				tabPanel("Processing",      
+					HTML('<hr noshade="noshade" />'),				
+					tags$p(align="justify","Preprocessing and summary results of this tab are shown for each file individually; please first specify the ID of the file of interest. 
+						The ID associated with a file can be found in the second column of the files table in the Files tab."),											
 					numericInput("sel_meas", "Type in file ID:", 0),
 					conditionalPanel(			
 						condition = "output.dowhat != 'Invalid ID chosen to view processing results.'",
@@ -1503,6 +1572,131 @@
 					)	
 				),
 				######################################################################################################################
+				tabPanel("Grouping",	
+					HTML('<hr noshade="noshade" />'),
+					tags$p(align="justify","To show grouping results of this tab, please first specify the ID of the file. The ID associated with a file can be found in the second column of the files table in the Files tab."),											
+					div(style = widget_style3,numericInput("sel_meas_comp", "Type in file ID:", 0, min=0)),
+					textOutput('sel_meas_comp_state'),
+					HTML('<hr noshade="noshade" />'),
+					conditionalPanel(
+					condition = "input.sel_meas_comp != '0'",
+						tabsetPanel( 					
+							tabPanel("Components",	
+							conditionalPanel(			
+								condition = "(output.sel_meas_comp_state != 'No componentization results for this file available') & (output.sel_meas_comp_state != 'Invalid file ID')",
+									HTML('<hr noshade="noshade" />'),
+									bsCollapse(multiple = FALSE, open = "col3", id = "collapse3",	
+										bsCollapsePanel("Summary", 
+											textOutput('num_peaks_all'),
+											textOutput('num_comp'),
+											textOutput('reduc'),
+											HTML('<hr noshade="noshade" />'),
+											textOutput('min2_size_comp'),
+											textOutput('median_size_comp'),
+											textOutput('max_size_comp')											
+										),
+										bsCollapsePanel("Individual components", 
+											tags$p(align="justify","You can select components either via the ID of a single peak contained in the component or via the ID of the component itself. In the first case, the selection of the peak ID
+												will automatically update the ID of the associated component."),											
+											fluidRow(										
+												column(4,numericInput("sel_meas_comp_peak", "Type in peak ID:", 0, min=0)),
+												column(4,numericInput("sel_meas_comp_comp", "Type in component ID:", 0, min=0)),
+												column(4,textOutput('found_compo'))
+											),
+											HTML('<hr noshade="noshade" />'),
+											plotOutput("comp_plot_spec",height = "400px"),
+											conditionalPanel(			
+												condition = "(output.found_compo != 'The selected component contains only one peak.')&(input.sel_meas_comp_comp != 0)",
+												tags$p(align="justify","The above mass spectrum shows all peaks grouped into the selected component (green) and all other non-component peaks that fall into the mass and RT range of the selected component."),											
+												HTML('<hr noshade="noshade" />'),
+												plotOutput("comp_plot_circ",height = "690px"),
+												tags$p(align="justify","The above circular plot shows all links (relations) that exist between peaks in the selected component, with individual peaks
+													positioned at an outer circle by increasing m/z, starting at the gray arrow.
+													Peaks are listed with their IDs and component-wise intensity ranking (in brackets). The most intense peak is marked by a circle.
+													Adduct links are shown in red, links between different isotopologues of the same adduct in blue."),													
+												HTML('<hr noshade="noshade" />'),
+												HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Component linkages </font></p> '),
+												tags$p(align="justify","The below table lists all pairwise relations between peaks being part of the selected component.  Each of the two peaks (i.e., 'first' & 'second' peak)
+													forming a link are listed by their IDs in the first and second column of the table."), 
+												DT::dataTableOutput('comp_table_a'),
+												HTML('<hr noshade="noshade" />'),
+												HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Component peaks </font></p> '),
+												tags$p(align="justify","The below table lists all peaks which are part of the selected component."), 
+												DT::dataTableOutput('comp_table_b'),
+												HTML('<hr noshade="noshade" />'),
+												HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Component homologues </font></p> '),
+												tags$p(align="justify","If peaks of the selected component form part of a homologue series, the individual series are listed in the below table."), 
+												DT::dataTableOutput('comp_table_c'),										
+												HTML('<hr noshade="noshade" />'),
+												HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> All peaks </font></p> '),
+												tags$p(align="justify","The below table lists all peaks which range in the RT- and m/z-window of the selected component, i.e., also peaks which were not
+													grouped into the selected component."),
+												DT::dataTableOutput('comp_table_d')				
+											)
+										),
+										bsCollapsePanel("Full component list", 
+											DT::dataTableOutput('comp_table')					
+										)
+									)
+								)
+							),
+							tabPanel("Homologues",	
+							conditionalPanel(			
+								condition = "(output.sel_meas_comp_state != 'No componentization results for this file available') & (output.sel_meas_comp_state != 'Invalid file ID')",
+									HTML('<hr noshade="noshade" />'),
+									bsCollapse(multiple = FALSE, open = "col4", id = "collapse4",
+										bsCollapsePanel("Series plot overview", 									
+											plotOutput("homol_plot",
+												dblclick = "homol_plot_dblclick",
+												hover = "homol_plot_hover",
+												brush = brushOpts(
+													id = "homol_plot_brush",
+													resetOnNew = TRUE
+												),								
+												height = "700px"
+											)	
+										),
+										bsCollapsePanel("Series table", 
+											DT::dataTableOutput('homol_table')
+										)
+									)
+								)
+							),
+							tabPanel("Atom bounds",	
+							conditionalPanel(			
+								condition = "output.sel_meas_comp_state != 'Invalid file ID'",
+									HTML('<hr noshade="noshade" />'),
+									tags$p(align="justify","Given a monoisotopic peak (via its ID) and any additional peaks of higher mass and similar RT (if any), this tool estimates upper bounds for the number of atoms of selected elements.
+										This estimate can be based (a) either only on those additional peaks contained in the same isotopologue group of the monoisotopic peak (if any, and if the isotopologue grouping 
+										is included in the workflow) or (b) all additional peaks with a RT similar to the monoisotopic one. 
+										Parameters for estimation are taken from those set for the isotopologue grouping (e.g., the intensity and RT tolerance) and the compound screening (e.g., LOD estimation), except
+										for the mass shift to be set below."), 
+									fluidRow(										
+										column(3,numericInput("atom_bound_peak", "Type in peak ID:", 0, width='200px',min=0)),
+										column(5,selectInput("atom_bound_addpeaks", "Select additional peaks:", c("(b) all peaks with similar RT"),selected="(b) all peaks with similar RT",multiple=FALSE))
+									),	
+									plotOutput("atom_bound_plot_peak",height = "400px"),
+									HTML('<hr noshade="noshade" />'),
+									HTML('<h1 align="left"> &#x21e9; </h1> '),
+									selectInput("atom_bounds_this", label="Choose elements to include / exclude", choices=c("C","H","N","O","Cl","Br","S"), selected = c("C","H","N","O","Cl","Br"), multiple = TRUE),
+									tags$p(align="justify","The below numeric values set the maximum allowable shift in between centroided peaks and their exact underlying isotopologue masses for each selected element, in ppm.
+									This maximum shift depends on the resolution of your instrument and can sometimes be quite large (even for high-res MS) - better use conservative values to be safe."), 
+									uiOutput("atom_bounds_that"),
+									HTML('<hr noshade="noshade" />'),
+									HTML('<h1 align="left"> &#x21e9; </h1> '),
+									tags$p(align="justify","Would you like the bounds of atom counts for elements other than carbon to be restricted by their maximum atom count ratio to that of carbon? Only functional if carbon is selected above."), 
+									radioButtons("atom_bound_wcarbon", "Include?", c("yes"="TRUE","no"="FALSE"),inline=TRUE),
+									HTML('<hr noshade="noshade" />'),
+									bsButton("atom_bounds_calculate","Refresh",style="success"),
+									HTML('<h1 align="left"> &#x21e9; </h1> '),
+									tags$p(align="justify","Maximum possible number of atoms for each element at charges of z = 1 to 4 based on the above selections:"), 
+									DT::dataTableOutput('atom_count_table')
+								)
+							)	
+						)	
+					)
+				),				
+				######################################################################################################################
 				tabPanel("Profiles",
 					div(style = widget_style5,
 						textOutput("had_ion"),	
@@ -1513,10 +1707,10 @@
 					tabsetPanel( 					
 						tabPanel("Summary",										
 								tags$h5("Filter profile list:"),
-								div(style = widget_style3,numericInput("filterProf_minmass", "Minimum m/z:", 0)),
-								div(style = widget_style3,numericInput("filterProf_maxmass", "Maximum m/z:", 3000)),
-								div(style = widget_style3,numericInput("filterProf_minrt", "Minimum RT [s]:", 0)),
-								div(style = widget_style3,numericInput("filterProf_maxrt", "Maximum RT [s]:", 100000)),			
+								div(style = widget_style3,numericInput("filterProf_minmass", "Minimum m/z:", 0, min=0)),
+								div(style = widget_style3,numericInput("filterProf_maxmass", "Maximum m/z:", 3000, min=0)),
+								div(style = widget_style3,numericInput("filterProf_minrt", "Minimum RT [s]:", 0, min=0)),
+								div(style = widget_style3,numericInput("filterProf_maxrt", "Maximum RT [s]:", 100000, min=0)),			
 								div(style = widget_style3,radioButtons("filterProf_meanblind", "Use mean above blind?", c("no"="no","yes"="yes"))),
 								bsPopover("filterProf_meanblind", 
 									title = "Replicates, not time series ...",
@@ -1525,7 +1719,7 @@
 								div(style = widget_style3,radioButtons("filterProf_notblind", "Not in blind?", c("no"="no","yes"="yes"))),
 								div(style = widget_style3,selectInput("filterProf_sort", "Sort profile list by:", 
 									choices = c("ID","mean m/z","mean RT","maximum intensity","mean intensity","global trend intensity","current trend intensity","total peak number"), selected="current trend intensity")),
-								div(style = widget_style3,numericInput("filterProf_count", "Restrict list size:", 500)),
+								div(style = widget_style3,numericInput("filterProf_count", "Restrict list size:", 500, min=0)),
 								#conditionalPanel( # IS filter				
 								#		condition = "input.screen_IS == 'yes'",
 								#		tags$h5("IS compounds filter:"),										
@@ -1576,6 +1770,11 @@
 									</p>'
 								)
 						),
+						#tabPanel("Profile viewer",
+						#	tags$h5("To be completed")	
+						#
+						#
+						#),
 						tabPanel("Single Profile",
 								tags$h5("Extraction of individual profiles"),					
 								HTML('<p> Enter the ID of a profile to extract relevant information. Profile IDs are listed both in the Summary tab and the Newest trends tab. 
@@ -1612,6 +1811,10 @@
 										imageOutput("massdens", height="auto"),
 										imageOutput("massint", height="auto"),
 										value="test3"),
+									bsCollapsePanel("Concentration estimation", 
+										tags$h5("To be completed")								
+																		
+									),			
 									bsCollapsePanel("Profile peak table", 
 										DT::dataTableOutput("oneproftable"),
 										value="test2")
@@ -1639,12 +1842,9 @@
 			tags$h4("Contact, author, maintainer:"),
 			helpText( a("Martin Loos, mloos@looscomputing.ch", href="http://looscomputing.ch/eng/contact.htm",target="_blank") ),
 			tags$h4("Contributors:"),
-			helpText("Steffen Ruppe, Matthias Ruff, Jan Mazacek, Heinz Singer"),
+			helpText("Rheinüberwachungsstation Basel, Eawag Dübendorf, SCIEX"),
 			HTML('<hr noshade="noshade" />'),	
-			tags$h4("License enviMass version 3.117 :"),
-			helpText( a("creative commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)", href="https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode", target="_blank") ),
-			helpText("enviMass is distributed in the hope that it will be useful and was tested in different settings, but WITHOUT ANY WARRANTY (see license). 
-				TERMS: You must give appropriate credit, indicate changes, not redistribute modifications and not use material for commercial purposes. ")	
+			helpText( a("Licensing", href="http://www.looscomputing.ch/eng/enviMass/about.htm",target="_blank") )
 		)
         ########################################################################
       ),

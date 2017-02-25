@@ -2,31 +2,47 @@
 #'
 #' @export
 #'
-#' @description Schedules workflow nodes
+#' @description Schedules workflow nodes in newproject.r
 #'
-#' @param depend logfile matrix downstream dependencies (1) & recalculations (2)
-#' @param must logfile matrix upstream musts (1) & unimplemented donts (-1)
+#' @param depend logfile matrix downstream dependencies (1) & upstream recalculations (2)
+#' @param must logfile matrix upstream musts (1), downstream musts (2) & yet unimplemented donts (-1)
 #' 
-#' @details enviMass workflow function, returns ordered string with workflow steps
+#' @details enviMass workflow function, returns ordered string with workflow steps. Note that musts entries should be reflected in depend.
+#' 
+#' 
+#' 
 #' 
 
 workflow_schedule<-function(depend,must){
 
 	######################################################################################
 	######################################################################################
-	# insert must into depends - to be save ##############################################
+	# insert must into depends - to be save for scheduling ###############################
 	for(i in 1:length(must[1,])){
-		if(sum(must[,i])>0){
-			those<-rownames(must)[must[,i]!=0]
+		if(any(must[,i])==1){
+			those<-rownames(must)[must[,i]==1]
 			for_that<-colnames(must)[i]
-			for(j in 1:length(those)){ # mark dependency in must-matrix
+			for(j in 1:length(those)){ # mark upstream must in dependency-matrix
+				if(depend[rownames(depend)==for_that,colnames(depend)==those[j]]==0){
+					cat("\n\n VOID DEPENDENCY detected (1)!\n")
+				}
 				depend[rownames(depend)==for_that,colnames(depend)==those[j]]<-1
 			}
 		}
+		if(any(must[,i])==2){
+			those<-rownames(must)[must[,i]==2]
+			for_that<-colnames(must)[i]
+			for(j in 1:length(those)){ # mark downstream must in dependency-matrix
+				if(depend[colnames(depend)==those[j],rownames(depend)==for_that]){
+					cat("\n\n VOID DEPENDENCY detected (2)!\n")			
+				}
+				depend[colnames(depend)==those[j],rownames(depend)==for_that]<-1
+			}
+		}		
 	}
 	######################################################################################
-	# insert upstream ==2 dependencies as downstream ==1 dependencies ####################
-	# just to be save ####################################################################
+	# insert upstream ==2 recalculations as downstream ==1 dependencies ##################
+	# - to be save for scheduling ########################################################
 	# ==2 only relevant for workflow_set, not for the scheduling #########################
 	for(i in 1:length(depend[1,])){
 		if(any(depend[,i]==2)){
@@ -68,9 +84,7 @@ workflow_schedule<-function(depend,must){
 	if(any(depend>0) & say!="ok"){say<-"workflow_scheduler issue#3"} 				# node missing
 	######################################################################################
 	if(say=="ok"){
-		return(
-			data.frame(node,node_level,stringsAsFactors=TRUE)
-		)
+		return(data.frame(node,node_level,stringsAsFactors=TRUE))
 	}else{
 		return(say)	
 	}

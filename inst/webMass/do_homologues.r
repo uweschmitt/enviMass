@@ -3,18 +3,18 @@
 	####################################################################################	
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 	cat("Homologue series detection: ")
-	if(logfile$parameters$external$homol_units[1]!="FALSE"){
-		these<-enviPat:::check_chemform(isotopes,logfile$parameters$external$homol_units)[,3]
-		mzfilter<-c(enviPat:::check_chemform(isotopes,logfile$parameters$external$homol_units)[,3] %*% t(1/logfile$parameters$external$homol_charges))
+	if(logfile$parameters$homol_units[1]!="FALSE"){
+		these<-enviPat:::check_chemform(isotopes,strsplit(logfile$parameters$homol_units,",")[[1]])[,3]
+		mzfilter<-c(enviPat:::check_chemform(isotopes,strsplit(logfile$parameters$homol_units,",")[[1]])[,3] %*% t(1/as.numeric(strsplit(logfile$parameters$homol_charges,",")[[1]])))
 		mzfilter<-unique(mzfilter);
-		elements<-unique(unlist(sapply(enviMass:::check_chemform(isotopes,logfile$parameters$external$homol_units,get_list=TRUE),names)))
+		elements<-unique(unlist(sapply(enviMass:::check_chemform(isotopes,strsplit(logfile$parameters$homol_units,",")[[1]],get_list=TRUE),names)))
 		use_minmz<-(min(mzfilter)-.1)
 		use_maxmz<-(max(mzfilter)+.1)
 	}else{
 		mzfilter<-FALSE
 		elements<-unique(as.character(isotopes[,1])[1:295]) #then use all available elements
-		use_minmz<-logfile$parameters$external$homol_minmz
-		use_maxmz<-logfile$parameters$external$homol_maxmz		
+		use_minmz<-as.numeric(logfile$parameters$homol_minmz)
+		use_maxmz<-as.numeric(logfile$parameters$homol_maxmz)		
 	}
 	####################################################################################		
 	
@@ -25,10 +25,6 @@
 			(measurements[b,names(measurements)=="homologues"]=="FALSE")  	# not yet done
 		){ 
 		
-			if(
-				(measurements[b,names(measurements)=="profiled"]=="FALSE") & 	
-				(logfile$parameters$prof_select=="TRUE")
-			){	next }	
 			##########################################################################
 			# exclude files that do not end up in profiles ###########################
 			if( (mute(logfile$parameters$prof_select=="TRUE")) & (measurements$profiled[b]=="FALSE") ){
@@ -44,7 +40,8 @@
 				file.remove(file.path(logfile[[1]],"results","componentization","homologues",for_file) )
 			}			
 			# Peaklist 
-			load(file=file.path(logfile[[1]],"peaklist",as.character(for_file)));   
+			load(file=file.path(logfile[[1]],"peaklist",as.character(for_file))); 
+			peaklist<-peaklist[order(peaklist[,10],decreasing=FALSE),] # match with IDs 			
 			##########################################################################
 			cat("series extraction - ")					
 			homol<-try(
@@ -55,23 +52,23 @@
 					use_C=FALSE,
 					minmz=use_minmz,
 					maxmz=use_maxmz,
-					minrt=logfile$parameters$external$homol_minrt,
-					maxrt=logfile$parameters$external$homol_maxrt,
-					ppm=logfile$parameters$external$homol_ppm,
-					mztol=logfile$parameters$external$homol_mztol,
-					rttol=logfile$parameters$external$homol_rttol,
-					minlength=logfile$parameters$external$homol_minlength,
+					minrt=as.numeric(logfile$parameters$homol_minrt),
+					maxrt=as.numeric(logfile$parameters$homol_maxrt),
+					ppm=as.logical(logfile$parameters$homol_ppm),
+					mztol=as.numeric(logfile$parameters$homol_mztol),
+					rttol=as.numeric(logfile$parameters$homol_rttol),
+					minlength=as.numeric(logfile$parameters$homol_minlength),
 					mzfilter,
-					vec_size=logfile$parameters$external$homol_vec_size,
+					vec_size=as.numeric(logfile$parameters$homol_vec_size),
 					mat_size=3,
 					R2=.98,
 					spar=.45,
-					plot_it=FALSE,
+					plotit=FALSE,
 					deb=0
 				)	
 			)
 			if(class(homol)=="try-error"){
-				cat("\n Homologue series detection failed - adpat parameters?");
+				cat("\n Homologue series detection failed - adapt parameters?");
 				next;
 			}	
 			if(length(homol[[3]][,1])==0){
@@ -98,7 +95,6 @@
 					Homol_groups[from,2]<-peaklist[those[j],"peak_ID"]					
 					Homol_groups[from,3]<-i	
 				}
-				
 			}
 			Homol_groups<-Homol_groups[1:from,]
 			those<-(Homol_groups[,1]>Homol_groups[,2])
@@ -107,9 +103,10 @@
 			}
 			Homol_groups<-Homol_groups[order(Homol_groups[,1],Homol_groups[,2],decreasing=FALSE),]
 			save(Homol_groups,file=(file.path(logfile[[1]],"results","componentization","homologues",paste(for_file,sep="_"))))
+			save(homol,file=(file.path(logfile[[1]],"results","componentization","homologues",paste("full",for_file,sep="_"))))			
 			rm(peaklist,homol,Homol_groups)
 			##########################################################################	
-			measurements[b,names(measurements)=="homologues"]<-"TRUE"
+			measurements[b,"homologues"]<-"TRUE"
 			write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 			cat("done.")
 			##########################################################################		
@@ -121,7 +118,7 @@
 	####################################################################################	
 	
 	####################################################################################	
-	rm(mzfilter,elements,use_minmz,use_maxmz)
+	rm(mzfilter,elements,use_minmz,use_maxmz,measurements)
 	####################################################################################	
 
 

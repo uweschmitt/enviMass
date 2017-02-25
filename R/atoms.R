@@ -1,4 +1,21 @@
-# Hallo Emma, dont distribute this:
+#' @title 
+#'
+#' @description 
+#'
+#' @param masses Masses
+#' @param intensities 
+#' @param elements 
+#' @param dmz 
+#' @param ppm 
+#' @param charges
+#' @param isotopes
+#' @param int_cut
+#' @param inttol
+#' @param use_C
+#' @param must_peak Must a non-monoisotopic peak be present to have an atom count >0 for an element? Non applicable to single-isotopic elements.
+#' 
+#' @details enviMass workflow function
+#' 
 
 atoms <-
 function(
@@ -25,6 +42,8 @@ function(
 	if(!is.numeric(dmz)){stop("Argument dmz must be numeric.")}
 	if(!is.numeric(charges)){stop("Argument charges must be numeric.")}	
 	if(!is.numeric(int_cut)){stop("Argument int_cut must be numeric.")}		
+	if(int_cut==0){stop("Argument int_cut must be >0")}		
+	int_cut_up<-(int_cut+(int_cut*inttol))
 	ord<-order(masses,decreasing=FALSE)
 	masses<-masses[ord]
 	intensities<-intensities[ord]
@@ -39,15 +58,15 @@ function(
 	for(i in 1:length(elements)){
 		at_isotopes<-which(as.character(isotopes[,1])==elements[i])
 		w_C<-as.numeric(unique(isotopes[at_isotopes,5]))
-		# single-isotopic element = estimate by monoisotopic mass alone ########
-		if( (length(at_isotopes)==1 || length(masses)==1) & (!must_peak) ){ # or only one mass?
+		# single-isotopic element = estimate by monoisotopic mass alone ########	
+		if( length(at_isotopes)==1 & !must_peak ){
 			for(n in 1:length(charges)){ # make entry for all charges
 				iso_mass<-as.numeric(isotopes[at_isotopes,3])
 				if(!use_C || (w_C==0)){
-					bounds[n,i]<-floor(masses[1]/(iso_mass/charges[n]))
+					bounds[n,i]<-floor(masses[1]/(iso_mass[1]/charges[n]))
 				}else{	
 					iso_mass<-(iso_mass+(1/w_C*12))
-					bounds[n,i]<-floor(masses[1]/(iso_mass/charges[n]))
+					bounds[n,i]<-floor(masses[1]/(iso_mass[1]/charges[n]))
 				}
 			}
 			next; # no pattern to be evaluated 
@@ -71,8 +90,8 @@ function(
 				iso_rat_abund<-(as.numeric(isotopes[at_isotopes[1],4])/as.numeric(isotopes[at_isotopes[j],4]))
 				for_mass<-which( (masses>=(min_masses[1]+iso_del_mass)) & (masses<=(max_masses[1]+iso_del_mass)) )
 				if(length(for_mass)==0){ # no match on first M+X position
-					# get estimate from int_cut:
-					n_atom<-floor(int_cut/min_intensities[1]*iso_rat_abund)
+					# get estimate from int_cut_up:					
+					n_atom<-floor(int_cut_up/min_intensities[1]*iso_rat_abund)					
 					max_over_isotopes<-c(max_over_isotopes,n_atom)					
 					peaks_over_isotopes<-c(peaks_over_isotopes,FALSE)
 				}else{ # match : solve full pattern iteratively, starting from maximum estimate set by M+X position
@@ -110,13 +129,13 @@ function(
 									(max_intensities>=from_int) 
 								)){								
 									found_peak<-TRUE
-									if(from_int<=int_cut){ # reached end = pattern below int_cut
+									if(from_int<=int_cut_up){ # reached end = pattern below int_cut
 										keep_doing<-FALSE
 									}else{
 										at_step<-(at_step+1)
 									}
 								}else{
-									if(from_int>int_cut){ # pattern still above int_cut?
+									if(from_int>int_cut_up){ # pattern still above int_cut?
 										keep_w<-FALSE
 									}				
 									keep_doing<-FALSE
@@ -130,8 +149,8 @@ function(
 						max_over_isotopes<-c(max_over_isotopes,n_atom_iter)
 						peaks_over_isotopes<-c(peaks_over_isotopes,found_peak)
 					}else{ # initial upper bound == 0
-						# get estimate from int_cut:
-						n_atom<-floor(int_cut/min_intensities[1]*iso_rat_abund)
+						# get estimate from int_cut_up:
+						n_atom<-floor(int_cut_up/min_intensities[1]*iso_rat_abund)
 						max_over_isotopes<-c(max_over_isotopes,n_atom)					
 						peaks_over_isotopes<-c(peaks_over_isotopes,FALSE)				
 					}

@@ -22,7 +22,7 @@ logfile$parameters$external$isotop_inttol<-0.5
 logfile$parameters$external$isotop_rttol<-5
 logfile$parameters$external$isotop_use_charges<-c(1,2)
 
-# Parameters for adduct grouping
+# Parameters for adduct grrouping
 logfile$parameters$external$adducts_rttol<-5
 logfile$parameters$external$adducts_mztol<-2.5
 logfile$parameters$external$adducts_ppm<-TRUE

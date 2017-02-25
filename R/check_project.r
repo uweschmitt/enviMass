@@ -121,19 +121,54 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 			say<-"Target screening: number of latest files to include invalid - must be >=1. Please revise!"
 		}
 	}
+	if((logfile$workflow[names(logfile$workflow)=="homologues"]=="yes") & (logfile$parameters$homol_units[1]!="FALSE")){
+		these<-enviPat:::check_chemform(isotopes,strsplit(logfile$parameters$homol_units,",")[[1]])
+		if(any(these[,1]=="TRUE")){
+			say<-"Invalid homologue units defined - please revise (empty spaces? not comma-seperated?)"
+		}
+	}
 	# data sets ok? ##############################################################
 	filed<-list.files(file.path(logfile[[1]],"files"))
 	if(!length(filed) & ignorefiles=="FALSE"){say<-"No files available!"}
 	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
-	if(length(names(measurements))!=29){
+	if(length(names(measurements))!=30){
 		say<-"Measurement table seems corrupted. Have you made any updates recently? Please report this issue!"
 	}
-# check: do profiling, but no samples or blinds or spiked exist?
-
-	
-# check: no blind files, but blind subtraction enabled?	
-	
-	
+	if(any(measurements[,"Mode"]=="positive")){
+		if(all(is.na(match(measurements[measurements[,"Mode"]=="positive","Type"],c("sample","blank"))))){
+			say<-"No blanks or sample files included - hence, nothing to do. Add at least one to continue, positive mode."
+		}	
+	}
+	if(any(measurements[,"Mode"]=="negative")){
+		if(all(is.na(match(measurements[measurements[,"Mode"]=="negative","Type"],c("sample","blank"))))){
+			say<-"No blanks or sample files included - hence, nothing to do. Add at least one to continue, negative mode."
+		}	
+	}
+	# check: do blind subtraction?
+	if( 
+		(logfile$workflow[names(logfile$workflow)=="blind"]=="yes") &
+		!any(measurements[,"Type"]=="blank")
+	){
+		say<-"You have included the blind/blank subtraction in the workflow - but there are no blind/blank files. Please revise!"
+	}
+	# check: do calibration?
+	if( 
+		(logfile$workflow[names(logfile$workflow)=="calibration"]=="yes") &
+		!any(measurements[,"Type"]=="calibration")
+	){
+		say<-"You have included the calibration in the workflow - but there are no calibration files. Please revise!"
+	}
+	# adduct grouping - but only one adduct selected?
+	if( 
+		(logfile$workflow[names(logfile$workflow)=="adducts"]=="yes") 
+	){
+		if( (any(measurements[,"Mode"]=="positive")) & (length(logfile$adducts_pos_group)<2) ){
+			say<-"You want to group nontarget adducts with the workflow - but have <2 adducts specified in the Settings-> Componentization -> Adducts (positive mode). Please revise!"
+		}
+		if( (any(measurements[,"Mode"]=="negative")) & (length(logfile$adducts_neg_group)<2) ){
+			say<-"You want to group nontarget adducts with the workflow - but have <2 adducts specified in the Settings-> Componentization -> Adducts (negative mode). Please revise!"
+		}
+	}
 	if(length(measurements[measurements[,"ID"]!="-",1,drop=FALSE])==0){
 		say<-"No files available."; 
 		return(say);
@@ -183,6 +218,12 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 			say<-paste("Invalid time format found for calibration file(s) with ID(s) ",
 			paste(these,collapse=", "),". Please revise concerned calibration file(s) in the files tab!",sep="")
 	  }
+	  if(any(is.na(as.numeric(measurements_cal$tag1)))){
+		say<-paste("Invalid non-numeric concentration (tag1) found for calibration file with ID:",
+			measurements_cal[which(is.na(as.numeric(measurements_cal$tag1))),"ID"][1],"- please revise",
+			sep=" ")
+	  }
+
   }
 	if(logfile$workflow[names(logfile$workflow)=="quantification"]=="yes" & any(measurements[,"Type"]=="calibration")){
 		# no period overlaps! ######################################################
@@ -209,7 +250,7 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 			}
 			for(i in 1:length(starttime)){			
 				if(numstart[i]>=numend[i]){
-						say<-paste("Start Date/Time >= end Date time for calibration set ",cal_files2[i,"tag2"]," (positive mode) overlap. Please revise!",sep="")				
+						say<-paste("Start Date/Time >= end Date/Time for calibration set ",cal_files2[i,"tag2"]," (positive mode). Please revise!",sep="")				
 				}
 			}
 			# do all files in one calibration set have identical start & end times?		
@@ -304,45 +345,80 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 			say<-paste("Invalid file IDs (tag2) to subtract from for spiked file(s) with ID(s) ",
 			paste(c(these_pos,these_neg),collapse=", "),". Please revise concerned spiked file(s) in the files tab!",sep="")	
 		}
-  }
-  ##############################################################################
-  # progress bar? ##############################################################
-  if(interactive() && !.Platform$OS.type == "windows" && .Platform$GUI == "Rgui" && logfile[[5]][21]=="TRUE"){
-	say<-"Disable the progress bar in the Settings General Tab; works only under Windows OS"
-  }
-  ##############################################################################
-  # blind peak subtraction enabled, but no blind files selected? ###############
-  if(
-	(logfile$workflow[names(logfile$workflow)=="blind"]=="yes") &
-	(logfile$parameters$subtract_pos_bydate==FALSE) &
-	(logfile$parameters$subtract_pos_byfile==FALSE) &
-	(logfile$parameters$subtract_neg_bydate==FALSE) &
-	(logfile$parameters$subtract_neg_byfile==FALSE) 
-  ){
-	say<-"Blind detection enabled but blind settings disabled? Please adjust."
-  }
-  ##############################################################################
-  # Isotopologue grouping - quantiz data set available? ######################## 
-  if(
-	(logfile$workflow[names(logfile$workflow)=="isotopologues"]=="yes") &
-	!file.exists(file.path(logfile[[1]],"results","componentization","isotopologues","quantiz") )
-	#(!file.exists( file.path(path.package("enviMass"),"inst","isotopol","quantiz") )) & # for devtools	
-	#(!file.exists( file.path(path.package("enviMass"),"isotopol","quantiz") ))  		# for regular package installation
-  ){
-	say<-"Isotopologue grouping enabled - but no quantizition data set found!"  
-  }
-  ###############################################################################
-  # Homologue series detection ################################################## 
-  if(logfile$workflow[names(logfile$workflow)=="homologues"]=="yes"){
-	if(logfile$parameters$external$homol_units[1]!="FALSE"){
-		these<-enviPat:::check_chemform(isotopes,logfile$parameters$external$homol_units)[,1] 
-		if(any(these!="FALSE")){
-			say<-"Invalid chemical formulas for predefined homologue series units found - please revise" 
-		}  
 	}
-  } 
-  ##############################################################################
-  if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in check_project.r!")}
-  return(say);
-  ##############################################################################  
+	##############################################################################
+	# progress bar? ##############################################################
+	if(interactive() && !.Platform$OS.type == "windows" && .Platform$GUI == "Rgui" && logfile[[5]][21]=="TRUE"){
+		say<-"Disable the progress bar in the Settings General Tab; works only under Windows OS"
+	}
+	##############################################################################
+	# blind peak subtraction enabled, but no blind files selected? ###############
+	if(
+		(logfile$workflow[names(logfile$workflow)=="blind"]=="yes") &
+		(logfile$parameters$subtract_pos_bydate==FALSE) &
+		(logfile$parameters$subtract_pos_byfile==FALSE) &
+		(logfile$parameters$subtract_neg_bydate==FALSE) &
+		(logfile$parameters$subtract_neg_byfile==FALSE) 
+	){
+		say<-"Blind detection enabled but blind settings disabled? Please adjust."
+	}
+	##############################################################################
+	# Isotopologue grouping - quantiz data set available? ######################## 
+	# Download from www.envimass.ch ##############################################
+	redo_load_quantiz<-FALSE
+	if( # quantiz file in project? check if it can be loaded and agrees with selected instrument&resolution
+		(logfile$workflow[names(logfile$workflow)=="isotopologues"]=="yes") &
+		file.exists(file.path(logfile[[1]],"dataframes","quantiz") )
+	){
+		load_quantiz<-try(load(file.path(logfile[[1]],"dataframes","quantiz")))  
+		if(class(load_quantiz)=="try-error"){
+			redo_load_quantiz<-TRUE
+		}else{
+			if(quantiz$R_set!=logfile$parameters$resolution){
+				redo_load_quantiz<-TRUE
+			}
+		}
+	}
+	if( # quantiz not available or not correct?
+		(logfile$workflow[names(logfile$workflow)=="isotopologues"]=="yes") &
+		( !file.exists(file.path(logfile[[1]],"dataframes","quantiz") ) || redo_load_quantiz)
+	){
+		avail<-("OrbitrapXL,Velos,VelosPro_R60000@400")
+		if(any(avail==logfile$parameters$resolution)){ # available on www.envimass.ch
+			if(logfile$parameters$resolution=="OrbitrapXL,Velos,VelosPro_R60000@400"){
+				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/OrbitrapXL,Velos,VelosPro_R60000@400/quantiz"
+			}
+			dest_file<-file.path(logfile[[1]],"dataframes","quantiz")
+			url_quantiz<-try(download.file(url=get_url, destfile=dest_file, mode = "wb"))
+			if(class(url_quantiz)=="try-error"){
+				cat("\n Download of missing isotopologue space failed.")
+				say<-"Unable to download missing isotopologue space. Please either check your internet connection and retry or
+				proceed manually as described on www.enviMass.ch -> Data input -> Download available isotopologue spaces." 
+			}else{
+				cat("\n Download of missing isotopologue space completed.\n")			  
+				load_quantiz<-try(load(file.path(logfile[[1]],"dataframes","quantiz")) )
+				if(class(load_quantiz)=="try-error"){
+					cat("\n Loading of missing isotopologue space failed.\n")	
+					say<-"Loading failure of downloaded of isotopologue space. Please proceed manually as described on www.enviMass.ch -> Data input -> Download available isotopologue spaces."
+				}
+			}
+		}else{	# not available on www.wnvimass.ch
+			say<-"The isotopologue grouping step is enabled in the workflow. We regret that no data set for the isotopologue space for the selected instrument and resolution is at present available for enviMass. 
+			Please remove the isotopologue grouping step from the workflow." 
+		} 
+	}
+	###############################################################################
+	# Homologue series detection ################################################## 
+	if(logfile$workflow[names(logfile$workflow)=="homologues"]=="yes"){
+		if(logfile$parameters$external$homol_units[1]!="FALSE"){
+			these<-enviPat:::check_chemform(isotopes,logfile$parameters$external$homol_units)[,1] 
+			if(any(these!="FALSE")){
+				say<-"Invalid chemical formulas for predefined homologue series units found - please revise" 
+			}  
+		}
+	} 
+	##############################################################################
+	if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in check_project.r!")}
+	return(say);
+	##############################################################################  
 }

@@ -607,9 +607,6 @@ observe({
  
  
  
- 
- 
- 
 ############################################################################## 
 # ADD MEASUREMENT ############################################################
 addmeasu<-reactive({
@@ -649,23 +646,29 @@ addmeasu<-reactive({
 							start_time<-as.character(isolate(input$Measadd_cal_time1))
 							tag1<-as.character(isolate(input$Measadd_tag1))
 							tag2<-as.character(isolate(input$Measadd_tag2))
-							tag3<-as.character(isolate(input$Measadd_tag1))
+							tag3<-"FALSE"
+							end_date<-as.character(isolate(input$Measadd_cal_date2))
+							end_time<-as.character(isolate(input$Measadd_cal_time2))
 						}
 						if(isolate(input$Measadd_type)=="sample" || isolate(input$Measadd_type)=="blank"){
 							use_profiling<-as.character(isolate(input$Measadd_profiled))
 							start_date<-as.character(isolate(input$Measadd_date))
 							start_time<-as.character(isolate(input$Measadd_time))		
-							tag1<-as.character(isolate(input$Measadd_tag1))						
+							tag1<-"FALSE"						
 							tag2<-"FALSE"
-							tag3<-as.character(isolate(input$Measadd_tag1))
+							tag3<-as.character(isolate(input$Measadd_tag3))
+							end_date<-"FALSE"
+							end_time<-"FALSE"
 						}
 						if(isolate(input$Measadd_type)=="spiked"){
 							use_profiling<-"FALSE"
 							start_date<-as.character(isolate(input$Measadd_recov_date)) # anything
 							start_time<-as.character(isolate(input$Measadd_recov_time)) # anything	
-							tag1<-FALSE
+							tag1<-"FALSE"
 							tag2<-as.character(isolate(input$Measadd_spiked_tag2))
-							tag3<-FALSE
+							tag3<-"FALSE"
+							end_date<-"FALSE"
+							end_time<-"FALSE"
 						}
 						measurements2<-c(
 							as.character(newID),
@@ -679,10 +682,9 @@ addmeasu<-reactive({
 							use_profiling,
 							"FALSE","FALSE","FALSE",
 							tag1,tag2,tag3,
-							as.character(isolate(input$Measadd_cal_date2)),							
-							as.character(isolate(input$Measadd_cal_time2)),
+							end_date,end_time,
 							"FALSE","FALSE","FALSE","FALSE","FALSE",
-							as.character(isolate(input$Measadd_ID2))							
+							as.character(isolate(input$Measadd_ID2)),"FALSE"							
 						)
 						measurements3<-rbind(measurements2,measurements1,stringsAsFactors=FALSE);
 						names(measurements3)<-nameit;
@@ -743,23 +745,29 @@ addmeasu<-reactive({
 						start_time<-as.character(isolate(input$Measadd_cal_time1))
 						tag1<-as.character(isolate(input$Measadd_tag1))
 						tag2<-as.character(isolate(input$Measadd_tag2))
-						tag3<-as.character(isolate(input$Measadd_tag1))
+						tag3<-"FALSE"
+						end_date<-as.character(isolate(input$Measadd_cal_date2))
+						end_time<-as.character(isolate(input$Measadd_cal_time2))
 					}
 					if(isolate(input$Measadd_type)=="sample" || isolate(input$Measadd_type)=="blank"){
 						use_profiling<-as.character(isolate(input$Measadd_profiled))
 						start_date<-as.character(isolate(input$Measadd_date))
 						start_time<-as.character(isolate(input$Measadd_time))
-						tag1<-as.character(isolate(input$Measadd_tag1))						
+						tag1<-"FALSE"						
 						tag2<-"FALSE"
-						tag3<-as.character(isolate(input$Measadd_tag1))
+						tag3<-as.character(isolate(input$Measadd_tag3))
+						end_date<-"FALSE"
+						end_time<-"FALSE"
 					}
 					if(isolate(input$Measadd_type)=="spiked"){
 						use_profiling<-"FALSE"
 						start_date<-as.character(isolate(input$Measadd_recov_date)) # anything
 						start_time<-as.character(isolate(input$Measadd_recov_time)) # anything	
-						tag1<-FALSE
+						tag1<-"FALSE"
 						tag2<-as.character(isolate(input$Measadd_spiked_tag2))
-						tag3<-FALSE
+						tag3<-"FALSE"
+						end_date<-"FALSE"
+						end_time<-"FALSE"
 					}
 					measurements2<-c(
 						as.character(newID),
@@ -773,10 +781,9 @@ addmeasu<-reactive({
 						use_profiling,
 						"FALSE","FALSE","FALSE",
 						tag1,tag2,tag3,
-						as.character(isolate(input$Measadd_cal_date2)),							
-						as.character(isolate(input$Measadd_cal_time2)),
+						end_date,end_time,
 						"FALSE","FALSE","FALSE","FALSE","FALSE",
-						as.character(isolate(input$Measadd_ID2))
+						as.character(isolate(input$Measadd_ID2)),"FALSE"
 					)
 					measurements3<-rbind(measurements2,measurements1,stringsAsFactors=FALSE);
 					names(measurements3)<-nameit;
@@ -878,10 +885,10 @@ observe({
 		if(length(measurements1[measurements1[,"ID"]!=as.character(isolate(input$Measdel_ID)),"ID"])==0){
 			measurements1<-data.frame(c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),
 				c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),
-				c("-"),c("-"),c("-"),c("-"),c("-"),c("-"));
+				c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"));
 			names(measurements1)<-c("ID","Name","Type","Mode","Place","Date","Time","include","copied","peakpicking",
 			  "checked","recal","align","norm","profiled","LOD","IS_screen","tar_screen","tag1","tag2","tag3","date_end","time_end",
-			  "isotopologues","adducts","homologues","EIC_correlation","blind","ID_2")
+			  "isotopologues","adducts","homologues","EIC_correlation","blind","ID_2","components_files")
 			adjustit<-"FALSE"
         }else{
 			delete_type<-measurements1[measurements1[,"ID"]==as.character(isolate(input$Measdel_ID)),"Type"]
@@ -964,15 +971,30 @@ observe({
 		if( file.exists(file.path(logfile[[1]],"pics",paste("peakmzRT_",isolate(input$Measdel_ID),sep="")) ) ){
 			file.remove(file.path(logfile[[1]],"pics",paste("peakmzRT_",isolate(input$Measdel_ID),sep="")) )
 		}			
+		if( file.exists(file.path(logfile[[1]],"results","componentization","EIC_corr",paste(isolate(input$Measdel_ID),sep="")) ) ){
+			file.remove(file.path(logfile[[1]],"results","componentization","EIC_corr",paste(isolate(input$Measdel_ID),sep="")) )
+		}			
 		if( file.exists(file.path(logfile[[1]],"results","componentization","adducts",paste(isolate(input$Measdel_ID),sep="")) ) ){
 			file.remove(file.path(logfile[[1]],"results","componentization","adducts",paste(isolate(input$Measdel_ID),sep="")) )
 		}			
 		if( file.exists(file.path(logfile[[1]],"results","componentization","isotopologues",paste(isolate(input$Measdel_ID),sep="")) ) ){
 			file.remove(file.path(logfile[[1]],"results","componentization","isotopologues",paste(isolate(input$Measdel_ID),sep="")) )
 		}			
-		if( file.exists(file.path(logfile[[1]],"results","componentization","EIC_corr",paste(isolate(input$Measdel_ID),sep="")) ) ){
-			file.remove(file.path(logfile[[1]],"results","componentization","EIC_corr",paste(isolate(input$Measdel_ID),sep="")) )
+		if( file.exists(file.path(logfile[[1]],"results","componentization","homologues",paste(isolate(input$Measdel_ID),sep="")) ) ){
+			file.remove(file.path(logfile[[1]],"results","componentization","homologues",paste(isolate(input$Measdel_ID),sep="")) )
+		}
+		if( file.exists(file.path(logfile[[1]],"results","componentization","adducts",paste("full",isolate(input$Measdel_ID),sep="_")) ) ){
+			file.remove(file.path(logfile[[1]],"results","componentization","adducts",paste("full",isolate(input$Measdel_ID),sep="_")) )
 		}			
+		if( file.exists(file.path(logfile[[1]],"results","componentization","isotopologues",paste("full",isolate(input$Measdel_ID),sep="_")) ) ){
+			file.remove(file.path(logfile[[1]],"results","componentization","isotopologues",paste("full",isolate(input$Measdel_ID),sep="_")) )
+		}			
+		if( file.exists(file.path(logfile[[1]],"results","componentization","homologues",paste("full",isolate(input$Measdel_ID),sep="_")) ) ){
+			file.remove(file.path(logfile[[1]],"results","componentization","homologues",paste("full",isolate(input$Measdel_ID),sep="_")) )
+		}
+		if( file.exists(file.path(logfile[[1]],"results","componentization","components",paste(isolate(input$Measdel_ID),sep="")) ) ){
+			file.remove(file.path(logfile[[1]],"results","componentization","components",paste(isolate(input$Measdel_ID),sep="")) )
+		}		
 		#############################################################################
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
         #############################################################################			
@@ -1140,8 +1162,12 @@ observe({
 			updateSelectInput(session, "Modif_profiled", selected = as.character(measurements3[measurements3[,"ID"]==atID,"profiled"]))
 			updateDateInput(session, "Modif_cal_date1", value = as.character(measurements3[measurements3[,"ID"]==atID,"Date"]))
 			updateTextInput(session, "Modif_cal_time1",value = as.character(measurements3[measurements3[,"ID"]==atID,"Time"]))
-			updateDateInput(session, "Modif_cal_date2", value = as.character(measurements3[measurements3[,"ID"]==atID,"date_end"]))
-			updateTextInput(session, "Modif_cal_time2",value = as.character(measurements3[measurements3[,"ID"]==atID,"time_end"]))
+			if(measurements3[measurements3[,"ID"]==atID,"date_end"]!="FALSE"){
+				updateDateInput(session, "Modif_cal_date2", value = as.character(measurements3[measurements3[,"ID"]==atID,"date_end"]))
+			}
+			if(measurements3[measurements3[,"ID"]==atID,"time_end"]!="FALSE"){
+				updateTextInput(session, "Modif_cal_time2",value = as.character(measurements3[measurements3[,"ID"]==atID,"time_end"]))
+			}
 			updateDateInput(session, "Modif_recov_date", value = as.character(measurements3[measurements3[,"ID"]==atID,"Date"]))
 			updateTextInput(session, "Modif_recov_time",value = as.character(measurements3[measurements3[,"ID"]==atID,"Time"]))				
 			updateTextInput(session, "Modif_ID2",value = as.character(measurements3[measurements3[,"ID"]==atID,"ID_2"]))			
@@ -1166,19 +1192,31 @@ observe({
 				use_profiling<-"FALSE"
 				start_date<-as.character(isolate(input$Modif_cal_date1))
 				start_time<-as.character(isolate(input$Modif_cal_time1))
+				tag1<-as.character(isolate(input$Modif_tag1))
 				tag2<-as.character(isolate(input$Modif_tag2))
+				tag3<-"FALSE"
+				date_end<-as.character(isolate(input$Modif_cal_date2))
+				time_end<-as.character(isolate(input$Modif_cal_time2))
 			}
 			if(isolate(input$Modif_type)=="sample" || isolate(input$Modif_type)=="blank"){
 				use_profiling<-as.character(isolate(input$Modif_profiled))
 				start_date<-as.character(isolate(input$Modif_date))
 				start_time<-as.character(isolate(input$Modif_time))	
-				tag2<-as.character(isolate(input$Modif_tag2))				
+				tag1<-"FALSE"				
+				tag2<-"FALSE"
+				tag3<-as.character(isolate(input$Modif_tag3))		
+				date_end<-"FALSE"
+				time_end<-"FALSE"				
 			}
 			if(isolate(input$Modif_type)=="spiked"){ 
 				use_profiling<-"FALSE"
 				start_date<-as.character(isolate(input$Modif_recov_date))
 				start_time<-as.character(isolate(input$Modif_recov_time))
+				tag1<-"FALSE"				
 				tag2<-as.character(isolate(input$Modif_spiked_tag2))
+				tag3<-"FALSE"				
+				date_end<-"FALSE"
+				time_end<-"FALSE"
 			}			
 			measurements3[measurements3[,"ID"]==atID,"Name"]<-as.character(isolate(input$Modif_name))
 			measurements3[measurements3[,"ID"]==atID,"Type"]<-as.character(isolate(input$Modif_type))
@@ -1187,14 +1225,14 @@ observe({
 			measurements3[measurements3[,"ID"]==atID,"Date"]<-start_date
 			measurements3[measurements3[,"ID"]==atID,"Date"]<-enviMass:::convDate(measurements3[measurements3[,"ID"]==atID,"Date"]);
 			measurements3[measurements3[,"ID"]==atID,"Time"]<-start_time	
-			measurements3[measurements3[,"ID"]==atID,"tag1"]<-as.character(isolate(input$Modif_tag1))
+			measurements3[measurements3[,"ID"]==atID,"tag1"]<-tag1
 			measurements3[measurements3[,"ID"]==atID,"tag2"]<-tag2
-			measurements3[measurements3[,"ID"]==atID,"tag3"]<-as.character(isolate(input$Modif_tag3))	
+			measurements3[measurements3[,"ID"]==atID,"tag3"]<-tag3	
 			measurements3[measurements3[,"ID"]==atID,"include"]<-as.character(isolate(input$Modif_include))				
 			measurements3[measurements3[,"ID"]==atID,"profiled"]<-use_profiling	
-			measurements3[measurements3[,"ID"]==atID,"date_end"]<-as.character(isolate(input$Modif_cal_date2))
+			measurements3[measurements3[,"ID"]==atID,"date_end"]<-date_end
 			measurements3[measurements3[,"ID"]==atID,"date_end"]<-enviMass:::convDate(measurements3[measurements3[,"ID"]==atID,"date_end"]);
-			measurements3[measurements3[,"ID"]==atID,"time_end"]<-as.character(isolate(input$Modif_cal_time2))
+			measurements3[measurements3[,"ID"]==atID,"time_end"]<-time_end
 			measurements3[measurements3[,"ID"]==atID,"ID_2"]<-as.character(isolate(input$Modif_ID2))
 			write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 			output$dowhat<-renderText("Specifications saved to file table.");
@@ -1528,13 +1566,25 @@ observe({
 				}				
 				if(file.exists(file.path(logfile[[1]],"results","componentization","adducts",rem_IDs[i]))){
 					file.remove(file.path(logfile[[1]],"results","componentization","adducts",rem_IDs[i]))
-				}				
-				if(file.exists(file.path(logfile[[1]],"results","componentization","EIC_corr",rem_IDs[i]))){
-					file.remove(file.path(logfile[[1]],"results","componentization","EIC_corr",rem_IDs[i]))
+				}			
+				if(file.exists(file.path(logfile[[1]],"results","componentization","homologues",rem_IDs[i]))){
+					file.remove(file.path(logfile[[1]],"results","componentization","homologues",rem_IDs[i]))
 				}
 				if(file.exists(file.path(logfile[[1]],"results","componentization","isotopologues",rem_IDs[i]))){
 					file.remove(file.path(logfile[[1]],"results","componentization","isotopologues",rem_IDs[i]))
+				}
+				if(file.exists(file.path(logfile[[1]],"results","componentization","adducts","full_",rem_IDs[i]))){
+					file.remove(file.path(logfile[[1]],"results","componentization","adducts","full_",rem_IDs[i]))
 				}			
+				if(file.exists(file.path(logfile[[1]],"results","componentization","homologues","full_",rem_IDs[i]))){
+					file.remove(file.path(logfile[[1]],"results","componentization","homologues","full_",rem_IDs[i]))
+				}
+				if(file.exists(file.path(logfile[[1]],"results","componentization","isotopologues","full_",rem_IDs[i]))){
+					file.remove(file.path(logfile[[1]],"results","componentization","isotopologues","full_",rem_IDs[i]))
+				}
+				if(file.exists(file.path(logfile[[1]],"results","componentization","EIC_corr",rem_IDs[i]))){
+					file.remove(file.path(logfile[[1]],"results","componentization","EIC_corr",rem_IDs[i]))
+				}							
 				cat("\n file removed")
 			}
 			if(isolate(input$Modif_cal_mode)=="positive"){ # positive
@@ -1636,7 +1686,7 @@ impfolder<-reactive({
 								"FALSE","FALSE","FALSE",
 								at_date,
 								as.character("12:00:00"),
-								"FALSE","FALSE","FALSE","FALSE","FALSE","FALSE"								
+								"FALSE","FALSE","FALSE","FALSE","FALSE","FALSE","FALSE"								
 							)								
 							measurements3<-rbind(measurements2,measurements1,stringsAsFactors=FALSE);
 							names(measurements3)<-nameit;
@@ -1699,7 +1749,7 @@ impfolder<-reactive({
 									"FALSE","FALSE","FALSE",
 									at_date,
 									as.character("12:00:00"),
-									"FALSE","FALSE","FALSE","FALSE","FALSE","FALSE"								
+									"FALSE","FALSE","FALSE","FALSE","FALSE","FALSE","FALSE"								
 								)	
 								measurements3<-rbind(measurements2,measurements1,stringsAsFactors=FALSE);
 								names(measurements3)<-nameit;
@@ -1764,26 +1814,33 @@ observe({
 		cat("\n Importing project parameters ...")
 		logfile_here<<-logfile;
 		file_in<-as.character(isolate(input$import_pro_dir_paras))
-		load(file.path(file_in,"logfile.emp"),envir=as.environment(".GlobalEnv"))
-		logfile_other<<-logfile;
-		rm(logfile,envir=as.environment(".GlobalEnv"))
-		logfile<<-logfile_here
-		if(logfile$version==logfile_other$version){
-			logfile[[4]]<<-logfile_other[[4]]
-			logfile$parameters<<-logfile_other$parameters
-			logfile$adducts_pos<<-logfile_other$adducts_pos		
-			logfile$adducts_neg<<-logfile_other$adducts_neg		 
-			logfile$isotopes<<-logfile_other$isotopes		
-			rm(logfile_other,logfile_here,envir=as.environment(".GlobalEnv"))
-			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp")); 
-			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-			source("server_variables_in.R", local=TRUE)
-			output$dowhat<<-renderText("Parameters imported.");
-			enviMass:::reset_selections(session)
-			cat(" done. \n")
+		a<-try(load(file.path(file_in,"logfile.emp"),envir=as.environment(".GlobalEnv")))
+		if(class(a)!="try-error"){
+			logfile_other<<-logfile;
+			rm(logfile,envir=as.environment(".GlobalEnv"))
+			logfile<<-logfile_here
+			if(logfile$version==logfile_other$version){
+				logfile[[4]]<<-logfile_other[[4]]
+				logfile$parameters<<-logfile_other$parameters
+				logfile$adducts_pos<<-logfile_other$adducts_pos		
+				logfile$adducts_neg<<-logfile_other$adducts_neg		 
+				logfile$isotopes<<-logfile_other$isotopes		
+				rm(logfile_other,logfile_here,envir=as.environment(".GlobalEnv"))
+				save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp")); 
+				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+				source("server_variables_in.R", local=TRUE)
+				output$dowhat<<-renderText("Parameters imported.");
+				enviMass:::reset_selections(session)
+				cat(" done. \n")
+			}else{
+				output$dowhat<<-renderText("Parameter import failed: incompatible enviMass versions.");
+				cat(" failed. \n")		
+				shinyjs:::info("Parameter import failed: incompatible enviMass versions.")
+			}
 		}else{
-			output$dowhat<<-renderText("Parameters failed: incompatible enviMass versions.");
-			cat(" failed. \n")		
+			output$dowhat<<-renderText("Parameter import failed: invalid file path.");
+			cat(" failed. \n")			
+			shinyjs:::info("Parameter import failed: invalid file path.")
 		}
 	}
 	if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_Add.r!")}

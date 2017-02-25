@@ -7,12 +7,31 @@
     for(i in 1:leng){ 
         # (measurement included & not yet picked) OR (peakpick forced) 
             if( (measurements[i,"include"]=="TRUE")&&(measurements[i,"peakpicking"]=="FALSE") ){
-				cat(paste("\n    Peak picking sample ",as.character(i)," of ",as.character(leng),": "));                        
+				cat(paste("\n    Peak picking sample ",as.character(i)," of ",as.character(leng),": "));    
+				if(logfile$parameters$cut_RT=="TRUE"){
+					use_minRT<-as.numeric(logfile$parameters$cut_RT_min)
+					use_maxRT<-as.numeric(logfile$parameters$cut_RT_max)
+					cat("(filter RT range)")
+				}else{
+					use_minRT<-FALSE
+					use_maxRT<-FALSE				
+				}		
+				if(logfile$parameters$cut_mass=="TRUE"){
+					use_minmass<-as.numeric(logfile$parameters$cut_mass_min)
+					use_maxmass<-as.numeric(logfile$parameters$cut_mass_max)
+					cat("(filter mass range)")
+				}else{
+					use_minmass<-FALSE
+					use_maxmass<-FALSE				
+				}				
 				MSlist<-enviPick::readMSdata(
 					file.path(logfile[[1]],"files",paste(as.character(measurements[i,1]),".mzXML",sep="")),
 					MSlevel=logfile$parameters$peak_MSlevel,  # MSlevel
 					progbar=logfile$parameters$progressBar, # progbar
-					minRT=FALSE,maxRT=FALSE,minmz=FALSE,maxmz=FALSE,
+					minRT=use_minRT,
+					maxRT=use_maxRT,
+					minmz=use_minmass,
+					maxmz=use_maxmass,
 					ion_mode=measurements[i,"Mode"]
 				);
 				if(any(MSlist[[4]][[2]][,2]==0)){stop("\n do_peakpicking: zero intensities found - resolve issue before proceding.")}
@@ -78,7 +97,7 @@
 				colnames(peaklist)[15]<-"keep";
 				colnames(peaklist)[16]<-"keep_2";
 				save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,"ID"])));   
-				cat(" plot -");  
+				cat(" plotted -");  
 				path=file.path(logfile[[1]],"pics",paste("peakhist_",as.character(measurements[i,"ID"]),sep=""))
 				png(filename = path, bg = "white")    
 				a<-hist(log10(MSlist[[4]][[2]][,2]),breaks=200,plot=FALSE)

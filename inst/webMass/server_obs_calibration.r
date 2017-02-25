@@ -237,6 +237,7 @@ observe({ # Update target name & IS_ID - C
 			if(use_cal!="none"){
 				cal_models_pos[[use_cal]]<<-list()
 				dump("cal_models_pos",file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));			
+				if(verbose){cat("\n deleting models _pos")}
 			}
 		}
 		if(isolate(input$Ion_mode_Cal)=="negative"){
@@ -244,6 +245,7 @@ observe({ # Update target name & IS_ID - C
 			if(use_cal!="none"){
 				cal_models_neg[[use_cal]]<<-list()
 				dump("cal_models_neg",file=file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));			
+				if(verbose){cat("\n deleting models _neg")}
 			}
 		}
 	}
@@ -1141,19 +1143,31 @@ observe({ # - M plot
 				if(verbose){cat("\n in M_text_output")}
 				if(cal_model$call[[2]]=="resp ~ 0 + lin"){ # linear, 0-intercept
 					coefi<-cal_model$coefficient
-					R2<-round(summary(cal_model)[[8]],digits=3)
+					if(isolate(input$cal_model_weight)){
+						R2<-round(summary(cal_model)[[9]],digits=3)
+					}else{
+						R2<-round(summary(cal_model)[[8]],digits=3)					
+					}
 					printthis<-paste("Concentration = ",as.character(round(coefi[[1]],digits=5)),"*Ratio,   R^2=",R2,sep="")
 					if(verbose){cat("\n in M_text_1")}
 				}
 				if(cal_model$call[[2]]=="resp ~ lin"){ # linear, with intercept
 					coefi<-cal_model$coefficient
-					R2<-round(summary(cal_model)[[8]],digits=3)
+					if(isolate(input$cal_model_weight)){
+						R2<-round(summary(cal_model)[[9]],digits=3)
+					}else{
+						R2<-round(summary(cal_model)[[8]],digits=3)					
+					}
 					printthis<-paste("Concentration = ",as.character(round(coefi[[1]],digits=5))," + ",as.character(round(coefi[[2]],digits=5)),"*Ratio,   R^2=",R2,sep="")
 					if(verbose){cat("\n in M_text_2")}
 				}
 				if(cal_model$call[[2]]=="resp ~ 0 + lin + quad"){ # linear, 0-intercept
 					coefi<-cal_model$coefficient
-					R2<-round(summary(cal_model)[[8]],digits=3)
+					if(isolate(input$cal_model_weight)){
+						R2<-round(summary(cal_model)[[9]],digits=3)
+					}else{
+						R2<-round(summary(cal_model)[[8]],digits=3)					
+					}
 					printthis<-paste("Concentration = ",
 						as.character(round(coefi[[1]],digits=5)),"*Ratio + ",
 						as.character(round(coefi[[2]],digits=5)),"*Ratio^2,   R^2=",R2,					
@@ -1161,7 +1175,11 @@ observe({ # - M plot
 				}
 				if(cal_model$call[[2]]=="resp ~ lin + quad"){ # linear, 0-intercept
 					coefi<-cal_model$coefficient
-					R2<-round(summary(cal_model)[[8]],digits=3)
+					if(isolate(input$cal_model_weight)){
+						R2<-round(summary(cal_model)[[9]],digits=3)
+					}else{
+						R2<-round(summary(cal_model)[[8]],digits=3)					
+					}
 					printthis<-paste("Concentration = ",
 						as.character(round(coefi[[1]],digits=5))," + ",
 						as.character(round(coefi[[2]],digits=5)),"*Ratio + ",
@@ -1373,7 +1391,7 @@ observe({ # - Q
 					cal_models_pos[[use_cal]][[delete_entry]]<<-list()
 					names(cal_models_pos[[use_cal]])[delete_entry]<<-"_"
 					if(length(cal_models_pos[[use_cal]][[delete_entry]])!=0){
-						stop("\n Calibration model delete fucked up. Debug me")
+						stop("\n Calibration model delete messed up. Debug me")
 					}
 				}
 				dump("cal_models_pos",file=file.path(logfile[[1]],"quantification",paste("cal_models_pos_",isolate(input$Cal_file_set),sep="")),envir=as.environment(".GlobalEnv"));					

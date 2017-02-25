@@ -8,7 +8,7 @@
 #' 
 
 
-pattern.search3<-function(
+pattern_search3<-function(
 	peaklist, 
 	quantiz, 
 	mztol = 2, 
@@ -90,33 +90,40 @@ pattern.search3<-function(
     int_slots <- (10^quantiz[[8]])
     pBar <- txtProgressBar(min = 0, max = length(peaklist[, 1]), 
         style = 3)
-    relat <- .Call("peak_search", as.matrix(peaklist[, 1:3]), 
-        as.matrix(peakTree), as.matrix(mass_slots), as.matrix(int_slots), 
-        as.numeric(mztol), as.numeric(ppm2), as.numeric(inttol), 
-        as.numeric(rttol), as.integer(inter), pBar, PACKAGE = "nontarget")
+    relat_pairs <- .Call("peak_search", 
+		as.matrix(peaklist[,1:3]), 
+        as.matrix(peakTree), 
+		as.matrix(mass_slots), 
+		as.matrix(int_slots), 
+        as.numeric(mztol), 
+		as.numeric(ppm2), 
+		as.numeric(inttol), 
+        as.numeric(rttol), 
+		as.integer(inter), 
+		pBar, PACKAGE = "nontarget")
     close(pBar)
 	#########################################################################################################	
 	# DEBUG?
-	if(any(duplicated(relat))){
-		cat("\n WARNING: duplicated relat entries - debug me!")
-		relat<-unique(relat)
+	if(any(duplicated(relat_pairs))){
+		cat("\n WARNING: duplicated relat_pairs entries!")
+		relat_pairs<-unique(relat_pairs)
 	}
 	#########################################################################################################
 	# NEW
 	if(exclude[1]!=FALSE){
 		# exclude<-exclude[order(exclude[,1],exclude[,2],decreasing=FALSE),] # already ordered in do_EIC_correlation.r
-		those<-(relat[,1]>relat[,2])
-		relat[those,]<-relat[those,c(2,1)]
-		relat<-relat[order(relat[,1],relat[,2],decreasing=FALSE),]
-		found<-enviMass:::rows_compare(relat,exclude,row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=FALSE)
-		cat("Exclusion: ")
+		those<-(relat_pairs[,1]>relat_pairs[,2])
+		relat_pairs[those,]<-relat_pairs[those,c(2,1)]
+		relat_pairs<-relat_pairs[order(relat_pairs[,1],relat_pairs[,2],decreasing=FALSE),]
+		found<-enviMass:::rows_compare(relat_pairs,exclude,row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=FALSE)
+		cat("\nExclusion: ")
 		cat(paste(as.character(round(sum(found)/length(found)*100,digits=2)),"% of potential potential pairs removed by missing EIC correlation.",sep=""))
-		relat<-relat[!found,]
+		relat_pairs<-relat_pairs[!found,]
 	}else{
 		cat("\n exclusion skipped.")
 	}
 	#########################################################################################################	
-    if (length(relat) < 1) {
+    if (length(relat_pairs) < 1) {
         return("\n No matches found \n ")
     }
     done <- matrix(ncol = length(charge_key), nrow = length(isotope_key), 
@@ -133,26 +140,26 @@ pattern.search3<-function(
     isotope <- c()
     charge <- c()
     retr_1 <- 0
-    pBar <- txtProgressBar(min = 0, max = length(relat[, 1]), 
+    pBar <- txtProgressBar(min = 0, max = length(relat_pairs[, 1]), 
         style = 3)
-    for (j in 1:length(relat[, 1])) {
+    for (j in 1:length(relat_pairs[, 1])) {
         done[, ] <- FALSE
         got <- FALSE
-        del_mass <- (peaklist[relat[j, 2], 1] - peaklist[relat[j, 
+        del_mass <- (peaklist[relat_pairs[j, 2], 1] - peaklist[relat_pairs[j, 
             1], 1])
         if (ppm == TRUE) {
-            search_bounds[1] <- (del_mass - (2 * mztol * peaklist[relat[j, 
+            search_bounds[1] <- (del_mass - (2 * mztol * peaklist[relat_pairs[j, 
                 1], 1]/1e+06))
-            search_bounds[2] <- (del_mass + (2 * mztol * peaklist[relat[j, 
+            search_bounds[2] <- (del_mass + (2 * mztol * peaklist[relat_pairs[j, 
                 1], 1]/1e+06))
         }
         else {
             search_bounds[1] <- (del_mass - (2 * mztol))
             search_bounds[2] <- (del_mass + (2 * mztol))
         }
-        search_bounds[3] <- (peaklist[relat[j, 1], 1] + adductmass_LB)
-        search_bounds[4] <- (peaklist[relat[j, 1], 1] + adductmass_UB)
-        log_int <- log10(peaklist[relat[j, 1], 2]/peaklist[relat[j, 
+        search_bounds[3] <- (peaklist[relat_pairs[j, 1], 1] + adductmass_LB)
+        search_bounds[4] <- (peaklist[relat_pairs[j, 1], 1] + adductmass_UB)
+        log_int <- log10(peaklist[relat_pairs[j, 1], 2]/peaklist[relat_pairs[j, 
             2], 2])
         search_bounds[5] <- (log_int - bound_int)
         search_bounds[6] <- (log_int + bound_int)
@@ -183,8 +190,8 @@ pattern.search3<-function(
                   done[as.numeric(strsplit(names(quantiz[[6]])[i], 
                     "_")[[1]][1]), as.numeric(strsplit(names(quantiz[[6]])[i], 
                     "_")[[1]][2])] <- TRUE
-                  from_peak <- c(from_peak, relat[j, 1])
-                  to_peak <- c(to_peak, relat[j, 2])
+                  from_peak <- c(from_peak, relat_pairs[j, 1])
+                  to_peak <- c(to_peak, relat_pairs[j, 2])
                   isotope <- c(isotope, as.numeric(strsplit(names(quantiz[[6]])[i], 
                     "_")[[1]][1]))
                   charge <- c(charge, as.numeric(strsplit(names(quantiz[[6]])[i], 
@@ -209,8 +216,8 @@ pattern.search3<-function(
                       done[as.numeric(strsplit(names(quantiz[[6]])[i], 
                         "_")[[1]][1]), as.numeric(strsplit(names(quantiz[[6]])[i], 
                         "_")[[1]][2])] <- TRUE
-                      from_peak <- c(from_peak, relat[j, 1])
-                      to_peak <- c(to_peak, relat[j, 2])
+                      from_peak <- c(from_peak, relat_pairs[j, 1])
+                      to_peak <- c(to_peak, relat_pairs[j, 2])
                       isotope <- c(isotope, as.numeric(strsplit(names(quantiz[[6]])[i], 
                         "_")[[1]][1]))
                       charge <- c(charge, as.numeric(strsplit(names(quantiz[[6]])[i], 
@@ -226,16 +233,16 @@ pattern.search3<-function(
                     retr_1 <- c(retr_1 + 1)
                     if (length(found) > 0) {
                       for (k in 1:length(found)) {
-                        marker_delmass <- c((peaklist[relat[j, 
+                        marker_delmass <- c((peaklist[relat_pairs[j, 
                           2], 1] - quantiz[[6]][[i]][found[k], 
-                          8]), (peaklist[relat[j, 2], 1] - quantiz[[6]][[i]][found[k], 
+                          8]), (peaklist[relat_pairs[j, 2], 1] - quantiz[[6]][[i]][found[k], 
                           7]))
                         if (ppm == TRUE) {
                           marker_bounds[1, 1] <- (min(marker_delmass) - 
-                            (2 * mztol * peaklist[relat[j, 1], 
+                            (2 * mztol * peaklist[relat_pairs[j, 1], 
                               1]/1e+06))
                           marker_bounds[1, 2] <- (max(marker_delmass) + 
-                            (2 * mztol * peaklist[relat[j, 1], 
+                            (2 * mztol * peaklist[relat_pairs[j, 1], 
                               1]/1e+06))
                         }
                         else {
@@ -244,12 +251,12 @@ pattern.search3<-function(
                           marker_bounds[1, 2] <- (max(marker_delmass) + 
                             (2 * mztol))
                         }
-                        max_int <- max(peaklist[relat[j, ], 2])
+                        max_int <- max(peaklist[relat_pairs[j, ], 2])
                         marker_bounds[2, 1] <- (max_int * (1 - 
                           inttol))
-                        marker_bounds[3, 1] <- (peaklist[relat[j, 
+                        marker_bounds[3, 1] <- (peaklist[relat_pairs[j, 
                           1], 3] - rttol)
-                        marker_bounds[3, 2] <- (peaklist[relat[j, 
+                        marker_bounds[3, 2] <- (peaklist[relat_pairs[j, 
                           1], 3] + rttol)
                         found_m <- .Call("search_kdtree", as.matrix(peaklist[, 
                           1:3]), as.matrix(peakTree), as.matrix(marker_bounds), 
@@ -258,9 +265,9 @@ pattern.search3<-function(
                           done[as.numeric(strsplit(names(quantiz[[6]])[i], 
                             "_")[[1]][1]), as.numeric(strsplit(names(quantiz[[6]])[i], 
                             "_")[[1]][2])] <- TRUE
-                          from_peak <- c(from_peak, relat[j, 
+                          from_peak <- c(from_peak, relat_pairs[j, 
                             1])
-                          to_peak <- c(to_peak, relat[j, 2])
+                          to_peak <- c(to_peak, relat_pairs[j, 2])
                           isotope <- c(isotope, as.numeric(strsplit(names(quantiz[[6]])[i], 
                             "_")[[1]][1]))
                           charge <- c(charge, as.numeric(strsplit(names(quantiz[[6]])[i], 
@@ -284,12 +291,8 @@ pattern.search3<-function(
     if (length(from_peak) == 0) {
         stop("\n No matches found \n")
     }
-	relat<-cbind(from_peak,to_peak)
-	return(relat)
-	
+	relat_pairs<-cbind(from_peak,to_peak)
 	############################################################################################################
-	
-	if(FALSE){
     use <- c(rep(1, length(to_peak)), rep(2, length(to_peak)))
     isotope <- c(isotope, isotope)
     charge <- c(charge, charge)
@@ -307,7 +310,7 @@ pattern.search3<-function(
     charge <- charge[use == 1]
     isotope <- isotope[use == 1]
     groups <- groups[use == 1]
-    cat(paste("\n  ", length(to_peak), " of ", length(relat[, 
+    cat(paste("\n  ", length(to_peak), " of ", length(relat_pairs[, 
         1]), " candidate linkages accepted.", "\n", sep = ""))
     cat("(3) Create output ...")
     pattern <- list(0)
@@ -477,12 +480,14 @@ pattern.search3<-function(
     }
     pattern[[11]] <- use_charges
     pattern[[12]] <- "no information"
+	pattern[[13]] <- relat_pairs
     names(pattern) <- c("Patterns", "Parameters", "Peaks in pattern groups", 
         "Atom counts", "Count of pattern groups", "Removals by rules", 
         "Number of peaks with pattern group overlapping", "Number of peaks per within-group interaction levels", 
-        "Counts of isotopes", "Elements", "Charges", "Rule settings")
+        "Counts of isotopes", "Elements", "Charges", "Rule settings","Pairs")
     cat(paste(" queries: ", retr_1, " - done.\n", sep = ""))
+	############################################################################################################
     return(pattern)
-	}
+	
 }
 

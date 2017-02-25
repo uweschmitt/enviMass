@@ -82,7 +82,11 @@
 		"profpeaks3",
 		"cal_models",
 		"cal_models_pos",
-		"cal_models_neg"
+		"cal_models_neg",
+		"dmz",
+		"elements",
+		"use_LOD",
+		"atom_peaks"
 	)
 	###############################################################################
 	

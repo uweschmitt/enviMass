@@ -13,7 +13,7 @@ get_latestID<-function(measurements){
 
 	################################################################
     measurements<-measurements[measurements[,"include"]=="TRUE",]
-	measurements<-measurements[measurements[,"Type"]=="sample",]
+	measurements<-measurements[((measurements[,"Type"]=="sample") |(measurements[,"Type"]=="blank")),]
 	################################################################
     dated<-measurements[,"Date"]
     timed<-measurements[,"Time"]

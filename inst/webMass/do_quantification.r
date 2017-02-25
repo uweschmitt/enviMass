@@ -338,17 +338,18 @@
 						at_group<-which(names(cal_models_pos_used)==use_group[use_files[,1]==at_sample])
 						if(length(at_group)==0){ 
 							reason<-paste(reason,"no quantific.",sep=" / ")
-						} 		
-						# if above correct, then: calibration models for this target exist at all ... ?									
-						if(!any(grepl(paste("_",at_ID_tar,"_",sep=""),names(cal_models_pos_used[[at_group]])))){ 
-							reason<-paste(reason,"missing calibration model",sep=" / ")
-						# ... or just not the one with the ISTD specified in the target table?
-						}else{
-							at_group_model<-which(names(cal_models_pos_used[[at_group]])==paste("_",at_ID_IS,"_",at_ID_tar,"_",sep=""))
-							if(length(at_group_model)==0){
-								reason<-paste(reason,"only model w/ incorrect ISTD",sep=" / ")
-							}
-						}				
+						}else{ 		
+							# if above correct, then: calibration models for this target exist at all ... ?									
+							if(!any(grepl(paste("_",at_ID_tar,"_",sep=""),names(cal_models_pos_used[[at_group]])))){ 
+								reason<-paste(reason,"missing calibration model",sep=" / ")
+							# ... or just not the one with the ISTD specified in the target table?
+							}else{
+								at_group_model<-which(names(cal_models_pos_used[[at_group]])==paste("_",at_ID_IS,"_",at_ID_tar,"_",sep=""))
+								if(length(at_group_model)==0){
+									reason<-paste(reason,"only model w/ incorrect ISTD",sep=" / ")
+								}
+							}			
+						}	
 						# target screening results exist, correct peak found?
 						at_sam<-which(names(res_target_pos_screen[[at_res_tar]])==at_sample)
 						if(length(at_sam)==0){
@@ -788,15 +789,16 @@
 						at_group<-which(names(cal_models_neg_used)==use_group[use_files[,1]==at_sample])
 						if(length(at_group)==0){ 
 							reason<-paste(reason,"no quantific.",sep=" / ")
-						} 		
-						# if above correct, then: calibration models for this target exist at all ... ?					
-						if(!any(grepl(paste("_",at_ID_tar,"_",sep=""),names(cal_models_neg_used[[at_group]])))){ 
-							reason<-paste(reason,"missing calibration model",sep=" / ")
-						# ... or just not the one with the ISTD specified in the target table?
 						}else{
-							at_group_model<-which(names(cal_models_neg_used[[at_group]])==paste("_",at_ID_IS,"_",at_ID_tar,"_",sep=""))
-							if(length(at_group_model)==0){
-								reason<-paste(reason,"incorrect calibration model",sep=" / ")
+							# if above correct, then: calibration models for this target exist at all ... ?					
+							if(!any(grepl(paste("_",at_ID_tar,"_",sep=""),names(cal_models_neg_used[[at_group]])))){ 
+								reason<-paste(reason,"missing calibration model",sep=" / ")
+							# ... or just not the one with the ISTD specified in the target table?
+							}else{
+								at_group_model<-which(names(cal_models_neg_used[[at_group]])==paste("_",at_ID_IS,"_",at_ID_tar,"_",sep=""))
+								if(length(at_group_model)==0){
+									reason<-paste(reason,"incorrect calibration model",sep=" / ")
+								}
 							}
 						}
 						# target screening results exist, correct peak found?
