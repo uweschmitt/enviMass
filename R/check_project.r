@@ -394,10 +394,10 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_280K@200"){
 				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive,ExactivePlus_280K@200/quantiz"
 			}			
-			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_280K@200"){
+			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_R140K@200"){
 				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive_ExactivePlus_R140K@200/quantiz"
 			}				
-			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_280K@200"){
+			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_R70K@200"){
 				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive_ExactivePlus_R70K@200/quantiz"
 			}				
 			dest_file<-file.path(logfile[[1]],"dataframes","quantiz")
