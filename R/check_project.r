@@ -383,11 +383,23 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 		(logfile$workflow[names(logfile$workflow)=="isotopologues"]=="yes") &
 		( !file.exists(file.path(logfile[[1]],"dataframes","quantiz") ) || redo_load_quantiz)
 	){
-		avail<-("OrbitrapXL,Velos,VelosPro_R60000@400")
+		avail<-c(
+			"OrbitrapXL,Velos,VelosPro_R60000@400",
+			"Q-Exactive,ExactivePlus_280K@200"
+		)
 		if(any(avail==logfile$parameters$resolution)){ # available on www.envimass.ch
 			if(logfile$parameters$resolution=="OrbitrapXL,Velos,VelosPro_R60000@400"){
 				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/OrbitrapXL,Velos,VelosPro_R60000@400/quantiz"
 			}
+			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_280K@200"){
+				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive,ExactivePlus_280K@200/quantiz"
+			}			
+			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_280K@200"){
+				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive_ExactivePlus_R140K@200/quantiz"
+			}				
+			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_280K@200"){
+				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive_ExactivePlus_R70K@200/quantiz"
+			}				
 			dest_file<-file.path(logfile[[1]],"dataframes","quantiz")
 			url_quantiz<-try(download.file(url=get_url, destfile=dest_file, mode = "wb"))
 			if(class(url_quantiz)=="try-error"){
