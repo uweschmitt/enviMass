@@ -1034,7 +1034,7 @@
 					tabPanel("EIC correlation",			
 						HTML('<hr noshade="noshade" />'),
 						numericInput("EICor_delRT", "RT tolerance window for candidate peak pairs [s]:", 5),
-						numericInput("EICor_minpeaks", "Min. number of scanes shared by EIC pairs to check for their correlation:", 15),
+						numericInput("EICor_minpeaks", "Min. number of data points (scans) shared by EIC pairs to check for their correlation:", 15),
 						numericInput("EICor_mincor", "Min. Pearson correlation [0,1] coefficient:", 0.95)
 					)						
 				)

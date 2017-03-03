@@ -68,16 +68,27 @@ maincalc<-reactive({
 			if(!file.exists(at_script_dont)){
 				at_script_dont<-FALSE
 			}
-			enviMass:::workflow_node(
-				at_node,at_node,at_node,at_node,
-				path_do=at_script_do,
-				path_undo=at_script_dont,
-				session,output,input
-			)  		
+			try_flow<-try({
+				enviMass:::workflow_node(
+					at_node,at_node,at_node,at_node,
+					path_do=at_script_do,
+					path_undo=at_script_dont,
+					session,output,input
+				)  		
+			})	
+			if(class(try_flow)=="try-error"){
+				do_flow<<-1000
+				try_flow_message<-paste("Workflow problem encoutered at project node ",at_node,". Revise settings or report the problem.",sep="");
+				shinyjs:::info(try_flow_message);			
+			}
 		}
 		########################################################################
         # make function reiterate ##############################################
         if(do_flow==(length(logfile$summary[,1])+1)){
+			# set all Tasks_to_redo to FALSE ###################################
+			logfile$Tasks_to_redo[1:length(logfile$Tasks_to_redo)]<<-"FALSE"	
+			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));  
+			# clean .GlobalEnv and reload results ############################## 
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="profileList_pos")){rm(profileList_pos)}
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
@@ -85,9 +96,7 @@ maincalc<-reactive({
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks_pos")){rm(profpeaks_pos,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="profpeaks_pos")){rm(profpeaks_pos)}
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks_neg")){rm(profpeaks_neg,envir=as.environment(".GlobalEnv"))}
-			if(any(objects()=="profpeaks_neg")){rm(profpeaks_neg)}
-			logfile$Tasks_to_redo[1:length(logfile$Tasks_to_redo)]<<-"FALSE"	
-			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
+			if(any(objects()=="profpeaks_neg")){rm(profpeaks_neg)}    
 			if(file.exists(file.path(as.character(logfile[[1]]),"results","profileList_pos"))){
 				load(file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"),verbose=TRUE)
 			}
@@ -100,6 +109,11 @@ maincalc<-reactive({
 			if(file.exists(file.path(as.character(logfile[[1]]),"results","profpeaks_neg"))){
 				load(file.path(as.character(logfile[[1]]),"results","profpeaks_neg"),envir=as.environment(".GlobalEnv"),verbose=TRUE)
 			}
+# BAUSTELLE - complete!			
+	
+	
+# BAUSTELLE - complete!				
+			####################################################################
         }
         do_flow<<-(do_flow+1);
 		if(do_flow==(length(logfile$summary[,1])+2)){
@@ -114,14 +128,20 @@ maincalc<-reactive({
 			cat("Calculating...");
 			return("Calculating...")
 		}else{		
-			output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
-			isolate(init$b<-(init$b+1))
-			if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_calculation.r!")}
-			cat("Calculations completed, with a \n")
-			time_diff<-(Sys.time()-time_start)
-			print(time_diff)
-			cat("\n")
-			return("Calculations completed \n")
+			if(do_flow<1000){
+				output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
+				isolate(init$b<-(init$b+1))
+				if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_calculation.r!")}
+				cat("Calculations completed, with a \n")
+				time_diff<-(Sys.time()-time_start)
+				print(time_diff)
+				cat("\n")
+				return("Calculations completed \n")
+			}else{
+				cat("\n")
+				return(try_flow_message);
+				cat(try_flow_message);				
+			}	
 		}
         ########################################################################
       }else{

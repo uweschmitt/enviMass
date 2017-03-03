@@ -385,14 +385,16 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 	){
 		avail<-c(
 			"OrbitrapXL,Velos,VelosPro_R60000@400",
-			"Q-Exactive,ExactivePlus_280K@200"
+			"Q-Exactive,ExactivePlus_280K@200",
+			"Q-Exactive,ExactivePlus_R140000@200",
+			"Q-Exactive,ExactivePlus_R70000@200"
 		)
 		if(any(avail==logfile$parameters$resolution)){ # available on www.envimass.ch
 			if(logfile$parameters$resolution=="OrbitrapXL,Velos,VelosPro_R60000@400"){
-				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/OrbitrapXL,Velos,VelosPro_R60000@400/quantiz"
+				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/OrbitrapXL_Velos_VelosPro_R60K@400/quantiz"
 			}
 			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_280K@200"){
-				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive,ExactivePlus_280K@200/quantiz"
+				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive_ExactivePlus_280K@200/quantiz"
 			}			
 			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_R140K@200"){
 				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive_ExactivePlus_R140K@200/quantiz"

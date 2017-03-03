@@ -1,13 +1,13 @@
 Package: enviMass
 Type: Package
 Title: Utilities to Process Mass Spectrometry (LC-MS) Data for Environmental Trend Analysis
-Version: 3.126
+Version: 3.127
 Date: 2016-02-02
 Author: Martin Loos
 Maintainer: Martin Loos <Martin.Loos@eawag.ch>
 Description: Utilities and workflow to process high resolution mass
     spectrometry (LC-MS) data for environmental trend analysis
-License: GPL-3
+License: CC BY-NC-ND 4.0
 BugReports: https://github.com/blosloos/enviMass/issues
 Depends: R(>= 3.0.1),shiny,shinyFiles,shinyBS,DT(>= 0.2),shinyjs,plotly
 Imports: 

@@ -17,14 +17,14 @@ workflow_schedule<-function(depend,must){
 
 	######################################################################################
 	######################################################################################
-	# insert must into depends - to be save for scheduling ###############################
+	# insert must into depends - to be save for scheduling - should better not arise #####
 	for(i in 1:length(must[1,])){
 		if(any(must[,i])==1){
 			those<-rownames(must)[must[,i]==1]
 			for_that<-colnames(must)[i]
 			for(j in 1:length(those)){ # mark upstream must in dependency-matrix
 				if(depend[rownames(depend)==for_that,colnames(depend)==those[j]]==0){
-					cat("\n\n VOID DEPENDENCY detected (1)!\n")
+					cat(paste("\nVOID DEPENDENCY_1 detected between ",for_that," and ",those[j],sep=""))
 				}
 				depend[rownames(depend)==for_that,colnames(depend)==those[j]]<-1
 			}
@@ -33,8 +33,8 @@ workflow_schedule<-function(depend,must){
 			those<-rownames(must)[must[,i]==2]
 			for_that<-colnames(must)[i]
 			for(j in 1:length(those)){ # mark downstream must in dependency-matrix
-				if(depend[colnames(depend)==those[j],rownames(depend)==for_that]){
-					cat("\n\n VOID DEPENDENCY detected (2)!\n")			
+				if(depend[colnames(depend)==those[j],rownames(depend)==for_that]){	
+					cat(paste("\nVOID DEPENDENCY_1 detected between ",those[j]," and ",for_that,sep=""))
 				}
 				depend[colnames(depend)==those[j],rownames(depend)==for_that]<-1
 			}

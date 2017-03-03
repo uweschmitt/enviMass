@@ -62,7 +62,10 @@ summary_html<-function(use_summary){
 	use_summary[use_summary[,1]=="isotopologues",1]<-"Isotopol. grouping"	
 	use_summary[use_summary[,1]=="adducts",1]<-"Adduct grouping"	
 	use_summary[use_summary[,1]=="homologues",1]<-"Homologue detection"		
-	use_summary[use_summary[,1]=="recovery",1]<-"Recovery"		
+	use_summary[use_summary[,1]=="recovery",1]<-"Recovery"			
+	use_summary[use_summary[,1]=="components_files",1]<-"File componentization"		
+	use_summary[use_summary[,1]=="components_profiles",1]<-"-"		
+
 	for(i in 1:len_init){
 		if(i%%2==0){
 			mat[i,1]<-c("background-color: lightgrey")
