@@ -4,8 +4,9 @@
 observe({
     input$savepar;
     input$saveflow;
-    if(	((exists("logfile")) & (isolate(input$savepar)))||
-		((exists("logfile")) & (isolate(input$saveflow)))
+    if(	
+		(exists("logfile")) &
+		((isolate(input$savepar)) || (isolate(input$saveflow)))
 	){
 		do_debug<-FALSE
 		########################################################################
@@ -52,12 +53,9 @@ observe({
 			for(i in 1:length(logfile$parameters)){	
 				if(names(logfile$parameters)[i]==""){next} # for any empty entries
 				if(names(logfile$parameters)[i]=="external"){next} # for external parameters		
-				old_param<-logfile$parameters[i]
-	old_param<<-old_param			
+				old_param<-logfile$parameters[i]			
 				for_param<-names(logfile$parameters)[i]
-	for_param<<-for_param
 				eval(parse(text=paste("new_param<-","as.character(isolate(input$",for_param,"))",sep="")))
-	new_param<<-new_param
 				if( length(new_param)>0 ){ # in shiny input list?
 					if(!enviMass:::comp_list(old_param,new_param,as_pairs=FALSE)){
 							# report changed parameter

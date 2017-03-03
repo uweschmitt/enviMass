@@ -7,7 +7,7 @@
 #' @param path String of file.r to evaluate
 #' @param logfile enviMass logfile
 #' 
-#' @details enviMass workflow function to update shiny ui.r script with logfile parameters of workflow settings, Do be used inside a shiny session.
+#' @details enviMass workflow function to update shiny ui.r script with logfile parameters of workflow settings, to be used inside a shiny session.
 #' 
 
 #path<-"D:/MS/R_packages/enviMass_devel/inst/webMass/ui_mainPanel.r"
