@@ -34,7 +34,10 @@
 					maxmz=use_maxmass,
 					ion_mode=measurements[i,"Mode"]
 				);
-				if(any(MSlist[[4]][[2]][,2]==0)){stop("\n do_peakpicking: zero intensities found - resolve issue before proceding.")}
+				if(any(MSlist[[4]][[2]][,2]==0)){
+					cat("\n do_peakpicking: zero intensities found - resolve issue before proceding.")
+					MSlist[[4]][[2]]<-MSlist[[4]][[2]][MSlist[[4]][[2]][,2]!=0,,drop=FALSE]
+				}				
 				cat(" data read -");  				
 				if(as.numeric(logfile$parameters$peak_perc_cut)>0){
 					len1<-length(MSlist[[4]][[2]][,2])
