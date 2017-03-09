@@ -87,7 +87,7 @@ plotaprofile<-function(
       }
     }
     latestID<-timeset[length(timeset[,2]),2]
-	numtime<-(as.numeric(atdate)+as.numeric(attime2/24))
+	numtime<-(as.numeric(atdate)+as.numeric(attime2/(24*60)))
 	colnames(timeset)<-c("above blank?","sampleID","blankID","sample_int","blank_int",rep("lag_int",length(lags)),rep("del_int",length(lags)),rep("max_time",length(lags)),rep("blind_int",length(lags)))	
     ############################################################################
     timeset[,4:5]<-0;

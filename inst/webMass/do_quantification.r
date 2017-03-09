@@ -44,14 +44,14 @@
 		cal_files<-measurements[measurements[,"Type"]=="calibration",,drop=FALSE]
 		cal_files<-unique(cal_files[,c(20,6,7,22,23),drop=FALSE])
 		starttime<-as.difftime(cal_files[,3]);startdate<-as.Date(cal_files[,2]);
-		numstart<-(as.numeric(startdate)+as.numeric(starttime/24))		
+		numstart<-(as.numeric(startdate)+as.numeric(starttime/(24*60*60)))		
 		endtime<-as.difftime(cal_files[,5]);enddate<-as.Date(cal_files[,4]);
-		numend<-(as.numeric(enddate)+as.numeric(endtime/24))		
+		numend<-(as.numeric(enddate)+as.numeric(endtime/(24*60*60)))		
 		use_files<-measurements[(measurements[,"Type"]!="calibration"),,drop=FALSE] # MUST retain spiked files!
 		use_group<-c()
 		for(i in 1:length(use_files[,1])){ # determine which file belongs to which calibration group
 			attime<-as.difftime(use_files[i,7]);atdate<-as.Date(use_files[i,6]);
-			numuse<-(as.numeric(atdate)+as.numeric(attime/24))		
+			numuse<-(as.numeric(atdate)+as.numeric(attime/(24*60*60)))		
 			if(any((numuse>=numstart) & (numuse<=numend))){
 				use_group<-c(use_group,
 					cal_files[(numuse>=numstart) & (numuse<=numend),1]
@@ -497,14 +497,14 @@
 		cal_files<-measurements[measurements[,"Type"]=="calibration",,drop=FALSE]
 		cal_files<-unique(cal_files[,c(20,6,7,22,23),drop=FALSE])
 		starttime<-as.difftime(cal_files[,3]);startdate<-as.Date(cal_files[,2]);
-		numstart<-(as.numeric(startdate)+as.numeric(starttime/24))		
+		numstart<-(as.numeric(startdate)+as.numeric(starttime/(24*60*60)))		
 		endtime<-as.difftime(cal_files[,5]);enddate<-as.Date(cal_files[,4]);
-		numend<-(as.numeric(enddate)+as.numeric(endtime/24))		
+		numend<-(as.numeric(enddate)+as.numeric(endtime/(24*60*60)))		
 		use_files<-measurements[(measurements[,"Type"]!="calibration"),,drop=FALSE] # MUST retain spiked files!
 		use_group<-c()
 		for(i in 1:length(use_files[,1])){ # determine which file belongs to which calibration group
 			attime<-as.difftime(use_files[i,7]);atdate<-as.Date(use_files[i,6]);
-			numuse<-(as.numeric(atdate)+as.numeric(attime/24))		
+			numuse<-(as.numeric(atdate)+as.numeric(attime/(24*60*60)))		
 			if(any((numuse>=numstart) & (numuse<=numend))){
 				use_group<-c(use_group,
 					cal_files[(numuse>=numstart) & (numuse<=numend),1]

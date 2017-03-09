@@ -5,8 +5,7 @@ observe({
     input$savepar;
     input$saveflow;
     if(	
-		(exists("logfile")) &
-		((isolate(input$savepar)) || (isolate(input$saveflow)))
+		(exists("logfile")) & ((isolate(input$savepar)) || (isolate(input$saveflow)))
 	){
 		do_debug<-FALSE
 		########################################################################
@@ -44,7 +43,7 @@ observe({
 		}
 		######################################################################## 		
 		
-		if(all_ok){
+		if(all_ok){ # otherwise report problem to try() in server_calculations.r
 			######################################################################## 						
 			# parameter settings ###################################################
 			cat("\n Checking parameter changes ... ")
@@ -53,7 +52,7 @@ observe({
 			for(i in 1:length(logfile$parameters)){	
 				if(names(logfile$parameters)[i]==""){next} # for any empty entries
 				if(names(logfile$parameters)[i]=="external"){next} # for external parameters		
-				old_param<-logfile$parameters[i]			
+				old_param<-logfile$parameters[i]		
 				for_param<-names(logfile$parameters)[i]
 				eval(parse(text=paste("new_param<-","as.character(isolate(input$",for_param,"))",sep="")))
 				if( length(new_param)>0 ){ # in shiny input list?
@@ -101,7 +100,12 @@ observe({
 					cat("\nAdapt settings affecting nodes: ")
 					print(affected);cat("\n")
 					for(i in 1:length(affected)){
-						enviMass:::workflow_set(down=affected[i],check_node=TRUE,single_file=TRUE,single_node=TRUE)
+						enviMass:::workflow_set(
+							down=affected[i],
+							check_node=TRUE, 	# only applied if affected step switched on - only in 
+							single_file=TRUE,
+							single_node=TRUE
+						)
 					}
 				}
 			}
@@ -127,7 +131,12 @@ observe({
 			logfile$adducts_neg<<-as.character(isolate(input$adducts_neg))
 			at6<-logfile$adducts_neg
 			if( any(is.na(match(at3,at4))) || any(is.na(match(at4,at3))) || any(is.na(match(at5,at6))) || any(is.na(match(at6,at5))) ){ 
-				enviMass:::workflow_set(down="pattern",check_node=TRUE,single_file=TRUE,single_node=TRUE)
+				enviMass:::workflow_set(
+					down="pattern",
+					check_node=TRUE,
+					single_file=TRUE,
+					single_node=TRUE
+				)
 			}
 			if(do_debug){cat("\n at_3")}
 			######################################################################## 
@@ -141,7 +150,12 @@ observe({
 			logfile$adducts_neg_group<<-as.character(isolate(input$adducts_neg_group))
 			at6<-logfile$adducts_neg_group
 			if( any(is.na(match(at3,at4))) || any(is.na(match(at4,at3))) || any(is.na(match(at5,at6))) || any(is.na(match(at6,at5))) ){ 
-				enviMass:::workflow_set(down="adducts",check_node=TRUE,single_file=TRUE,single_node=TRUE)
+				enviMass:::workflow_set(
+					down="adducts",
+					check_node=TRUE,
+					single_file=TRUE,
+					single_node=TRUE
+				)
 			}
 			if(do_debug){cat("\n at_4")}
 			########################################################################
@@ -153,14 +167,24 @@ observe({
 			at2<-logfile$Positive_subtraction_files
 			if(any(is.na(at2))){stop("\nThere was an issue reading out the new settings - maybe comma / dot separation was not fullfilled?")}		
 			if(!enviMass:::comp_list(at1,at2,as_pairs=FALSE)){ # both steps take partly the same parameters! 
-				enviMass:::workflow_set(down="blind",check_node=TRUE,single_file=TRUE,single_node=TRUE)
+				enviMass:::workflow_set(
+					down="blind",
+					check_node=TRUE,
+					single_file=TRUE,
+					single_node=TRUE
+				)
 			}	
 			at1<-logfile$Negative_subtraction_files
 			logfile$Negative_subtraction_files<<-c(isolate(input$files_neg_select_subtract),"FALSE")
 			at2<-logfile$Negative_subtraction_files
 			if(any(is.na(at2))){stop("\nThere was an issue reading out the new settings - maybe comma / dot separation was not fullfilled?")}		
 			if(!enviMass:::comp_list(at1,at2,as_pairs=FALSE)){ # both steps take partly the same parameters! 
-				enviMass:::workflow_set(down="blind",check_node=TRUE,single_file=TRUE,single_node=TRUE)
+				enviMass:::workflow_set(
+					down="blind",
+					check_node=TRUE,
+					single_file=TRUE,
+					single_node=TRUE
+				)
 			}		
 			if(do_debug){cat("\n at_8b")}
 			########################################################################  		  
@@ -194,7 +218,12 @@ observe({
 					cat("\nAdapt settings affecting nodes: ")
 					print(found);cat("\n")
 					for(i in 1:length(found)){
-						enviMass:::workflow_set(down=found[i],check_node=FALSE,single_file=TRUE) # do not change
+						enviMass:::workflow_set(
+							down=found[i],
+							check_node=FALSE,
+							single_file=TRUE,
+							single_node=FALSE
+						) # do not change
 					}
 			}
 			cat("Done checking of workflow changes.\n")

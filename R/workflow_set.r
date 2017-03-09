@@ -7,18 +7,27 @@
 #' @param down Name of node (logfile$Tasks_to_redo) to be altered
 #' @param added Name of node (logfile$Tasks_to_redo) to be added - additionally
 #' @param except Name of node (logfile$Tasks_to_redo) to be excluded - dangerous
-#' @param single_file File-wise handler
 #' @param check_node Only evaluate whether the concerned node is enabled in workflow?
+#' @param single_file File-wise handler
 #' @param single_node Apply single_file == TRUE resets of data.frame-measurements-entries only to down node?
 #' 
 #' @details enviMass workflow function. 
 #' 
 
-workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_node=FALSE,single_node=FALSE,...){
+workflow_set<-function(
+		down,
+		added=FALSE,
+		except=FALSE,
+		check_node=FALSE,
+		single_file=FALSE,
+		single_node=FALSE,
+		...
+	){
 
 	########################################################################################	
 	if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in workflow_set.r!")}
 	########################################################################################
+	# check inputs #########################################################################
 	if(!is.logical(added) & !is.logical(except)){
 		if((any(!is.na(match(added,except)))) || (any(!is.na(match(except,added))))){
 			stop("workflow_set: added or except nodes but not both for a node.")
@@ -28,26 +37,30 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 		stop(paste("workflow_set: unknown down argument",down))
 	}
 	if(length(down)>1){
-		stop("workflow_set: from which node down? Please specify only one node at a time.")
+		stop("workflow_set: from which node down? Please specify only ONE node at a time.")
 	}
+	if(any(is.na(match(logfile$workflow,c("yes","no"))))){
+		stop("Missing yes/no in logfile$workflow found - please debug!")	
+	}
+	if(any(is.na(match(logfile$Tasks_to_redo,c("TRUE","FALSE"))))){
+		stop("Missing yes/no in logfile$workflow found - please debug!")	
+	}	
 	########################################################################################
 	
 	########################################################################################
 	# leave funtion if check_node=TRUE (=parameters changed) but node not run ##############
+	# (i.e., only its script dont_.r) ######################################################
 	if(check_node){
 		if(logfile$workflow[names(logfile$workflow)==down]=="no"){
 			return(NULL);
-		}
-		if(logfile$workflow[names(logfile$workflow)==down]=="FALSE"){
-			return(NULL);
-		}		
+		}	
 	}
 	########################################################################################
 	depend<-logfile$workflow_depend
 	diag(depend)<-1
 	must<-logfile$workflow_must
 	########################################################################################
-	# retrieve tasks to redo ###############################################################
+	# retrieve Tasks to redo ###############################################################
 	# redefined dependencies:
 	if(!is.logical(added)){
 		for(i in 1:length(added)){
@@ -81,7 +94,7 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 	########################################################################################
 	
 	########################################################################################
-	# update $workflow #####################################################################
+	# UPDATE $workflow #####################################################################
 	# adapt chained requirements if set to "no" ############################################
 	########################################################################################
 	doit<-TRUE
@@ -104,11 +117,12 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 	########################################################################################	
 	
 	########################################################################################
-	# update $Tasks_to_redo ################################################################
+	# UPDATE $Tasks_to_redo ################################################################
 	########################################################################################
 	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 	while(length(work_stream)>0){
-		if(logfile$workflow[names(logfile$workflow)==work_stream[1]]=="yes"){
+		####################################################################################
+		if( (logfile$workflow[names(logfile$workflow)==work_stream[1]]=="yes") || (!check_node) ){
 			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)==work_stream[1]]<<-TRUE;			
 			if(	
 				((!single_file) & (any(names(measurements)==work_stream[1]))) || 
@@ -117,15 +131,7 @@ workflow_set<-function(down,added=FALSE,except=FALSE,single_file=FALSE,check_nod
 				measurements[,names(measurements)==work_stream[1]]<-FALSE;
 			}
 		}	
-		if(!check_node){
-			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)==work_stream[1]]<<-TRUE;
-			if( 
-				((!single_file) & (any(names(measurements)==work_stream[1]))) || 
-				((single_node) & (work_stream[1]==down) & (any(names(measurements)==work_stream[1])))			
-			){
-				measurements[,names(measurements)==work_stream[1]]<-FALSE;
-			}
-		}
+		####################################################################################
 		work_stream<-work_stream[-1]
 	}
 	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);

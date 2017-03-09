@@ -73,7 +73,7 @@ intensup<-function(
         timeset[i,3]<-as.numeric(sampleID[i]);
       }
     }
-    numtime<-(as.numeric(atdate)+as.numeric(attime/24))
+    numtime<-(as.numeric(atdate)+as.numeric(attime/(24*60*60)))
 	colnames(timeset)<-c("above blank?","sampleID","blankID","sample_int","blank_int",rep("lag_int",length(lags)),rep("del_int",length(lags)),rep("max_time",length(lags)),rep("blind_int",length(lags)))			
 	leng<-max(seq(1,length(timeset[,1]),1)[timeset[,2]!=0])	
 	latestID<-timeset[leng,2][[1]]

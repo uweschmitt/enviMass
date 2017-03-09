@@ -201,7 +201,7 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 		say<-paste("Invalid time format found for file(s) with ID(s) ",
 		paste(these,collapse=", "),". Please revise concerned file(s) in the files tab (- if there are any loaded so far)!",sep="")
 	}
-  # check calibration files
+  	# check calibration files
   measurements_cal<-measurements[measurements[,"Type"]=="calibration",,drop=FALSE] 
   if(length(measurements_cal[,1])>0){
 	  a<-try({as.Date(c(measurements_cal[,22]))},silent=TRUE)
@@ -233,9 +233,9 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 			# do calibration sets overlap in periods?
 			cal_files2<-unique(cal_files[,c(20,6,7,22,23),drop=FALSE])
 			starttime<-as.difftime(cal_files2[,3]);startdate<-as.Date(cal_files2[,2]);
-			numstart<-(as.numeric(startdate)+as.numeric(starttime/24))		
+			numstart<-(as.numeric(startdate)+as.numeric(starttime/(24*60*60)))		
 			endtime<-as.difftime(cal_files2[,5]);enddate<-as.Date(cal_files2[,4]);
-			numend<-(as.numeric(enddate)+as.numeric(endtime/24))
+			numend<-(as.numeric(enddate)+as.numeric(endtime/(24*60*60)))
 			if(length(starttime)>1){			
 				for(i in 1:(length(starttime)-1)){
 					for(j in (i+1):length(starttime)){		
@@ -276,9 +276,9 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 			# do calibration sets overlap in periods?
 			cal_files2<-unique(cal_files[,c(20,6,7,22,23),drop=FALSE])
 			starttime<-as.difftime(cal_files2[,3]);startdate<-as.Date(cal_files2[,2]);
-			numstart<-(as.numeric(startdate)+as.numeric(starttime/24))		
+			numstart<-(as.numeric(startdate)+as.numeric(starttime/(24*60*60)))		
 			endtime<-as.difftime(cal_files2[,5]);enddate<-as.Date(cal_files2[,4]);
-			numend<-(as.numeric(enddate)+as.numeric(endtime/24))	
+			numend<-(as.numeric(enddate)+as.numeric(endtime/(24*60*60)))	
 			if(length(starttime)>1){
 				for(i in 1:(length(starttime)-1)){
 					for(j in (i+1):length(starttime)){		

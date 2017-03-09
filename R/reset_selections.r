@@ -16,8 +16,8 @@ reset_selections<-function(session){
 	updateNumericInput(session,"sel_meas_ID", value = 0)
 	updateNumericInput(session,"sel_meas", value = 0)
 	updateSelectInput(session,"Pos_compound_select",selected = "Choose")	
-	
-	
+	updateSelectInput(session,"Neg_compound_select",selected = "Choose")	
+	updateNumericInput(session,"sel_meas_comp", value = 0)	
 	################################################################
 	
 }

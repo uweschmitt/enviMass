@@ -272,16 +272,16 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	}
 	################################################################################################
 	# define matrix of downstream workflow dependencies (==1) and ##################################
-	# recalculations of previous steps if their results are overwritten (==2), e.g. IS_subtr or ####
+	# upstream recalculations of nodes if their results are overwritten (==2), e.g. IS_subtr or ####
 	# target_subtr or target screening result tables/lists for quantification ######################
-	# requires only a definition of direct ones - indirect ones will be in workflow_set.r ##########
+	# requires only a definition of direct ones - indirect ones will be in workflow_set() ##########
 	# dependencies must simply go after their parent node ########################################## 
-	# order here actually irrelevant, because calculation order set with workflow_schedule #########
+	# order here actually irrelevant, because calculation order set with workflow_schedule() #######
 	logfile[[11]]<-workflow_depend
 	names(logfile)[11]<-"workflow_depend"	
 	################################################################################################
-	# define upstream workflow "musts", i.e., upstream nodes on which`s execution a node ###########
-	# depends. 0 = not dependent. 1 = dependent. -1 = MUST NOT be executed (not yet implemented)  	
+	# define upstream musts (==1), i.e., upstream nodes on which`s execution a node depends ########
+	# and downstream musts (==2).  (==-1) = MUST NOT be executed (not yet implemented) #############
 	logfile[[12]]<-workflow_must
 	names(logfile)[12]<-"workflow_must"	
 	################################################################################################	

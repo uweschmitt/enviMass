@@ -53,7 +53,7 @@ export_profile_list<-function(
         timeset[i,3]<-as.numeric(sampleID[i]);
       }
     }
-    numtime<-(as.numeric(atdate)+as.numeric(attime/24))
+    numtime<-(as.numeric(atdate)+as.numeric(attime/(24*60*60)))
 	colnames(timeset)<-c("above blank?","sampleID","blankID","sample_int","blank_int")			
 	leng_list<-length(profpeaks2[,1])
 	leng<-length(timeset[,1])
