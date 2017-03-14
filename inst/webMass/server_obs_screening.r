@@ -39,9 +39,17 @@ observe({
 				}else{
 					results_screen_pos<-results_screen_target_pos[[2]]
 				}
-				table_screening_pos<-DT::datatable(results_screen_pos, escape = FALSE,selection = 'single') %>% 
-					formatStyle('Max. sample score',background = styleColorBar(c(0,1), 'lightgreen'),backgroundPosition = 'right')
-				output$Table_screening_pos <- DT::renderDataTable({table_screening_pos},server = TRUE)
+				table_screening_pos<-DT::datatable(
+											results_screen_pos, escape = FALSE,selection = 'single',
+											extensions = c('Buttons'),		
+											options = list(	
+												lengthMenu = c(25,100,200),
+												ordering=TRUE,
+												dom = 'Bfrtip',
+												buttons = c('excel')
+											)
+										) %>% formatStyle('Max. sample score',background = styleColorBar(c(0,1), 'lightgreen'),backgroundPosition = 'right')
+				output$Table_screening_pos <- DT::renderDataTable({table_screening_pos},server = FALSE)
 				rm(results_screen_target_pos)
 				found_table<-TRUE
 				load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"),envir=as.environment(".GlobalEnv"),verbose=TRUE);	
@@ -107,9 +115,17 @@ observe({
 				}else{
 					results_screen_pos<-results_screen_IS_pos[[2]]
 				}
-				table_screening_pos<-DT::datatable(results_screen_pos, escape = FALSE,selection = 'single') %>% 
-					formatStyle('Max. sample score',background = styleColorBar(c(0,1), 'lightgreen'),backgroundPosition = 'right')
-				output$Table_screening_pos <- DT::renderDataTable({table_screening_pos},server = TRUE)
+				table_screening_pos<-DT::datatable(
+											results_screen_pos, escape = FALSE, selection = 'single',
+											extensions = 'Buttons',		
+											options = list(	
+												lengthMenu = c(25,100,200),
+												ordering=TRUE,
+												dom = 'Bfrtip',
+												buttons = c('excel')
+											)
+										) %>% formatStyle('Max. sample score',background = styleColorBar(c(0,1), 'lightgreen'),backgroundPosition = 'right')
+				output$Table_screening_pos <- DT::renderDataTable({table_screening_pos},server = FALSE)
 				rm(results_screen_IS_pos)	
 				found_table<-TRUE
 				load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"),envir=as.environment(".GlobalEnv"));	
@@ -252,15 +268,22 @@ observe({
 					}
 					DT::datatable(
 						as.data.frame(cbind(which_where,sample_type,which_peaks,score_1,score_2,delppm,delRT,inte,with_peaks),
-						#with_file,with_s),
 						row.names = NULL,stringsAsFactors=FALSE),
-						rownames = FALSE, colnames=c("File ID","File type","Pattern matches","Score > LOD","Score < LOD",
-							"m/z deviation (ppm)","RT","log Intensity","Peak IDs")#,"m","i")
-					)
+						rownames = FALSE, 
+						colnames=c("File ID","File type","Pattern matches","Score > LOD","Score < LOD",
+							"m/z deviation (ppm)","RT","log Intensity","Peak IDs"),
+						extensions = 'Buttons',		
+						options = list(	
+							lengthMenu = c(50,100),
+							dom = 'Bfrtip',
+							buttons = c('excel'),
+							ordering=TRUE
+						)							
+					)				
 				}else{
 					DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No compound selected or adducts collapsed")
 				}
-			},server = TRUE)
+			},server = FALSE)
 			# initialize intensity range for selected internal standard
 			observe({ 
 				s<-input$Table_screening_pos_row_last_clicked
@@ -793,9 +816,17 @@ observe({
 				}else{
 					results_screen_neg<-results_screen_target_neg[[2]]
 				}
-				table_screening_neg<-DT::datatable(results_screen_neg, escape = FALSE,selection = 'single') %>% 
-					formatStyle('Max. sample score',background = styleColorBar(c(0,1), 'lightgreen'),backgroundPosition = 'right')
-				output$Table_screening_neg <- DT::renderDataTable({table_screening_neg},server = TRUE)
+				table_screening_neg<-DT::datatable(
+											results_screen_neg, escape = FALSE,selection = 'single',
+											extensions = c('Buttons'),		
+											options = list(	
+												lengthMenu = c(25,100,200),
+												ordering=TRUE,
+												dom = 'Bfrtip',
+												buttons = c('excel')
+											)
+										) %>% formatStyle('Max. sample score',background = styleColorBar(c(0,1), 'lightgreen'),backgroundPosition = 'right')
+				output$Table_screening_neg <- DT::renderDataTable({table_screening_neg},server = FALSE)
 				rm(results_screen_target_neg)
 				found_table<-TRUE
 				load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy"),envir=as.environment(".GlobalEnv"),verbose=TRUE);	
@@ -853,7 +884,7 @@ observe({
 					load(file=file.path(logfile$project_folder,"quantification","results_screen_IS_neg_cal"))
 					results_screen_IS_neg<-results_screen_IS_neg_cal;rm(results_screen_IS_neg_cal) # contains sample vs. blank intensity ratios
 				}
-				screen_dev_neg<-results_screen_IS_neg[[3]]  # contains sample vs. blank intensity ratios		
+				screen_dev_neg<-results_screen_IS_neg[[3]]  # contains sample vs. blank intensity ratios					
 				screen_dev_neg[,2]<-log10(screen_dev_neg[,2])
 				rat_sam_blank_neg<-results_screen_IS_neg[[1]][,10,drop=FALSE]				
 				if( isolate(input$screen_neg_summarize=="yes") ){
@@ -861,9 +892,17 @@ observe({
 				}else{
 					results_screen_neg<-results_screen_IS_neg[[2]]
 				}
-				table_screening_neg<-DT::datatable(results_screen_neg, escape = FALSE,selection = 'single') %>% 
-					formatStyle('Max. sample score',background = styleColorBar(c(0,1), 'lightgreen'),backgroundPosition = 'right')
-				output$Table_screening_neg <- DT::renderDataTable({table_screening_neg},server = TRUE)
+				table_screening_neg<-DT::datatable(
+											results_screen_neg, escape = FALSE,selection = 'single',
+											extensions = c('Buttons'),		
+											options = list(	
+												lengthMenu = c(25,100,200),
+												ordering=TRUE,
+												dom = 'Bfrtip',
+												buttons = c('excel')
+											)
+										) %>% formatStyle('Max. sample score',background = styleColorBar(c(0,1), 'lightgreen'),backgroundPosition = 'right')
+				output$Table_screening_neg <- DT::renderDataTable({table_screening_neg},server = FALSE)
 				rm(results_screen_IS_neg)	
 				found_table<-TRUE
 				load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy"),envir=as.environment(".GlobalEnv"));	
@@ -1006,15 +1045,22 @@ observe({
 					}
 					DT::datatable(
 						as.data.frame(cbind(which_where,sample_type,which_peaks,score_1,score_2,delppm,delRT,inte,with_peaks),
-						#with_file,with_s),
 						row.names = NULL,stringsAsFactors=FALSE),
-						rownames = FALSE, colnames=c("File ID","File type","Pattern matches","Score > LOD","Score < LOD",
-							"m/z deviation (ppm)","RT","log Intensity","Peak IDs")#,"m","i")
-					)
+						rownames = FALSE, 
+						colnames=c("File ID","File type","Pattern matches","Score > LOD","Score < LOD",
+							"m/z deviation (ppm)","RT","log Intensity","Peak IDs"),
+						extensions = 'Buttons',		
+						options = list(	
+							lengthMenu = c(50,100),
+							dom = 'Bfrtip',
+							buttons = c('excel'),
+							ordering=TRUE
+						)							
+					)		
 				}else{
 					DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No compound selected or adducts collapsed")
 				}
-			},server = TRUE)
+			},server = FALSE)
 			# initialize intensity range for selected internal standard
 			observe({ 
 				s<-input$Table_screening_neg_row_last_clicked

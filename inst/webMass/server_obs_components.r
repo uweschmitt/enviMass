@@ -84,7 +84,8 @@ observe({ # - A
 						dom = 'Bfrtip',
 						buttons = c('excel')#buttons = c('excel', 'pdf', 'print', 'csv'),
 					)
-				)
+				),
+				server = FALSE
 			)
 			# output text summary ################################################
 			if((length(component[["pattern peak list"]])>1) & (do_isot)){found_isos<-TRUE}else{found_isos<-FALSE}

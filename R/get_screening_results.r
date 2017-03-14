@@ -246,7 +246,7 @@
 		results[[1]]<-results_table_1
 		results[[2]]<-results_table_2
 		if(at_len>0){
-			at_matrix<-at_matrix[1:(at_len-1),]
+			at_matrix<-at_matrix[1:(at_len-1),,drop=FALSE]
 			results[[3]]<-at_matrix
 		}else{
 			results[[3]]<-numeric(0)

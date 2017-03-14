@@ -22,6 +22,12 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 	}
 	if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in check_project.r!")}
 	###############################################################################
+	if(!all(names(logfile)==c("project_folder","Tasks_to_redo","summary","PW MSconvert path","parameters","workflow",
+	"adducts_pos","adducts_neg","isotopes","version","workflow_depend","workflow_must","Positive_subtraction_files",
+	"Negative_subtraction_files","adducts_pos_group","adducts_neg_group"))){
+		say<-"Your logfile is corrupted _1, serious debug required!"
+	}
+	###############################################################################
 	# wrong upstream "must not" executions? #######################################
 	must<-logfile[[12]]
 	for(i in 1:length(must[1,])){

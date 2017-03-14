@@ -214,7 +214,8 @@ observe({
 					targets,
 					isotopes,
 					adducts,
-					logfile
+					logfile,
+					check_relat=FALSE
 				)
 				rm(targets)
 				if(say=="Project consistent"){
@@ -521,7 +522,8 @@ observe({
 					targets=target_in,
 					isotopes,
 					adducts,
-					logfile
+					logfile,
+					check_relat=FALSE
 				)
 				rm(IS_current)
 				if(say=="Project consistent"){

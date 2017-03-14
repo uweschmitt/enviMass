@@ -2,16 +2,20 @@
 #'
 #' @description \code{} runs several cconsistency checks on a enviMass project
 #'
-#' @param logfile enviMass project logfile
-#' @param isotopes Isotope list
-#' @param adducts Adducts list from package enviPat
+#' @param intstand_check 
+#' @param
+#' @param
+#' @param
+#' @param
+#' @param
+#' @param
 #'
 #' @return Character string with either specific error message or a "Project consistent" message.
 #' 
 #' @details enviMass workflow function; run before further calculations are started in the workflow.
 #' 
 
-check_compounds<-function(intstand_check,targets_check,isotopes,adducts,logfile,write_tables=FALSE){
+check_compounds<-function(intstand_check,targets_check,isotopes,adducts,logfile,write_tables=FALSE,check_relat=TRUE){
 
 	say<-"Project consistent"
 	##############################################################################
@@ -271,8 +275,10 @@ check_compounds<-function(intstand_check,targets_check,isotopes,adducts,logfile,
 	##############################################################################
 	# check compounds and files for calibration & quantification #################
 	if(
-		(logfile$workflow[names(logfile$workflow)=="calibration"])=="yes" ||
-		(logfile$workflow[names(logfile$workflow)=="quantification"])=="yes"	
+		(
+			(logfile$workflow[names(logfile$workflow)=="calibration"])=="yes" ||
+			(logfile$workflow[names(logfile$workflow)=="quantification"])=="yes"
+		)&(check_relat)
 	){
 		# check if all relations / adducts are correct
 		for(i in 1:length(targets_check[,"ID"])){
