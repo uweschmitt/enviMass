@@ -27,17 +27,22 @@
 					use_maxmass<-FALSE				
 				}				
 				##################################################################
-				MSlist<-enviPick::readMSdata(
-					file.path(logfile[[1]],"files",paste(as.character(measurements[i,1]),".mzXML",sep="")),
-					MSlevel=logfile$parameters$peak_MSlevel,  # MSlevel
-					progbar=logfile$parameters$progressBar, # progbar
-					minRT=use_minRT,
-					maxRT=use_maxRT,
-					minmz=use_minmass,
-					maxmz=use_maxmass,
-					ion_mode=measurements[i,"Mode"]
-				);
-				cat(" file read -"); 
+				if(logfile$parameters$is_example=="FALSE"){
+					MSlist<-enviPick::readMSdata(
+						file.path(logfile[[1]],"files",paste(as.character(measurements[i,1]),".mzXML",sep="")),
+						MSlevel=logfile$parameters$peak_MSlevel,  # MSlevel
+						progbar=logfile$parameters$progressBar, # progbar
+						minRT=use_minRT,
+						maxRT=use_maxRT,
+						minmz=use_minmass,
+						maxmz=use_maxmass,
+						ion_mode=measurements[i,"Mode"]
+					);
+					cat(" file read -"); 
+				}else{ # no mzXML files for example projects -> use MSlist
+					load(file=file.path(logfile[[1]],"MSlist",as.character(measurements[i,"ID"]))); 
+					cat("example MSlist loaded -"); 
+				}
 				##################################################################
 				if(logfile$parameters$peak_estimate=="TRUE"){
 					use_peak_perc_cut<-0

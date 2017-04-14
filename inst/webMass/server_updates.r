@@ -1622,7 +1622,7 @@ if(logfile$version<3.2){
 	cat("\n Updating to version 3.2 ...")
 	################################################################################################	
 	if(!any(names(logfile$parameters)=="is_example")){
-		logfile$parameters$is_example<<-"TRUE"	
+		logfile$parameters$is_example<<-"FALSE"	
 	}
 	################################################################################################	
 	logfile$version<<-3.2
