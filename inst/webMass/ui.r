@@ -47,7 +47,7 @@ widget_style5 <-
   border-width: 3px;
   border-radius: 4px;
   border-color: darkgrey;
-  background-color: #cccccc;"
+  background-color: #cccccc;" 
 
 widget_style6 <-
   "max-width: 600px;"  

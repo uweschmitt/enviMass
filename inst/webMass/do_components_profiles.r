@@ -16,7 +16,7 @@ if(
 	if(any(objects()=="links_profiles_pos")){rm(links_profiles_pos)}					
 	load(file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"));
 	# links_peaks_pos<-list(); # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol
-	load(file.path(as.character(logfile[[1]]),"results","links_peaks_pos"));	
+	load(file.path(as.character(logfile[[1]]),"results","links_peaks_pos"),envir=as.environment(".GlobalEnv"));	
 	links_profiles_pos<-list(); # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol
 	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 	peaks<-profileList_pos[["peaks"]][,c("sampleIDs","peakIDs","profileIDs","RT")] # to retrieve relations with, sampleID, peakID, profileID, RT

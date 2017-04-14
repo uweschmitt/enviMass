@@ -1813,20 +1813,30 @@ output$had_import_folder<-renderText(paste(impfolder()))
 observe({
     input$Import_project_para
     if(input$Import_project_para){
-		cat("\n Importing project parameters ...")
-		logfile_here<<-logfile;
-		file_in<-as.character(isolate(input$import_pro_dir_paras))
-		a<-try(load(file.path(file_in,"logfile.emp"),envir=as.environment(".GlobalEnv")))
+		cat("\n Importing project parameters ...");
+		logfile_here<<-logfile;	
+		file_in<-as.character(isolate(input$import_pro_dir_paras));
+		a<-try(load(file.path(file_in,"logfile.emp"),envir=as.environment(".GlobalEnv")))	
 		if(class(a)!="try-error"){
 			logfile_other<<-logfile;
-			rm(logfile,envir=as.environment(".GlobalEnv"))
+			rm(logfile,envir=as.environment(".GlobalEnv"));
 			logfile<<-logfile_here
-			if(logfile$version==logfile_other$version){
-				logfile[[4]]<<-logfile_other[[4]]
-				logfile$parameters<<-logfile_other$parameters
-				logfile$adducts_pos<<-logfile_other$adducts_pos		
-				logfile$adducts_neg<<-logfile_other$adducts_neg		 
-				logfile$isotopes<<-logfile_other$isotopes		
+			if(logfile$version==logfile_other$version){	
+				if(any(names(logfile_other)=="PW MSconvert path")){
+					logfile[[4]]<<-logfile_other[[4]] # PW_MSconvert_path
+				}
+				if(any(names(logfile_other)=="parameters")){
+					logfile$parameters<<-logfile_other$parameters
+				}
+				if(any(names(logfile_other)=="adducts_pos")){				
+					logfile$adducts_pos<<-logfile_other$adducts_pos		
+				}
+				if(any(names(logfile_other)=="adducts_neg")){				
+					logfile$adducts_neg<<-logfile_other$adducts_neg			 
+				}
+				if(any(names(logfile_other)=="isotopes")){				
+					logfile$isotopes<<-logfile_other$isotopes			
+				}
 				rm(logfile_other,logfile_here,envir=as.environment(".GlobalEnv"))
 				save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp")); 
 				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");

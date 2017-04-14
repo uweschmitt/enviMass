@@ -1,7 +1,8 @@
 mainchecked<-reactive({
     input$Check
     if(input$Check){
-		say<-enviMass:::check_project(isotopes,adducts,skipcheck=isolate(input$do_project_check),ignorefiles=isolate(input$ignore_large_files),write_tables=FALSE);
+    	if( (isolate(input$ignore_large_files)=="TRUE") || (logfile$parameters$is_example=="TRUE")){ ignorefiles<-TRUE }else{ ignorefiles<-FALSE }
+		say<-enviMass:::check_project(isotopes,adducts,skipcheck=isolate(input$do_project_check),ignorefiles=ignorefiles,write_tables=FALSE);
 		output$dowhat<<-renderText(say)
 		if(say=="Project consistent"){
 			cat("Project consistent\n");
@@ -30,7 +31,8 @@ maincalc<-reactive({
 
 		if(do_flow==0){	# check only once, initially at do_flow==0! really?
 			enviMass:::reset_selections(session)
-			say<-enviMass:::check_project(isotopes,adducts,skipcheck=isolate(input$do_project_check),ignorefiles=isolate(input$ignore_large_files),write_tables=FALSE); # because of write_tables=TRUE only here, this check must remain here!
+    		if( (isolate(input$ignore_large_files)=="TRUE") || (logfile$parameters$is_example=="TRUE")){ ignorefiles<-TRUE }else{ ignorefiles<-FALSE }
+			say<-enviMass:::check_project(isotopes,adducts,skipcheck=isolate(input$do_project_check),ignorefiles=ignorefiles,write_tables=FALSE); # because of write_tables=TRUE only here, this check must remain here!
 			output$dowhat<<-renderText(say)
 			updateSelectInput(session,inputId="Ion_mode_Cal",selected = "none")			
 			updateSelectInput(session,inputId="Cal_file_set",selected = "none")

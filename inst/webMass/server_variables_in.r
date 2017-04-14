@@ -10,14 +10,14 @@ enviMass:::workflow_get(path,logfile,session)
 #########################################################################
 # adducts ###############################################################
 updateCheckboxGroupInput(session, "adducts_pos", selected=as.character(logfile$adducts_pos))
-updateCheckboxGroupInput(session, "adducts_neg", selected=as.character(logfile$adducts_neg)) 
+updateCheckboxGroupInput(session, "adducts_neg", selected=as.character(logfile$adducts_neg))
 updateCheckboxGroupInput(session, "adducts_pos_group", selected=as.character(logfile$adducts_pos_group))
 updateCheckboxGroupInput(session, "adducts_neg_group", selected=as.character(logfile$adducts_neg_group))                              
 #########################################################################
 
 #########################################################################
 # PW Path ###############################################################
-updateTextInput(session,inputId="PWpath",value=logfile$PW)	
+updateTextInput(session,inputId="PWpath",value=logfile$PW)
 #########################################################################
 
 #########################################################################
@@ -30,8 +30,8 @@ if(any( (measurements[,"ID"]!="-") & (measurements[,"Mode"]=="positive") & (meas
 		(measurements[,"Mode"]=="positive") & (measurements[,"Type"]!="sample")
 	,2]
 	IDs_pos<-paste(IDs_pos,names_pos,sep=" - ")
-	if(any(logfile[[13]]!="FALSE")){
-		select_pos<-logfile[[13]]
+	if(any(logfile[["Positive_subtraction_files"]]!="FALSE")){
+		select_pos<-logfile[["Positive_subtraction_files"]]
 		select_pos<-select_pos[select_pos!="FALSE"]
 		# include changes from file additions / removals
 		select_pos<-select_pos[!is.na(match(select_pos,IDs_pos))]
@@ -50,8 +50,8 @@ if(any( (measurements[,"ID"]!="-") & (measurements[,"Mode"]=="negative") & (meas
 		(measurements[,"Mode"]=="negative") & (measurements[,"Type"]!="sample")
 	,2]
 	IDs_neg<-paste(IDs_neg,names_neg,sep=" - ")
-	if(any(logfile[[14]]!="FALSE")){
-		select_neg<-logfile[[14]]
+	if(any(logfile[["Negative_subtraction_files"]]!="FALSE")){
+		select_neg<-logfile[["Negative_subtraction_files"]]
 		select_neg<-select_neg[select_neg!="FALSE"]
 		select_neg<-select_neg[!is.na(match(select_neg,IDs_neg))]
 	}else{

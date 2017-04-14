@@ -21,7 +21,7 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 		return(say);
 	}
 	if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in check_project.r!")}
-	###############################################################################
+	###############################################################################	
 	if(!all(names(logfile)==c("project_folder","Tasks_to_redo","summary","PW MSconvert path","parameters","workflow",
 	"adducts_pos","adducts_neg","isotopes","version","workflow_depend","workflow_must","Positive_subtraction_files",
 	"Negative_subtraction_files","adducts_pos_group","adducts_neg_group"))){
@@ -332,20 +332,20 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 	}	   
 	# check spiked files
 	measurements_spiked<-measurements[measurements[,"Type"]=="spiked",,drop=FALSE]   
-	if(length(measurements_spiked[,1])>0){  
+	if(length(measurements_spiked[,"ID"])>0){  
 		these_pos<-which(is.na(match(
 			measurements_spiked[measurements_spiked$Mode=="positive",]$tag2,
-			measurements[measurements$Mode=="positive",1]))
+			measurements[measurements$Mode=="positive","ID"]))
 		)
 		if(length(these_pos)>0){
-			these_pos<-measurements_spiked[measurements_spiked$Mode=="positive",1,drop=FALSE][these_pos]
+			these_pos<-measurements_spiked[measurements_spiked$Mode=="positive","ID"][these_pos]
 		}
 		these_neg<-which(is.na(match(
 			measurements_spiked[measurements_spiked$Mode=="negative",]$tag2,
-			measurements[measurements$Mode=="negative",1]))
+			measurements[measurements$Mode=="negative","ID"]))
 		)
 		if(length(these_neg)>0){	
-			these_neg<-measurements_spiked[measurements_spiked$Mode=="negative",1,drop=FALSE][these_neg]
+			these_neg<-measurements_spiked[measurements_spiked$Mode=="negative","ID"][these_neg]
 		}
 		if(length(these_pos)>0 || length(these_neg)>0){
 			say<-paste("Invalid file IDs (tag2) to subtract from for spiked file(s) with ID(s) ",
@@ -380,8 +380,14 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 		if(class(load_quantiz)=="try-error"){
 			redo_load_quantiz<-TRUE
 		}else{
-			if(quantiz$R_set!=logfile$parameters$resolution){
-				redo_load_quantiz<-TRUE
+			if(quantiz$R_set!="Sciex_all"){
+				if(quantiz$R_set!=logfile$parameters$resolution){
+					redo_load_quantiz<-TRUE
+				}
+			}else{ # Sciex instruments all set by one quantiz simulation
+				if(!grepl("Sciex",logfile$parameters$resolution)){
+					redo_load_quantiz<-TRUE
+				}
 			}
 		}
 	}
@@ -393,7 +399,10 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 			"OrbitrapXL,Velos,VelosPro_R60000@400",
 			"Q-Exactive,ExactivePlus_280K@200",
 			"Q-Exactive,ExactivePlus_R140000@200",
-			"Q-Exactive,ExactivePlus_R70000@200"
+			"Q-Exactive,ExactivePlus_R70000@200",
+			"Sciex_TripleTOF5600_R25000@200",
+			"Sciex_TripleTOF6600_R25000@200",
+			"Sciex_QTOFX500R_R25000@200"
 		)
 		if(any(avail==logfile$parameters$resolution)){ # available on www.envimass.ch
 			if(logfile$parameters$resolution=="OrbitrapXL,Velos,VelosPro_R60000@400"){
@@ -408,6 +417,15 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_R70K@200"){
 				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive_ExactivePlus_R70K@200/quantiz"
 			}				
+			if(logfile$parameters$resolution=="Sciex_TripleTOF5600_R25000@200"){
+				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Sciex_all/quantiz"
+			}
+			if(logfile$parameters$resolution=="Sciex_TripleTOF6600_R25000@200"){
+				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Sciex_all/quantiz"
+			}
+			if(logfile$parameters$resolution=="Sciex_QTOFX500R_R25000@200"){
+				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Sciex_all/quantiz"
+			}
 			dest_file<-file.path(logfile[[1]],"dataframes","quantiz")
 			url_quantiz<-try(download.file(url=get_url, destfile=dest_file, mode = "wb"))
 			if(class(url_quantiz)=="try-error"){

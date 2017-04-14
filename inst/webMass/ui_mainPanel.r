@@ -582,13 +582,18 @@
 				networkD3:::forceNetworkOutput("force_workflow", width = 1500, height = 400),
 				# block 1 ######################################################
 				HTML('<hr noshade="noshade" />'),
-				HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> File upload </font></p> '),
-				HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Peak picking </font></p> '),
+				HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> File upload
+					<a href="http://www.looscomputing.ch/eng/enviMass/topics/PW.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a>	
+				</font></p> '),
+				HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Peak picking 
+					<a href="http://www.looscomputing.ch/eng/enviMass/topics/peakpicking.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a>	
+				</font></p> '),
 				HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Quality control filter </font></p> '),
 					fluidRow(
 						column(width = 2, radioButtons("qc", "Include?", c("yes"="yes","no"="no"), inline = TRUE)),          
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","The quantile distributions of peak intensities are compared between files to detect outliers.")
+							tags$p(align="justify","The quantile distributions of peak intensities are compared between files to detect outliers."),
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/QC.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')								
 						)
 					),
 				HTML('<hr noshade="noshade" />'),
@@ -598,7 +603,8 @@
 					fluidRow(
 						column(width = 2, radioButtons("recal", "Include?", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","Theoretical masses of internal standard compounds are used to correct systematic offsets in measured masses.")
+							tags$p(align="justify","Theoretical masses of internal standard compounds are used to correct systematic offsets in measured masses."),
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/recalibration.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
 					),
 				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Median intensity normalization </font></p> '),
@@ -606,7 +612,8 @@
 						column(width = 2, radioButtons("norm", "Include?", c("yes"="yes","no"="no"))),          
 						column(width = 10, offset = 0.3,
 							tags$p(align="justify","Intensity normalization with the median peak intensity of each file. Only useful if overall intensities can be assumed to be constant among files.
-							Should be avoided if this assumption is violated, e.g., when including blank/blind files into profiling. Better use the below normalization with internal standards.")
+							Should be avoided if this assumption is violated, e.g., when including blank/blind files into profiling. Better use the below normalization with internal standards."),
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/median_normalization.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
 					),
 				#HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> RT alignment </font></p> '),
@@ -618,7 +625,8 @@
 						column(width = 8, offset = 0.3,
 							tags$p(align="justify","Detects sample peaks which are also present in blind/blank files. Check Settings Blind Tab for file selection. 
 							Optionally, affected peaks can early be removed before downstream processing. Recommended for e.g. effect on compound screening - otherwise
-							later removal (cp. red steps) recommended.")
+							later removal (cp. red steps) recommended."),
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/blind.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
 					),				
 				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Replicate filter </font></p> '),				
@@ -629,7 +637,8 @@
 							tags$p(align="justify","Filters out picked peaks which are not ubiquitously present in a set of measurements, within tolerances specified in the Settings/Replicates tab.
 							Typically, such a set would be composed of replicate measurements. 
 							A set can be defined by a joint string other than FALSE (e.g. replicates_A) in the tag_3 column of the file table, as assembled in the Files tab.
-							Optionally, profiles can be extracted in the replicates first, and later merged over all files.")
+							Optionally, profiles can be extracted in the replicates first, and later merged over all files."),
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/replicates.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
 					),
 				HTML('<hr noshade="noshade" />'),
@@ -640,7 +649,8 @@
 						column(width = 2, radioButtons("profiling", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
 							tags$p(align="justify","An intensity descent assorts peaks into profiles. Uses a fixed retention time tolerance window and
-							an adaptive mass tolerance window. Only peaks of files marked for profiling are used (column profiled in the files table / File Tab).")
+							an adaptive mass tolerance window. Only peaks of files marked for profiling are used (column profiled in the files table / File Tab)."),
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/profiling.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
 					),					
 				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> LOD interpolation </font></p>'),
@@ -648,7 +658,8 @@
 						column(width = 2, radioButtons("LOD", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
 							tags$p(align="justify","For each measurement, estimates a RT-dependent intensity threshold below which peaks are not expected to get picked. 
-							Can be used for the below compound screening.")
+							Can be used for the below compound screening."),
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/lod.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
 					),
 				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> Compound screening </font></p> '),
@@ -662,7 +673,8 @@
 						column(width = 6, offset = 0.3,
 							tags$p(align="justify","Uses the LOD thresholds estimated in the above step. If the LOD interpolation is not run, a fixed intensity threshold as specified in the
 							Settings/Screening tabs is used. All peaks of files marked for inclusion and profiling are used (column profiled in the files table / File Tab) - unless peaks are
-							removed explicitly in the early blind detection (see blue workflow steps).")
+							removed explicitly in the early blind detection (see blue workflow steps)."),
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/screening.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
 					),	
 				HTML('<hr noshade="noshade" />'),
@@ -705,7 +717,8 @@
 					fluidRow(
 						column(width = 2, radioButtons("EIC_correlation", "Include?", c("yes"="yes","no"="no"))),
 						column(width = 10, offset = 0.3, tags$p(align="justify","Checks for correlation between EICs (= chromatographic peak shapes) which share enough scans. 
-						Also used to exclude non-correlated EIC peaks from the below isotopologue and adduct grouping."))
+						Also used to exclude non-correlated EIC peaks from the below isotopologue and adduct grouping.")),
+						HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/eic" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 					),	
 				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> File-wise componentization </font></p> '),
 					fluidRow(
@@ -716,7 +729,9 @@
 						),
 						column(width = 3, radioButtons("adducts", "... adduct grouping?", c("yes"="yes","no"="no"),inline=TRUE)),
 						column(width = 3, radioButtons("homologues", "... homologue series detection?", c("yes"="yes","no"="no"),inline=TRUE))
-					),					
+					),		
+					HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/components" style="color:rgb(60, 100, 60); text-decoration: none"; 
+						target="_blank"><p align="right">&#8594; More info.</a></p>'),	
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),  				
 				# block 5 ######################################################
@@ -726,7 +741,8 @@
 						column(width = 10, offset = 0.3,
 							tags$p(align="justify","Relies on the above profile extraction and internal standard screening (green steps). Intensities of picked peaks in each measurement 
 							are normalized by the median deviation all internal standards have in the measurement from their individual median profile intensity.
-							This approach can replace the less reliable Median intensity normalization above (blue steps). Internal standards must have been spiked at constant concentrations.")
+							This approach can replace the less reliable Median intensity normalization above (blue steps). Internal standards must have been spiked at constant concentrations."),
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/IS_normalization" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
 					),					
 				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Profile filtering </font></p> '),
@@ -735,7 +751,8 @@
 							radioButtons("subtr", "Include?", c("yes"="yes","no"="no"),inline=TRUE)
 						),
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","Run a profile recalculation omitting...")						
+							tags$p(align="justify","Run a profile recalculation omitting..."),
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/filtering" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')				
 						)
 					),	
 					HTML('<hr noshade="noshade" />'), 
@@ -769,20 +786,26 @@
 							radioButtons("subtr_spiked", "Subtract?", c("yes"="yes","no"="no"),inline=TRUE)
 						)
 					),	
-				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Trend detection </font></p> '),
+					HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Trend detection </font></p> '),
 					fluidRow(
 						column(width = 2, radioButtons("trendblind", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","Depending on settings, this can contain a separate blind detection step. Herein, intensities of blind/blank peaks are interpolated over the time series.
-							This interpolation and subtraction is only applicable if the separate blind filter step is disabled (see above blue steps and the preceding red step).")
+							tags$p(align="justify","Detects and ranks profile intensities which increase over time.
+							Depending on settings, this can contain a separate blind detection step. Herein, intensities of blind/blank peaks are interpolated over the time series.
+							This interpolation and subtraction is only applicable if the separate blind filter step is disabled (see above blue steps and the preceding red step)."),
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/trends" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
-					),							            
-				#HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Profile componentization </font></p> '),
+					)#,							            
+				#HTML('<h1 align="center"> &#x21e9; </h1> '), 
+				#HTML('<p style="background-color:blue"; align="center"> <font color="#FFFFFF"> Profile componentization </font></p> '),
 				#	fluidRow(
-				#		column(width = 2, radioButtons("components", "Include?", c("yes"="yes","no"="no"))),
-				#		column(width = 10, offset = 0.3,tags$p(align="justify","Under construction"))
+				#		column(width = 2, radioButtons("components_profiles", "Include?", c("yes"="yes","no"="no"))),
+				#		column(width = 10, offset = 0.3,
+				#			tags$p(align="justify","Exports screening and profiling results."),
+				#			HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/trends" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
+				#		)
 				#	),
-				HTML('<hr noshade="noshade" />') 
+				#HTML('<hr noshade="noshade" />') 
 				################################################################
 	
         ),
@@ -790,60 +813,73 @@
         # PARAMETER SETTINGS ###################################################
         ########################################################################
         tabPanel("Settings",     
-		  tags$h5("Apply paramter settings to project?"), 
+		  tags$h5("Apply parameter settings to project?"), 
 		  bsButton("savepar","Apply",style="warning"),
 		  bsAlert("alert_2"),
-		  HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/inputs/parameters.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on parameters</a></p>'),	
+		  HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/inputs/parameters.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Help on how to specify parameters.</a></p>'),	
           tabsetPanel(
             # PEAK PICKING #####################################################
             tabPanel("Peak picking",
-				div(style = widget_style2,
-					tags$h5("Data extraction"),
-					selectInput("cut_RT", "Filter RT range?", choices = c("yes"="TRUE","no"="FALSE"), selected="FALSE"),
-					numericInput("cut_RT_min", "Lower RT bound [minutes]", 0),
-					numericInput("cut_RT_max", "Upper RT bound [minutes]", 25),
-					HTML('<hr noshade="noshade" />') ,
-					selectInput("cut_mass", "Filter mass range?", choices = c("yes"="TRUE","no"="FALSE"), selected="FALSE"),
-					numericInput("cut_mass_min", "Lower m/z bound", 0),
-					numericInput("cut_mass_max", "Upper m/z bound", 2000)
-				),	
-				div(style = widget_style2,
-					tags$h5("EIC partitioning & clustering"),
-					sliderInput("peak_drtgap", "Maximum retention time gap in an EIC", min = 20, max = 1500, value = 300, step= 1),
-					sliderInput("peak_dmzdens", "Maximum m/z deviation of a measurement from its EIC mean [ppm]", min = 1, max = 100, value = 3.5, step= 0.1)       				
+  				HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/peakpicking.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details & parameter descriptions.</a></p>'),			
+				HTML('<hr noshade="noshade" />'),
+					tags$h4("Data extraction"),
+					fluidRow(
+						column(width = 5, 
+							selectInput("cut_RT", "Filter RT range?", choices = c("yes"="TRUE","no"="FALSE"), selected="FALSE"),
+							numericInput("cut_RT_min", "Lower RT bound [minutes]", 0),
+							numericInput("cut_RT_max", "Upper RT bound [minutes]", 25)
+						),
+						column(width = 5, 						
+							selectInput("cut_mass", "Filter mass range?", choices = c("yes"="TRUE","no"="FALSE"), selected="FALSE"),
+							numericInput("cut_mass_min", "Lower m/z bound", 0),
+							numericInput("cut_mass_max", "Upper m/z bound", 2000)
+						)
+					),
+				HTML('<hr noshade="noshade" />'),
+				div(style = widget_style5,
+					tags$h4("Parameter estimation"),
+					tags$h5("This self-parametrization step estimates file-specific values for the below 'Maximum m/z deviation of a centroid data point from its EIC mean',
+						the 'Minimum log10(intensity) threshold' and the 'Percentage of low-intense data points to discard'. It overwrites the provided values of these
+						three parameters; if the estimation fails the provided values will be used instead. 
+						The estimation is useful for peak-picking in files with large but variable amounts of low-intense noise."),
+					selectInput("peak_estimate", "Include estimation?", choices = c("yes"="TRUE","no"="FALSE"), selected="TRUE")
 				),
 				div(style = widget_style2,
-					tags$h5("Peak definition"), 
-					numericInput("peak_minpeak", "Minimum number of measurements per peak ...", 4),
+					tags$h4("EIC partitioning & clustering"),
+					sliderInput("peak_drtgap", "Maximum retention time gap in an EIC", min = 20, max = 1500, value = 300, step= 1),
+					sliderInput("peak_dmzdens", "Maximum m/z deviation of a centroid data point from its EIC mean [ppm]", min = 1, max = 100, value = 3.5, step= 0.1)       				
+				),
+				div(style = widget_style2,
+					tags$h4("Peak definition"), 
+					numericInput("peak_minpeak", "Minimum number of centroid data point  per peak ...", 4),
 					sliderInput("peak_drtsmall2", "... within a given RT window [s]", min = 1, max = 200, value = 20, step= 0.1),
 					sliderInput("peak_drtfill", "Maximum RT gap length to be interpolated [s]", min = 0, max = 60, value = 10, step= 0.1),
 					sliderInput("peak_drtdens2", "Peak definition - Maximum RT length of a single peak", min = 10, max = 1500, value = 120, step= 0.1),
 					HTML('<hr noshade="noshade" />') ,
 					numericInput("peak_minint_log10", "Minimum log10(intensity) threshold", -10),
-					#sliderInput("peak_minint_log10", "Minimum log10(intensity) threshold", min = 0, max = 10, value = 4, step= .1),
 					numericInput("peak_SN", "Minimum Signal/Noise", 5),
 					numericInput("peak_SB", "Minimum Signal/Base", 2),
 					numericInput("peak_recurs", "Maximum possible number of peaks within a single EIC", 3)
 				),
 				div(style = widget_style,
-					tags$h5("Advanced options"),
+					tags$h4("Advanced options"),
 					numericInput("peak_ended", "How often can a peak detection fail to end the recursion? - peak picking", 1),
-					numericInput("peak_weight", "Weight for assigning measurements to a peak - peak picking", 1),
+					numericInput("peak_weight", "Weight for assigning centroid data points to a peak - peak picking", 1),
 					numericInput("peak_maxint_log10", "Upper log10(intensity) safety threshold", 6.7),					
-					#sliderInput("peak_maxint_log10", "Upper log10(intensity) safety threshold", min = 0, max = 15, value = 6.7, step= .1),
 					sliderInput("peak_perc_cut", "Percentage of low-intense data points to discard", min = 0, max = 100, value = 0, step= .1)
 				),
               tags$h4(""),
               tags$h4("")              
             ),
 			# RESOLUTION #######################################################
-            tabPanel("Resolution",
+            tabPanel("Instrument / Resolution",
                   div(style = widget_style3,selectInput("resolution", label="Instrument resolution:", choices="none", selected="none", width='600px')),
 				  imageOutput("plot_resolution", height="auto")	  
             ),	
             # RECALIBRATION ####################################################
-            tabPanel("Recalibration",
-              tags$h5("Mass recalibration"),
+            tabPanel("Mass recalibration",
+      		  HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/recalibration.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details & parameter descriptions.</a></p>'),				
+              HTML('<hr noshade="noshade" />'),
               div(
                 style = widget_style3,
                 selectInput("recal_use", "Reference compounds:", c("Internal standards","Target compounds","both"),"Internal standards",multiple=FALSE),                
@@ -855,6 +891,8 @@
             ),
 			# REPLICATES #######################################################
             tabPanel("Replicates",
+      		  	HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/replicates.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details & parameter descriptions.</a></p>'),				
+				HTML('<hr noshade="noshade" />'),
 				tags$h5("Replicate files are defined (i.e., grouped) by the tag3 entry (not FALSE) in the measurements table"),
 				numericInput("replicate_dmz", "+/- m/z tolerance ...", 3),                
 				selectInput("replicate_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),	
@@ -868,6 +906,8 @@
             #),
             # SCREENING ########################################################
             tabPanel("Screening",
+              HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/screening.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details & parameter descriptions.</a></p>'),				
+              HTML('<hr noshade="noshade" />'),
               tabsetPanel(
                 tabPanel("IS",
 					div(style = widget_style2,
@@ -939,12 +979,15 @@
 			# QUANTIFICATION & RECOVERY ########################################
 			tabPanel("Quantification",
 				HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/quantification.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details & parameter descriptions.</a></p>'),	
+				HTML('<hr noshade="noshade" />'),
 				numericInput("quant_files_included", "Number of latest file to include in the quantification:", 30),
 				numericInput("recov_files_included", "Number of latest spiked files to include for recovery estimation:", 30)			
 			),
             # INTENSITY NORMALIZATION ##########################################
             tabPanel("Normalization",
 				tags$h5("Intensity normalization based on IS-profiles"),
+				HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/quantification.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details & parameter descriptions.</a></p>'),	
+				HTML('<hr noshade="noshade" />'),
 				sliderInput("ISnorm_percfiles", "Minimum of files covered by each IS profile (%)", min = 0, max = 100, value = 90, step= 1),
 				sliderInput("ISnorm_score", "Screening threshold", min = 0, max = 1, value = 0.8, step= .01),
 				numericInput("ISnorm_numbIS", "Minimum number of IS profiles", 15),
@@ -959,7 +1002,9 @@
 			),
             # PROFILING ########################################################
             tabPanel("Profiling",
-				tags$h5("Profile extraction"),
+				#tags$h5("Profile extraction"),
+				HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/profiling.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details & parameter descriptions.</a></p>'),	
+				HTML('<hr noshade="noshade" />'),
 				sliderInput("prof_maxfiles", "Maximum number of newest files to be processed (by date/time) ", min = 50, max = 3000, value = 100, step= 1),
 				numericInput("prof_dmz", "Peak deviation within profiles: m/z tolerance ...", 3),                
                 selectInput("prof_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),
@@ -971,7 +1016,9 @@
 			),
             # TREND ############################################################
             tabPanel("Trends",
-				tags$h5("Trend detection:"),
+				#tags$h5("Trend detection:"),
+				HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/trends.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details & parameter descriptions.</a></p>'),	
+				HTML('<hr noshade="noshade" />'),
 				textInput("trend_lags", "Time lags of trends [days], comma-separated:", value = "4,7,14"),
 				numericInput("trend_threshold", "Trend vs. mean+variance intensity threshold:", 3),
 				HTML('<hr noshade="noshade" />'),
@@ -981,7 +1028,9 @@
             ),
             # BLIND #############################################################
             tabPanel("Blind",
-				tags$h5("Blind subtraction:"),
+				#tags$h5("Blind subtraction:"),
+				HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/blind.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details & parameter descriptions.</a></p>'),	
+				HTML('<hr noshade="noshade" />'),
 				numericInput("blind_threshold", "Intensity threshold ratio sample/blind <", 100),
 				numericInput("blind_dmz", "Mass uncertainty (+/-) ...", 3), 
                 selectInput("blind_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),				
@@ -999,8 +1048,12 @@
             ),			
             # Componentization #################################################
             tabPanel("Componentization",			
+            	tags$h5("File-wise componentization"),
+				HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/components.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on filewise componentization.</a></p>'),	
+				HTML('<hr noshade="noshade" />'),
 				tabsetPanel(
 					tabPanel("Isotopologue grouping",	
+						HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/isotopologues.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on isotopologue grouping parameters.</a></p>'),	
 						HTML('<hr noshade="noshade" />'),
 						numericInput("isotop_mztol", "Mass uncertainty (+/-) ...", 3), 
 						selectInput("isotop_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),				
@@ -1008,6 +1061,7 @@
 						sliderInput("isotop_inttol", "Intensity tolerance %", min = 0, max = 100, value = 30, step= .2)
 					),
 					tabPanel("Adduct grouping",	
+						HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/adducts.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on adduct grouping parameters.</a></p>'),	
 						HTML('<hr noshade="noshade" />'),
 						numericInput("adducts_mztol", "Mass uncertainty (+/-) ...", 3), 
 						selectInput("adducts_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),				
@@ -1017,6 +1071,7 @@
 						div(style = widget_style3,checkboxGroupInput("adducts_neg_group", "Negative mode:", "none"))						
 					),
 					tabPanel("Homologue series detection",	
+						HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/homol.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on homologue detection parameters.</a></p>'),	
 						HTML('<hr noshade="noshade" />'),
 						textInput("homol_units", label="Homologue units (comma seperated, no empty spaces; insert FALSE to detect all series with m/z differences in between 10 and 120)", value = "CH2,CH4O", width = '100%', placeholder = "CH2,CH4O"),
 						textInput("homol_charges", label="Charges z (comma seperated, no empty spaces)", value = "1,2", width = NULL, placeholder = "1,2"),
@@ -1031,7 +1086,8 @@
 						HTML('<hr noshade="noshade" />'),						
 						numericInput("homol_vec_size", "Ignore unless a relevant error message is printed (then try to increase size): ", 1E8)
 					),
-					tabPanel("EIC correlation",			
+					tabPanel("EIC correlation",	
+						HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/eic.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on EIC correlation parameter.</a></p>'),	
 						HTML('<hr noshade="noshade" />'),
 						numericInput("EICor_delRT", "RT tolerance window for candidate peak pairs [s]:", 5),
 						numericInput("EICor_minpeaks", "Min. number of data points (scans) shared by EIC pairs to check for their correlation:", 15),
@@ -1059,7 +1115,7 @@
 			),
 			# IMPORT PARAMETERS FROM ANOTHER PROJECT ###########################
             tabPanel("Import",			
-				tags$h5("Import all parameter settings from another project, excluding blind file selection. Insert full project path to import from, i.e., the path to the project folder in which the logfile.emp file of the project file located. Does only work between projects made with the same enviMass version."),
+				tags$h5("Import all parameter settings from another project, excluding blind file selection. Insert full project path to import from, i.e., the path to the project folder in which the logfile.emp file of the project file is located. Does only work between projects made with the same enviMass version."),
 						textInput("import_pro_dir_paras", "", value = "C:\\...\\other_project_name"),
 						bsPopover("import_pro_dir_paras", 
 							title = "Insert full project path to import from, i.e., the the project folder in which a logfile.emp file is located.",

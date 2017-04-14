@@ -146,6 +146,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters$cut_mass<-"FALSE"
 		logfile$parameters$cut_mass_min<-"0"
 		logfile$parameters$cut_mass_max<-"2000"		
+		logfile$parameters$peak_estimate<-"TRUE"		
 		# show progbar? ########################################################
 		logfile$parameters$progressBar<-"FALSE";	 
 		# isotope patterns #####################################################
@@ -184,7 +185,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters$prof_ppm<-"TRUE";		
 		logfile$parameters$prof_drt<-"60";			
 		logfile$parameters$prof_comp_maxfiles<-"15"
-		logfile$parameters$prof_select<-"FALSE";		
+		logfile$parameters$prof_select<-"TRUE";		
 		logfile$parameters$replicates_prof<-"yes";		
 		# IS screening #########################################################
 		logfile$parameters$IS_drt1<-"30"; 			# RT tolerance of peaks in sample relative to their expected RT [s]
@@ -253,7 +254,11 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters$EICor_delRT<-"5"		
 		logfile$parameters$EICor_minpeaks<-"15" 	
 		logfile$parameters$EICor_mincor<-".95"
-		
+		# Is this an example project? ##########################################
+		logfile$parameters$is_example<-"FALSE"			
+
+
+
 
 		# add custom parameters ################################################
 		source(file="workflow_parameters.r",local=TRUE)
@@ -263,7 +268,9 @@ newproject<-function(pro_name,pro_dir,IS,targets){
     names(logfile)[6]<-c("workflow")
 	for(i in 1:length(names(logfile[[2]]))){
 		# use simple initial workflow settings
-		if(any(names(logfile[[2]])[i]==c("peakpicking","LOD","profiling","IS_screen","target_screen"))){
+		if(any(names(logfile[[2]])[i]==
+			c("peakpicking","LOD","profiling","IS_screen","target_screen")
+		)){
 			logfile$workflow[i]<-"yes"; 
 		}else{
 			logfile$workflow[i]<-"no"; 		
@@ -294,7 +301,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
     # positive adducts - screening #########################################################
     logfile[[7]]<-0   
     names(logfile)[7]<-c("adducts_pos")
-    logfile[[7]]<-"M+H";
+    logfile[[7]]<-c("M+H","M+Na","M+K","M+NH4");
     # negative adducts - screening #########################################################
     logfile[[8]]<-0   
     names(logfile)[8]<-c("adducts_neg")
@@ -303,7 +310,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
     logfile[[9]]<-"";
     names(logfile)[9]<-c("isotopes")
 	# enviMass version number ##################################################
-    logfile[[10]]<-3.127
+    logfile[[10]]<-3.2
     names(logfile)[10]<-c("version")   
 	# subtraction files ########################################################
 	logfile[[13]]<-"FALSE"

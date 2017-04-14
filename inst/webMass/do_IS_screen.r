@@ -63,7 +63,8 @@
 		RT_tol_inside<-as.numeric(logfile$parameters$IS_drt2)		# RT tolerance of peaks within an isotope pattern [s]
 		cut_score<-as.numeric(logfile$parameters$IS_w1)	
 
-# BAUSTELLE
+		###############################################################################################
+		# restrict to latest files? ###################################################################		
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");			
 		if(logfile$parameters$screen_IS_restrict=="TRUE"){
 			measurements<-measurements[measurements[,"Mode"]=="positive",,drop=FALSE]
@@ -85,9 +86,9 @@
 			retain_sample<-rep(TRUE,max(as.numeric(measurements[,"ID"])))		
 		}
 		rm(measurements)
-# BAUSTELLE
+
 		
-		peaks<-profileList_pos[[7]];
+		peaks<-profileList_pos[["index_prof"]];
 		peaklist<-peaks[,c("mean_mz","mean_int","mean_RT")];
 		# screen centroids
 		count_nonmax<-0
@@ -129,6 +130,7 @@
 		for(i in 1:length(getit)){ # transfer to a first list of compoundadduct x centroids
 			screen_list[[centro_ID[i]]][[centro_number[i]]]<-getit[i]
 		}
+		#######################################################################################
 		# resort to a full result list: pattern x sample x (centroids,matches) ( = peak index in profileList_pos)		
 		IS_pos_screen_listed<-list()  # default: no match at all		
 		set_ID<-seq(1:length(profileList_pos[[4]]))	
@@ -141,9 +143,7 @@
 						for(k in 1:length(profs)){ # over their matched profile peaks = k		
 							if(profileList_pos[[7]][profs[k],4]!=profs[k]){cat("\n debug me: profile ID mismatch");stop();} # a check
 							for(m in profileList_pos[[7]][profs[k],1]:profileList_pos[[7]][profs[k],2]){ # over their sample peaks	
-# BAUSTELLE
 								if(retain_sample[profileList_pos[[2]][m,"sampleIDs"]]==FALSE){next} # Is this file among the latest ones?
-# BAUSTELLE							
 								delmass<-abs(profileList_pos[[2]][m,1]-pattern[[i]][j,1])		
 								if(!ppm){
 									if(delmass>mztol){next}
@@ -171,6 +171,7 @@
 			}
 		}	
 		names(IS_pos_screen_listed)<-names(pattern)
+		#######################################################################################
 		# decompose ###########################################################################		
 		if( logfile$parameters$screen_IS_cutit=="TRUE" ){
 			use_score_cut<-TRUE;
@@ -228,8 +229,10 @@
 			}
 			names(res_IS_pos_screen)<-names(IS_pos_screen_listed)
 		}
+		####################################################################################################
 		# save list ########################################################################################
 		save(res_IS_pos_screen,file=file.path(logfile$project_folder,"results","screening","res_IS_pos_screen"))
+		####################################################################################################
 		# assemble output table of length(list) ############################################################
 		# iterator m is NOT directly equal to the sample ID ################################################
 		# must be corrected by the smallest ID in the file set used ########################################
@@ -309,7 +312,7 @@
 		rm(getit,IS_pos_screen_listed,res_IS_pos_screen)
 		rm(pattern,pattern_RT,pattern_delRT,envir=as.environment(".GlobalEnv"))
 		####################################################################################################
-}		
+	}		
 	########################################################################################################
 	########################################################################################################
 	
@@ -346,10 +349,10 @@
 		pattern_delRT<<-patternDelRT_neg_IS;rm(patternDelRT_neg_IS,envir=as.environment(".GlobalEnv"));
 		
 		if(FALSE){ # debug - reduce to a speccific compound & adduct
-			use_that<-names(pattern)=="21_M-H_none_none_none" # Bentazone
-			use_that<-names(pattern)=="692_M-H_none_none_none" # Bezafibrat
-			use_that<-names(pattern)=="16_M-H_none_none_none" # 1,4-D 613C
-			use_that<-names(pattern)=="320_M-H_none_none_none" # Diclofenac
+			use_that<-names(pattern)=="90_M-H_none_none_none" # Bentazone
+			#use_that<-names(pattern)=="692_M-H_none_none_none" # Bezafibrat
+			#use_that<-names(pattern)=="16_M-H_none_none_none" # 1,4-D 613C
+			#use_that<-names(pattern)=="320_M-H_none_none_none" # Diclofenac
 			pattern_RT<<-pattern_RT[use_that]
 			pattern_delRT<<-pattern_delRT[use_that]
 			pattern<<-pattern[use_that]
@@ -363,7 +366,6 @@
 		RT_tol_inside<-as.numeric(logfile$parameters$IS_drt2)		# RT tolerance of peaks within an isotope pattern [s]
 		cut_score<-as.numeric(logfile$parameters$IS_w1)	
 
-# BAUSTELLE
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");			
 		if(logfile$parameters$screen_IS_restrict=="TRUE"){
 			measurements<-measurements[measurements[,"Mode"]=="negative",,drop=FALSE]
@@ -385,8 +387,7 @@
 			retain_sample<-rep(TRUE,max(as.numeric(measurements[,"ID"])))		
 		}
 		rm(measurements)
-# BAUSTELLE
-		
+
 		peaks<-profileList_neg[[7]];
 		peaklist<-peaks[,c(14,16,15)];
 		# screen centroids
@@ -441,9 +442,7 @@
 						for(k in 1:length(profs)){ # over their matched profile peaks = k		
 							if(profileList_neg[[7]][profs[k],4]!=profs[k]){cat("\n debug me: profile ID mismatch");stop();} # a check
 							for(m in profileList_neg[[7]][profs[k],1]:profileList_neg[[7]][profs[k],2]){ # over their sample peaks		
-# BAUSTELLE
-								if(retain_sample[profileList_neg[[2]][m,"sampleIDs"]]==FALSE){next} # Is this file among the latest ones?
-# BAUSTELLE										
+								if(retain_sample[profileList_neg[[2]][m,"sampleIDs"]]==FALSE){next} # Is this file among the latest ones?									
 								delmass<-abs(profileList_neg[[2]][m,1]-pattern[[i]][j,1])		
 								if(!ppm){
 									if(delmass>mztol){next}

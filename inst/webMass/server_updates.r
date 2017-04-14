@@ -45,6 +45,7 @@ if(logfile$version<3.100){
 		for(i in 1:length(IDs)){
 			load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
 			if(any(colnames(peaklist)=="keep")){break} # ok, has been done before
+			#if(any(colnames(peaklist)=="keep")){next} # ok, has been done before			
 			keep<-rep(1,length(peaklist[,1])) # 1 == TRUE
 			peaklist<-cbind(peaklist,keep)
 			colnames(peaklist)[15]<-"keep";
@@ -460,6 +461,7 @@ if(logfile$version<3.101){
 		for(i in 1:length(IDs)){
 			load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
 			if(any(colnames(peaklist)=="keep_2")){break} # ok, has been done before
+			#if(any(colnames(peaklist)=="keep_2")){next} # ok, has been done before	
 			keep_2<-rep(1,length(peaklist[,1])) # 1 == TRUE
 			peaklist<-cbind(peaklist,keep_2)
 			colnames(peaklist)[16]<-"keep_2";
@@ -1293,6 +1295,13 @@ if(logfile$version<3.120){
 		names(logfile)[16]<<-c("adducts_neg_group")	
 	}	
 	################################################################################################
+	# update isotopes entry ########################################################################
+	# update adducts for nontarget grouping ########################################################
+	if(!any(names(logfile)=="isotopes")){
+    	logfile[[9]]<<-"";
+    	names(logfile)[9]<<-c("isotopes")
+	}
+	################################################################################################
 	# update isotopologue parameters ###############################################################
 	if(!any(names(logfile$parameters)=="adducts_rttol")){
 		logfile$parameters$adducts_rttol<<-"5"
@@ -1493,6 +1502,7 @@ if(logfile$version<3.126){
 
 if(logfile$version<3.127){
 
+	cat("\n Updating to version 3.127 ...")
 	################################################################################################	
 	# update workflow ##############################################################################		
 	workflow_depend<-read.table(
@@ -1591,8 +1601,37 @@ if(logfile$version<3.127){
 
 }
 
+if(logfile$version<3.128){
 
+	cat("\n Updating to version 3.128 ...")
+	################################################################################################	
+	if(!any(names(logfile$parameters)=="peak_estimate")){
+		logfile$parameters$peak_estimate<<-"TRUE"	
+	}
+	################################################################################################	
+	logfile$version<<-3.128
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
 
+}
+
+if(logfile$version<3.2){
+
+	cat("\n Updating to version 3.2 ...")
+	################################################################################################	
+	if(!any(names(logfile$parameters)=="is_example")){
+		logfile$parameters$is_example<<-"TRUE"	
+	}
+	################################################################################################	
+	logfile$version<<-3.2
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
+
+}
 
 ########################################################################
 
