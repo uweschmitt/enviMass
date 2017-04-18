@@ -822,7 +822,7 @@
             tabPanel("Peak picking",
   				HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/peakpicking.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details & parameter descriptions.</a></p>'),			
 				HTML('<hr noshade="noshade" />'),
-					tags$h4("Data extraction"),
+					tags$h4("Data filtering"),
 					fluidRow(
 						column(width = 5, 
 							selectInput("cut_RT", "Filter RT range?", choices = c("yes"="TRUE","no"="FALSE"), selected="FALSE"),
@@ -845,16 +845,16 @@
 					selectInput("peak_estimate", "Include estimation?", choices = c("yes"="TRUE","no"="FALSE"), selected="TRUE")
 				),
 				div(style = widget_style2,
-					tags$h4("EIC partitioning & clustering"),
-					sliderInput("peak_drtgap", "Maximum retention time gap in an EIC", min = 20, max = 1500, value = 300, step= 1),
+					tags$h4("Extraction of ion chromatogram (EIC)"),
+					sliderInput("peak_drtgap", "Maximum retention time gap in an EIC [seconds]", min = 20, max = 1500, value = 300, step= 1),
 					sliderInput("peak_dmzdens", "Maximum m/z deviation of a centroid data point from its EIC mean [ppm]", min = 1, max = 100, value = 3.5, step= 0.1)       				
 				),
 				div(style = widget_style2,
-					tags$h4("Peak definition"), 
-					numericInput("peak_minpeak", "Minimum number of centroid data point  per peak ...", 4),
+					tags$h4("Peak picking"), 
+					numericInput("peak_minpeak", "Minimum number of centroid data points  per peak ...", 4),
 					sliderInput("peak_drtsmall2", "... within a given RT window [s]", min = 1, max = 200, value = 20, step= 0.1),
 					sliderInput("peak_drtfill", "Maximum RT gap length to be interpolated [s]", min = 0, max = 60, value = 10, step= 0.1),
-					sliderInput("peak_drtdens2", "Peak definition - Maximum RT length of a single peak", min = 10, max = 1500, value = 120, step= 0.1),
+					sliderInput("peak_drtdens2", "Maximum RT width of a single peak [s]", min = 10, max = 1500, value = 120, step= 0.1),
 					HTML('<hr noshade="noshade" />') ,
 					numericInput("peak_minint_log10", "Minimum log10(intensity) threshold", -10),
 					numericInput("peak_SN", "Minimum Signal/Noise", 5),
@@ -863,9 +863,9 @@
 				),
 				div(style = widget_style,
 					tags$h4("Advanced options"),
+					numericInput("peak_maxint_log10", "Upper log10(intensity) safety threshold", 6.7),	
 					numericInput("peak_ended", "How often can a peak detection fail to end the recursion? - peak picking", 1),
-					numericInput("peak_weight", "Weight for assigning centroid data points to a peak - peak picking", 1),
-					numericInput("peak_maxint_log10", "Upper log10(intensity) safety threshold", 6.7),					
+					numericInput("peak_weight", "Weight for assigning centroid data points to a peak - peak picking", 1),				
 					sliderInput("peak_perc_cut", "Percentage of low-intense data points to discard", min = 0, max = 100, value = 0, step= .1)
 				),
               tags$h4(""),
@@ -1010,8 +1010,8 @@
                 selectInput("prof_ppm", "... given in:", choices = c("ppm"="TRUE","absolute"="FALSE"), "TRUE"),
                 numericInput("prof_drt", "Peak deviation within profiles: RT tolerance [s]", 60),     
 				HTML('<hr noshade="noshade" />'),
-				sliderInput("prof_comp_maxfiles", "Maximum number of file-wise components to be considered for profile componentization (by date/time)", min = 1, max = 300, value = 15, step= 1),
-				HTML('<hr noshade="noshade" />'),				
+				#sliderInput("prof_comp_maxfiles", "Maximum number of file-wise components to be considered for profile componentization (by date/time)", min = 1, max = 300, value = 15, step= 1),
+				#HTML('<hr noshade="noshade" />'),				
 				selectInput("prof_select", "Omit files with table entry profiled=FALSE from profiling?", choices = c("TRUE"="TRUE","FALSE"="FALSE"), selected="FALSE")			
 			),
             # TREND ############################################################
