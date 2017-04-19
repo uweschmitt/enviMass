@@ -561,7 +561,8 @@ observe({
 					any(objects(envir=as.environment(".GlobalEnv"))=="MSlist")
 				){
 					EIC_ID<<-unique(MSlist[[8]][MSlist[[8]][,10]==isolate(input$sel_peak_ID),9]);
-					peakit<<-MSlist[[4]][[2]][c(MSlist[[7]][isolate(input$sel_peak_ID),1]:MSlist[[7]][isolate(input$sel_peak_ID),2]),]			
+					peakit<<-MSlist[[4]][[2]][c(MSlist[[7]][as.numeric(isolate(input$sel_peak_ID)),1]:MSlist[[7]][
+						as.numeric(isolate(input$sel_peak_ID)),2]),]			
 					if(length(peakit)>7){
 						EICit<<-MSlist[[4]][[2]][c(MSlist[[6]][EIC_ID,1]:MSlist[[6]][EIC_ID,2]),]
 						output$EIC1 <- renderPlot({
@@ -1161,10 +1162,11 @@ maincalc4<-reactive({
 			fileID[fileID=="0"]<-peakTable[peakTable[,3]=="0",5]
 			if(any(peakTable[as.numeric(isolate(input$profpeakID)),7]!=0)){
 				load(file.path(logfile[[1]],"MSlist",fileID[as.numeric(isolate(input$profpeakID))]), envir=as.environment(".GlobalEnv"))
-				cat("\n MSlist loaded");		
+				cat("\n MSlist loaded");	
+cat("\n");cat("DOING STH")	
 				EIC_ID<-unique(MSlist[[8]][MSlist[[8]][,10]==as.numeric(peakTable[as.numeric(isolate(input$profpeakID)),7]),9]);
-				peakit<-MSlist[[4]][[2]][c(MSlist[[7]][as.numeric(peakTable[as.numeric(isolate(input$profpeakID)),7]),1]:MSlist[[7]][as.numeric(peakTable[as.numeric(isolate(input$profpeakID)),7]),2]),]		
-				#if(length(peakit)>7){
+				peakit3<<-MSlist[[4]][[2]][c(MSlist[[7]][as.numeric(peakTable[as.numeric(isolate(input$profpeakID)),7]),1]:MSlist[[7]][as.numeric(peakTable[as.numeric(isolate(input$profpeakID)),7]),2]),]		
+				#if(length(peakit3)>7){
 				EICit<-MSlist[[4]][[2]][c(MSlist[[6]][EIC_ID,1]:MSlist[[6]][EIC_ID,2]),]								
 				output$profile_EIC <- renderPlot({
 					par_old<-par(mar=c(2,2,1,1))							
@@ -1173,15 +1175,15 @@ maincalc4<-reactive({
 					}else{
 						plot(EICit[3],EICit[2],type="h",col="darkgrey",xlab="RT",ylab="Intensity")
 					}
-					if(length(peakit)>7){	
-						points(peakit[,3],peakit[,2],type="h",col="red",lwd=2)
+					if(length(peakit3)>7){	
+						points(peakit3[,3],peakit3[,2],type="h",col="red",lwd=2)
 					}else{
-						points(peakit[3],peakit[2],type="h",col="red",lwd=2)				
+						points(peakit3[3],peakit3[2],type="h",col="red",lwd=2)				
 					}
 					par(par_old);	
 					env=as.environment(".GlobalEnv")
 				})
-				rm(EIC_ID,peakit)			
+				rm(EIC_ID,peakit3)			
 				return(
 					paste("= sample file ID: ",as.character(fileID[as.numeric(isolate(input$profpeakID))])," (",as.character(timed[as.numeric(isolate(input$profpeakID))]),")" )
 				);		
