@@ -95,7 +95,7 @@ observe({
 				found<-found[found!="logfile$parameters$progressBar"]
 			}
 			if(length(found)){
-				affected<-enviMass:::workflow_where(found)
+				affected<-enviMass:::workflow_where(found) # which scripts directly affected?
 				if(length(affected)>0){
 					cat("\nAdapt settings affecting nodes: ")
 					print(affected);cat("\n")
@@ -103,8 +103,8 @@ observe({
 						enviMass:::workflow_set(
 							down=affected[i],
 							check_node=TRUE, 	# only applied if affected step switched on - only in 
-							single_file=TRUE,
-							single_node=TRUE
+							single_file=FALSE,
+							single_node=FALSE
 						)
 					}
 				}
@@ -134,8 +134,8 @@ observe({
 				enviMass:::workflow_set(
 					down="pattern",
 					check_node=TRUE,
-					single_file=TRUE,
-					single_node=TRUE
+					single_file=FALSE,
+					single_node=FALSE
 				)
 			}
 			if(do_debug){cat("\n at_3")}
@@ -153,8 +153,8 @@ observe({
 				enviMass:::workflow_set(
 					down="adducts",
 					check_node=TRUE,
-					single_file=TRUE,
-					single_node=TRUE
+					single_file=FALSE,
+					single_node=FALSE
 				)
 			}
 			if(do_debug){cat("\n at_4")}
@@ -170,8 +170,8 @@ observe({
 				enviMass:::workflow_set(
 					down="blind",
 					check_node=TRUE,
-					single_file=TRUE,
-					single_node=TRUE
+					single_file=FALSE,
+					single_node=FALSE
 				)
 			}	
 			at1<-logfile$Negative_subtraction_files
@@ -182,8 +182,8 @@ observe({
 				enviMass:::workflow_set(
 					down="blind",
 					check_node=TRUE,
-					single_file=TRUE,
-					single_node=TRUE
+					single_file=FALSE,
+					single_node=FALSE
 				)
 			}		
 			if(do_debug){cat("\n at_8b")}
@@ -221,7 +221,7 @@ observe({
 						enviMass:::workflow_set(
 							down=found[i],
 							check_node=FALSE,
-							single_file=TRUE,
+							single_file=FALSE,
 							single_node=FALSE
 						) # do not change
 					}

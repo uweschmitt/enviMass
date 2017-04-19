@@ -32,13 +32,13 @@ if(length(those)>0){
 		#peaklist<-peaklist[peaklist[,colnames(peaklist)=="keep"]==1,,drop=FALSE]
 		if(length(peaklist[,1])==0){next}
 		# LOD ###################################################################
-		his<-hist(peaklist[,5],breaks=100,plot=FALSE)
+		his<-hist(peaklist[,"RT"],breaks=100,plot=FALSE)
 		get_int<-c()
 		get_ret<-c()
 		get_w<-c()
 		for(j in 2:length(his$breaks)){
-			ret<-peaklist[(peaklist[,5]>=his$breaks[j-1] & peaklist[,5]<his$breaks[j]),5]
-			int<-log10(peaklist[(peaklist[,5]>=his$breaks[j-1] & peaklist[,5]<his$breaks[j]),13])
+			ret<-peaklist[(peaklist[,"RT"]>=his$breaks[j-1] & peaklist[,"RT"]<his$breaks[j]),"RT"]
+			int<-log10(peaklist[(peaklist[,"RT"]>=his$breaks[j-1] & peaklist[,"RT"]<his$breaks[j]),"int_corr"])
 			ret<-ret[order(int,decreasing=FALSE)]
 			int<-int[order(int,decreasing=FALSE)]
 			getit<-ceiling(length(int)*0.1)

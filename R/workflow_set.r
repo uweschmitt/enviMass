@@ -7,9 +7,9 @@
 #' @param down Name of node (logfile$Tasks_to_redo) to be altered
 #' @param added Name of node (logfile$Tasks_to_redo) to be added - additionally
 #' @param except Name of node (logfile$Tasks_to_redo) to be excluded - dangerous
-#' @param check_node Only evaluate whether the concerned node is enabled in workflow?
-#' @param single_file File-wise handler
-#' @param single_node Apply single_file == TRUE resets of data.frame-measurements-entries only to down node?
+#' @param check_node TRUE = resetting only evaluate when the concerned node is enabled in the workflow? = do not add parameters to dont scripts!
+#' @param single_file TRUE = surpress resetting of all files-wise handlers to FALSE for all affected nodes? Independent of single_node.
+#' @param single_node TRUE = resetting of files-wise handlers to FALSE only for the 'down' node? Independent of single_file.
 #' 
 #' @details enviMass workflow function. 
 #' 
@@ -49,9 +49,17 @@ workflow_set<-function(
 	
 	########################################################################################
 	# leave funtion if check_node=TRUE (=parameters changed) but node not run ##############
-	# (i.e., only its script dont_.r) ######################################################
+	# (i.e., only its script dont_.r will be evaluated) ####################################
+	# still, reset the file handler - if node will later be included it must be re-exec. ###
 	if(check_node){
 		if(logfile$workflow[names(logfile$workflow)==down]=="no"){
+			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+			if(any(names(measurements)==down)){
+				measurements[,names(measurements)==down]<-FALSE;
+				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+				cat(" ** ")
+			}
+			rm(measurements)
 			return(NULL);
 		}	
 	}
@@ -120,15 +128,18 @@ workflow_set<-function(
 	# UPDATE $Tasks_to_redo ################################################################
 	########################################################################################
 	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+	cat("\n");cat("\nAdapt dependent nodes: ");
 	while(length(work_stream)>0){
 		####################################################################################
 		if( (logfile$workflow[names(logfile$workflow)==work_stream[1]]=="yes") || (!check_node) ){
+			cat(work_stream[1]);cat(" - ")
 			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)==work_stream[1]]<<-TRUE;			
-			if(	
-				((!single_file) & (any(names(measurements)==work_stream[1]))) || 
-				((single_node) & (work_stream[1]==down) & (any(names(measurements)==work_stream[1])))
+			if(	# reset single files
+				(any(names(measurements)==work_stream[1])) &
+				( (!single_file) || ((single_node) & (work_stream[1]==down)) )
 			){
 				measurements[,names(measurements)==work_stream[1]]<-FALSE;
+				cat(" * ")
 			}
 		}	
 		####################################################################################

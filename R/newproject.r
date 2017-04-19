@@ -105,7 +105,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
     # folder name ##############################################################
     logfile[[1]]<-file.path(pro_dir,pro_name);
     names(logfile)[1]<-c("project_folder")
-    # nodes - what MUST be (re)done? ###########################################
+    # nodes - what MUST be (re)done? initially, everything, also _donts! #######
 	logfile[[2]]<-rep(FALSE,length(colnames(workflow_must)));
 	names(logfile[[2]])<-colnames(workflow_must)
 	names(logfile)[2]<-c("Tasks_to_redo");    
@@ -269,7 +269,8 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	for(i in 1:length(names(logfile[[2]]))){
 		# use simple initial workflow settings
 		if(any(names(logfile[[2]])[i]==
-			c("peakpicking","LOD","profiling","IS_screen","target_screen")
+			#c("peakpicking","LOD","profiling","IS_screen","target_screen")
+			c("peakpicking")			
 		)){
 			logfile$workflow[i]<-"yes"; 
 		}else{

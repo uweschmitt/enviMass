@@ -2,7 +2,7 @@
 conditionalPanel( 
 		condition = "output.textit == 'Waiting...'",
 		div(style = widget_style4,	  
-			tags$h4("Welcome to enviMass version 3.128"),
+			tags$h4("Welcome to enviMass version 3.2"),
 			tags$h5("The new workflow for processing high-resolution LC-MS data and temporal trend detection"),
 			imageOutput("peakrot", width="10%",height="10%")
 		),

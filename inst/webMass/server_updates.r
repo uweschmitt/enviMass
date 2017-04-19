@@ -1636,3 +1636,6 @@ if(logfile$version<3.2){
 ########################################################################
 
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_updates.r!")}
+
+#logfile$parameters$is_example<-"TRUE"
+#save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));

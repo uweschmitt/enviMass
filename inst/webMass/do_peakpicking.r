@@ -6,7 +6,7 @@
     leng<-dim(measurements)[1];         
     for(i in 1:leng){ 
         # (measurement included & not yet picked) OR (peakpick forced) 
-            if( (measurements[i,"include"]=="TRUE")&&(measurements[i,"peakpicking"]=="FALSE") ){
+            if( (measurements[i,"include"]=="TRUE") & (measurements[i,"peakpicking"]=="FALSE") ){
 
 				##################################################################
 				cat(paste("\n    Peak picking sample ",as.character(i)," of ",as.character(leng),": "));    
@@ -39,50 +39,61 @@
 						ion_mode=measurements[i,"Mode"]
 					);
 					cat(" file read -"); 
-				}else{ # no mzXML files for example projects -> use MSlist
-					load(file=file.path(logfile[[1]],"MSlist",as.character(measurements[i,"ID"]))); 
-					cat("example MSlist loaded -"); 
-				}
-				##################################################################
-				if(logfile$parameters$peak_estimate=="TRUE"){
-					use_peak_perc_cut<-0
-					estim_values<-try({enviMass:::dens_filter(MSlist,plotit=FALSE,n=2000,m=5)},silent=TRUE)
-					if(class(estim_values)!="try-error"){
-						use_peak_dmzdens<-estim_values[[1]]
-						use_peak_minint_log10<-estim_values[[2]]
-						if(as.numeric(logfile$parameters$peak_maxint_log10)<use_peak_minint_log10){
-							use_peak_maxint_log10<-log10(max(MSlist[["Scans"]][[2]][,"intensity"])+1)
+					##############################################################
+					if(logfile$parameters$peak_estimate=="TRUE"){
+						use_peak_perc_cut<-0
+						estim_values<-try({enviMass:::dens_filter(MSlist,plotit=FALSE,n=2000,m=5)},silent=TRUE)
+						if(class(estim_values)!="try-error"){
+							use_peak_dmzdens<-estim_values[[1]]
+							use_peak_minint_log10<-estim_values[[2]]
+							if(as.numeric(logfile$parameters$peak_maxint_log10)<use_peak_minint_log10){
+								use_peak_maxint_log10<-log10(max(MSlist[["Scans"]][[2]][,"intensity"])+1)
+							}else{
+								use_peak_maxint_log10<-as.numeric(logfile$parameters$peak_maxint_log10)
+							} 
+							len1<-dim(MSlist[["Scans"]][[2]])[1]
+							MSlist[["Scans"]][[2]]<-MSlist[["Scans"]][[2]][
+								MSlist[["Scans"]][[2]][,"intensity"]>=(10^use_peak_minint_log10)
+							,]
+							len2<-dim(MSlist[["Scans"]][[2]])[1]
+							cat(paste(" ",as.character(len1-len2),"of",as.character(len1),"data points discarded by absolute threshold -"))
+							cat(" data filtered -"); 
 						}else{
-							use_peak_maxint_log10<-as.numeric(logfile$parameters$peak_maxint_log10)
-						} 
-						len1<-dim(MSlist[["Scans"]][[2]])[1]
-						MSlist[["Scans"]][[2]]<-MSlist[["Scans"]][[2]][
-							MSlist[["Scans"]][[2]][,"intensity"]>=(10^use_peak_minint_log10)
-						,]
-						len2<-dim(MSlist[["Scans"]][[2]])[1]
-						cat(paste(" ",as.character(len1-len2),"of",as.character(len1),"data points discarded by absolute threshold -"))
-						cat(" data filtered -"); 
+							use_peak_dmzdens<-as.numeric(logfile$parameters$peak_dmzdens)
+							use_peak_minint_log10<-as.numeric(logfile$parameters$peak_minint_log10)
+							use_peak_maxint_log10<-as.numeric(logfile$parameters$peak_maxint_log10)					
+							use_peak_perc_cut<-as.numeric(logfile$parameters$peak_perc_cut)
+							cat(" no data filtering possible -"); 
+						}	
 					}else{
 						use_peak_dmzdens<-as.numeric(logfile$parameters$peak_dmzdens)
 						use_peak_minint_log10<-as.numeric(logfile$parameters$peak_minint_log10)
 						use_peak_maxint_log10<-as.numeric(logfile$parameters$peak_maxint_log10)					
 						use_peak_perc_cut<-as.numeric(logfile$parameters$peak_perc_cut)
-						cat(" no data filtering possible -"); 
+						if(use_peak_perc_cut>0){ # not to be used with filtering estimates - that uses absolute threshold intensities
+							len1<-dim(MSlist[["Scans"]][[2]])[1]
+							MSlist[["Scans"]][[2]]<-MSlist[["Scans"]][[2]][
+								MSlist[["Scans"]][[2]][,"intensity"]>=quantile(MSlist[["Scans"]][[2]][,"intensity"],(use_peak_perc_cut/100))
+							,]
+							len2<-dim(MSlist[["Scans"]][[2]])[1]
+							cat(paste(" ",as.character(len1-len2),"of",as.character(len1),"data points discarded by fraction -"))
+						}
 					}	
-				}else{
+					##############################################################
+				}else{ # no mzXML files for example projects -> use MSlist
+					load(file=file.path(logfile[[1]],"MSlist",as.character(measurements[i,"ID"]))); 
+					MSlist[["Scans"]][[2]]<-MSlist[["Scans"]][[2]][ # re-set
+						order(MSlist[["Scans"]][[2]][,"RT"],decreasing=FALSE)
+					,]
+					MSlist[["Scans"]][[2]][,"partID"]<-0
+					MSlist[["Scans"]][[2]][,"clustID"]<-0					
+					MSlist[["Scans"]][[2]][,"peakID"]<-0
 					use_peak_dmzdens<-as.numeric(logfile$parameters$peak_dmzdens)
-					use_peak_minint_log10<-as.numeric(logfile$parameters$peak_minint_log10)
+					use_peak_minint_log10<-0
 					use_peak_maxint_log10<-as.numeric(logfile$parameters$peak_maxint_log10)					
-					use_peak_perc_cut<-as.numeric(logfile$parameters$peak_perc_cut)
-					if(use_peak_perc_cut>0){ # not to be used with filtering estimates - that uses absolute threshold intensities
-						len1<-dim(MSlist[["Scans"]][[2]])[1]
-						MSlist[["Scans"]][[2]]<-MSlist[["Scans"]][[2]][
-							MSlist[["Scans"]][[2]][,"intensity"]>=quantile(MSlist[["Scans"]][[2]][,"intensity"],(use_peak_perc_cut/100))
-						,]
-						len2<-dim(MSlist[["Scans"]][[2]])[1]
-						cat(paste(" ",as.character(len1-len2),"of",as.character(len1),"data points discarded by fraction -"))
-					}
-				}	
+					use_peak_perc_cut<-0
+					cat("example MSlist loaded -"); 
+				}
 				##################################################################
 				if(any(MSlist[["Scans"]][[2]][,"intensity"]==0)){
 					cat("\n Note in do_peakpicking: zero intensities found and discarded.")
