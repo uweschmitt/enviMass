@@ -8,6 +8,7 @@
 #' @param n_profiles Integer. How many of the most intense profiles to include?
 #' @param incl_profiles. NULL or Logical vector of length equal to that of the number of profiles, with FALSE indicating profiles to exclude.
 #' @param only_sample. Logical. TRUE = should peaks of sample files (and not, e.g., blank files) be included only?
+#' @param normalize. Logical. TRUE = should intensities of each profile be divided by their maximum to range in [0,1]?
 #'
 #' @return Matrix with intensities.
 #' 
@@ -16,12 +17,13 @@
 #' Rows are ordered by date and time, columns by decreasing amximum profile intensity.  
 #' 
 
-profiles_to_matrix<-function(
+profiles_to_matrix2<-function(
 	profileList,
 	n_profiles=1000,
     n_latest=NULL,
     incl_profiles=NULL,
-    only_sample=TRUE
+    only_sample=TRUE,
+    normalize=TRUE
 ){
 
     ############################################################################
@@ -33,6 +35,9 @@ profiles_to_matrix<-function(
         }
     }else{
         incl_profiles<-rep(TRUE,len)
+    }
+    if(!is.logical(normalize)){
+        stop("normalize must be logical")
     }
 	############################################################################
 
@@ -47,6 +52,8 @@ profiles_to_matrix<-function(
                 ,"intensity"]
             )
     }
+
+    
     max_int_ord<-order(max_int,decreasing=TRUE)
     ############################################################################    
 
@@ -86,15 +93,20 @@ profiles_to_matrix<-function(
         )
     )
     mat[
-        match( # rows = sample IDs
-            profileList_pos[["peaks"]][sub_peaks_ind,"sampleIDs"],
-            as.numeric(rownames(mat))
-        ),
-        match( # columns = profile IDs
-            profileList_pos[["peaks"]][sub_peaks_ind,"profileIDs"],
-            as.numeric(colnames(mat))
+        cbind(
+            as.character(profileList_pos[["peaks"]][sub_peaks_ind,"sampleIDs"]),
+            as.character(profileList_pos[["peaks"]][sub_peaks_ind,"profileIDs"])
         )
     ]<-profileList_pos[["peaks"]][sub_peaks_ind,"intensity"]
+    ############################################################################
+
+    ############################################################################
+    # (0,1)-normalize ##########################################################
+    if(normalize){
+        mat<-sweep(mat,2,apply(mat,2,max),"/")
+    }
+    ############################################################################
+
     ############################################################################
     return(mat)
 	

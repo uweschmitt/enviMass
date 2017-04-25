@@ -1,4 +1,4 @@
-#' @title Screens a peak- and blanklist for matches with compounds
+#' @title Screens a peak- and blanklist for matches with compounds (deprecated).
 #'
 #' @export
 #'

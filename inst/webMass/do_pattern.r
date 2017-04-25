@@ -51,22 +51,22 @@
 					for(i in 1:length(formeln)){
 						if(intstand[i,7]=="positive"){
 							cat(paste("\nDoing IS positive ",as.character(i)," of ",as.character(length(formeln)),":",sep=""));
-							if( (intstand[i,10]=="TRUE") & (intstand[i,6]=="FALSE") ){
+							if( (intstand[i,"restrict_adduct"]=="TRUE") & (intstand[i,"main_adduct"]=="FALSE") ){
 								warning(paste("IS pattern: restrict to adduct with no adduct selected? skipped IS with ID:",eidis[i],"\n",sep=""))
 								next;
 							}
 							takeall<-TRUE # use all adducts for recal?
-							if(intstand[i,10]=="FALSE"){ # use main adduct & all adducts - main adduct MUST come first -> for mz_ and RT_ below
-								if(intstand[i,6]=="FALSE"){ # no main adduct chosen?
-									with_add<-c(logfile[[7]])
+							if(intstand[i,"restrict_adduct"]=="FALSE"){ # use main adduct & all adducts - main adduct MUST come first -> for mz_ and RT_ below
+								if(intstand[i,"main_adduct"]=="FALSE"){ # no main adduct chosen?
+									with_add<-c(logfile[["adducts_pos"]])
 									takeall<-TRUE
 								}else{ # with main adduct?
-									with_add<-c(intstand[i,6],logfile[[7]])
+									with_add<-c(intstand[i,"main_adduct"],logfile[["adducts_pos"]])
 									with_add<-unique(with_add)
 									takeall<-FALSE
 								}
 							}else{ # use main adduct only
-								with_add<-c(intstand[i,6])
+								with_add<-c(intstand[i,"main_adduct"])
 								takeall<-TRUE # there is just one entry anyway
 							}
 							for(j in 1:length(with_add)){
