@@ -17,7 +17,7 @@
 #' Rows are ordered by date and time, columns by decreasing amximum profile intensity.  
 #' 
 
-profiles_to_matrix2<-function(
+profiles_to_matrix<-function(
 	profileList,
 	n_profiles=1000,
     n_latest=NULL,
@@ -52,8 +52,6 @@ profiles_to_matrix2<-function(
                 ,"intensity"]
             )
     }
-
-    
     max_int_ord<-order(max_int,decreasing=TRUE)
     ############################################################################    
 
