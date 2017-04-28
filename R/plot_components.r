@@ -37,7 +37,7 @@ plot_components<-function(
 		}		
 		plot.window(xlim=xlim2,ylim=ylim2)			
 		box();axis(1);axis(2);
-		title(xlab="m/z",ylab="RT")
+		title(xlab="m/z",ylab="RT [s]")
 		legend("topleft",
 			legend=c("EIC","isot.","adduc.","homol."),
 			col=c("red","blue","green","gray"),

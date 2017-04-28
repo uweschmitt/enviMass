@@ -188,7 +188,7 @@ observe({
 						plot.new()
 						plot.window(xlim=x_lim,ylim=y_lim)
 						title(
-							xlab="m/z [Th]", ylab="RT",
+							xlab="m/z [Th]", ylab="RT [s]",
 							main="Draw rectangles and double-click into them to zoom in, double-click again to zoom fully out. Bottom plots adapt accordingly.",cex.main=.75
 						)
 						box();axis(1);axis(2);

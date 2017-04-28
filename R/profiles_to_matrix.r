@@ -4,10 +4,9 @@
 #' @description Converts profileList peak table to matrix of peak intensities. 
 #'
 #' @param profileList A profile list.
-#' @param n_latest. NULL or Integer. If integer, number of latest file peaks to include.
 #' @param n_profiles Integer. How many of the most intense profiles to include?
-#' @param incl_profiles. NULL or Logical vector of length equal to that of the number of profiles, with FALSE indicating profiles to exclude.
 #' @param only_sample. Logical. TRUE = should peaks of sample files (and not, e.g., blank files) be included only?
+#' @param n_latest. NULL or Integer. If integer, number of latest file peaks to include.
 #' @param normalize. Logical. TRUE = should intensities of each profile be divided by their maximum to range in [0,1]?
 #'
 #' @return Matrix with intensities.
@@ -19,84 +18,107 @@
 
 profiles_to_matrix<-function(
 	profileList,
-	n_profiles=1000,
+	n_profiles=NULL,
+    only_sample=FALSE,
     n_latest=NULL,
-    incl_profiles=NULL,
-    only_sample=TRUE,
-    normalize=TRUE
+    normalize=FALSE
 ){
 
-    ############################################################################
+	############################################################################
     if(!profileList[[1]][[3]]){stop("profileList not profiled; aborted.")}
     len<-dim(profileList[["index_prof"]])[1]
-    if(!is.null(incl_profiles[1])){
-        if(length(incl_profiles)!=len){
-            stop("If not set to NULL, incl_profiles must be logical and of length equal to that of the number of profiles.")
-        }
-    }else{
-        incl_profiles<-rep(TRUE,len)
-    }
-    if(!is.logical(normalize)){
-        stop("normalize must be logical")
-    }
+    if(!is.logical(normalize)){stop("normalize must be logical")}
 	############################################################################
+
+    ############################################################################    
+    # get sample IDs ###########################################################
+    ord<-order(as.POSIXct(profileList[["datetime"]]),decreasing=TRUE)
+    type<-profileList[["type"]][ord]
+    file_ID<-profileList[["sampleID"]][ord]
+    if(!is.null(n_latest)[1]){
+        type<-type[1:n_latest]
+		file_ID<-file_ID[1:n_latest]
+    }
+	keep<-rep(TRUE,len)
+	profile_IDs<-profileList[["index_prof"]][,"profile_ID"]
+    if(only_sample){
+        file_ID<-file_ID[type=="sample"]
+		# filter out profiles which do not contain sample peaks
+		for(i in 1:len){
+			if(
+				all(is.na(match(
+					profileList[["peaks"]][
+							profileList[["index_prof"]][i,"start_ID"]:profileList[["index_prof"]][i,"end_ID"]
+						,"sampleIDs"],
+					file_ID
+				)))
+			){
+				keep[i]<-FALSE
+			}
+		}	
+	}
+    ############################################################################ 
 
     ############################################################################    
     # get maximum intensity of each profile ####################################
     max_int<-rep(0,len)
     for(i in 1:len){
-        if(!incl_profiles[i]){next}
-        max_int[profileList_pos[["index_prof"]][i,"profile_ID"]]<-
-            max(profileList_pos[["peaks"]][
-                    profileList_pos[["index_prof"]][i,"start_ID"]:profileList_pos[["index_prof"]][i,"end_ID"]
+        if(!keep[i]){next}
+        max_int[i]<-
+            max(profileList[["peaks"]][
+                    profileList[["index_prof"]][i,"start_ID"]:profileList[["index_prof"]][i,"end_ID"]
                 ,"intensity"]
             )
     }
+	profile_IDs<-profile_IDs[keep]
+	max_int<-max_int[keep]
     max_int_ord<-order(max_int,decreasing=TRUE)
+	profile_IDs<-profile_IDs[max_int_ord]
     ############################################################################    
 
     ############################################################################    
-    # get sample IDs ###########################################################
-    ord<-order(as.POSIXct(profileList[["datetime"]]),decreasing=TRUE)
-    if(!is.null(n_latest)[1]){
-        ord<-ord[1:n_latest]
-    }
-    type<-profileList[["type"]][ord]
-    file_ID<-profileList[["sampleID"]][ord]
-    if(only_sample){
-        file_ID<-file_ID[type=="sample"]
-    }
-    ############################################################################ 
-
-    ############################################################################    
-    # write to matrix ##########################################################
+    # write to matrix ##########################################################	
+	if(is.null(n_profiles)){
+		n_profiles<-length(profile_IDs)
+	}else{
+		if(n_profiles>length(profile_IDs)){
+			n_profiles<-length(profile_IDs)
+		}
+	}
     mat<-matrix(nrow=length(file_ID),ncol=n_profiles,0)
     rownames(mat)<-as.character(file_ID)
-    # which sample profiles to include -> most intense & not excluded?
-    max_int_ord_nb<-max_int_ord[incl_profiles[max_int_ord]]
-    max_int_ord_nb<-max_int_ord_nb[1:n_profiles]
-    colnames(mat)<-as.character(max_int_ord_nb)
+	colnames(mat)<-as.character(profile_IDs[1:n_profiles])
     sub_peaks_ind<-(
         !is.na(
             match(
-                profileList_pos[["peaks"]][,"sampleIDs"],
+                profileList[["peaks"]][,"sampleIDs"],
                 as.numeric(rownames(mat))
             )
         ) &
         !is.na(
             match(
-                profileList_pos[["peaks"]][,"profileIDs"],
+                profileList[["peaks"]][,"profileIDs"],
                 as.numeric(colnames(mat))
             )
         )
     )
-    mat[
+	mat[
         cbind(
-            as.character(profileList_pos[["peaks"]][sub_peaks_ind,"sampleIDs"]),
-            as.character(profileList_pos[["peaks"]][sub_peaks_ind,"profileIDs"])
+            match(as.character(profileList[["peaks"]][sub_peaks_ind,"sampleIDs"]),rownames(mat)),
+            match(as.character(profileList[["peaks"]][sub_peaks_ind,"profileIDs"]),colnames(mat))
         )
-    ]<-profileList_pos[["peaks"]][sub_peaks_ind,"intensity"]
+    ]<-profileList[["peaks"]][sub_peaks_ind,"intensity"]
     ############################################################################
+	
+    ############################################################################
+	# checks ###################################################################
+	if(any(is.na(mat))){ 
+		stop("Sth went wrong in function profiles_to_matrix - debug_1!")
+	}	
+	if(any(apply(mat,2,max)==0)){ 
+		stop("Sth went wrong in function profiles_to_matrix - debug_2!")
+	}
+    ############################################################################ 	
 
     ############################################################################
     # (0,1)-normalize ##########################################################

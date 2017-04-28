@@ -27,9 +27,11 @@
 					use_maxmass<-FALSE				
 				}				
 				##################################################################
-				if(logfile$parameters$is_example=="FALSE"){
+				if(#logfile$parameters$is_example=="FALSE"
+					file.exists(file.path(logfile[[1]],"MSlist",as.character(measurements[i,"ID"])))
+				){
 					MSlist<-enviPick::readMSdata(
-						file.path(logfile[[1]],"files",paste(as.character(measurements[i,1]),".mzXML",sep="")),
+						filepath.mzXML=file.path(logfile[[1]],"files",paste(as.character(measurements[i,1]),".mzXML",sep="")),
 						MSlevel=logfile$parameters$peak_MSlevel,  # MSlevel
 						progbar=logfile$parameters$progressBar, # progbar
 						minRT=use_minRT,
