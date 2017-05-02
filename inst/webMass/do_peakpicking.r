@@ -28,7 +28,7 @@
 				}				
 				##################################################################
 				if(#logfile$parameters$is_example=="FALSE"
-					file.exists(file.path(logfile[[1]],"MSlist",as.character(measurements[i,"ID"])))
+					file.exists(file.path(logfile[[1]],"files",as.character(measurements[i,"ID"])))
 				){
 					MSlist<-enviPick::readMSdata(
 						filepath.mzXML=file.path(logfile[[1]],"files",paste(as.character(measurements[i,1]),".mzXML",sep="")),
