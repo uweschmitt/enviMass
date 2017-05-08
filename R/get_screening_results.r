@@ -208,9 +208,9 @@
 		num_peaks_sample_all_sum<-rep(0,length(ID_comp))
 		num_peaks_blank_all_sum<-rep(0,length(ID_comp))		
 		for(i in 1:length(ID_comp)){
-			those<-(IDed==ID_comp[i])
-			those[!((max_score_sample_all[those]>0) | (max_score_blank_all[those]>0))]<-FALSE
-			if(any(those)){	
+			those<-which(IDed==ID_comp[i])
+			those<-those[((max_score_sample_all[those]>0) | (max_score_blank_all[those]>0))]
+			if(length(those)>0){	
 				named_sum[i]<-unique(named[those])
 				adduct_sum[i]<-paste(adducted[those],collapse=", ")
 				max_score_sample_all_sum[i]<-max(round(max_score_sample_all[those],digits=2))

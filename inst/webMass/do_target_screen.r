@@ -253,7 +253,9 @@
 			# create links in link_list_pos for peaks in profileList_pos = used for tracing back ###########
 			use_entries<-find_empty(links_peaks_pos)
 			for(i in 1:length(res_target_pos_screen)){
+# REMOVE ME:
 cat(paste0("\n",i))
+# 
 				if(length(res_target_pos_screen[[i]])>0){
 					for(m in 1:length(res_target_pos_screen[[i]])){
 						if(length(res_target_pos_screen[[i]][[m]])>0){
