@@ -28,10 +28,10 @@
 				}				
 				##################################################################
 				if(#logfile$parameters$is_example=="FALSE"
-					file.exists(file.path(logfile[[1]],"files",as.character(measurements[i,"ID"])))
+					file.exists(file.path(logfile[[1]],"files",paste0(as.character(measurements[i,"ID"]),".mzXML")))
 				){
 					MSlist<-enviPick::readMSdata(
-						filepath.mzXML=file.path(logfile[[1]],"files",paste(as.character(measurements[i,1]),".mzXML",sep="")),
+						filepath.mzXML=file.path(logfile[[1]],"files",paste0(as.character(measurements[i,1]),".mzXML")),
 						MSlevel=logfile$parameters$peak_MSlevel,  # MSlevel
 						progbar=logfile$parameters$progressBar, # progbar
 						minRT=use_minRT,
