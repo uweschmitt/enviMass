@@ -185,9 +185,15 @@
 		do_at<-1
 		if(length(target_pos_screen_listed)>0){
 			for(i in do_at:length(target_pos_screen_listed)){ # i - on compound_adduct
+# REMOVE ME:
+cat(paste0("\n",i))
+# 
 				if(length(target_pos_screen_listed[[i]])>0){	
 					res_target_pos_screen[[i]]<-list()
-					for(m in 1:length(target_pos_screen_listed[[i]])){ # m - sample					
+					for(m in 1:length(target_pos_screen_listed[[i]])){ # m - sample		
+# REMOVE ME:
+cat("*")			
+# 
 						at_ID<-set_ID[profileList_pos[[4]]==colnames(target_pos_screen_listed[[i]][[m]])[1]]
 						if(length(target_pos_screen_listed[[i]][[m]])>0){
 							if(do_LOD){							
@@ -211,7 +217,8 @@
 								use_score_cut=use_score_cut,
 								score_cut=score_cut,
 								plot_it=FALSE,
-								verbose=FALSE
+								verbose=FALSE,
+								RT_seperate=TRUE
 							)
 							for(k in 1:length(combination_matches)){ # add file ID
 								combination_matches[[k]][[10]]<-colnames(target_pos_screen_listed[[i]][[m]])[1]
@@ -253,9 +260,6 @@
 			# create links in link_list_pos for peaks in profileList_pos = used for tracing back ###########
 			use_entries<-find_empty(links_peaks_pos)
 			for(i in 1:length(res_target_pos_screen)){
-# REMOVE ME:
-cat(paste0("\n",i))
-# 
 				if(length(res_target_pos_screen[[i]])>0){
 					for(m in 1:length(res_target_pos_screen[[i]])){
 						if(length(res_target_pos_screen[[i]][[m]])>0){
@@ -360,7 +364,6 @@ cat(paste0("\n",i))
 		RT_tol_inside<-as.numeric(logfile$parameters$tar_drt2)		# RT tolerance of peaks within an isotope pattern [s]
 		cut_score<-as.numeric(logfile$parameters$tar_w1)	
 
-# BAUSTELLE
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");			
 		if(logfile$parameters$screen_IS_restrict=="TRUE"){
 			measurements<-measurements[measurements[,"Mode"]=="negative",,drop=FALSE]
@@ -382,7 +385,6 @@ cat(paste0("\n",i))
 			retain_sample<-rep(TRUE,max(as.numeric(measurements[,"ID"])))		
 		}
 		rm(measurements)
-# BAUSTELLE
 		
 		peaks<-profileList_neg[[7]];
 		peaklist<-peaks[,c(14,16,15)];
@@ -438,9 +440,7 @@ cat(paste0("\n",i))
 						for(k in 1:length(profs)){ # over their matched profile peaks = k
 							if(profileList_neg[[7]][profs[k],4]!=profs[k]){cat("\n debug me: profile ID mismatch");stop();} # just a check
 							for(m in profileList_neg[[7]][profs[k],1]:profileList_neg[[7]][profs[k],2]){ # over their sample peaks
-# BAUSTELLE
 								if(retain_sample[profileList_neg[[2]][m,"sampleIDs"]]==FALSE){next} # Is this file among the latest ones?
-# BAUSTELLE	
 								delmass<-abs(profileList_neg[[2]][m,1]-pattern[[i]][j,1])		
 								if(!ppm){
 									if(delmass>mztol){next}
@@ -481,9 +481,15 @@ cat(paste0("\n",i))
 		res_target_neg_screen<-list()  # default: no match at all
 		if(length(target_neg_screen_listed)>0){
 			for(i in 1:length(target_neg_screen_listed)){ # i - on compound_adduct
+# REMOVE ME:
+cat(paste0("\n",i))
+# 
 				if(length(target_neg_screen_listed[[i]])>0){	
 					res_target_neg_screen[[i]]<-list()
-					for(m in 1:length(target_neg_screen_listed[[i]])){ # m - sample				
+					for(m in 1:length(target_neg_screen_listed[[i]])){ # m - sample		
+# REMOVE ME:
+cat("*")			
+# 		
 						at_ID<-set_ID[profileList_neg[[4]]==colnames(target_neg_screen_listed[[i]][[m]])[1]]	
 						if(length(target_neg_screen_listed[[i]][[m]])>0){
 							if(do_LOD){							
@@ -507,7 +513,8 @@ cat(paste0("\n",i))
 								use_score_cut=use_score_cut,
 								score_cut=score_cut,
 								plot_it=FALSE,
-								verbose=FALSE
+								verbose=FALSE,
+								RT_seperate=TRUE
 							)
 							for(k in 1:length(combination_matches)){ # add file ID
 								combination_matches[[k]][[10]]<-colnames(target_neg_screen_listed[[i]][[m]])[1]

@@ -211,7 +211,8 @@
 								use_score_cut=use_score_cut,
 								score_cut=score_cut,
 								plot_it=FALSE,
-								verbose=FALSE
+								verbose=FALSE,
+								RT_seperate=TRUE
 							)
 							for(k in 1:length(combination_matches)){ # add file ID
 								combination_matches[[k]][[10]]<-colnames(IS_pos_screen_listed[[i]][[m]])[1]
