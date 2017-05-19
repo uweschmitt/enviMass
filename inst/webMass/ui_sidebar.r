@@ -6,10 +6,16 @@ sidebarPanel(
         tags$style(type='text/css', ".well { max-width: 230px; }"),
         tags$style(type='text/css', ".span4 { max-width: 350px; }")
       ),
+    conditionalPanel(
+		condition = "output.textit != 'Waiting...'",	  
+			HTML('<p><b><font color=darkgreen size="5">
+				&nbsp enviMass v3.2 </font><br/></b></p>'),
+				helpText("Project folder:")
+	),
     verbatimTextOutput("textit"),
     # start panel ##############################################################
     conditionalPanel(
-		condition = "output.textit == 'Waiting...'",
+		condition = "output.textit == 'Waiting...'",		
 		bsAlert("failed_new"),bsAlert("failed_open"),
 		# (1) to start a new project #############################################
 		tags$h4("Start new project"),
@@ -19,7 +25,8 @@ sidebarPanel(
 			title = "Path to folder that will contain the new project.",
 			content = "The new project folder will be generated automatically, using the project name.", 
 			placement = "right", trigger = "hover"),
-		bsActionButton("newit","Start",style="success"),
+		bsButton("newit","Start",style="success"),
+		HTML('<hr noshade="noshade" />'),
 		# (2) to open an existing project ########################################
 		tags$h4("Open existing project"),
 		helpText("Type path to project folder ..."),
@@ -37,7 +44,7 @@ sidebarPanel(
 			content = "... located inside the project folder of the desired project.", 
 			placement = "right", trigger = "hover"),	
 		helpText(""),				  
-		bsActionButton("openit","Open",style="success"),
+		bsButton("openit","Open",style="success"),
 		textOutput("had_opened")
     ),
     # action panel #############################################################
@@ -46,16 +53,25 @@ sidebarPanel(
 	  bsAlert("reset"),
       helpText("Current state:"),
       verbatimTextOutput("dowhat"),
-      helpText("Finished tasks:"),
-      tableOutput("summar"),
+      helpText("Project state:"),
+	  htmlOutput("summa_html"),
 	  HTML('<hr noshade="noshade" />'),
-      bsActionButton("Calc","Calculate",style="danger"),
+	  fluidRow(
+			column(width = 5, bsButton("Check","Check project",style="success"),textOutput("had_checked")),
+			column(width = 1,  conditionalPanel(
+									condition = "output.had_checked == 'Project consistent'",	  
+									HTML('<h1 align="right"> &#x2713; </h1> ')
+								)
+			)
+	  ),
+	  HTML('<hr noshade="noshade" />'),
+      bsButton("Calc","Calculate",style="danger"),
 	  bsPopover("Calc", 
 		title = "Start new project (re)calculation.",
 		content = "The current settings for parameters and workflow steps will be used. Calculation results will be displayed in the results tabset.", 
 		placement = "right", trigger = "hover"),
-	  textOutput("had_calculated"),
-	  HTML('<hr noshade="noshade" />'),
+	  textOutput("had_calculated"),		  
+	  HTML('<hr noshade="noshade" />'),		  
       actionButton("Restart","Back"),
 	  bsPopover("Restart", 
 		title = "Return to start page ...",content = "... to start a new project or open an existing one.", 
@@ -63,4 +79,4 @@ sidebarPanel(
       actionButton("Exit","Exit")
     ),
 	HTML('<font color="white">')
-)
+, width = 3)

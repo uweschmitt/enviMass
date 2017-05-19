@@ -8,8 +8,6 @@
 #' make sure to set the relevant browser as your default browser.
 #' 
 
-
-
 webMass<-function(){
   shiny::runApp(system.file('webMass', package='enviMass'))
 }

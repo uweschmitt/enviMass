@@ -13,11 +13,13 @@
 #' @param what Character strings "mass" or "ret".
 #' @param one Logical. Only use recalibration \code{mz, ret} that can be matched unambiguously.
 #' @param knot Integer. Number of spline knots.
-#' @param plotit Logical. Produce recalibration plot?
+#' @param plot_it Logical. Produce recalibration plot?
 #' @param path_1 Logical \code{FALSE} or character string. If not \code{FALSE}, filepath to output the plot
 #' @param path_2 Logical \code{FALSE} or character string. Filepath for saving GAM model.
 #' @param stopit Logical. Triggers a full R error (\code{TRUE}) or returns an error message string (\code{FALSE}) if failing. 
 #' @param intermediate_results Logical. Call by reference to have intermediates in the enclosing environment?
+#' @param plot_ppm FALSE or vector of numerics. If a vector, plots the ppm mass deviations from the vector.
+#' @param max_recal FALSE or numeric. If the recalibration proposes mass corrections larger than that value (either ppm or absolute, see parameter \code{ppm}), dismiss the recalibration.
 #'
 #' @return Recalibrated \code{peaklist}.
 #' 
@@ -40,7 +42,9 @@ recalib<-function(
   path_1=FALSE,
   path_2=FALSE,  
   stopit=FALSE,
-  intermediate_results=FALSE
+  intermediate_results=FALSE,
+  plot_ppm=FALSE,
+  max_recal=FALSE
   ){
 
 
@@ -56,19 +60,19 @@ recalib<-function(
       put<-as.numeric(strsplit(peaks[i],"/")[[1]]);
       if(what=="mass"){
         if(one==TRUE & length(put)==1){
-          getit1<-c(getit1,rep(mz[i],length(put)));  # expected
-          getit2<-c(getit2,peaklist[put,1]);         # observed
+			getit1<-c(getit1,rep(mz[i],length(put)));  # expected
+			getit2<-c(getit2,peaklist[put,1]);         # observed
         }else{
-          getit1<-c(getit1,rep(mz[i],length(put)));  # expected
-          getit2<-c(getit2,peaklist[put,1]);         # observed
+			getit1<-c(getit1,rep(mz[i],length(put)));  # expected
+			getit2<-c(getit2,peaklist[put,1]);         # observed
         }
       }else{ # what=="ret"
         if(one==TRUE & length(put)==1){
-          getit1<-c(getit1,rep(ret[i],length(put))); # expected
-          getit2<-c(getit2,peaklist[put,3]);         # observed
+			getit1<-c(getit1,rep(ret[i],length(put))); # expected
+			getit2<-c(getit2,peaklist[put,3]);         # observed
         }else{
-          getit1<-c(getit1,rep(ret[i],length(put))); # expected
-          getit2<-c(getit2,peaklist[put,3]);         # observed
+			getit1<-c(getit1,rep(ret[i],length(put))); # expected
+			getit2<-c(getit2,peaklist[put,3]);         # observed
         }
       }
     }
@@ -97,33 +101,80 @@ recalib<-function(
   model<-mgcv::gam(delta~s(obs,bs="ts",k=knot),data=that);
   if(plotit==TRUE){
     if(what=="mass"){    
-      if(path_1!="FALSE"){png(filename = path_1, bg = "white")}
-      plot(getit2,getit3,pch=19,cex=0.5,xlab="m/z",ylab="Expected m/z - observed m/z",main="Recalibration results");
-      abline(h=0,col="red");
-      points(getit2[order(getit2)],predict(model)[order(getit2)],col="red",type="l",lwd=2);
-      #points(getit2,getit3-predict(model),col="green",pch=19,cex=0.7);      
-      if(path_1!="FALSE"){dev.off()}   
+		if(path_1!="FALSE"){png(filename = path_1, bg = "white")}
+		ylim<-c(min(getit3),max(getit3))
+		if(ylim[1]>0){ylim[1]<-0}
+		if(ylim[2]<0){ylim[2]<-0}
+		plot(getit2,getit3,pch=19,cex=0.5,xlab="m/z",ylab="Expected m/z - observed m/z",main="Recalibration results",ylim=ylim);
+		abline(h=0,col="darkgreen");
+		points(getit2[order(getit2)],predict(model)[order(getit2)],col="red",type="l",lwd=2);
+		if(plot_ppm[1]!="FALSE"){
+			ppm_mass<-seq(0,max(getit2),10)
+			for(k in 1:length(plot_ppm)){
+				ppm_ppm<-(ppm_mass*plot_ppm[k]/1E6)
+				lines(ppm_mass,ppm_ppm,lty=2,col="gray")
+				lines(ppm_mass,-ppm_ppm,lty=2,col="gray")
+				plotmass<-median(ppm_mass)
+				text(
+					plotmass,ppm_ppm[ppm_mass==plotmass],
+					labels=paste(as.character(plot_ppm[k]),"ppm"),
+					col="gray",cex=1.2
+				)
+				text(
+					plotmass,-ppm_ppm[ppm_mass==plotmass],
+					labels=paste("-",as.character(plot_ppm[k])," ppm",sep=""),
+					col="gray",cex=1.2
+				)
+			}
+		}
+		if(max_recal!="FALSE"){
+			if(ppm){
+				ppm_mass<-seq(0,max(getit2),10)
+				ppm_ppm<-(ppm_mass*max_recal/1E6)
+				lines(ppm_mass,ppm_ppm,lty=2,lwd=1.5,col="red")
+				lines(ppm_mass,-ppm_ppm,lty=2,lwd=1.5,col="red")			
+			}else{
+				abline(h=max_recal,lty=2,lwd=1.5,col="red")
+				abline(h=-max_recal,lty=2,lwd=1.5,col="red")				
+			}
+		}
+		if(path_1!="FALSE"){dev.off()}   
     }else{
-      if(path_1!="FALSE"){png(filename = path_1, bg = "white")} 
-      plot(getit2,getit3,pch=19,cex=0.5,xlab="Retention time",ylab="Expected RT - observed RT",main="Recalibration results");
-      abline(h=0,col="red");
-      points(getit2[order(getit2)],predict(model)[order(getit2)],col="red",type="l",lwd=2);
-      #points(getit2,getit3-predict(model),col="green",pch=19,cex=0.7);
-      if(path_1!="FALSE"){dev.off()}      
+		if(path_1!="FALSE"){png(filename = path_1, bg = "white")} 
+		plot(getit2,getit3,pch=19,cex=0.5,xlab="Retention time",ylab="Expected RT - observed RT",main="Recalibration results");
+		abline(h=0,col="red");
+		points(getit2[order(getit2)],predict(model)[order(getit2)],col="red",type="l",lwd=2);
+		if(path_1!="FALSE"){dev.off()}      
     }
   }
   ##############################################################################
   # predict -> recalibrate peaklist ############################################
   if(what=="mass"){
-      that<-data.frame("obs"=peaklist[,1],"delta"=peaklist[,1]);
-      pred2<-mgcv::predict.gam(model,newdata=that);
-      newpeaks<-peaklist;
-      newpeaks[,1]<-c(peaklist[,1]+pred2);
+  		that<-data.frame("obs"=peaklist[,1],"delta"=peaklist[,1]);
+		pred2<-mgcv::predict.gam(model,newdata=that);
+		newpeaks<-peaklist;
+  		if(max_recal=="FALSE"){
+			newpeaks[,1]<-c(peaklist[,1]+pred2);		
+		}else{
+			if(ppm){
+				if(!any((pred2/that[,1]*1E6)>max_recal)){
+					newpeaks[,1]<-c(peaklist[,1]+pred2);
+				}else{
+					cat("\n recalibration skipped - correction off limits!")
+				}				
+			}else{
+				if(!any(abs(pred2)>max_recal)){
+					newpeaks[,1]<-c(peaklist[,1]+pred2);
+				}else{
+					cat("\n recalibration skipped - correction off limits!")
+				}
+			}
+		}
   }else{
-      that<-data.frame("obs"=peaklist[,3],"delta"=peaklist[,3]);
-      pred2<-mgcv::predict.gam(model,newdata=that);
-      newpeaks<-peaklist;
-      newpeaks[,3]<-c(peaklist[,3]+pred2);
+		that<-data.frame("obs"=peaklist[,3],"delta"=peaklist[,3]);
+		pred2<-mgcv::predict.gam(model,newdata=that);
+		newpeaks<-peaklist;
+		newpeaks[,3]<-c(peaklist[,3]+pred2);
   }
   if(path_2!="FALSE"){
 	save(model,file=path_2)

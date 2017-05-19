@@ -1,31 +1,44 @@
 options(shiny.maxRequestSize=2000*1024^2)
+verbose<-FALSE
 
 shinyServer(function(input, output, session){
 ################################################################################
 ################################################################################
 
+  cat("\n I run in ");print(environment())
+  in_envir<<-environmentName(environment())
+  if(any(ls()=="logfile")){stop("\n illegal logfile detected in server.r #1")}  
   ##############################################################################
   # load data ##################################################################  
   if(!any(objects(envir=as.environment(".GlobalEnv"))=="isotopes")){data(isotopes,package="enviPat",envir=as.environment(".GlobalEnv"))}
+  updateSelectInput(session,inputId="atom_bounds_this", choices=unique(isotopes[1:295,1]),selected = c("C","H","N","O","Cl","Br"))    
   if(!any(objects(envir=as.environment(".GlobalEnv"))=="adducts")){data(adducts,package="enviPat",envir=as.environment(".GlobalEnv"))}
   if(!any(objects(envir=as.environment(".GlobalEnv"))=="resolution_list")){data(resolution_list,package="enviPat",envir=as.environment(".GlobalEnv"))}
+  if(any(names(resolution_list)=="Elite/R240000@400")){
+	shinyjs:::info("library enviPat is not up to date - or you have loaded an old workspace containing old enviPat resolution data lists. Update enviPat and clean your workspace before continuing with enviMass!");
+  }	
   ##############################################################################
   # define variables, inputs, outputs - if not in server.startup.R #############
   tried<-try(getVolumes()(),silent=FALSE)
   if(!inherits(tried,"try-error")){
-	shinyFileChoose(input,"pro_dir3", session=session, roots=getVolumes(), filetypes=c("emp") )
+	shinyFileChoose(input, "pro_dir3", session=session, roots=getVolumes(), filetypes=c("emp"), updateFreq = 30000)
+	shinyFileSave(input, "download_IS", roots=getVolumes(), updateFreq=30000)
+	shinyFileSave(input, "download_target", roots=getVolumes(), updateFreq=30000)	
   }else{
-	createAlert(session,inputId = "alert_4", alertId="a4", title = NULL, message="logfile select disabled, used folder path input",type = "alarm",append=FALSE,block=TRUE,dismiss=TRUE)
+	createAlert(session,anchorId = "alert_4", alertId="a4", title = NULL, content="logfile select disabled, used folder path input",style = "alarm",append=FALSE,dismiss=TRUE)
   }
   output$textit<-renderText("Waiting...")
   output$dowhat<-renderText("Open")
+  output$sel_meas_comp_state<-renderText("No componentization results for this file available")
   output$isotable<-renderTable(isotopes)
   updateCheckboxGroupInput(session, "adducts_pos", "Positive ions:", choices =  as.character(adducts[adducts[,6]=="positive",1]),selected=as.character(adducts[adducts[,6]=="positive",1][1]))
   updateCheckboxGroupInput(session, "adducts_neg", "Negative ions:", choices =  as.character(adducts[adducts[,6]=="negative",1]),selected=as.character(adducts[adducts[,6]=="negative",1][1]))               
+  updateCheckboxGroupInput(session, "adducts_pos_group", "Positive mode:", choices =  as.character(adducts[adducts[,6]=="positive",1]),selected=as.character(adducts[adducts[,6]=="positive",1][1]))
+  updateCheckboxGroupInput(session, "adducts_neg_group", "Negative mode:", choices =  as.character(adducts[adducts[,6]=="negative",1]),selected=as.character(adducts[adducts[,6]=="negative",1][1]))               
   updateSelectInput(session, "resolution", "Instrument resolution:", choices =  names(resolution_list), selected= (names(resolution_list)[1]))                   
   init<-reactiveValues() 	# reactive value to indicate ...
   init$a<-"FALSE"  			# ... if/when a project is opened
-  init$b<-1					# ... increments each time a calculation is run or ion mode selected; trigger observers to refresh results
+  init$b<-1					# ... increments each time a calculation is run or ion mode selected; trigger observers to refresh results	
   logobusy<-list(src="circ.gif");
   output$logobusy1<-renderImage(logobusy, deleteFile = FALSE);
   output$logobusy2<-renderImage(logobusy, deleteFile = FALSE);
@@ -35,7 +48,7 @@ shinyServer(function(input, output, session){
   ##############################################################################
   # start projects or load them - get their individual logfile #################
   # also load parameter settings ###############################################
-  source("server_startup.r", local=TRUE)
+  source("server_startup.r", local=TRUE) 
   ##############################################################################  
   # add compounds, measurements, etc ###########################################
   source("server_obs_Add.r", local=TRUE)
@@ -48,6 +61,20 @@ shinyServer(function(input, output, session){
   ##############################################################################  
   # observe export requests ####################################################  
   source("server_export.r", local=TRUE)
+  ############################################################################## 
+  # output screening results ###################################################
+  source("server_obs_screening.r", local=TRUE)  
+  ############################################################################## 
+  # observe calibration sets ###################################################
+  source("server_obs_calibration.r", local=TRUE)  
+  ############################################################################## 
+  # observe componentization outputs ###########################################
+  source("server_obs_components.r", local=TRUE)  
+  ############################################################################## 
+  # observe profiling outputs ##################################################
+  source("server_obs_profiles.r", local=TRUE)  
+  # output network js ##########################################################
+  source("server_force.r", local=TRUE)    
   ##############################################################################  
   # run calculations ###########################################################
   source("server_calculation.r", local=TRUE)

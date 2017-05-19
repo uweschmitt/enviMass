@@ -10,6 +10,10 @@
 #' @param ppm Logical. \code{dmass} given in ppm?
 #' @param RT Numeric vector. Retention times to be matched; units equal to those of the input files
 #' @param dRT Numeric. RT tolerance window; units equal to those of the input files
+#' @param onlymax Logical. Return only the matched peak of highest intensity. 
+#' @param intratio. Logical FALSE or numeric. Only matching peaks >= this intensity ratio are returned.  
+#' @param int. Logical FALSE or numeric vector. Intensities of the peaks to be matched; required when using intratio.
+#' @param get_matches. Logical. Return all matches (TRUE, default) or only indicate if any have been found.
 #'
 #' @return Vector of characters. For each code{mz,RT} input, the vector entry specifies the match indices in \code{peaklist}.
 #' 
@@ -19,7 +23,7 @@
 
 
 
-search_peak<-function(peaklist,mz,dmz=5,ppm=TRUE,RT,dRT){
+search_peak<-function(peaklist,mz,dmz=5,ppm=TRUE,RT,dRT,onlymax=FALSE,int_ratio=FALSE,int=FALSE,get_matches=TRUE){
 
   ##############################################################################
   # redefine order of peaklist & mz, keep ord1 and ord2 to resort
@@ -74,23 +78,44 @@ search_peak<-function(peaklist,mz,dmz=5,ppm=TRUE,RT,dRT){
    	for(f in k:n){
     	if(   (as.numeric(peaks[f,1]) >= as.numeric(target_low)) &&
     		    ( as.numeric(peaks[f,1]) <= as.numeric(target_up))  &&
-    		    ( as.numeric(peaks[f,3]) >= (as.numeric(RT[ord2[i]])-as.numeric(dRT[i]))) &&
-    		    ( as.numeric(peaks[f,3]) <= (as.numeric(RT[ord2[i]])+as.numeric(dRT[i])))){
+    		    ( as.numeric(peaks[f,3]) >= (as.numeric(RT[ord2[i]])-as.numeric(dRT[ord2[i]]))) &&
+    		    ( as.numeric(peaks[f,3]) <= (as.numeric(RT[ord2[i]])+as.numeric(dRT[ord2[i]])))){
           deletes<-c(deletes,f);
         }
     }
     # save results #############################################################
     if(length(deletes)>0){
-     result[ord2[i]]<-as.character(ord1[deletes[1]]);
-     if(length(deletes)>1){
-      for(j in 2:length(deletes)){
-         result[ord2[i]]<-paste(result[ord2[i]],"/",as.character(ord1[deletes[j]]))
-      }
-     }
-    }
+		if(is.numeric(int_ratio)){
+			deletes<-deletes[
+				int_ratio>=(int[ord2[i]]/peaklist[ord1[deletes],2])
+			]
+		}
 	}
-	##############################################################################
-	return(result);
+	if(length(deletes)>0){
+		if(!get_matches){
+			result[ord2[i]]<-"TRUE"
+			next;
+		}
+		if(onlymax){ # only save matched peak with highest intensity
+			if(length(deletes)==1){
+				result[ord2[i]]<-as.character(ord1[deletes]);
+			}else{
+				result[ord2[i]]<-as.character(
+					(ord1[deletes])[which.max(peaklist[ord1[deletes],2])]
+				)
+			}
+		}else{
+			result[ord2[i]]<-as.character(ord1[deletes[1]]);
+			if(length(deletes)>1){
+				for(j in 2:length(deletes)){
+					result[ord2[i]]<-paste(result[ord2[i]],"/",as.character(ord1[deletes[j]]))
+				}
+			}
+		}	
+	}
+  }
+  ##############################################################################
+  return(result);
 
 }
 

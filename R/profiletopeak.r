@@ -12,8 +12,6 @@
 #' 
 #' @export
 
-
-
 profiletopeak<-function(profileList,progbar){
 
     ############################################################################
@@ -42,9 +40,9 @@ profiletopeak<-function(profileList,progbar){
 		peaklist[k,9]<-max(profileList[[2]][(profileList[[7]][k,1]:profileList[[7]][k,2]),3])	
 		peaklist[k,10]<-profileList[[7]][k,4]	
 		peaklist[k,11]<-profileList[[7]][k,3]	
-		peaklist[k,12]<-profileList[[7]][k,6] # overall trend
-		peaklist[k,13]<-profileList[[7]][k,5] # current trend
-		peaklist[k,14]<-profileList[[7]][k,17] # current intensity
+		peaklist[k,12]<-profileList[[7]][k,6] 	# overall trend
+		peaklist[k,13]<-profileList[[7]][k,5] 	# current trend
+		peaklist[k,14]<-profileList[[7]][k,17] 	# current intensity
 	}
 	if(progbar==TRUE){ close(prog); }
     ############################################################################
